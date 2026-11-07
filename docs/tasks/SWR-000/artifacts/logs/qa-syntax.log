@@ -1,0 +1,20 @@
+$ node --check scripts/check-task.mjs scripts/check-task.test.mjs
+exit=0
+# note: node --check only checks the first file; later args are passed as argv. Each file is checked separately below.
+$ node --check scripts/check-task.mjs
+exit=0
+$ node --check scripts/check-task.test.mjs
+exit=0
+# proof of the note: second arg is a file with a syntax error (let x = ;), still exit 0
+$ node --check scripts/check-task.mjs $SCRATCH/bad.mjs
+exit=0
+$ node --check $SCRATCH/bad.mjs
+$SCRATCH/bad.mjs:1
+let x = ;
+        ^
+
+SyntaxError: Unexpected token ';'
+    at checkSyntax (node:internal/main/check_syntax:74:5)
+
+Node.js v20.19.5
+exit=1

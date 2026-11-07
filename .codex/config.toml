@@ -1,0 +1,9 @@
+# Project-scoped Codex config. Role definitions: .codex/agents/*.toml (thin adapters over docs/agents/roles/).
+# Status: written from Codex docs, NOT yet run locally (Codex CLI not installed) — see docs/process/runtime-adapters.md.
+
+[agents]
+# Parallel subagent threads the orchestrator may run at once.
+max_threads = 4
+# Orchestrator -> role only. Leads do not spawn workers; the orchestrator dispatches both
+# (parity with Claude Code, where subagents cannot spawn subagents).
+max_depth = 1

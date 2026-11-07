@@ -1,0 +1,47 @@
+# BV-1: honest in-progress SWR-000 must pass
+$ node scripts/check-task.mjs docs/tasks/SWR-000
+OK docs/tasks/SWR-000
+exit=0
+
+# BV-2: same task, agent falsely claims 'accepted' + FINAL_ACCEPTANCE passed while QA/AC are not_run
+# (scratch copy at <scratch>/SWR-000-dishonest; the exit code is the checker's own, captured without a pipe)
+$ (cwd=<scratch>) node scripts/check-task.mjs SWR-000-dishonest
+SWR-000-dishonest/status.md: [R4] stage IMPLEMENTATION artifact path `scripts/check-task.mjs` does not exist (line 9)
+SWR-000-dishonest/status.md: [R4] stage IMPLEMENTATION is passed but Artifact has no existing file in backticks (line 9)
+SWR-000-dishonest/status.md: [R3] stage FINAL_ACCEPTANCE is passed but earlier stage CODE_REVIEW is in_progress (line 14)
+SWR-000-dishonest/status.md: [R3] stage FINAL_ACCEPTANCE is passed but earlier stage BUSINESS_VALIDATION is pending (line 14)
+SWR-000-dishonest/status.md: [R3] stage FINAL_ACCEPTANCE is passed but earlier stage QA_EXECUTION is pending (line 14)
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-2 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-3 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-4 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-5 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-2 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-3 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-4 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-5 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-2 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-3 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-4 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-5 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-1 in acceptance.md is not_run
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-1 in qa-results.md is not_run
+SWR-000-dishonest/acceptance.md: [R10] accepted but AC-1 in delivery-report.md is not_run
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-3 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-4 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-5 (defined in specification.md) is missing from acceptance.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-3 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-4 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-5 (defined in specification.md) is missing from qa-results.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-3 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-4 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-5 (defined in specification.md) is missing from delivery-report.md
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-1 in acceptance.md is not_run
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-1 in qa-results.md is not_run
+SWR-000-dishonest/delivery-report.md: [R10] accepted but AC-1 in delivery-report.md is not_run
+FAIL SWR-000-dishonest (35 problems)
+exit=1
+
+# Note: an earlier version of this log printed exit=0 for BV-2 — that was the exit code of sed in a pipe, not of the checker. Corrected by the Analyst on re-run.

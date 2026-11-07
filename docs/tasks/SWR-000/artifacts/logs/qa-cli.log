@@ -1,0 +1,230 @@
+# QA CLI log — SWR-000. node v20.19.5. cwd=$QA=/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/qa (outside repo, contains AGENTS.md).
+# $CHK = $REPO/scripts/check-task.mjs, $REPO = /Users/dimatitov/WebstormProjects/Game automa
+# Each case = fresh copy of scripts/fixtures/valid-task + the listed edits.
+
+## AC-5 / usage
+
+$ node $CHK   (no args)
+Usage: node scripts/check-task.mjs <taskDir> [<taskDir> ...]
+exit=2
+
+$ node $CHK does-not-exist
+check-task: task directory not found: does-not-exist
+exit=2
+
+$ node $CHK ok
+OK ok
+exit=0
+
+$ node $CHK /Users/dimatitov/WebstormProjects/Game automa/docs/tasks/_template
+OK /Users/dimatitov/WebstormProjects/Game automa/docs/tasks/_template
+exit=0
+
+$ node $CHK my dir
+OK my dir
+exit=0
+
+## AC-1 missing required files
+# rm a1/specification.md a1/review.md
+
+$ node $CHK a1
+a1/specification.md: [R1] required file is missing
+a1/review.md: [R1] required file is missing
+a1/status.md: [R4] stage ANALYSIS artifact path `specification.md` does not exist (line 6)
+a1/status.md: [R4] stage ANALYSIS is passed but Artifact has no existing file in backticks (line 6)
+a1/status.md: [R4] stage CODE_REVIEW artifact path `review.md` does not exist (line 11)
+a1/status.md: [R4] stage CODE_REVIEW is passed but Artifact has no existing file in backticks (line 11)
+a1/acceptance.md: [R10] accepted but specification.md is missing, so the task has no AC set
+a1/acceptance.md: [R10] accepted but review.md verdict is missing/invalid, not approved
+a1/delivery-report.md: [R10] accepted but specification.md is missing, so the task has no AC set
+a1/delivery-report.md: [R10] accepted but review.md verdict is missing/invalid, not approved
+FAIL a1 (10 problems)
+exit=1
+# a1empty = empty directory
+
+$ node $CHK a1empty
+a1empty/request.md: [R1] required file is missing
+a1empty/specification.md: [R1] required file is missing
+a1empty/implementation-plan.md: [R1] required file is missing
+a1empty/test-cases.md: [R1] required file is missing
+a1empty/review.md: [R1] required file is missing
+a1empty/qa-results.md: [R1] required file is missing
+a1empty/acceptance.md: [R1] required file is missing
+a1empty/delivery-report.md: [R1] required file is missing
+a1empty/status.md: [R1] required file is missing
+FAIL a1empty (9 problems)
+exit=1
+# rm a1b/request.md
+
+$ node $CHK ok a1b
+OK ok
+a1b/request.md: [R1] required file is missing
+a1b/status.md: [R4] stage INTAKE artifact path `request.md` does not exist (line 5)
+a1b/status.md: [R4] stage INTAKE is passed but Artifact has no existing file in backticks (line 5)
+FAIL a1b (3 problems)
+exit=1
+
+## AC-2 evidence (R5/R6/R7/R11)
+# edit a2tbd/acceptance.md: sed 's#| AC-2 | passed | `artifacts/logs/cli.log` |#| AC-2 | passed | TBD |#'
+
+$ node $CHK a2tbd
+a2tbd/acceptance.md: [R5] AC-2 is passed but evidence is empty or a placeholder (line 10)
+FAIL a2tbd (1 problems)
+exit=1
+# edit a2ghost/qa-results.md: sed 's#| AC-1 | passed | `artifacts/logs/unit.log` |#| AC-1 | passed | `artifacts/logs/ghost.log` |#'
+
+$ node $CHK a2ghost
+a2ghost/qa-results.md: [R6] AC-1 evidence path `artifacts/logs/ghost.log` does not exist (line 11)
+a2ghost/qa-results.md: [R5] AC-1 is passed but evidence has no existing file path in backticks (line 11)
+FAIL a2ghost (2 problems)
+exit=1
+# edit a2free/acceptance.md: sed 's#| AC-1 | passed | `artifacts/logs/unit.log` |#| AC-1 | passed | ran it locally, trust me |#'
+
+$ node $CHK a2free
+a2free/acceptance.md: [R5] AC-1 is passed but evidence has no existing file path in backticks (line 9)
+FAIL a2free (1 problems)
+exit=1
+# edit a2ver/qa-results.md: sed 's#^- unit: passed — `artifacts/logs/unit.log`#- unit: passed#'
+# edit a2ver/delivery-report.md: sed 's#^- cli: passed — `artifacts/logs/cli.log`#- cli: passed — `artifacts/logs/nope.log`#'
+
+$ node $CHK a2ver
+a2ver/qa-results.md: [R7] check "unit" is passed but has no evidence (line 15)
+a2ver/delivery-report.md: [R7] check "cli" evidence path `artifacts/logs/nope.log` does not exist (line 14)
+a2ver/delivery-report.md: [R7] check "cli" is passed but evidence has no existing file path in backticks (line 14)
+FAIL a2ver (3 problems)
+exit=1
+# edit a2abs/acceptance.md: sed 's#| AC-1 | passed | `artifacts/logs/unit.log` |#| AC-1 | passed | `/etc/hosts` |#'
+
+$ node $CHK a2abs
+a2abs/acceptance.md: [R11] AC-1 evidence path `/etc/hosts` is absolute; use a path relative to the task folder or repo root (line 9)
+a2abs/acceptance.md: [R5] AC-1 is passed but evidence has no existing file path in backticks (line 9)
+FAIL a2abs (2 problems)
+exit=1
+# edit a2nr/qa-results.md: sed 's#^- e2e: not_run — no UI in this fixture#- e2e: not_run — #'
+# control: not_run without evidence is allowed
+
+$ node $CHK a2nr
+OK a2nr
+exit=0
+
+## AC-3 status.md (R2-R4)
+# edit a3dup/status.md: sed '/^| INTAKE |/p'
+
+$ node $CHK a3dup
+a3dup/status.md: [R2] stage INTAKE is listed more than once (line 6)
+FAIL a3dup (1 problems)
+exit=1
+# edit a3miss/status.md: sed '/^| INTEGRATION |/d'
+
+$ node $CHK a3miss
+a3miss/status.md: [R2] stage INTEGRATION is missing
+a3miss/status.md: [R3] stage CODE_REVIEW is passed but earlier stage INTEGRATION is missing (line 10)
+a3miss/status.md: [R3] stage BUSINESS_VALIDATION is passed but earlier stage INTEGRATION is missing (line 11)
+a3miss/status.md: [R3] stage QA_EXECUTION is passed but earlier stage INTEGRATION is missing (line 12)
+a3miss/status.md: [R3] stage FINAL_ACCEPTANCE is passed but earlier stage INTEGRATION is missing (line 13)
+a3miss/status.md: [R3] stage DELIVERY is passed but earlier stage INTEGRATION is missing (line 14)
+FAIL a3miss (6 problems)
+exit=1
+# edit a3swap/status.md: sed 's/^| ANALYSIS |/| TMPX |/; s/^| TECH_PLANNING |/| ANALYSIS |/; s/^| TMPX |/| TECH_PLANNING |/'
+
+$ node $CHK a3swap
+a3swap/status.md: [R2] stage ANALYSIS is out of order (must come before TECH_PLANNING) (line 7)
+FAIL a3swap (1 problems)
+exit=1
+# edit a3bad/status.md: sed 's/^| CODE_REVIEW | passed |/| CODE_REVIEW | done |/'
+
+$ node $CHK a3bad
+a3bad/status.md: [R2] stage CODE_REVIEW has invalid status "done" (allowed: pending, in_progress, passed, failed, blocked) (line 11)
+a3bad/status.md: [R3] stage BUSINESS_VALIDATION is passed but earlier stage CODE_REVIEW is done (line 12)
+a3bad/status.md: [R3] stage QA_EXECUTION is passed but earlier stage CODE_REVIEW is done (line 13)
+a3bad/status.md: [R3] stage FINAL_ACCEPTANCE is passed but earlier stage CODE_REVIEW is done (line 14)
+a3bad/status.md: [R3] stage DELIVERY is passed but earlier stage CODE_REVIEW is done (line 15)
+FAIL a3bad (5 problems)
+exit=1
+# edit a3order/status.md: sed 's/^| CODE_REVIEW | passed |/| CODE_REVIEW | pending |/'
+
+$ node $CHK a3order
+a3order/status.md: [R3] stage BUSINESS_VALIDATION is passed but earlier stage CODE_REVIEW is pending (line 12)
+a3order/status.md: [R3] stage QA_EXECUTION is passed but earlier stage CODE_REVIEW is pending (line 13)
+a3order/status.md: [R3] stage FINAL_ACCEPTANCE is passed but earlier stage CODE_REVIEW is pending (line 14)
+a3order/status.md: [R3] stage DELIVERY is passed but earlier stage CODE_REVIEW is pending (line 15)
+FAIL a3order (4 problems)
+exit=1
+# edit a3art/status.md: sed 's#^| IMPLEMENTATION | passed | workers | `artifacts/logs/unit.log` |#| IMPLEMENTATION | passed | workers | `src/missing.ts` |#'
+
+$ node $CHK a3art
+a3art/status.md: [R4] stage IMPLEMENTATION artifact path `src/missing.ts` does not exist (line 9)
+a3art/status.md: [R4] stage IMPLEMENTATION is passed but Artifact has no existing file in backticks (line 9)
+FAIL a3art (2 problems)
+exit=1
+
+## AC-4 accepted gate (R8-R10)
+# edit a4ac/acceptance.md: sed 's#| AC-2 | passed | `artifacts/logs/cli.log` |#| AC-2 | failed | `artifacts/logs/cli.log` |#'
+
+$ node $CHK a4ac
+a4ac/acceptance.md: [R10] accepted but AC-2 in acceptance.md is failed
+a4ac/delivery-report.md: [R10] accepted but AC-2 in acceptance.md is failed
+FAIL a4ac (2 problems)
+exit=1
+# edit a4rev/review.md: sed 's/^approved$/changes_requested/'
+
+$ node $CHK a4rev
+a4rev/acceptance.md: [R10] accepted but review.md verdict is changes_requested, not approved
+a4rev/delivery-report.md: [R10] accepted but review.md verdict is changes_requested, not approved
+FAIL a4rev (2 problems)
+exit=1
+# edit a4fa/status.md: sed 's/^| FINAL_ACCEPTANCE | passed |/| FINAL_ACCEPTANCE | in_progress |/; s/^| DELIVERY | passed |/| DELIVERY | pending |/'
+
+$ node $CHK a4fa
+a4fa/acceptance.md: [R10] accepted but FINAL_ACCEPTANCE in status.md is in_progress, not passed
+a4fa/delivery-report.md: [R10] accepted but FINAL_ACCEPTANCE in status.md is in_progress, not passed
+FAIL a4fa (2 problems)
+exit=1
+# edit a4verd/review.md: sed 's/^approved$/lgtm/'
+
+$ node $CHK a4verd
+a4verd/review.md: [R8] verdict must start with one of approved, changes_requested, blocked (lowercase), got "lgtm" (line 10)
+a4verd/acceptance.md: [R10] accepted but review.md verdict is missing/invalid, not approved
+a4verd/delivery-report.md: [R10] accepted but review.md verdict is missing/invalid, not approved
+FAIL a4verd (3 problems)
+exit=1
+# edit a4dec/delivery-report.md: sed 's/^accepted — delivered$/approved — delivered/'
+
+$ node $CHK a4dec
+a4dec/delivery-report.md: [R9] final decision must start with one of accepted, rejected, blocked (lowercase), got "approved — delivered" (line 18)
+FAIL a4dec (1 problems)
+exit=1
+# edit a4drop/acceptance.md: sed '/^| AC-2 |/d'
+# edit a4drop/qa-results.md: sed '/^| AC-2 |/d'
+# edit a4drop/delivery-report.md: sed '/^| AC-2 |/d'
+
+$ node $CHK a4drop
+a4drop/acceptance.md: [R10] accepted but AC-2 (defined in specification.md) is missing from acceptance.md
+a4drop/acceptance.md: [R10] accepted but AC-2 (defined in specification.md) is missing from qa-results.md
+a4drop/acceptance.md: [R10] accepted but AC-2 (defined in specification.md) is missing from delivery-report.md
+a4drop/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from acceptance.md
+a4drop/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from qa-results.md
+a4drop/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from delivery-report.md
+FAIL a4drop (6 problems)
+exit=1
+# edit a4ctl/acceptance.md: sed 's#| AC-2 | passed | `artifacts/logs/cli.log` |#| AC-2 | failed | `artifacts/logs/cli.log` |#'
+# edit a4ctl/acceptance.md: sed 's/^accepted — all AC passed with evidence$/rejected — AC-2 failed/'
+# edit a4ctl/delivery-report.md: sed 's/^accepted — delivered$/blocked — AC-2 failed/'
+# edit a4ctl/status.md: sed 's/^| FINAL_ACCEPTANCE | passed |/| FINAL_ACCEPTANCE | failed |/; s/^| DELIVERY | passed |/| DELIVERY | pending |/'
+# control: honest rejected/blocked with a failed AC
+
+$ node $CHK a4ctl
+OK a4ctl
+exit=0
+
+## Control-case edit verification (were the sed edits applied?)
+$ grep -n 'e2e' a2nr/qa-results.md
+17:- e2e: not_run —    (line ends after '— ', no evidence)
+$ grep -n 'AC-2\|^rejected' a4ctl/acceptance.md
+10:| AC-2 | failed | `artifacts/logs/cli.log` |
+13:rejected — AC-2 failed
+$ grep -n '^blocked' a4ctl/delivery-report.md
+18:blocked — AC-2 failed
+$ grep -n 'FINAL_ACCEPTANCE\|DELIVERY' a4ctl/status.md
+14:| FINAL_ACCEPTANCE | failed | analyst | `acceptance.md` | ok |
+15:| DELIVERY | pending | analyst | `delivery-report.md` | ok |

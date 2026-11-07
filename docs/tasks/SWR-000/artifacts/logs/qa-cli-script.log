@@ -1,0 +1,53 @@
+#!/bin/bash
+# QA CLI checks for SWR-000. Scratch copies live OUTSIDE the repo under $QA.
+REPO="/Users/dimatitov/WebstormProjects/Game automa"
+QA=/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/qa
+CHK="$REPO/scripts/check-task.mjs"
+FIX="$REPO/scripts/fixtures/valid-task"
+rm -rf "$QA"; mkdir -p "$QA"; echo "# scratch repo root" > "$QA/AGENTS.md"
+cd "$QA"
+fresh() { rm -rf "$1"; cp -R "$FIX" "$1"; }
+run() { echo; echo "\$ $*"; "$@" 2>&1; echo "exit=$?"; }
+sub() { sed -i '' "$2" "$1"; echo "# edit $1: sed '$2'"; }
+echo "# QA CLI log — SWR-000. node $(node --version). cwd=\$QA=$QA (outside repo, contains AGENTS.md)."
+echo "# \$CHK = \$REPO/scripts/check-task.mjs, \$REPO = $REPO"
+echo "# Each case = fresh copy of scripts/fixtures/valid-task + the listed edits."
+CHKV='$CHK'
+r() { echo; echo "\$ node \$CHK $*"; node "$CHK" "$@" 2>&1; echo "exit=$?"; }
+
+echo; echo "## AC-5 / usage"
+echo; echo "\$ node \$CHK   (no args)"; node "$CHK" 2>&1; echo "exit=$?"
+r does-not-exist
+fresh ok; r ok
+r "$REPO/docs/tasks/_template"
+fresh "my dir"; r "my dir"
+
+echo; echo "## AC-1 missing required files"
+fresh a1; rm a1/specification.md a1/review.md; echo "# rm a1/specification.md a1/review.md"; r a1
+mkdir -p a1empty; echo "# a1empty = empty directory"; r a1empty
+fresh a1b; rm a1b/request.md; echo "# rm a1b/request.md"; r ok a1b
+
+echo; echo "## AC-2 evidence (R5/R6/R7/R11)"
+fresh a2tbd; sub a2tbd/acceptance.md 's#| AC-2 | passed | `artifacts/logs/cli.log` |#| AC-2 | passed | TBD |#'; r a2tbd
+fresh a2ghost; sub a2ghost/qa-results.md 's#| AC-1 | passed | `artifacts/logs/unit.log` |#| AC-1 | passed | `artifacts/logs/ghost.log` |#'; r a2ghost
+fresh a2free; sub a2free/acceptance.md 's#| AC-1 | passed | `artifacts/logs/unit.log` |#| AC-1 | passed | ran it locally, trust me |#'; r a2free
+fresh a2ver; sub a2ver/qa-results.md 's#^- unit: passed — `artifacts/logs/unit.log`#- unit: passed#'; sub a2ver/delivery-report.md 's#^- cli: passed — `artifacts/logs/cli.log`#- cli: passed — `artifacts/logs/nope.log`#'; r a2ver
+fresh a2abs; sub a2abs/acceptance.md 's#| AC-1 | passed | `artifacts/logs/unit.log` |#| AC-1 | passed | `/etc/hosts` |#'; r a2abs
+fresh a2nr; sub a2nr/qa-results.md 's#^- e2e: not_run — no UI in this fixture#- e2e: not_run — #'; echo "# control: not_run without evidence is allowed"; r a2nr
+
+echo; echo "## AC-3 status.md (R2-R4)"
+fresh a3dup; sub a3dup/status.md '/^| INTAKE |/p'; r a3dup
+fresh a3miss; sub a3miss/status.md '/^| INTEGRATION |/d'; r a3miss
+fresh a3swap; sub a3swap/status.md 's/^| ANALYSIS |/| TMPX |/; s/^| TECH_PLANNING |/| ANALYSIS |/; s/^| TMPX |/| TECH_PLANNING |/'; r a3swap
+fresh a3bad; sub a3bad/status.md 's/^| CODE_REVIEW | passed |/| CODE_REVIEW | done |/'; r a3bad
+fresh a3order; sub a3order/status.md 's/^| CODE_REVIEW | passed |/| CODE_REVIEW | pending |/'; r a3order
+fresh a3art; sub a3art/status.md 's#^| IMPLEMENTATION | passed | workers | `artifacts/logs/unit.log` |#| IMPLEMENTATION | passed | workers | `src/missing.ts` |#'; r a3art
+
+echo; echo "## AC-4 accepted gate (R8-R10)"
+fresh a4ac; sub a4ac/acceptance.md 's#| AC-2 | passed | `artifacts/logs/cli.log` |#| AC-2 | failed | `artifacts/logs/cli.log` |#'; r a4ac
+fresh a4rev; sub a4rev/review.md 's/^approved$/changes_requested/'; r a4rev
+fresh a4fa; sub a4fa/status.md 's/^| FINAL_ACCEPTANCE | passed |/| FINAL_ACCEPTANCE | in_progress |/; s/^| DELIVERY | passed |/| DELIVERY | pending |/'; r a4fa
+fresh a4verd; sub a4verd/review.md 's/^approved$/lgtm/'; r a4verd
+fresh a4dec; sub a4dec/delivery-report.md 's/^accepted — delivered$/approved — delivered/'; r a4dec
+fresh a4drop; for f in acceptance.md qa-results.md delivery-report.md; do sub a4drop/$f '/^| AC-2 |/d'; done; r a4drop
+fresh a4ctl; sub a4ctl/acceptance.md 's#| AC-2 | passed | `artifacts/logs/cli.log` |#| AC-2 | failed | `artifacts/logs/cli.log` |#'; sub a4ctl/acceptance.md 's/^accepted — all AC passed with evidence$/rejected — AC-2 failed/'; sub a4ctl/delivery-report.md 's/^accepted — delivered$/blocked — AC-2 failed/'; sub a4ctl/status.md 's/^| FINAL_ACCEPTANCE | passed |/| FINAL_ACCEPTANCE | failed |/; s/^| DELIVERY | passed |/| DELIVERY | pending |/'; echo "# control: honest rejected/blocked with a failed AC"; r a4ctl

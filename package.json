@@ -1,0 +1,10 @@
+{
+  "name": "star-wars-rebellion-ai",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test scripts/",
+    "check:task": "node scripts/check-task.mjs"
+  }
+}

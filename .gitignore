@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.db
+*.sqlite
+# Large QA artifacts are not committed by default
+docs/tasks/*/artifacts/playwright-traces/*
+!docs/tasks/*/artifacts/playwright-traces/.gitkeep
+.DS_Store

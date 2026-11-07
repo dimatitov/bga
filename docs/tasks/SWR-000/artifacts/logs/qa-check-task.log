@@ -1,0 +1,3 @@
+$ node scripts/check-task.mjs docs/tasks/SWR-000
+OK docs/tasks/SWR-000
+exit=0
