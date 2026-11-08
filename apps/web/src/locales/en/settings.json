@@ -1,0 +1,22 @@
+{
+  "title": "Settings",
+  "back": "Back",
+  "language": {
+    "title": "Interface language",
+    "ru": "Russian",
+    "en": "English"
+  },
+  "accessibility": {
+    "title": "Accessibility"
+  },
+  "reduceMotion": {
+    "label": "Reduce motion",
+    "hint": "Disables smooth zoom, highlight pulsing and transitions"
+  },
+  "storageNote": "Settings are stored in this browser.",
+  "announce": {
+    "language": "Interface language: English",
+    "reduceMotionOn": "Reduced motion is on",
+    "reduceMotionOff": "Reduced motion is off"
+  }
+}

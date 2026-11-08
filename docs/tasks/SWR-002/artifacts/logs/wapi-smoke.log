@@ -1,0 +1,134 @@
+$ bash smoke.sh  (script inlined below)
+Sun Nov  8 00:09:37 UTC 2026
+$ DATABASE_URL=file:<scratchpad>/smoke.db pnpm exec prisma migrate deploy
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "smoke.db" at "file:/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/smoke.db"
+
+SQLite database smoke.db created at file:/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/smoke.db
+
+1 migration found in prisma/migrations
+
+Applying migration `20261107235651_init`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261107235651_init/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+exit=0
+$ PORT=3200 node dist/main.js &
+
+$ curl http://localhost:3200/api/health
+{"status":"ok"}
+HTTP 200
+exit=0
+
+$ curl -X POST http://localhost:3200/api/games (empire vs ai)
+{"gameId":"7a29921c-68e9-40a8-b0ad-ea210e22c860","view":{"id":"7a29921c-68e9-40a8-b0ad-ea210e22c860","version":1,"round":1,"phase":"assignment","setup":{"humanFaction":"empire","opponent":{"kind":"ai","difficulty":"hard"}},"systems":[{"id":"sys-aurelis","nameKey":"systems.sys-aurelis","regionId":"reg-inner","adjacentSystemIds":["sys-brevora","sys-cindral"]},{"id":"sys-brevora","nameKey":"systems.sys-brevora","regionId":"reg-inner","adjacentSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"id":"sys-cindral","nameKey":"systems.sys-cindral","regionId":"reg-inner","adjacentSy ...
+HTTP 201
+gameId=7a29921c-68e9-40a8-b0ad-ea210e22c860
+
+$ curl http://localhost:3200/api/games/7a29921c-68e9-40a8-b0ad-ea210e22c860  (summary: version, phase, rebelBase, piece pc-01, hidden pc-21)
+{"version":1,"phase":"assignment","rebelBase":{"systemId":null,"revealed":false},"pc01":{"id":"pc-01","kind":"unit","owner":"empire","typeKey":"unit.empire.capital-ship","systemId":"sys-aurelis"},"pc21":{"id":"pc-21","kind":"token","owner":"rebellion","typeKey":"unknown","systemId":"sys-fennix","hidden":true},"legalActions":12}
+HTTP 200
+raw body contains hidden typeKey 'covert-cell': 0
+
+$ curl -X POST http://localhost:3200/api/games/7a29921c-68e9-40a8-b0ad-ea210e22c860/commands  MOVE pc-01 sys-aurelis→sys-brevora v1 (legal)
+{"ok":true,"version":2,"pc01":"sys-brevora","events":[{"seq":2,"at":"2026-11-08T00:09:41.086Z","type":"PIECES_MOVED","actor":"empire","payload":{"pieceIds":["pc-01"],"fromSystemId":"sys-aurelis","toSystemId":"sys-brevora"}}]}
+HTTP 200
+
+$ curl -H Content-Type: application/json -d {"actor":"empire","expectedVersion":1,"command":{"type":"ADVANCE_PHASE"}} http://localhost:3200/api/games/7a29921c-68e9-40a8-b0ad-ea210e22c860/commands
+{"ok":false,"error":{"code":"VERSION_CONFLICT","messageKey":"errors.versionConflict","details":{"currentVersion":2}}}
+HTTP 409
+exit=0
+
+$ curl -H Content-Type: application/json -d {"actor":"empire","expectedVersion":2,"command":{"type":"MOVE_PIECES","pieceIds":["pc-02"],"fromSystemId":"sys-aurelis","toSystemId":"sys-eskara"}} http://localhost:3200/api/games/7a29921c-68e9-40a8-b0ad-ea210e22c860/commands
+{"ok":false,"error":{"code":"ILLEGAL_COMMAND","messageKey":"errors.notAdjacent","details":{"fromSystemId":"sys-aurelis","toSystemId":"sys-eskara"}}}
+HTTP 422
+exit=0
+
+$ curl -H Content-Type: application/json -d {"actor":"empire","expectedVersion":2,"command":{"type":"ADVANCE_PHASE"}} http://localhost:3200/api/games/no-such-game/commands
+{"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.notFound"}}
+HTTP 404
+exit=0
+
+$ curl http://localhost:3200/api/games/no-such-game
+{"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.notFound"}}
+HTTP 404
+exit=0
+
+$ curl -H Content-Type: application/json -d {"actor":"empire","expectedVersion":2,"command":{"type":"MOVE_PIECES","pieceIds":[]}} http://localhost:3200/api/games/7a29921c-68e9-40a8-b0ad-ea210e22c860/commands
+{"ok":false,"error":{"code":"VALIDATION","messageKey":"errors.validation","details":{"issues":[{"path":["command","pieceIds"],"code":"too_small","message":"Too small: expected array to have >=1 items"},{"path":["command","fromSystemId"],"code":"invalid_type","message":"Invalid input: expected string, received undefined"},{"path":["command","toSystemId"],"code":"invalid_type","message":"Invalid input: expected string, received undefined"}]}}}
+HTTP 400
+exit=0
+
+$ curl http://localhost:3200/api/games
+[{"gameId":"7a29921c-68e9-40a8-b0ad-ea210e22c860","setup":{"humanFaction":"empire","opponent":{"kind":"ai","difficulty":"hard"}},"round":1,"phase":"assignment","updatedAt":"2026-11-08T00:09:41.086Z"}]
+HTTP 200
+exit=0
+
+$ kill 78710 (stop server)
+server stopped
+after stop: HTTP 000
+server log:
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +19ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPersistenceModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGamesModule dependencies initialized[39m[38;5;3m +14ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCommandsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/health}:[39m[38;5;3m +3ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGamesController {/api/games}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games/:id, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCommandsController {/api/games}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games/:id/commands, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 78710  - [39m11/08/2026, 3:09:40 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +3ms[39m
+exit=0
+
+----- smoke.sh (verbatim) -----
+#!/bin/bash
+# W-API smoke: built API (dist) on PORT=3200 with a temp SQLite file (not the dev DB).
+API="/Users/dimatitov/WebstormProjects/Game automa/apps/api"
+DB="$1/smoke.db"; rm -f "$DB"
+export DATABASE_URL="file:$DB" PORT=3200
+cd "$API"
+echo "\$ DATABASE_URL=file:<scratchpad>/smoke.db pnpm exec prisma migrate deploy"
+pnpm exec prisma migrate deploy; echo "exit=$?"
+echo "\$ PORT=3200 node dist/main.js &"
+node dist/main.js > "$1/server.log" 2>&1 &
+PID=$!
+for i in $(seq 1 40); do curl -s -o /dev/null http://localhost:3200/api/health && break; sleep 0.25; done
+B=http://localhost:3200/api
+run() { echo; echo "\$ curl $*"; curl -s -w '\nHTTP %{http_code}\n' "$@"; echo "exit=$?"; }
+run $B/health
+echo; echo "\$ curl -X POST $B/games (empire vs ai)"
+CREATE=$(curl -s -H 'Content-Type: application/json' -d '{"humanFaction":"empire","opponent":{"kind":"ai","difficulty":"hard"}}' $B/games -w '\n%{http_code}')
+echo "$CREATE" | head -c 600; echo " ..."; echo "HTTP $(echo "$CREATE" | tail -1)"
+ID=$(echo "$CREATE" | head -1 | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).gameId))')
+echo "gameId=$ID"
+echo; echo "\$ curl $B/games/$ID  (summary: version, phase, rebelBase, piece pc-01, hidden pc-21)"
+curl -s $B/games/$ID -w '\n%{http_code}' > "$1/get.txt"
+head -1 "$1/get.txt" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const v=JSON.parse(s);console.log(JSON.stringify({version:v.version,phase:v.phase,rebelBase:v.rebelBase,pc01:v.pieces.find(p=>p.id==="pc-01"),pc21:v.pieces.find(p=>p.id==="pc-21"),legalActions:v.legalActions.length}))})'
+echo "HTTP $(tail -1 "$1/get.txt")"
+echo "raw body contains hidden typeKey 'covert-cell': $(grep -c covert-cell "$1/get.txt")"
+echo; echo "\$ curl -X POST $B/games/$ID/commands  MOVE pc-01 sys-aurelis→sys-brevora v1 (legal)"
+curl -s -H 'Content-Type: application/json' -d '{"actor":"empire","expectedVersion":1,"command":{"type":"MOVE_PIECES","pieceIds":["pc-01"],"fromSystemId":"sys-aurelis","toSystemId":"sys-brevora"}}' $B/games/$ID/commands -w '\n%{http_code}' > "$1/move.txt"
+head -1 "$1/move.txt" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=JSON.parse(s);console.log(JSON.stringify({ok:r.ok,version:r.view.version,pc01:r.view.pieces.find(p=>p.id==="pc-01").systemId,events:r.events}))})'
+echo "HTTP $(tail -1 "$1/move.txt")"
+run -H 'Content-Type: application/json' -d '{"actor":"empire","expectedVersion":1,"command":{"type":"ADVANCE_PHASE"}}' $B/games/$ID/commands
+run -H 'Content-Type: application/json' -d '{"actor":"empire","expectedVersion":2,"command":{"type":"MOVE_PIECES","pieceIds":["pc-02"],"fromSystemId":"sys-aurelis","toSystemId":"sys-eskara"}}' $B/games/$ID/commands
+run -H 'Content-Type: application/json' -d '{"actor":"empire","expectedVersion":2,"command":{"type":"ADVANCE_PHASE"}}' $B/games/no-such-game/commands
+run $B/games/no-such-game
+run -H 'Content-Type: application/json' -d '{"actor":"empire","expectedVersion":2,"command":{"type":"MOVE_PIECES","pieceIds":[]}}' $B/games/$ID/commands
+run $B/games
+echo; echo "\$ kill $PID (stop server)"
+kill $PID; wait $PID 2>/dev/null; echo "server stopped"
+curl -s -o /dev/null -w 'after stop: HTTP %{http_code}\n' http://localhost:3200/api/health
+echo "server log:"; cat "$1/server.log"
+rm -f "$DB" "$DB-journal"

@@ -1,0 +1,21 @@
+$ pnpm typecheck
+
+> star-wars-rebellion-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> star-wars-rebellion-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages/contracts packages/game-data packages/game-core
+
+Scope: 5 of 6 workspace projects
+packages/contracts typecheck$ tsc -p tsconfig.test.json
+packages/contracts typecheck: Done
+packages/game-data typecheck$ tsc -p tsconfig.test.json
+packages/game-data typecheck: Done
+packages/game-core typecheck$ tsc -p tsconfig.test.json
+apps/web typecheck$ tsc -b
+packages/game-core typecheck: Done
+apps/web typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/api typecheck: Done
+exit=0

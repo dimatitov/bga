@@ -1,0 +1,47 @@
+pid=91664 pgid=91664
+$ pnpm dev  (background via setsid, pgid=91664; ready after ~14s)
+$ curl -s localhost:3000/api/health
+{"status":"ok"} HTTP 200
+exit=0
+$ curl -s localhost:5173/
+HTTP 200
+exit=0
+$ curl -s localhost:5173/api/health
+{"status":"ok"} HTTP 200
+exit=0
+$ curl -s -X POST localhost:5173/api/games -H 'content-type: application/json' -d '{"humanFaction":"empire","opponent":{"kind":"ai","difficulty":"normal"}}'  (body truncated to 300 chars)
+HTTP 201
+exit=0
+{"gameId":"b15cdc26-6d4e-4912-99a5-5ea115d8bc89","view":{"id":"b15cdc26-6d4e-4912-99a5-5ea115d8bc89","version":1,"round":1,"phase":"assignment","setup":{"humanFaction":"empire","opponent":{"kind":"ai","difficulty":"normal"}},"systems":[{"id":"sys-aurelis","nameKey":"systems.sys-aurelis","regionId":"
+$ kill -TERM -91664
+exit=0
+$ lsof listeners on 3000/5173/3100/5174
+(no lines above = none listening)
+$ ps -g 91664
+(empty = process group gone)
+--- pnpm dev output (last 25 lines) ---
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:24 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:24 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +19ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPersistenceModule dependencies initialized[39m[38;5;3m +2037ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGamesModule dependencies initialized[39m[38;5;3m +15ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCommandsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/health}:[39m[38;5;3m +3ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health, GET} route[39m[38;5;3m +2ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mGamesController {/api/games}:[39m[38;5;3m +0ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games, POST} route[39m[38;5;3m +2ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games, GET} route[39m[38;5;3m +2ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games/:id, GET} route[39m[38;5;3m +1ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCommandsController {/api/games}:[39m[38;5;3m +1ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/games/:id/commands, POST} route[39m[38;5;3m +1ms[39m
+[api] [32m[Nest] 91925  - [39m11/08/2026, 3:32:26 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +2ms[39m
+ ELIFECYCLE  Command failed.
+[pkgs]  ELIFECYCLE  Command failed.
+[pkgs] pnpm run watch:packages exited with code SIGTERM
+--> Sending SIGTERM to other processes..
+[api] pnpm --filter @swr/api run dev exited with code 0
+--> Sending SIGTERM to other processes..
+[web] /Users/dimatitov/WebstormProjects/Game automa/apps/web:
+[web]  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @swr/web@0.0.0 dev: `vite`
+[web] Exit status 143
+[web] pnpm --filter @swr/web run dev exited with code SIGTERM

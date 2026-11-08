@@ -1,0 +1,32 @@
+# QA independent architecture checks (AC-12) — 2026-11-08T00:52:10Z. No files written: eslint via --stdin.
+$ printf "import { createGame } from '@swr/game-core';
+export const p = createGame;
+" | pnpm exec eslint --stdin --stdin-filename apps/web/src/__qa_probe.ts   # expected non-zero
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/__qa_probe.ts
+  1:1  error  '@swr/game-core' import is restricted from being used by a pattern. Rules live on the server: web imports only @swr/contracts and @swr/game-data/layout (AC-12)  no-restricted-imports
+
+✖ 1 problem (1 error, 0 warnings)
+
+exit=1
+$ printf "import React from 'react';
+export const p = [React, Date.now()];
+" | pnpm exec eslint --stdin --stdin-filename packages/game-core/src/__qa_probe.ts   # expected non-zero
+
+/Users/dimatitov/WebstormProjects/Game automa/packages/game-core/src/__qa_probe.ts
+  1:1   error  'react' import is restricted from being used by a pattern. game-core is pure TS and imports only @swr/contracts (game-data only in tests)  no-restricted-imports
+  2:26  error  'Date.now' is restricted from being used. game-core is deterministic: use ctx.now                                                          no-restricted-properties
+
+✖ 2 problems (2 errors, 0 warnings)
+
+exit=1
+$ grep -rnE "@swr/game-core|packages/game-core" apps/web/src apps/web/package.json   # expected: no output
+exit=1 (1 = no matches)
+$ grep -rnE "@(Put|Patch|Delete)\(" apps/api/src   # expected: no output
+exit=1 (1 = no matches)
+$ grep -rniE "openai" apps/*/src packages/*/src apps/*/package.json packages/*/package.json package.json   # expected: no output
+packages/game-core/src/index.ts:3: * Pure TypeScript: imports only `@swr/contracts`; no React/NestJS/Prisma/OpenAI, no Date/Math.random.
+exit=0 (1 = no matches)
+$ grep -rn "__boardDebug" apps/web/dist   # expected: no output (production build from pnpm verify)
+exit=1 (1 = no matches)
+# Automated tests counted in qa-verify.log: routes.int.test.ts (TC-API-23/TC-ARCH-06), contracts schemas.test.ts (TC-ARCH-03), game-data layout.test.ts (TC-ARCH-04), check-web-bundle (TC-ARCH-08), e2e architecture.spec.ts (TC-E2E-30/31).

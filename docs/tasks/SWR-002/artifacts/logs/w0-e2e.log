@@ -1,0 +1,47 @@
+$ pnpm e2e
+# 2026-11-08T00:00:14Z node v20.19.5
+
+> star-wars-rebellion-ai@ e2e /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && playwright test
+
+
+> star-wars-rebellion-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages/contracts packages/game-data packages/game-core
+
+[WebServer] 
+[WebServer] > @swr/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+[WebServer] Environment variables loaded from .env
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 1 migration found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [InstanceLoader] AppModule dependencies initialized +15ms
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [InstanceLoader] PersistenceModule dependencies initialized +13ms
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [RoutesResolver] HealthController {/api/health}: +24ms
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [RouterExplorer] Mapped {/api/health, GET} route +2ms
+[WebServer] [Nest] 72703  - 11/08/2026, 3:00:21 AM     LOG [NestApplication] Nest application successfully started +3ms
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/smoke.spec.ts:4:1 › api health is reachable through the web proxy (69ms)
+  ✓  2 [chromium] › e2e/smoke.spec.ts:10:1 › home page loads without console errors (501ms)
+
+  2 passed (9.5s)
+exit=0

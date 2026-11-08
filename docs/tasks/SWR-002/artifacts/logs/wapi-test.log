@@ -1,0 +1,20 @@
+$ pnpm --filter @swr/api test
+Sun Nov  8 00:08:56 UTC 2026
+
+> @swr/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 78234  - [39m11/08/2026, 3:09:02 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=eb78b872-5c67-4bf6-8ce8-22b157ef32f3 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 78234  - [39m11/08/2026, 3:09:02 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=- code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 78234  - [39m11/08/2026, 3:09:02 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=eb78b872-5c67-4bf6-8ce8-22b157ef32f3 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 78234  - [39m11/08/2026, 3:09:02 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=dc02a2b0-56f9-422c-b469-55e8c232396e code=INTERNAL status=500 error=ZodError[39m
+
+ Test Files  7 passed (7)
+      Tests  57 passed (57)
+   Start at  03:08:58
+   Duration  4.43s (transform 1.95s, setup 0ms, import 7.02s, tests 3.99s, environment 1ms)
+
+exit=0

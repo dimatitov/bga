@@ -1,0 +1,16 @@
+$ node scripts/check-task.mjs docs/tasks/SWR-002   (2026-11-08T00:55:36Z) — after AC-11/TC-DOC-01 update
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-3 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-4 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-5 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-6 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-7 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-8 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-9 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-10 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-11 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-12 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but AC-1 in acceptance.md is not_run
+docs/tasks/SWR-002/delivery-report.md: [R10] accepted but FINAL_ACCEPTANCE in status.md is pending, not passed
+FAIL docs/tasks/SWR-002 (13 problems)
+exit=1

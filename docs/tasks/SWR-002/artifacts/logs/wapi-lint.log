@@ -1,0 +1,8 @@
+# @swr/api has no 'lint' script; root 'lint' = eslint . + prettier --check . — run scoped to apps/api
+$ pnpm exec eslint apps/api --max-warnings=0
+Sun Nov  8 00:09:08 UTC 2026
+exit=0
+$ pnpm exec prettier --check apps/api
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

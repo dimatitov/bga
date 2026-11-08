@@ -1,0 +1,2 @@
+$ pnpm exec tsc -p e2e/tsconfig.json --noEmit  (2026-11-08T00:10:18Z)
+exit=0

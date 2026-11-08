@@ -1,0 +1,16 @@
+{
+  // Editor + typecheck config for src AND test (tests import ESM-only vitest, so Bundler resolution here).
+  // The emitted build uses tsconfig.build.json (NodeNext/CommonJS, @swr/* from dist).
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "customConditions": ["@swr/source"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "useDefineForClassFields": false,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src", "test", "vitest.config.mts"]
+}

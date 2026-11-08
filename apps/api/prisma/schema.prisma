@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Game {
+  id        String      @id
+  setup     String // JSON: GameSetup (output form)
+  state     String // JSON: full GameState — NEVER sent to clients (only PlayerView)
+  version   Int
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  events    GameEvent[]
+
+  @@index([updatedAt])
+}
+
+/// Append-only mirror of GameState.log, written in the same transaction as the snapshot (A-15).
+model GameEvent {
+  id        Int      @id @default(autoincrement())
+  gameId    String
+  seq       Int
+  type      String
+  actor     String
+  payload   String // JSON
+  createdAt DateTime @default(now())
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId, seq])
+}

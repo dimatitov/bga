@@ -1,0 +1,81 @@
+# BE integration — 2026-11-08T00:11:44Z — node v20.19.5, pnpm 10.34.9
+
+$ pnpm --filter @swr/contracts --filter @swr/game-data --filter @swr/game-core --filter @swr/api run build
+Scope: 4 of 6 workspace projects
+packages/contracts build$ tsc -b
+packages/contracts build: Done
+packages/game-data build$ tsc -b
+packages/game-data build: Done
+packages/game-core build$ tsc -b
+packages/game-core build: Done
+apps/api build$ nest build
+apps/api build: Done
+exit=0
+
+$ pnpm --filter @swr/contracts --filter @swr/game-data --filter @swr/game-core --filter @swr/api run typecheck
+Scope: 4 of 6 workspace projects
+packages/contracts typecheck$ tsc -p tsconfig.test.json
+packages/contracts typecheck: Done
+packages/game-data typecheck$ tsc -p tsconfig.test.json
+packages/game-data typecheck: Done
+packages/game-core typecheck$ tsc -p tsconfig.test.json
+packages/game-core typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/api typecheck: Done
+exit=0
+
+$ pnpm --filter @swr/contracts --filter @swr/game-data --filter @swr/game-core --filter @swr/api run lint
+Scope: 4 of 6 workspace projects
+packages/contracts lint$ eslint . --max-warnings=0
+packages/contracts lint: Done
+packages/game-data lint$ eslint . --max-warnings=0
+packages/game-data lint: Done
+packages/game-core lint$ eslint . --max-warnings=0
+packages/game-core lint: Done
+apps/api lint$ eslint . --max-warnings=0
+apps/api lint: Done
+exit=0
+
+$ pnpm --filter @swr/contracts --filter @swr/game-data --filter @swr/game-core --filter @swr/api run test
+Scope: 4 of 6 workspace projects
+packages/contracts test$ vitest run
+packages/contracts test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/contracts
+packages/contracts test:  Test Files  1 passed (1)
+packages/contracts test:       Tests  34 passed (34)
+packages/contracts test:    Start at  03:12:10
+packages/contracts test:    Duration  1.35s (transform 478ms, setup 0ms, import 661ms, tests 64ms, environment 0ms)
+packages/contracts test: Done
+packages/game-data test$ vitest run
+packages/game-data test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/game-data
+packages/game-data test:  Test Files  2 passed (2)
+packages/game-data test:       Tests  13 passed (13)
+packages/game-data test:    Start at  03:12:12
+packages/game-data test:    Duration  791ms (transform 442ms, setup 0ms, import 610ms, tests 48ms, environment 0ms)
+packages/game-data test: Done
+packages/game-core test$ vitest run --passWithNoTests
+packages/game-core test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/game-core
+packages/game-core test:  Test Files  7 passed (7)
+packages/game-core test:       Tests  48 passed (48)
+packages/game-core test:    Start at  03:12:14
+packages/game-core test:    Duration  2.53s (transform 1.66s, setup 0ms, import 2.88s, tests 1.98s, environment 1ms)
+packages/game-core test: Done
+apps/api test$ vitest run
+apps/api test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+apps/api test: [31m[Nest] 80835  - [39m11/08/2026, 3:12:21 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=38e7d744-6057-427e-bb92-8033349934ed code=INTERNAL status=500 error=SyntaxError[39m
+apps/api test: [31m[Nest] 80835  - [39m11/08/2026, 3:12:21 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=- code=INTERNAL status=500 error=SyntaxError[39m
+apps/api test: [31m[Nest] 80835  - [39m11/08/2026, 3:12:21 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=38e7d744-6057-427e-bb92-8033349934ed code=INTERNAL status=500 error=SyntaxError[39m
+apps/api test: [31m[Nest] 80835  - [39m11/08/2026, 3:12:21 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31mgameId=6fb995a1-3bdc-4c29-a708-ea68971b1727 code=INTERNAL status=500 error=ZodError[39m
+apps/api test:  Test Files  7 passed (7)
+apps/api test:       Tests  57 passed (57)
+apps/api test:    Start at  03:12:17
+apps/api test:    Duration  4.55s (transform 1.81s, setup 0ms, import 6.69s, tests 3.80s, environment 1ms)
+apps/api test: Done
+exit=0
+
+$ pnpm exec prettier --check playwright.config.ts packages/contracts/package.json packages/game-data/package.json packages/game-core/package.json apps/api/package.json
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ pnpm exec tsc -p e2e/tsconfig.json
+exit=0

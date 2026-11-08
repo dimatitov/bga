@@ -1,0 +1,12 @@
+packages:
+  - apps/*
+  - packages/*
+
+# pnpm 10 does not run dependency install scripts by default.
+# Prisma needs them to download its engines; SWC/esbuild need their native binaries.
+onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
+  - prisma
+  - '@swc/core'
+  - esbuild

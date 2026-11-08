@@ -1,0 +1,98 @@
+{
+  "canvas": {
+    "label": "Карта галактики",
+    "instructions": "Стрелки — сдвиг карты, плюс и минус — масштаб, 0 — вписать карту, Esc — снять выбор. Выбор объектов и ходы с клавиатуры — во вкладке «Объекты».",
+    "mockCaption": "Временная графика · вымышленные системы (mock)"
+  },
+  "zoom": {
+    "in": "Приблизить",
+    "out": "Отдалить",
+    "fit": "Вписать карту",
+    "level": "{{percent}}%",
+    "levelLabel": "Масштаб {{percent}}%"
+  },
+  "system": {
+    "unknown": "Неизвестная система",
+    "region": "Регион: {{region}}",
+    "baseOwn": "Ваша база (скрыта от Империи)",
+    "baseRevealed": "База Повстанцев",
+    "neighbours": "Соседи",
+    "objects_one": "Объекты ({{count}})",
+    "objects_few": "Объекты ({{count}})",
+    "objects_many": "Объекты ({{count}})",
+    "objects_other": "Объекты ({{count}})",
+    "noObjects": "В системе нет объектов."
+  },
+  "piece": {
+    "unknown": "Неизвестный объект",
+    "unknownHint": "Тип объекта скрыт от вас.",
+    "location": "Находится:"
+  },
+  "move": {
+    "success": "{{piece}} → {{system}}",
+    "successGroup_one": "{{count}} объект → {{system}}",
+    "successGroup_few": "{{count}} объекта → {{system}}",
+    "successGroup_many": "{{count}} объектов → {{system}}",
+    "successGroup_other": "{{count}} объекта → {{system}}",
+    "cancelled": "Перемещение отменено",
+    "illegalTarget": "Нельзя переместить в {{system}}: нет допустимого хода"
+  },
+  "phase": {
+    "advanceMock": "Завершить фазу (mock)",
+    "advanced": "Раунд {{round}} · фаза: {{phase}} (mock)"
+  },
+  "actions": {
+    "title": "Действия",
+    "moveTo": "Переместить в:",
+    "moveAll_one": "Переместить все мои ({{count}}) в:",
+    "moveAll_few": "Переместить все мои ({{count}}) в:",
+    "moveAll_many": "Переместить все мои ({{count}}) в:",
+    "moveAll_other": "Переместить все мои ({{count}}) в:",
+    "mockFootnote": "Цели рассчитаны временными правилами (mock).",
+    "enemyNoActions": "Объект противника — действий нет.",
+    "noMoves": "Для этого объекта сейчас нет допустимых ходов.",
+    "noMovesPhase": "В этой фазе ходов нет (mock)."
+  },
+  "panel": {
+    "emptyTitle": "Контекст",
+    "emptyHint": "Выберите систему или объект на карте или во вкладке «Объекты».",
+    "gameActions": "Действия партии"
+  },
+  "legend": {
+    "title": "Легенда",
+    "empire": "Заполненная фигура — {{faction}}",
+    "rebellion": "Контурная фигура — {{faction}}"
+  },
+  "log": {
+    "title": "Журнал событий",
+    "GAME_CREATED": "Партия создана",
+    "PIECES_MOVED_one": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "PIECES_MOVED_few": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "PIECES_MOVED_many": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "PIECES_MOVED_other": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "PHASE_ADVANCED": "{{actor}}: фаза {{fromPhase}} → {{phase}}, раунд {{round}}",
+    "unknown": "Событие ({{type}})",
+    "mockTag": "mock"
+  },
+  "list": {
+    "label": "Системы и объекты",
+    "systemOption_one": "{{name}} · {{count}} объект",
+    "systemOption_few": "{{name}} · {{count}} объекта",
+    "systemOption_many": "{{name}} · {{count}} объектов",
+    "systemOption_other": "{{name}} · {{count}} объекта",
+    "targetSuffix": " · допустимая цель",
+    "pieceOption": "{{name}} · {{faction}}",
+    "moveHere": "Переместить выбранный объект",
+    "moveSelected": "Переместить «{{piece}}» в:",
+    "moveHereTo": "Переместить сюда: {{system}}"
+  },
+  "sidebar": {
+    "label": "Панель партии",
+    "tabsLabel": "Разделы",
+    "tab": {
+      "log": "Журнал",
+      "objects": "Объекты",
+      "game": "Партия"
+    }
+  }
+}

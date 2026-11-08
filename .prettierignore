@@ -1,0 +1,14 @@
+**/*.md
+docs/
+scripts/
+.claude/
+.codex/
+.agents/
+pnpm-lock.yaml
+**/dist/
+**/dist-e2e/
+**/.tmp/
+apps/api/prisma/migrations/
+coverage/
+playwright-report/
+test-results/

@@ -1,0 +1,1 @@
+export { GameTablePage } from './GameTablePage';

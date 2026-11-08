@@ -1,0 +1,36 @@
+{
+  "menu": {
+    "newGame": "New game",
+    "continue": "Continue",
+    "continueHint": "{{round}} · {{faction}} · {{time}}",
+    "noGames": "No saved games",
+    "settings": "Settings",
+    "loadError": "Server unavailable: could not load the list of games.",
+    "loadingGames": "Loading games…"
+  },
+  "recent": {
+    "title": "Recent games",
+    "item": "{{faction}} vs {{opponent}} · R{{round}} · {{phase}} · {{time}}",
+    "opponentAi": "AI ({{difficulty}})",
+    "opponentHuman": "Human"
+  },
+  "newGame": {
+    "title": "New game",
+    "backToMenu": "Menu",
+    "factionStep": "1. Your side (required)",
+    "factionHint": "Choose a side",
+    "factionDescription": {
+      "empire": "Hunts for the hidden base",
+      "rebellion": "Hides the base, plays for time"
+    },
+    "opponentStep": "2. Opponent",
+    "opponentAi": "AI",
+    "opponentHuman": "Human at the table",
+    "humanHint": "The second player moves at the table; entering their moves (hot-seat) comes in the next stage.",
+    "difficultyStep": "3. AI difficulty",
+    "start": "Start game",
+    "starting": "Creating game…",
+    "cancel": "Cancel",
+    "created": "Game created"
+  }
+}

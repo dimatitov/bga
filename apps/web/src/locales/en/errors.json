@@ -1,0 +1,25 @@
+{
+  "validation": "Invalid request.",
+  "notFound": "Game not found.",
+  "versionConflict": "The game state has changed. Check the map and repeat your move.",
+  "notYourSide": "You can only move your own side right now.",
+  "unknownPiece": "There is no such piece in this game.",
+  "unknownSystem": "There is no such system in this game.",
+  "notOwner": "This piece belongs to the other side.",
+  "notInFromSystem": "The piece is not in the origin system.",
+  "sameSystem": "The piece is already in this system.",
+  "notAdjacent": "The systems are not adjacent: you cannot move there.",
+  "internal": "Internal server error. Please try again later.",
+  "network": "Server unavailable. Check the connection and try again.",
+  "unknown": "Unknown error.",
+  "code": {
+    "ILLEGAL_COMMAND": "Action not allowed.",
+    "VERSION_CONFLICT": "The game state has changed. Repeat the action.",
+    "NOT_FOUND": "Not found.",
+    "VALIDATION": "Invalid request.",
+    "INTERNAL": "Internal server error. Please try again later.",
+    "NETWORK": "Server unavailable. Check the connection and try again.",
+    "INVALID_RESPONSE": "The server returned an unexpected response.",
+    "HTTP_ERROR": "Server error."
+  }
+}

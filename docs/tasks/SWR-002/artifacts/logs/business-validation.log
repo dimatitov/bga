@@ -1,0 +1,17 @@
+# SWR-002 Business validation — Analyst, 2026-11-08 (after CODE_REVIEW = approved)
+# Environment: `pnpm dev` (api :3000, web :5173), built-in browser at 1440x900. Observations recorded from the live app.
+
+BV-1 Main menu (/): «Новая партия», «Продолжить» (shows last game: «Раунд 1 · Империя · 7 мин. назад»), «Настройки»; MOCK badge and footer label visible.
+BV-2 New game (/games/new): side not preselected, «Начать партию» disabled with hint «Выберите сторону»; chose Повстанцы + AI/Обычная → navigated to /games/79fcaa89-4020-40a5-8527-7e4426af5e3e.
+BV-3 Table as Rebellion: map with 10 systems, links, pieces of both factions (filled = Empire, outlined = Rebellion), legend in empty context panel, round/phase «Раунд 1 · Фаза: Назначение», «Завершить фазу (MOCK)», own base icon at Холлин (rebel player may see own base).
+BV-4 Select: click on token pc-20 at Галдор → context panel «Жетон саботажа», «Переместить в: Довмарен / Искра / Холлин / Йорван»; the same 4 targets highlighted on map with dashed rings/lines. Note «Цели рассчитаны временными правилами (mock)».
+BV-5 Move in 1 click: «Искра» → data-version 1→2; live-region «Жетон саботажа → Искра»; save status «Сохранение…» → «Автосохранение».
+BV-6 Reload /games/<id>: data-version=2, pc-20 at sys-iskra, log: PIECES_MOVED «Повстанцы: Жетон саботажа — Галдор → Искра», GAME_CREATED «Партия создана».
+BV-7 Server is the authority (curl via web proxy):
+$ POST /api/games/<id>/commands {actor:rebellion, expectedVersion:2, MOVE pc-20 sys-iskra→sys-aurelis}
+{"ok":false,"error":{"code":"ILLEGAL_COMMAND","messageKey":"errors.notAdjacent","details":{"fromSystemId":"sys-iskra","toSystemId":"sys-aurelis"}}} HTTP 422
+$ POST /api/games/<id>/commands {actor:rebellion, expectedVersion:1, ADVANCE_PHASE}
+{"ok":false,"error":{"code":"VERSION_CONFLICT","messageKey":"errors.versionConflict","details":{"currentVersion":2}}} HTTP 409
+
+Verdict: business scenario «select → legal actions → Command API → persisted state» works end-to-end; UX matches «companion, not simulator» (1 click move from a context panel, no modals). dev servers stopped afterwards (ports 3000/5173 free).
+Observations (non-blocking): screenshot right after the click can show the pre-move frame for ~1s while saving (pending state is visible as «Сохранение…»).

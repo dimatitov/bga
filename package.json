@@ -2,9 +2,37 @@
   "name": "star-wars-rebellion-ai",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
-    "test": "node --test scripts/",
+    "dev": "pnpm run build:packages && pnpm --filter @swr/api run db:prepare && concurrently -k --names pkgs,api,web --prefix-colors gray,blue,magenta \"pnpm run watch:packages\" \"pnpm --filter @swr/api run dev\" \"pnpm --filter @swr/web run dev\"",
+    "build:packages": "tsc -b packages/contracts packages/game-data packages/game-core",
+    "watch:packages": "tsc -b packages/contracts packages/game-data packages/game-core --watch --preserveWatchOutput",
+    "lint": "eslint . --max-warnings=0 && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json",
+    "test": "pnpm run test:process && pnpm -r run test",
+    "test:process": "node --test scripts/",
+    "build": "pnpm -r run build",
+    "e2e": "pnpm run build:packages && playwright test",
+    "check:bundle": "node scripts/check-web-bundle.mjs",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle && pnpm e2e",
     "check:task": "node scripts/check-task.mjs"
-  }
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.65.0",
+    "@types/node": "20.19.43",
+    "concurrently": "9.2.5",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.7",
+    "globals": "17.14.0",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.1"
+  },
+  "packageManager": "pnpm@10.34.9"
 }

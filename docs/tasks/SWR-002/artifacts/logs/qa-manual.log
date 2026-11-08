@@ -1,0 +1,47 @@
+# QA manual browser run — SWR-002 (qa-lead), 2026-11-08
+Tool: Claude built-in browser pane (Chromium), viewport emulation 1440x900 (then 1024x768, 1920x1080).
+Observations are from DOM / window.__boardDebug (DEV) / network reads after real mouse & keyboard input.
+Note: the pane screenshot shows a scaled/cropped frame, so visual evidence = Playwright screenshots in artifacts/screenshots/.
+
+## TC-MAN-01 one-command start (README) — passed (existing install; not a fresh clone)
+$ pnpm dev   (README.md "pnpm dev"; ports 3000/5173/3100/5174 were free before)
+- build:packages → db:prepare (ensure-env: apps/api/.env exists; prisma generate; migrate deploy: "No pending migrations") → api + web via concurrently
+- curl http://localhost:3000/api/health → {"status":"ok"}; curl http://localhost:5173/api/health (vite proxy) → {"status":"ok"}
+- Nest mapped exactly: GET /api/health, POST /api/games, GET /api/games, GET /api/games/:id, POST /api/games/:id/commands
+- "/" opened in the browser, RU, main menu with Новая партия / Продолжить / Настройки + "Недавние партии" (2 earlier dev games).
+Limitation: not a clean clone / fresh `pnpm install` (existing node_modules).
+
+## TC-MAN-02 dev DB recreated automatically — not_run
+Reason: would require deleting the user's apps/api/dev.db (destructive to local data); not done. Equivalent path (fresh DB + migrate deploy) is exercised by e2e-serve on every `pnpm e2e` (qa-verify.log).
+
+## TC-MAN-03 scenarios 1–8 quick pass — passed
+1 New game: /games/new → radios have names (Империя/Повстанцы, AI/Человек за столом, Лёгкая/Обычная/Сложная); "Начать партию" disabled until a side is chosen; Империя + Сложная → /games/ff6adda5-… ; header "Империя против AI · Сложная", "Раунд 1", "Фаза: Назначение", button "Завершить фазу (mock)", MOCK badge.
+3 Table: 10 systems with adjacency lines, filled (Empire) / outlined (Rebel) placeholder shapes, one "?" hidden piece. Wheel up: scale 0.702 → 0.772; drag on empty background: viewport x/y +90/+60, selection (pc-02) kept. zoom buttons aria-label: Приблизить / Отдалить / Вписать карту; zoom-level "77%".
+4 Selection: click on Аурелис → selection {system, sys-aurelis}, context-panel data-state=system; panel: region, neighbours (Бревора, Синдрал), 5 objects, group move "Переместить все мои (5) в: Бревора / Синдрал", note "Цели рассчитаны временными правилами (mock)". Click on piece pc-01 → selection piece, highlighted [sys-brevora, sys-cindral], action buttons exactly action-move-pc-01-sys-brevora / -sys-cindral.
+5 Move: (a) illegal drag pc-01 → Довмарен (non-adjacent): 0 POST /commands, piece back at the same screen position, snackbar + aria-live "Нельзя переместить в Довмарен: нет допустимого хода", version stays 1. (b) drag pc-01 → Бревора: 1 POST, piece-item-pc-01 data-system-id=sys-brevora, version 2, live "Крейсер → Бревора", log "Империя: Крейсер — Аурелис → Бревора". (c) actions panel: pc-02 → "Синдрал" (1 click) → sys-cindral, version 3, save-status=saved.
+7 Mock phase ×3 → phase assignment, "Раунд 2", version 6.
+6 Reload of /games/:id → version 6, pc-01 Бревора, pc-02 Синдрал, phase assignment, round 2, 6 log items. "/" → Продолжить → same game, version 6.
+8 Settings: English → <html lang=en>, localStorage swr.settings.v1 = {"language":"en","reduceMotion":false}; no Cyrillic in body text on /settings, /, /games/new, /games/:id. (Language reset to ru afterwards.)
+Console errors during the session: none (read_console_messages onlyErrors → "No console logs").
+
+## TC-MAN-04 abuse (double click on move, drag during request) — not_run
+Reason: not exercised manually in this pass; single-command-per-action is covered by the 409/concurrency tests (TC-API-20, TC-E2E-34) only partially.
+
+## TC-MAN-05 keyboard only (table) — passed
+Tab order from page start: skip-link "Перейти к списку объектов" → Меню → Завершить фазу (mock) → mock badge → Настройки → board-canvas "Карта галактики" → zoom +/−/fit → advance-phase-panel → sidebar tabs Журнал / Объекты; every focused element matched :focus-visible.
+Enter on "Объекты" → Tab into listbox (system-item-sys-aurelis, role=option) → ArrowDown ×3 → piece-item-pc-08 (Командир) → Enter: aria-selected=true, selection pc-08 → Tab → "Переместить сюда: Бревора" (system-item-sys-brevora-move) → Enter: pc-08 → sys-brevora, version 7, aria-live "Командир → Бревора", focus moved to the context panel heading (H2 "Командир").
+Not covered manually: keyboard-only on /, /games/new, /settings (covered by component tests only).
+
+## TC-MAN-06 graphics — passed
+Only own placeholder shapes (circles/squares/diamonds/"?"), fictional system names (Аурелис, Бревора, …); no rights-holder assets observed.
+
+## TC-MAN-07 window sizes — passed
+1024x768: scrollWidth 1024 / scrollHeight 768 (no page scroll); canvas 704x712, context panel at x=705 w=319; after "Вписать карту" all 10 systems inside the canvas.
+1920x1080: scrollWidth 1920 / scrollHeight 1080; canvas 1536x1024, panel w=383; after fit all systems inside, scale 1.03.
+
+## TC-MAN-08 e2e in parallel with pnpm dev — not_run
+Reason: coordinator asked for verify with all ports free; e2e and dev were run sequentially, not concurrently.
+
+## Cleanup
+Stopped only the `pnpm dev` process started by QA (background task). lsof -iTCP:3000,5173,3100,5174 -sTCP:LISTEN → nothing listening.
+Manual session left data in the dev DB: game ff6adda5-38dc-4d11-a711-1790672e5063 (version 7).

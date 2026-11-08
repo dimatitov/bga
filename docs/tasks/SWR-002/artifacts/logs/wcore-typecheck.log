@@ -1,0 +1,6 @@
+$ pnpm --filter @swr/game-core typecheck
+
+> @swr/game-core@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/game-core
+> tsc -p tsconfig.test.json
+
+exit=0

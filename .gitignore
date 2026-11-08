@@ -9,3 +9,10 @@ dist/
 docs/tasks/*/artifacts/playwright-traces/*
 !docs/tasks/*/artifacts/playwright-traces/.gitkeep
 .DS_Store
+*.tsbuildinfo
+apps/api/.tmp/
+apps/api/dist-e2e/
+coverage/
+playwright-report/
+test-results/
+*.db-journal

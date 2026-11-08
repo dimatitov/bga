@@ -1,0 +1,7 @@
+$ pnpm --filter @swr/api typecheck
+Sun Nov  8 00:09:02 UTC 2026
+
+> @swr/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0

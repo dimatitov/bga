@@ -1,0 +1,163 @@
+$ pnpm e2e
+
+> star-wars-rebellion-ai@ e2e /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && playwright test
+
+
+> star-wars-rebellion-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages/contracts packages/game-data packages/game-core
+
+[WebServer] 
+[WebServer] > @swr/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+[WebServer] Environment variables loaded from .env
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 1 migration found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [InstanceLoader] AppModule dependencies initialized +17ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [InstanceLoader] PersistenceModule dependencies initialized +14ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [InstanceLoader] GamesModule dependencies initialized +23ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [InstanceLoader] CommandsModule dependencies initialized +0ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RoutesResolver] HealthController {/api/health}: +3ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RouterExplorer] Mapped {/api/health, GET} route +2ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RoutesResolver] GamesController {/api/games}: +1ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RouterExplorer] Mapped {/api/games, POST} route +1ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RouterExplorer] Mapped {/api/games, GET} route +2ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RouterExplorer] Mapped {/api/games/:id, GET} route +1ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RoutesResolver] CommandsController {/api/games}: +0ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [RouterExplorer] Mapped {/api/games/:id/commands, POST} route +2ms
+[WebServer] [Nest] 90903  - 11/08/2026, 3:30:26 AM     LOG [NestApplication] Nest application successfully started +2ms
+
+Running 37 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/00-empty-db.spec.ts:11:3 › empty database › TC-E2E-02: main menu with no saved games — Continue is disabled (1.0s)
+  ✓   2 [chromium] › e2e/architecture.spec.ts:15:1 › TC-E2E-30 + TC-E2E-31: Empire session leaks no secrets; only allowed requests mutate (4.0s)
+  ✓   3 [chromium] › e2e/board-view.spec.ts:7:1 › TC-E2E-06: table renders the mock scenario from the server PlayerView (1.5s)
+  ✓   4 [chromium] › e2e/board-view.spec.ts:53:1 › TC-E2E-32: unknown game id shows a "not found" state with a way back (833ms)
+  ✓   5 [chromium] › e2e/keyboard.spec.ts:8:1 › TC-E2E-28: keyboard-only select + move with visible focus and aria-live feedback (1.9s)
+  ✓   6 [chromium] › e2e/move.spec.ts:59:1 › TC-E2E-17: move via the actions panel (selection + 1 click) (1.5s)
+  ✓   7 [chromium] › e2e/move.spec.ts:79:1 › TC-E2E-18: move by dragging the piece onto a highlighted system (1.8s)
+  ✓   8 [chromium] › e2e/move.spec.ts:96:1 › TC-E2E-18b: move by clicking a highlighted target on the map (1.5s)
+  ✓   9 [chromium] › e2e/move.spec.ts:106:1 › TC-E2E-19: drop on a non-adjacent system is refused without a request and rolled back (3.2s)
+  ✓  10 [chromium] › e2e/move.spec.ts:129:1 › TC-E2E-20: server rejects an illegal move with 422 and the state is unchanged (1.8s)
+  ✘  11 [chromium] › e2e/move.spec.ts:152:1 › TC-E2E-21: dragging an enemy piece sends nothing and the piece stays (2.4s)
+  ✓  12 [chromium] › e2e/move.spec.ts:170:1 › TC-E2E-34: stale view → 409, message, refetch, selection kept (A-19) (1.6s)
+  ✓  13 [chromium] › e2e/new-game.spec.ts:13:1 › TC-E2E-03: menu → new game (Empire, AI, hard) → table of the created game (1.4s)
+  ✓  14 [chromium] › e2e/new-game.spec.ts:46:1 › TC-E2E-04: human opponent — difficulty unavailable, setup has no difficulty (1.5s)
+  ✓  15 [chromium] › e2e/new-game.spec.ts:75:1 › TC-E2E-05: new game as Rebellion — view is for the Rebellion (1.2s)
+  ✓  16 [chromium] › e2e/persistence.spec.ts:15:1 › TC-E2E-22: after a move, reload restores the state from the server (2.3s)
+  ✓  17 [chromium] › e2e/persistence.spec.ts:43:1 › TC-E2E-23: "Continue" in a fresh browser context opens the latest game with its state (1.3s)
+  ✓  18 [chromium] › e2e/persistence.spec.ts:79:1 › TC-E2E-23b: "Recent games" lists ≤ 5 games newest first and opens the chosen one (1.2s)
+  ✓  19 [chromium] › e2e/phase.spec.ts:23:1 › TC-E2E-24: "End phase (mock)" cycles phases, increments the round and persists (2.5s)
+  ✓  20 [chromium] › e2e/phase.spec.ts:49:1 › TC-E2E-24 (move in any phase): a move is offered and accepted in the "command" phase (1.6s)
+  ✓  21 [chromium] › e2e/screenshots.spec.ts:27:1 › TC-E2E-33: capture AC-11 screenshots (7.4s)
+  ✓  22 [chromium] › e2e/selection.spec.ts:22:1 › TC-E2E-13: clicking a system selects it and opens the system panel (1.2s)
+  ✓  23 [chromium] › e2e/selection.spec.ts:49:1 › TC-E2E-14: clicking an own piece shows exactly its legal moves and highlights targets (1.2s)
+  ✓  24 [chromium] › e2e/selection.spec.ts:76:1 › TC-E2E-15: enemy pieces (visible and hidden) offer no move commands (1.2s)
+  ✓  25 [chromium] › e2e/selection.spec.ts:95:1 › TC-E2E-16: background click (< 4 px) and Esc clear the selection (1.4s)
+  ✘  26 [chromium] › e2e/settings.spec.ts:13:1 › TC-E2E-25: switching ru → en → ru changes the UI language and persists over reload (6.7s)
+  ✓  27 [chromium] › e2e/settings.spec.ts:41:1 › TC-E2E-26: in English no Cyrillic text remains on the main screens (incl. system names) (3.1s)
+  ✓  28 [chromium] › e2e/settings.spec.ts:67:1 › TC-E2E-27: reduce motion toggles the documented flag, persists and makes zoom instant (2.0s)
+  ✓  29 [chromium] › e2e/smoke.spec.ts:4:1 › api health is reachable through the web proxy (14ms)
+  ✓  30 [chromium] › e2e/smoke.spec.ts:10:1 › home page loads without console errors (558ms)
+  ✓  31 [chromium] › e2e/zoom-pan.spec.ts:29:1 › TC-E2E-07: zoom buttons + / − change the scale and the DOM mirror (1.8s)
+  ✓  32 [chromium] › e2e/zoom-pan.spec.ts:43:1 › TC-E2E-08: mouse wheel zooms around the cursor (1.5s)
+  ✓  33 [chromium] › e2e/zoom-pan.spec.ts:70:3 › limits › TC-E2E-09: zoom is clamped to min/max and buttons disable at the limits (2.5s)
+  ✓  34 [chromium] › e2e/zoom-pan.spec.ts:95:1 › TC-E2E-10: fit shows every system inside the canvas (2.1s)
+  ✓  35 [chromium] › e2e/zoom-pan.spec.ts:114:1 › TC-E2E-11: dragging the background pans and keeps the selection (2.6s)
+  ✓  36 [chromium] › e2e/zoom-pan.spec.ts:137:1 › TC-E2E-12: drag started on a piece does not pan; drop on empty space cancels (2.6s)
+  ✓  37 [chromium] › e2e/zoom-pan.spec.ts:156:1 › TC-E2E-29: zoom controls and canvas are labelled and keyboard operable (2.0s)
+
+
+  1) [chromium] › e2e/move.spec.ts:152:1 › TC-E2E-21: dragging an enemy piece sends nothing and the piece stays 
+
+    Error: expect(received).toBeLessThan(expected)
+
+    Expected: < 3
+    Received:   781
+
+      160 |   await expect.poll(() => dbg.isDragging(page)).toBe(false);
+      161 |   const back = await dbg.piecePos(page, enemy!.id);
+    > 162 |   expect(Math.abs(back.x - origin.x)).toBeLessThan(3);
+          |                                       ^
+      163 |   expect(Math.abs(back.y - origin.y)).toBeLessThan(3);
+      164 |   await expect(page.getByTestId(T.pieceItem(enemy!.id))).toHaveAttribute(
+      165 |     'data-system-id',
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/move.spec.ts:162:39
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/move-TC-E2E-21-dragging-an-0c1ee-nothing-and-the-piece-stays-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/move-TC-E2E-21-dragging-an-0c1ee-nothing-and-the-piece-stays-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/move-TC-E2E-21-dragging-an-0c1ee-nothing-and-the-piece-stays-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/move-TC-E2E-21-dragging-an-0c1ee-nothing-and-the-piece-stays-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › e2e/settings.spec.ts:13:1 › TC-E2E-25: switching ru → en → ru changes the UI language and persists over reload 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('menu-new-game')
+    Expected: "NEW GAME"
+    Received: "New game"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('menu-new-game') with timeout 5000ms
+      - waiting for getByTestId('menu-new-game')
+        14 × locator resolved to <a tabindex="0" href="/games/new" data-discover="true" data-testid="menu-new-game" class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeLarge MuiButton-colorPrimary MuiButton-fullWidth css-1dj64w-MuiButtonBase-root-MuiButton-root">…</a>
+           - unexpected value "New game"
+
+
+      28 |   await page.reload();
+      29 |   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    > 30 |   await expect(page.getByTestId(T.menuNewGame)).toHaveText(enLabel);
+         |                                                 ^
+      31 |
+      32 |   const { gameId } = await createGame(request);
+      33 |   await openGame(page, gameId);
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/settings.spec.ts:30:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/settings-TC-E2E-25-switchi-4a60d-ge-and-persists-over-reload-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/settings-TC-E2E-25-switchi-4a60d-ge-and-persists-over-reload-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/settings-TC-E2E-25-switchi-4a60d-ge-and-persists-over-reload-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/settings-TC-E2E-25-switchi-4a60d-ge-and-persists-over-reload-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › e2e/move.spec.ts:152:1 › TC-E2E-21: dragging an enemy piece sends nothing and the piece stays 
+    [chromium] › e2e/settings.spec.ts:13:1 › TC-E2E-25: switching ru → en → ru changes the UI language and persists over reload 
+  35 passed (1.5m)
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1

@@ -1,0 +1,38 @@
+{
+  "page": {
+    "title": "Game table",
+    "loading": "Loading game…",
+    "skipToList": "Skip to the objects list"
+  },
+  "topBar": {
+    "vsAi": "vs AI · {{difficulty}}",
+    "vsHuman": "vs human at the table",
+    "round": "Round {{round}}",
+    "phase": "Phase: {{phase}}"
+  },
+  "save": {
+    "idle": "Autosave",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "error": "Not saved"
+  },
+  "info": {
+    "gameId": "Game",
+    "side": "Your side",
+    "opponent": "Opponent",
+    "opponentAi": "AI · {{difficulty}}",
+    "opponentHuman": "Human at the table",
+    "version": "State version",
+    "base": "Rebel base",
+    "baseKnown": "{{system}}",
+    "baseUnknown": "unknown"
+  },
+  "ai": {
+    "inactive": "AI opponent: not active in the prototype"
+  },
+  "notFound": {
+    "title": "Game not found",
+    "text": "It may have been deleted, or the link is wrong.",
+    "toMenu": "To menu"
+  }
+}

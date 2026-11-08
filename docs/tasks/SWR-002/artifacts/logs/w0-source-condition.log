@@ -1,0 +1,17 @@
+$ rm -rf packages/*/dist && ls -d packages/*/dist; pnpm --filter @swr/api test
+# 2026-11-08T00:00:25Z node v20.19.5
+(eval):1: no matches found: packages/*/dist
+
+> @swr/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  03:00:27
+   Duration  3.15s (transform 162ms, setup 0ms, import 596ms, tests 127ms, environment 0ms)
+
+exit=0

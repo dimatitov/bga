@@ -1,0 +1,76 @@
+$ pnpm install
+Scope: all 6 workspace projects
+Progress: resolved 1, reused 0, downloaded 0, added 0
+
+   ╭──────────────────────────────────────────────────────────────────────╮
+   │                                                                      │
+   │                 Update available! 10.34.9 → 12.18.0.                 │
+   │                 Changelog: https://pnpm.io/v/12.18.0                 │
+   │   To update, run: curl -fsSL https://get.pnpm.io/install.sh | sh -   │
+   │                                                                      │
+   ╰──────────────────────────────────────────────────────────────────────╯
+
+Progress: resolved 27, reused 0, downloaded 19, added 0
+Progress: resolved 47, reused 0, downloaded 42, added 0
+Progress: resolved 49, reused 0, downloaded 43, added 0
+Progress: resolved 92, reused 0, downloaded 76, added 0
+Progress: resolved 106, reused 0, downloaded 97, added 0
+Progress: resolved 141, reused 0, downloaded 113, added 0
+Progress: resolved 179, reused 0, downloaded 151, added 0
+Progress: resolved 212, reused 0, downloaded 181, added 0
+Progress: resolved 247, reused 0, downloaded 218, added 0
+Progress: resolved 305, reused 0, downloaded 271, added 0
+Progress: resolved 356, reused 0, downloaded 323, added 0
+Progress: resolved 398, reused 0, downloaded 348, added 0
+Progress: resolved 442, reused 0, downloaded 386, added 0
+Progress: resolved 478, reused 0, downloaded 418, added 0
+Progress: resolved 516, reused 0, downloaded 459, added 0
+Progress: resolved 551, reused 0, downloaded 495, added 0
+Progress: resolved 616, reused 0, downloaded 554, added 0
+Progress: resolved 675, reused 0, downloaded 622, added 0
+Progress: resolved 682, reused 0, downloaded 645, added 0
+Progress: resolved 687, reused 0, downloaded 652, added 0
+Packages: +653
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 687, reused 0, downloaded 652, added 1
+Progress: resolved 687, reused 0, downloaded 652, added 380
+Progress: resolved 687, reused 0, downloaded 652, added 538
+Progress: resolved 687, reused 0, downloaded 652, added 651
+Progress: resolved 687, reused 0, downloaded 652, added 652
+Progress: resolved 687, reused 0, downloaded 652, added 653
+Progress: resolved 687, reused 0, downloaded 652, added 653, done
+.../node_modules/@swc/core postinstall$ node postinstall.js
+.../node_modules/@prisma/engines postinstall$ node scripts/postinstall.js
+.../node_modules/@prisma/engines postinstall: Done
+.../node_modules/@swc/core postinstall: Done
+.../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+.../node_modules/prisma preinstall: Done
+.../node_modules/@prisma/client postinstall$ node scripts/postinstall.js
+.../node_modules/@prisma/client postinstall: prisma:warn We could not find your Prisma schema in the default locations (see: https://pris.ly/d/prisma-schema-location).
+.../node_modules/@prisma/client postinstall: If you have a Prisma schema file in a custom path, you will need to run
+.../node_modules/@prisma/client postinstall: `prisma generate --schema=./path/to/your/schema.prisma` to generate Prisma Client.
+.../node_modules/@prisma/client postinstall: If you do not have a Prisma schema file yet, you can ignore this message.
+.../node_modules/@prisma/client postinstall: Done
+apps/api postinstall$ prisma generate
+apps/api postinstall: Prisma schema loaded from prisma/schema.prisma
+apps/api postinstall: ✔ Generated Prisma Client (v6.19.3) to ./../../node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3/node_modules/@prisma/client in 88ms
+apps/api postinstall: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+apps/api postinstall: Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+apps/api postinstall: Done
+
+devDependencies:
++ @eslint/js 10.0.1
++ @playwright/test 1.65.0
++ @types/node 20.19.43 (26.6.6 is available)
++ concurrently 9.2.5 (10.0.7 is available)
++ eslint 10.14.0
++ eslint-config-prettier 10.1.8
++ eslint-plugin-react-hooks 7.1.1
++ eslint-plugin-react-refresh 0.5.7
++ globals 17.14.0
++ prettier 3.9.10
++ typescript 5.9.3 (7.0.2 is available)
++ typescript-eslint 8.72.1
+
+Done in 49.5s using pnpm v10.34.9
+exit=0

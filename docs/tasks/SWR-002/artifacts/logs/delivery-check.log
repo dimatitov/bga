@@ -1,0 +1,5 @@
+$ node scripts/check-task.mjs docs/tasks/SWR-002 docs/tasks/SWR-000 docs/tasks/_template
+OK docs/tasks/SWR-002
+OK docs/tasks/SWR-000
+OK docs/tasks/_template
+exit=0

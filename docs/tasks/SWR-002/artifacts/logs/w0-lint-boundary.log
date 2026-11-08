@@ -1,0 +1,39 @@
+# Temporary files with forbidden imports (AC-12 / TC-ARCH-01/02), then removed:
+$ cat apps/web/src/__boundary_check.ts
+import { createGame } from '@swr/game-core';
+import { mockScenario } from '@swr/game-data';
+import { mapLayout } from '@swr/game-data/layout';
+export const probe = [createGame, mockScenario, mapLayout];
+$ cat packages/game-core/src/__boundary_check.ts
+import { mockScenario } from '@swr/game-data';
+export const probe = [mockScenario, Date.now(), new Date(), Math.random()];
+$ pnpm lint   # expected: non-zero exit
+
+> star-wars-rebellion-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/__boundary_check.ts
+  1:1  error  '@swr/game-core' import is restricted from being used by a pattern. Rules live on the server: web imports only @swr/contracts and @swr/game-data/layout (AC-12)  no-restricted-imports
+  2:1  error  '@swr/game-data' import is restricted from being used. Only @swr/game-data/layout is allowed in web (the scenario holds secrets)                                 no-restricted-imports
+
+/Users/dimatitov/WebstormProjects/Game automa/packages/game-core/src/__boundary_check.ts
+  1:1   error  '@swr/game-data' import is restricted from being used by a pattern. game-core is pure TS and imports only @swr/contracts (game-data only in tests)  no-restricted-imports
+  2:37  error  'Date.now' is restricted from being used. game-core is deterministic: use ctx.now                                                                   no-restricted-properties
+  2:49  error  game-core is deterministic: take time from ctx.now                                                                                                  no-restricted-syntax
+  2:61  error  'Math.random' is restricted from being used. game-core is deterministic: no randomness                                                              no-restricted-properties
+
+✖ 6 problems (6 errors, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1
+$ rm apps/web/src/__boundary_check.ts packages/game-core/src/__boundary_check.ts
+exit=0
+$ pnpm lint   # expected: 0 after removal
+
+> star-wars-rebellion-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

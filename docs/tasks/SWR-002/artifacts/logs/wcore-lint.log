@@ -1,0 +1,10 @@
+$ pnpm exec eslint --max-warnings=0 packages/game-core
+exit=0
+$ pnpm exec prettier --check packages/game-core
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+$ grep -rnE 'new Date|Date\.now|Math\.random' packages/game-core/src
+packages/game-core/src/index.ts:3: * Pure TypeScript: imports only `@swr/contracts`; no React/NestJS/Prisma/OpenAI, no Date/Math.random.
+exit=0 (1 = no matches)
+(only match is the doc comment in index.ts stating the rule; no code usage)

@@ -1,0 +1,9 @@
+$ pnpm lint
+# 2026-11-07T23:59:24Z node v20.19.5
+
+> star-wars-rebellion-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

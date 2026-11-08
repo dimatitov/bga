@@ -1,0 +1,15 @@
+$ pnpm --filter @swr/game-core test
+
+> @swr/game-core@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/game-core
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/game-core
+
+
+ Test Files  7 passed (7)
+      Tests  48 passed (48)
+   Start at  03:08:07
+   Duration  2.64s (transform 1.85s, setup 0ms, import 3.29s, tests 2.03s, environment 1ms)
+
+exit=0

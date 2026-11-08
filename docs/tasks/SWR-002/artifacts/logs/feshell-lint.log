@@ -1,0 +1,50 @@
+$ pnpm --filter @swr/web lint
+
+> @swr/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/features/game-board/hooks/useAdvancePhase.ts
+  24:51  error  Error: Cannot access variable before it is declared
+
+`advance` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/features/game-board/hooks/useAdvancePhase.ts:24:51
+  22 |       });
+  23 |     } else {
+> 24 |       reportCommandFailure(t, outcome, () => void advance());
+     |                                                   ^^^^^^^ `advance` accessed before it is declared
+  25 |     }
+  26 |   }, [send, t]);
+  27 |   return { advance, enabled: canAdvancePhase(view) && !isPending, isPending };
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/features/game-board/hooks/useAdvancePhase.ts:13:3
+  11 |   const { view, send, isPending } = useBoard();
+  12 |   const { t } = useTranslation();
+> 13 |   const advance = useCallback(async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |     const outcome = await send({ type: 'ADVANCE_PHASE' });
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |     if (outcome.ok) {
+     …
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 25 |     }
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 26 |   }, [send, t]);
+     | ^^^^^^^^^^^^^^^^^ `advance` is declared here
+  27 |   return { advance, enabled: canAdvancePhase(view) && !isPending, isPending };
+  28 | }
+  29 |  react-hooks/immutability
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/features/game-board/sidebar/BoardList.tsx
+  94:9  error  The value assigned to 'next' is not used in subsequent statements  no-useless-assignment
+
+✖ 2 problems (2 errors, 0 warnings)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @swr/web@0.0.0 lint: `eslint . --max-warnings=0`
+Exit status 1
+exit=1
+
+$ pnpm exec eslint --max-warnings=0 <FE-SHELL owned files>
+exit=0

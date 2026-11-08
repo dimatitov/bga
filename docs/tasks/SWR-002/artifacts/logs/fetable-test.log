@@ -1,0 +1,18 @@
+$ pnpm --filter @swr/web test
+
+> @swr/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - import "./vite.config" without a file extension (vitest.config.ts:2:24). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  13 passed (13)
+      Tests  87 passed (87)
+   Start at  03:21:53
+   Duration  6.73s (transform 3.98s, setup 6.05s, import 9.54s, tests 11.48s, environment 15.10s)
+
+exit=0

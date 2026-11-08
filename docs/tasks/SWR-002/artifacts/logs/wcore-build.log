@@ -1,0 +1,39 @@
+$ pnpm --filter @swr/game-core build
+
+> @swr/game-core@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/game-core
+> tsc -b
+
+exit=0
+apply-command.d.ts
+apply-command.d.ts.map
+apply-command.js
+apply-command.js.map
+context.d.ts
+context.d.ts.map
+context.js
+context.js.map
+create-game.d.ts
+create-game.d.ts.map
+create-game.js
+create-game.js.map
+index.d.ts
+index.d.ts.map
+index.js
+index.js.map
+internal
+legal-actions.d.ts
+legal-actions.d.ts.map
+legal-actions.js
+legal-actions.js.map
+mock-rules.d.ts
+mock-rules.d.ts.map
+mock-rules.js
+mock-rules.js.map
+player-view.d.ts
+player-view.d.ts.map
+player-view.js
+player-view.js.map
+result.d.ts
+result.d.ts.map
+result.js
+result.js.map
