@@ -1,6 +1,8 @@
 packages:
   - apps/*
-  - packages/*
+  # explicit: `packages/*` would also match the `packages/games` folder itself
+  - packages/platform
+  - packages/games/*
 
 # pnpm 10 does not run dependency install scripts by default.
 # Prisma needs them to download its engines; SWC/esbuild need their native binaries.

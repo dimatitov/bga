@@ -1,0 +1,42 @@
+$ pnpm --filter @bga/platform build
+
+> @bga/platform@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -b
+
+exit=0
+
+$ pnpm --filter @bga/game-rebellion build
+
+> @bga/game-rebellion@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -b
+
+exit=0
+
+$ pnpm --filter @bga/game-forbidden-stars build
+
+> @bga/game-forbidden-stars@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/games/forbidden-stars
+> tsc -b
+
+exit=0
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm --filter @bga/game-rebellion typecheck
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+exit=0
+

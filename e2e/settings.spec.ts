@@ -1,7 +1,9 @@
-// Scenario 8 — settings: TC-E2E-25, TC-E2E-26, TC-E2E-27 (AC-3, AC-10).
+// Scenario 8 — settings: TC-E2E-25, TC-E2E-26, TC-E2E-27 (+ TC-CAT-12 language part) — AC-3, AC-1.
+// SWR-003: the language check reads the catalog (`game-card-status`) instead of the removed main menu; the
+// "no Cyrillic in English" walk covers catalog, game page, new-session screen, session table and settings.
 import { expect, test, type Page } from '@playwright/test';
-import { createGame } from './support/api';
-import { openGame, waitViewportStable, dbg } from './support/board';
+import { createSession, REBELLION } from './support/api';
+import { dbg, gamePath, newSessionPath, openSession, waitViewportStable } from './support/board';
 import { CYRILLIC, T } from './support/testids';
 
 async function setLanguage(page: Page, lang: 'ru' | 'en') {
@@ -10,33 +12,37 @@ async function setLanguage(page: Page, lang: 'ru' | 'en') {
   await expect(page.locator('html')).toHaveAttribute('lang', lang);
 }
 
+/** Status chip of the Rebellion card on the catalog — a translated, language-dependent label. */
+const statusLabel = (page: Page) =>
+  page.getByTestId(T.gameCard(REBELLION)).getByTestId(T.gameCardStatus);
+
 test('TC-E2E-25: switching ru → en → ru changes the UI language and persists over reload', async ({
   page,
   request,
 }) => {
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('lang', 'ru');
-  // textContent, not innerText: MUI buttons are CSS-uppercased (innerText reflects text-transform).
-  const ruLabel = ((await page.getByTestId(T.menuNewGame).textContent()) ?? '').trim();
+  // textContent, not innerText: MUI chips/buttons may be CSS-uppercased (innerText reflects text-transform).
+  const ruLabel = ((await statusLabel(page).textContent()) ?? '').trim();
   expect(ruLabel).toMatch(CYRILLIC);
 
   await setLanguage(page, 'en');
   await page.goto('/');
-  const enLabel = ((await page.getByTestId(T.menuNewGame).textContent()) ?? '').trim();
+  const enLabel = ((await statusLabel(page).textContent()) ?? '').trim();
   expect(enLabel).not.toMatch(CYRILLIC);
   expect(enLabel).not.toBe(ruLabel);
 
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.getByTestId(T.menuNewGame)).toHaveText(enLabel);
+  await expect(statusLabel(page)).toHaveText(enLabel);
 
-  const { gameId } = await createGame(request);
-  await openGame(page, gameId);
+  const { sessionId } = await createSession(request);
+  await openSession(page, sessionId);
   await expect(page.getByTestId(T.contextPanel)).not.toContainText(CYRILLIC);
 
   await setLanguage(page, 'ru');
   await page.goto('/');
-  await expect(page.getByTestId(T.menuNewGame)).toHaveText(ruLabel);
+  await expect(statusLabel(page)).toHaveText(ruLabel);
 });
 
 test('TC-E2E-26: in English no Cyrillic text remains on the main screens (incl. system names)', async ({
@@ -44,12 +50,18 @@ test('TC-E2E-26: in English no Cyrillic text remains on the main screens (incl. 
   request,
 }) => {
   await setLanguage(page, 'en');
-  const { gameId } = await createGame(request);
+  const { sessionId } = await createSession(request);
+  // Each screen is read only after its main element is visible (lazy game chunks, sessions list).
+  const goto = (url: string, ready: string) => async () => {
+    await page.goto(url);
+    await expect(page.getByTestId(ready)).toBeVisible();
+  };
   const screens: [string, () => Promise<void>][] = [
-    ['/', () => page.goto('/').then(() => undefined)],
-    ['/games/new', () => page.goto('/games/new').then(() => undefined)],
-    [`/games/${gameId}`, () => openGame(page, gameId)],
-    ['/settings', () => page.goto('/settings').then(() => undefined)],
+    ['/', goto('/', T.gameCatalog)],
+    [gamePath(REBELLION), goto(gamePath(REBELLION), T.gamePage)],
+    [newSessionPath(REBELLION), goto(newSessionPath(REBELLION), T.setupStart)],
+    [`/sessions/${sessionId}`, () => openSession(page, sessionId)],
+    ['/settings', goto('/settings', T.settingsReduceMotion)],
   ];
   for (const [name, open] of screens) {
     await open();
@@ -59,9 +71,8 @@ test('TC-E2E-26: in English no Cyrillic text remains on the main screens (incl. 
     expect(hits, `Cyrillic on ${name}`).toEqual([]);
   }
   // Hidden tabs of the table (objects list) also carry translated system names.
-  const listText = await page
-    .goto(`/games/${gameId}`)
-    .then(() => page.getByTestId(T.boardList).evaluate((el) => el.textContent ?? ''));
+  await openSession(page, sessionId);
+  const listText = await page.getByTestId(T.boardList).evaluate((el) => el.textContent ?? '');
   expect(listText).not.toMatch(CYRILLIC);
 });
 
@@ -83,8 +94,8 @@ test('TC-E2E-27: reduce motion toggles the documented flag, persists and makes z
   await page.reload();
   await expect.poll(flag).toBe('true');
 
-  const { gameId } = await createGame(request);
-  await openGame(page, gameId);
+  const { sessionId } = await createSession(request);
+  await openSession(page, sessionId);
   const s0 = (await dbg.viewport(page)).scale;
   await page.getByTestId(T.zoomIn).click();
   // Without tween the target scale is applied immediately (no intermediate values).

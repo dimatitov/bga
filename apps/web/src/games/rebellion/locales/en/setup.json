@@ -1,0 +1,32 @@
+{
+  "newGame": {
+    "title": "New game",
+    "factionStep": "1. Your side",
+    "selected": "Selected",
+    "opponentStep": "2. Opponent",
+    "opponentAi": "AI",
+    "opponentHuman": "Second player on this device",
+    "opponentCaption": {
+      "ai": {
+        "rebels": "AI plays the Rebels",
+        "empire": "AI plays the Empire"
+      },
+      "human": {
+        "rebels": "Second player plays the Rebels",
+        "empire": "Second player plays the Empire"
+      }
+    },
+    "humanHint": "Take turns: before the opponent moves, the app hides the map.",
+    "difficultyStep": "3. AI difficulty",
+    "difficultyHint": "Saved for the AI; in the prototype the AI does not move.",
+    "rulesetStep": "4. Ruleset",
+    "modeStep": "5. Mode",
+    "soon": "soon",
+    "rulesetSoonHint": "The expansion is not supported yet.",
+    "modeSoonHint": "This mode is not supported yet.",
+    "start": "Start game",
+    "starting": "Creating game…",
+    "cancel": "Cancel",
+    "invalid": "Check the game settings."
+  }
+}

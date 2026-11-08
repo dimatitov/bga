@@ -1,4 +1,7 @@
-// Flat config. Boundary rules (AC-12, R-15, TC-ARCH-01/02) are `no-restricted-imports` per area.
+// Flat config. Architecture boundaries (SWR-003 plan-backend §1.8, B-1…B-17) are `no-restricted-imports`
+// per area; checked by scripts/eslint-boundaries.test.mjs (part of `pnpm test`).
+// NOTE: for one file ESLint applies only the LAST matching block's options of a rule, so narrower blocks
+// below repeat the restrictions of the wider ones (composed from the constants).
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
@@ -9,23 +12,91 @@ import tseslint from 'typescript-eslint';
 const AI_AND_SERVER = ['openai', 'openai/*', '@nestjs/*', '@prisma/*'];
 const REACT_UI = ['react', 'react-*', 'react/*', 'react-dom/*', '@mui/*', 'konva', 'konva/*'];
 
+/** Any game package, bare or with any subpath. */
+const ANY_GAME_PKG = '^@bga/game-[^/]+(/.*)?$';
+/** Game package entry points web may import: ./definition ./schema ./board ./assets (Q-8: not the bare package). */
+const GAME_NOT_WEB = '^@bga/game-[^/]+(/(?!(definition|schema|board|assets)$).*)?$';
+/** Server registry may import only ./definition and ./server of a game. */
+const GAME_NOT_REGISTRY = '^@bga/game-[^/]+(/(?!(definition|server)$).*)?$';
+/** Server-only game entry points that even web i18n tests must not read (they may read ./scenario). */
+const GAME_RULES_SERVER_AI = '^@bga/game-[^/]+/(rules|server|ai)(/.*)?$';
+/** Relative imports from web into the api sources (only the registry consistency test may read definitions). */
+const WEB_TO_API_SRC = '(^|/)api/src/';
+
+/** Sibling subpaths of a game package (`../<sub>`), for the per-subpath layering rules. */
+const sibling = (...names) => names.flatMap((n) => [`../${n}`, `../${n}/*`]);
+
 /**
- * Web: dynamic `import()` must obey the same boundary as static imports (review #3).
- * Forbidden: @swr/game-core[/…], @swr/game-data and any subpath except `/layout`, paths into packages/.
+ * Build a `no-restricted-imports` rule.
+ * @param {{ groups?: string[], regexes?: string[], paths?: object[] }} spec
+ */
+function restrict(message, { groups = [], regexes = [], paths = [] } = {}) {
+  const patterns = [];
+  if (groups.length > 0) patterns.push({ group: groups, message });
+  for (const regex of regexes) patterns.push({ regex, message });
+  return ['error', { paths, patterns }];
+}
+
+/** Q-21 / AC-9: no `import()` with a computed specifier anywhere (tests excepted). */
+const COMPUTED_DYNAMIC_IMPORT = {
+  selector: 'ImportExpression[source.type!="Literal"]',
+  message:
+    'Dynamic import() must use a string literal specifier (no loading of games by name, AC-9).',
+};
+
+/**
+ * Web: dynamic `import()` must obey the same boundary as static imports.
+ * Forbidden: game package entry points other than definition/schema/board/assets, paths into packages/.
  */
 const WEB_DYNAMIC_IMPORTS = [
   {
     selector:
-      'ImportExpression[source.value=/^@swr\\/game-core(\\/.*)?$|^@swr\\/game-data(\\/(?!layout$).*)?$|(^|\\/)packages\\//]',
+      'ImportExpression[source.value=/^@bga\\/game-[a-z0-9-]+(\\/(?!(definition|schema|board|assets)$).*)?$|(^|\\/)packages\\//]',
     message:
-      'Dynamic import of game-core / the game-data scenario is forbidden in web (AC-12; the scenario holds secrets).',
+      'Dynamic import of game rules / scenario / server / ai is forbidden in web (the scenario holds secrets).',
   },
-  {
-    // A computed specifier could hide any of the above.
-    selector: 'ImportExpression[source.type!="Literal"]',
-    message: 'Dynamic import() in web must use a string literal specifier (boundary check).',
-  },
+  COMPUTED_DYNAMIC_IMPORT,
 ];
+
+// ---- web restriction sets ----
+const WEB_MESSAGE =
+  'web imports from game packages only ./definition, ./schema, ./board, ./assets; never server code (AC-5, Q-8).';
+const WEB_GROUPS = ['@prisma/*', '@nestjs/*', 'openai', 'openai/*', '**/packages/**'];
+const WEB = { groups: WEB_GROUPS, regexes: [GAME_NOT_WEB, WEB_TO_API_SRC] };
+
+// ---- api restriction sets ----
+const API_GROUPS = ['react', 'react-*', 'react/*', '@mui/*', 'openai', 'openai/*'];
+
+// ---- game package restriction sets (B-2) ----
+const GAME_SRC_MESSAGE =
+  'A game package depends only on @bga/platform and zod; game subpaths are layered (plan-backend §1.8).';
+const GAME_SRC_GROUPS = [
+  '@bga/api',
+  '@bga/web',
+  ...REACT_UI,
+  ...AI_AND_SERVER,
+  'node:*',
+  '**/apps/**',
+  '**/platform/src/**',
+  '**/games/**',
+  // any relative path leaving the package (src/<subpath>/file → ../../../…)
+  '../../../*',
+];
+const gameSrc = (...extraGroups) => ({
+  groups: [...GAME_SRC_GROUPS, ...extraGroups],
+  regexes: [ANY_GAME_PKG],
+});
+
+const DETERMINISM = {
+  syntax: {
+    selector: "NewExpression[callee.name='Date']",
+    message: 'game rules are deterministic: take time from ctx.now.',
+  },
+  properties: [
+    { object: 'Date', property: 'now', message: 'game rules are deterministic: use ctx.now.' },
+    { object: 'Math', property: 'random', message: 'game rules are deterministic: no randomness.' },
+  ],
+};
 
 /** User-facing JSX attributes whose string values must come from i18n (review #2). */
 const UI_TEXT_ATTRS =
@@ -50,11 +121,6 @@ const JSX_UI_LITERALS = [
   // children: <p>{'Text'}</p>, <>{c && 'Text'}</>
   ...literalSlots(':matches(JSXElement, JSXFragment) > JSXExpressionContainer'),
 ].map((selector) => ({ selector, message: NO_UI_LITERALS_MESSAGE }));
-
-/** Build a `no-restricted-imports` rule from gitignore-style groups. */
-function restrict(groups, message, paths = []) {
-  return ['error', { paths, patterns: [{ group: groups, message }] }];
-}
 
 export default tseslint.config(
   {
@@ -93,8 +159,10 @@ export default tseslint.config(
       '*.{js,mjs,cjs,ts,mts}',
       'apps/api/**/*.{ts,mts,mjs}',
       'apps/web/*.{ts,mjs}',
-      'packages/*/*.{ts,mts,mjs}',
-      'packages/*/test/**/*.ts',
+      'packages/platform/*.{ts,mts,mjs}',
+      'packages/games/*/*.{ts,mts,mjs}',
+      'packages/platform/test/**/*.ts',
+      'packages/games/*/test/**/*.ts',
       'e2e/**/*.ts',
     ],
     languageOptions: { globals: { ...globals.node } },
@@ -106,68 +174,78 @@ export default tseslint.config(
     rules: { '@typescript-eslint/consistent-type-imports': 'off' },
   },
 
-  // ---- Architecture boundaries ----
+  // ---- Architecture boundaries (plan-backend §1.8) ----
+  // B-1: platform depends only on zod.
   {
-    files: ['packages/contracts/src/**/*.ts'],
+    files: ['packages/platform/src/**/*.ts'],
     rules: {
       'no-restricted-imports': restrict(
-        ['@swr/*', ...REACT_UI, ...AI_AND_SERVER, 'node:*'],
-        'contracts depends only on zod.',
-      ),
-    },
-  },
-  {
-    files: ['packages/game-core/src/**/*.ts'],
-    rules: {
-      'no-restricted-imports': restrict(
-        [
-          '@swr/game-data',
-          '@swr/game-data/*',
-          ...REACT_UI,
-          ...AI_AND_SERVER,
-          'node:*',
-          '**/apps/**',
-          '**/game-data/**',
-        ],
-        'game-core is pure TS and imports only @swr/contracts (game-data only in tests).',
-      ),
-      // R-1: determinism — time and ids come from ctx.
-      'no-restricted-syntax': [
-        'error',
+        '@bga/platform depends only on zod; it never imports games.',
         {
-          selector: "NewExpression[callee.name='Date']",
-          message: 'game-core is deterministic: take time from ctx.now.',
+          groups: ['@bga/*', ...REACT_UI, ...AI_AND_SERVER, 'node:*', '**/games/**', '**/apps/**'],
+          regexes: [ANY_GAME_PKG],
         },
-      ],
-      'no-restricted-properties': [
-        'error',
-        { object: 'Date', property: 'now', message: 'game-core is deterministic: use ctx.now.' },
-        {
-          object: 'Math',
-          property: 'random',
-          message: 'game-core is deterministic: no randomness.',
-        },
-      ],
-    },
-  },
-  {
-    files: ['packages/game-data/src/**/*.ts'],
-    rules: {
-      'no-restricted-imports': restrict(
-        ['@swr/game-core', '@swr/game-core/*', ...REACT_UI, ...AI_AND_SERVER, 'node:*'],
-        'game-data is plain data (depends only on @swr/contracts types).',
       ),
     },
   },
+  // B-2: game packages depend only on @bga/platform and zod.
   {
-    files: ['packages/game-data/src/layout.ts'],
+    files: ['packages/games/*/src/**/*.ts'],
+    rules: { 'no-restricted-imports': restrict(GAME_SRC_MESSAGE, gameSrc()) },
+  },
+  // B-3: web-reachable subpaths are self-contained (board can never pull the scenario into the web bundle).
+  {
+    files: ['packages/games/*/src/{definition,schema,board,assets}/**/*.ts'],
     rules: {
       'no-restricted-imports': restrict(
-        ['./scenario', './index', '.', './', '@swr/*', ...REACT_UI, ...AI_AND_SERVER, 'node:*'],
-        'layout must not pull the scenario (rebel base!) into the web bundle.',
+        'definition/schema/board/assets are web-reachable: they must not import other subpaths.',
+        gameSrc('../*', '../../*'),
       ),
     },
   },
+  // B-4: the scenario is data and sees only ../schema.
+  {
+    files: ['packages/games/*/src/scenario/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'scenario is data: it may import only ../schema.',
+        gameSrc(...sibling('rules', 'server', 'ai', 'board', 'assets', 'definition')),
+      ),
+    },
+  },
+  // B-5: rules are pure and deterministic (scenario only in tests).
+  {
+    files: ['packages/games/*/src/rules/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'rules are pure: they may import only ../schema and @bga/platform (scenario only in tests).',
+        gameSrc(...sibling('scenario', 'server', 'ai', 'board', 'assets', 'definition')),
+      ),
+      'no-restricted-syntax': ['error', DETERMINISM.syntax, COMPUTED_DYNAMIC_IMPORT],
+      'no-restricted-properties': ['error', ...DETERMINISM.properties],
+    },
+  },
+  // B-6: AI strategy configuration is data.
+  {
+    files: ['packages/games/*/src/ai/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'ai is configuration data: it may import only ../schema.',
+        gameSrc(...sibling('rules', 'scenario', 'server', 'board', 'assets')),
+      ),
+    },
+  },
+  // B-7: the server module wires definition + schema + rules + scenario (+ ai).
+  {
+    files: ['packages/games/*/src/server/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'server must not import web-only board/assets.',
+        gameSrc(...sibling('board', 'assets')),
+      ),
+    },
+  },
+  // B-8: web — only definition/schema/board/assets of games; no server code.
   {
     files: ['apps/web/src/**/*.{ts,tsx}'],
     languageOptions: { globals: { ...globals.browser } },
@@ -175,26 +253,7 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'no-restricted-imports': restrict(
-        [
-          '@swr/game-core',
-          '@swr/game-core/*',
-          '@swr/game-data/*',
-          '!@swr/game-data/layout',
-          '@prisma/*',
-          '@nestjs/*',
-          'openai',
-          'openai/*',
-          '**/packages/**',
-        ],
-        'Rules live on the server: web imports only @swr/contracts and @swr/game-data/layout (AC-12).',
-        [
-          {
-            name: '@swr/game-data',
-            message: 'Only @swr/game-data/layout is allowed in web (the scenario holds secrets).',
-          },
-        ],
-      ),
+      'no-restricted-imports': restrict(WEB_MESSAGE, WEB),
       'no-restricted-syntax': ['error', ...WEB_DYNAMIC_IMPORTS],
     },
   },
@@ -209,24 +268,123 @@ export default tseslint.config(
       'no-restricted-syntax': ['error', ...WEB_DYNAMIC_IMPORTS, ...JSX_UI_LITERALS],
     },
   },
+  // B-9: shared web code knows no game — only the registry (`@/games/registry`).
   {
-    // Test-only check that every game-data key has a translation (plan-frontend §0.1, §7.4).
-    files: ['apps/web/src/**/*.i18n.test.ts'],
+    files: ['apps/web/src/{app,shared,platform}/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': restrict(
-        ['@swr/game-core', '@swr/game-core/*', '@prisma/*', '@nestjs/*', 'openai', 'openai/*'],
-        'web tests may read the scenario but never game-core.',
+        'Platform web code (app/shared/platform) must not import game packages, game folders or features — only @/games/registry (AC-5).',
+        {
+          groups: [
+            ...WEB_GROUPS,
+            '@/games/*',
+            '!@/games/registry',
+            '**/games/*',
+            '!**/games/registry',
+            '@/features/*',
+            '**/features/*',
+          ],
+          regexes: [ANY_GAME_PKG, WEB_TO_API_SRC],
+        },
+      ),
+    },
+  },
+  // B-17: a web game folder sees neither other games nor the registry (only `@/games/types`).
+  {
+    files: ['apps/web/src/games/*/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'A web game folder must not import the registry or other games (from @/games/* only @/games/types); from game packages only definition/schema/board/assets — rules/scenario/server/ai are server-only.',
+        { groups: [...WEB_GROUPS, '@/games/*', '!@/games/types'], regexes: WEB.regexes },
       ),
     },
   },
   {
-    files: ['apps/api/src/**/*.ts'],
+    files: ['apps/web/src/games/forbidden-stars/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': restrict(
-        ['react', 'react-*', 'react/*', '@mui/*', 'openai', 'openai/*'],
-        'api: no UI libraries; OpenAI is out of scope in SWR-002.',
+        'Forbidden Stars web code may import only @bga/platform and @bga/game-forbidden-stars/{definition,assets}.',
+        {
+          groups: [...WEB_GROUPS, '@/games/*', '!@/games/types'],
+          regexes: [
+            ...WEB.regexes,
+            '^@bga/(?!platform$|game-forbidden-stars/(definition|assets)$)',
+          ],
+        },
       ),
     },
+  },
+  // B-16: the only web file that may read api sources — the registry consistency test (Q-25), definitions only.
+  {
+    files: ['apps/web/src/games/registry.consistency.test.ts'],
+    rules: {
+      'no-restricted-imports': restrict(WEB_MESSAGE, {
+        groups: WEB_GROUPS,
+        regexes: [GAME_NOT_WEB, '(^|/)api/src/(?!game-registry/definitions$)'],
+      }),
+    },
+  },
+  // B-10: web i18n tests may read a game scenario (translation coverage) but never rules/server/ai.
+  {
+    files: ['apps/web/src/**/*.i18n.test.ts'],
+    rules: {
+      'no-restricted-imports': restrict('web tests may read the scenario but never game rules.', {
+        groups: ['@prisma/*', '@nestjs/*', 'openai', 'openai/*'],
+        regexes: [GAME_RULES_SERVER_AI],
+      }),
+    },
+  },
+  // B-11: api — no UI libraries; OpenAI is out of scope.
+  {
+    files: ['apps/api/src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict('api: no UI libraries; OpenAI is out of scope.', {
+        groups: API_GROUPS,
+      }),
+    },
+  },
+  // B-12: shared server code never imports games (only via ../game-registry).
+  {
+    files: [
+      'apps/api/src/{sessions,common,persistence,health}/**/*.ts',
+      'apps/api/src/{app.module,app.factory,main}.ts',
+    ],
+    rules: {
+      'no-restricted-imports': restrict(
+        'Shared server code must not import game packages — use the game registry (AC-5).',
+        { groups: [...API_GROUPS, '**/packages/**'], regexes: [ANY_GAME_PKG] },
+      ),
+    },
+  },
+  // B-13: the server registry sees only ./definition and ./server of a game.
+  {
+    files: ['apps/api/src/game-registry/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'game-registry may import only @bga/game-*/definition and @bga/game-*/server.',
+        { groups: [...API_GROUPS, '**/packages/**'], regexes: [GAME_NOT_REGISTRY] },
+      ),
+    },
+  },
+  // B-14: the fake game of the session-service tests must not lean on a real game (AC-5(a)).
+  {
+    files: ['apps/api/test/support/fake-game.ts'],
+    rules: {
+      'no-restricted-imports': restrict('fake-game must not import a real game package.', {
+        groups: ['**/packages/**'],
+        regexes: [ANY_GAME_PKG],
+      }),
+    },
+  },
+  // B-15: Q-21 — no computed import() in api/packages sources (web: WEB_DYNAMIC_IMPORTS; rules: B-5 block).
+  {
+    files: [
+      'apps/api/src/**/*.ts',
+      'packages/platform/src/**/*.ts',
+      'packages/games/*/src/**/*.ts',
+    ],
+    ignores: ['**/*.test.ts', '**/test/**', 'packages/games/*/src/rules/**'],
+    rules: { 'no-restricted-syntax': ['error', COMPUTED_DYNAMIC_IMPORT] },
   },
   prettier,
 );

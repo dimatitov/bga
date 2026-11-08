@@ -1,0 +1,18 @@
+$ pnpm -r run typecheck  (root typecheck minus the e2e tsc step)
+2026-11-08T04:26:19Z
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/web typecheck$ tsc -b
+apps/web typecheck: Done
+apps/api typecheck: Done
+exit=0

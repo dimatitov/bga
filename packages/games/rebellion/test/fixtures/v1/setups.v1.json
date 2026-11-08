@@ -1,0 +1,40 @@
+{
+  "_provenance": "generated from SWR-003 working tree on d4895ac, 2026-11-08, createGame + applyCommand, mockScenario (SWR-004 R0, frozen v1 — do not regenerate, do not rename)",
+  "stored": [
+    {
+      "humanFaction": "rebellion",
+      "opponent": {
+        "kind": "ai",
+        "difficulty": "hard"
+      }
+    },
+    {
+      "humanFaction": "empire",
+      "opponent": {
+        "kind": "human"
+      }
+    },
+    {
+      "humanFaction": "empire",
+      "opponent": {
+        "kind": "ai",
+        "difficulty": "normal"
+      }
+    }
+  ],
+  "inputs": {
+    "aiWithoutDifficulty": {
+      "humanFaction": "empire",
+      "opponent": {
+        "kind": "ai"
+      }
+    },
+    "aiWithoutDifficultyParsed": {
+      "humanFaction": "empire",
+      "opponent": {
+        "kind": "ai",
+        "difficulty": "normal"
+      }
+    }
+  }
+}

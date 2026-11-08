@@ -1,0 +1,6 @@
+$ pnpm --filter @bga/game-rebellion lint   # 2026-11-08T04:37:59Z
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+exit=0

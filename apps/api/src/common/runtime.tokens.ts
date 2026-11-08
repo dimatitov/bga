@@ -5,14 +5,13 @@ export interface Clock {
   now(): string;
 }
 
-/** Source of new game ids. Overridable through `createApp({ idGenerator })`. */
+/** Source of new session ids. Overridable through `createApp({ idGenerator })`. */
 export interface IdGenerator {
-  gameId(): string;
+  sessionId(): string;
 }
 
 export const CLOCK = Symbol('CLOCK');
 export const ID_GENERATOR = Symbol('ID_GENERATOR');
-export const SCENARIO = Symbol('SCENARIO');
 
-export const systemClock: Clock = { now: () => new Date().toISOString() };
-export const uuidGenerator: IdGenerator = { gameId: () => randomUUID() };
+export const wallClock: Clock = { now: () => new Date().toISOString() };
+export const uuidGenerator: IdGenerator = { sessionId: () => randomUUID() };

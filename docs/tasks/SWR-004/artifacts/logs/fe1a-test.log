@@ -1,0 +1,434 @@
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/games/rebellion/describeSession.test.ts (3 tests | 2 failed) 30ms
+     × AI opponent with difficulty: side, opponent, round and phase (ru) 23ms
+     × human opponent (no difficulty), en 4ms
+ ❯ src/games/rebellion/locales.i18n.test.ts (12 tests | 1 failed) 85ms
+     × every Rebellion error messageKey has ru and en text in rebellion.errors (PA-5) 20ms
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx (7 tests | 6 failed) 114ms
+     × keeps "saved" from the previous accepted command after a 4xx 30ms
+     × keeps "error" from a previous network failure after a 4xx 8ms
+     × switches to "saved" only on an accepted command 12ms
+     × envelope from the cached session view; ok → detail view replaced, lists invalidated 16ms
+     × 409 → invalidates the session detail (refetch), cache view unchanged 14ms
+     × accepted command with a non-Rebellion view → INVALID_RESPONSE, detail invalidated 9ms
+ ❯ src/app/router.test.tsx (13 tests | 1 failed) 2760ms
+     × catalogue card → /games/star-wars-rebellion: lists its sessions with the game line; Continue → latest 488ms
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx (11 tests | 2 failed) 12066ms
+     × TC-WEB-04: human hides difficulty and POST has no difficulty 5014ms
+     × Scenario 1: AI + hard → POST /api/sessions { gameId, setup }, session cached, replace to /sessions/:id 5025ms
+ ❯ src/games/rebellion/table/TableScreen.test.tsx (15 tests | 14 failed) 70212ms
+     × TC-WEB-11: renders server view with round/phase, mock badge and a mock-labelled End phase 5029ms
+     × TC-WEB-06 (component): selecting P_E1 offers only server targets and highlights them 5023ms
+     × TC-WEB-07: an enemy piece shows info and no move actions 5008ms
+     × moves via the actions panel: envelope from cache, view from response, log + feedback + focus 5015ms
+     × TC-WEB-08: 422 shows the localized reason and leaves the state unchanged 5006ms
+     × TC-WEB-09: 409 → "state updated" message, view refetched, selection kept 5004ms
+     × network failure → error message with retry, save-status error 5007ms
+     × mock End phase sends ADVANCE_PHASE and shows the new phase 5007ms
+     × End phase is disabled when ADVANCE_PHASE is not in legalActions 5008ms
+     × listbox keyboard: arrows move focus, Enter selects; Esc clears the selection 5009ms
+     × system selection shows the system panel with group move (intersection of legal targets) 5005ms
+     × D-SH-4: "← To game" leads to the game page; settings link kept 5006ms
+     × a view that does not match the Rebellion schema → table-invalid-view with "← To game" 5008ms
+     × 404 on a command → session detail refetched → SessionHost shows session-not-found 5004ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 26 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/app/router.test.tsx > app routes (SWR-003 plan-frontend §2) > catalogue card → /games/star-wars-rebellion: lists its sessions with the game line; Continue → latest
+Error: [2mexpect([22m[31melement[39m[2m).toHaveTextContent()[22m
+
+Expected element to have text content:
+[32m  /Империя/[39m
+Received:
+[31m  faction.undefined vs Человек · Р2 · Командование · 5 мин. назад[39m
+ ❯ src/app/router.test.tsx:65:17
+     63|     const row = await screen.findByTestId('recent-session-r1');
+     64|     // Rebellion's describeSession (not the generic platform line) + r…
+     65|     expect(row).toHaveTextContent(/Империя/);
+       |                 ^
+     66|     expect(row).not.toHaveTextContent(/^Партия · обновлена/);
+     67|     expect(screen.getByTestId('game-continue')).toHaveAttribute('href'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/26]⎯
+
+ FAIL  src/games/rebellion/describeSession.test.ts > describeRebellionSession (D-GP-4/5, Q-13) > AI opponent with difficulty: side, opponent, round and phase (ru)
+AssertionError: expected '' to be 'Империя vs AI (Обычная) · Р2 · Команд…' // Object.is equality
+
+- Expected
++ Received
+
+- Империя vs AI (Обычная) · Р2 · Командование
+
+ ❯ src/games/rebellion/describeSession.test.ts:11:66
+      9| describe('describeRebellionSession (D-GP-4/5, Q-13)', () => {
+     10|   it('AI opponent with difficulty: side, opponent, round and phase (ru…
+     11|     expect(describeRebellionSession(makeRebellionSummary(), ru)).toBe(
+       |                                                                  ^
+     12|       'Империя vs AI (Обычная) · Р2 · Командование',
+     13|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/26]⎯
+
+ FAIL  src/games/rebellion/describeSession.test.ts > describeRebellionSession (D-GP-4/5, Q-13) > human opponent (no difficulty), en
+AssertionError: expected '' to be 'Rebellion vs Human · R1 · Assignment' // Object.is equality
+
+- Expected
++ Received
+
+- Rebellion vs Human · R1 · Assignment
+
+ ❯ src/games/rebellion/describeSession.test.ts:24:51
+     22|       phase: 'assignment',
+     23|     };
+     24|     expect(describeRebellionSession(summary, en)).toBe('Rebellion vs H…
+       |                                                   ^
+     25|   });
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/26]⎯
+
+ FAIL  src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > every Rebellion error messageKey has ru and en text in rebellion.errors (PA-5)
+AssertionError: ru notYourTurn: expected 'undefined' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "undefined"
+
+ ❯ src/games/rebellion/locales.i18n.test.ts:101:81
+     99|       const name = messageKey.replace(/^errors\./, '');
+    100|       for (const lng of ['ru', 'en'] as const) {
+    101|         expect(typeof lookup(REBELLION_ERRORS_NS, lng, name), `${lng} …
+       |                                                                                 ^
+    102|       }
+    103|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/26]⎯
+
+ FAIL  src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen > TC-WEB-04: human hides difficulty and POST has no difficulty
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx:51:3
+     49|   });
+     50|
+     51|   it('TC-WEB-04: human hides difficulty and POST has no difficulty', a…
+       |   ^
+     52|     const { requests } = mockFetch({
+     53|       'POST /api/sessions': created(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/26]⎯
+
+ FAIL  src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen > Scenario 1: AI + hard → POST /api/sessions { gameId, setup }, session cached, replace to /sessions/:id
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx:79:3
+     77|   });
+     78|
+     79|   it('Scenario 1: AI + hard → POST /api/sessions { gameId, setup }, se…
+       |   ^
+     80|     const view = makeView({
+     81|       id: 'g-1',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > TC-WEB-11: renders server view with round/phase, mock badge and a mock-labelled End phase
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:48:3
+     46|
+     47| describe('Rebellion TableScreen (via SessionHost)', () => {
+     48|   it('TC-WEB-11: renders server view with round/phase, mock badge and …
+       |   ^
+     49|     renderTable({ [VIEW_PATH]: session() });
+     50|     const table = await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > TC-WEB-06 (component): selecting P_E1 offers only server targets and highlights them
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:86:3
+     84|   });
+     85|
+     86|   it('TC-WEB-06 (component): selecting P_E1 offers only server targets…
+       |   ^
+     87|     const { user } = renderTable({ [VIEW_PATH]: session() });
+     88|     await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > TC-WEB-07: an enemy piece shows info and no move actions
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:104:3
+    102|   });
+    103|
+    104|   it('TC-WEB-07: an enemy piece shows info and no move actions', async…
+       |   ^
+    105|     const { user } = renderTable({ [VIEW_PATH]: session() });
+    106|     await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > moves via the actions panel: envelope from cache, view from response, log + feedback + focus
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:115:3
+    113|   });
+    114|
+    115|   it('moves via the actions panel: envelope from cache, view from resp…
+       |   ^
+    116|     const moved = makeMovedView();
+    117|     const { user, api } = renderTable({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > TC-WEB-08: 422 shows the localized reason and leaves the state unchanged
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:151:3
+    149|   });
+    150|
+    151|   it('TC-WEB-08: 422 shows the localized reason and leaves the state u…
+       |   ^
+    152|     const { user } = renderTable({
+    153|       [VIEW_PATH]: session(),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > TC-WEB-09: 409 → "state updated" message, view refetched, selection kept
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:169:3
+    167|   });
+    168|
+    169|   it('TC-WEB-09: 409 → "state updated" message, view refetched, select…
+       |   ^
+    170|     let gets = 0;
+    171|     const fresh = makeView({ version: 5 });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > network failure → error message with retry, save-status error
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:199:3
+    197|   });
+    198|
+    199|   it('network failure → error message with retry, save-status error', …
+       |   ^
+    200|     const { user } = renderTable({
+    201|       [VIEW_PATH]: session(),
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > mock End phase sends ADVANCE_PHASE and shows the new phase
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:218:3
+    216|   });
+    217|
+    218|   it('mock End phase sends ADVANCE_PHASE and shows the new phase', asy…
+       |   ^
+    219|     const next = makeView({ version: 4, phase: 'command' });
+    220|     const { user, api } = renderTable({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > End phase is disabled when ADVANCE_PHASE is not in legalActions
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:236:3
+    234|   });
+    235|
+    236|   it('End phase is disabled when ADVANCE_PHASE is not in legalActions'…
+       |   ^
+    237|     renderTable({ [VIEW_PATH]: session(makeView({ legalActions: [] }))…
+    238|     await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > listbox keyboard: arrows move focus, Enter selects; Esc clears the selection
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:242:3
+    240|   });
+    241|
+    242|   it('listbox keyboard: arrows move focus, Enter selects; Esc clears t…
+       |   ^
+    243|     const { user } = renderTable({ [VIEW_PATH]: session() });
+    244|     await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > system selection shows the system panel with group move (intersection of legal targets)
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:261:3
+    259|   });
+    260|
+    261|   it('system selection shows the system panel with group move (interse…
+       |   ^
+    262|     const { user } = renderTable({ [VIEW_PATH]: session() });
+    263|     await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > D-SH-4: "← To game" leads to the game page; settings link kept
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:279:3
+    277|   });
+    278|
+    279|   it('D-SH-4: "← To game" leads to the game page; settings link kept',…
+       |   ^
+    280|     const { user, router } = renderTable({ [VIEW_PATH]: session() });
+    281|     await screen.findByTestId('game-table');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > a view that does not match the Rebellion schema → table-invalid-view with "← To game"
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:290:3
+    288|   });
+    289|
+    290|   it('a view that does not match the Rebellion schema → table-invalid-…
+       |   ^
+    291|     renderTable({
+    292|       [VIEW_PATH]: {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/26]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > 404 on a command → session detail refetched → SessionHost shows session-not-found
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:306:3
+    304|   });
+    305|
+    306|   it('404 on a command → session detail refetched → SessionHost shows …
+       |   ^
+    307|     let gets = 0;
+    308|     const { user } = renderTable({
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/26]⎯
+
+ FAIL  src/games/rebellion/table/hooks/useSendCommand.test.tsx > useSendCommand — save indicator (review nit #6) > keeps "saved" from the previous accepted command after a 4xx
+AssertionError: expected 'idle' to be 'saved' // Object.is equality
+
+Expected: "saved"
+Received: "idle"
+
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx:57:39
+     55|       await result.current.send(MOVE);
+     56|     });
+     57|     expect(result.current.saveStatus).toBe('saved');
+       |                                       ^
+     58|     await act(async () => {
+     59|       await result.current.send(MOVE);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/26]⎯
+
+ FAIL  src/games/rebellion/table/hooks/useSendCommand.test.tsx > useSendCommand — save indicator (review nit #6) > keeps "error" from a previous network failure after a 4xx
+AssertionError: expected 'idle' to be 'error' // Object.is equality
+
+Expected: "error"
+Received: "idle"
+
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx:69:39
+     67|       await result.current.send(MOVE);
+     68|     });
+     69|     expect(result.current.saveStatus).toBe('error');
+       |                                       ^
+     70|     await act(async () => {
+     71|       await result.current.send(MOVE);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/26]⎯
+
+ FAIL  src/games/rebellion/table/hooks/useSendCommand.test.tsx > useSendCommand — save indicator (review nit #6) > switches to "saved" only on an accepted command
+AssertionError: expected 'idle' to be 'saved' // Object.is equality
+
+Expected: "saved"
+Received: "idle"
+
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx:81:39
+     79|       await result.current.send(MOVE);
+     80|     });
+     81|     expect(result.current.saveStatus).toBe('saved');
+       |                                       ^
+     82|   });
+     83| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[23/26]⎯
+
+ FAIL  src/games/rebellion/table/hooks/useSendCommand.test.tsx > useSendCommand — session cache (SWR-003 plan-frontend §3.1) > envelope from the cached session view; ok → detail view replaced, lists invalidated
+SyntaxError: "undefined" is not valid JSON
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx:95:17
+     93|     });
+     94|     const post = vi.mocked(fetch).mock.calls[0];
+     95|     expect(JSON.parse(String(post?.[1]?.body))).toEqual({
+       |                 ^
+     96|       actor: 'empire',
+     97|       expectedVersion: 3,
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[24/26]⎯
+
+ FAIL  src/games/rebellion/table/hooks/useSendCommand.test.tsx > useSendCommand — session cache (SWR-003 plan-frontend §3.1) > 409 → invalidates the session detail (refetch), cache view unchanged
+AssertionError: expected { ok: false, code: 'NOT_READY', …(1) } to match object { ok: false, code: 'VERSION_CONFLICT' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "VERSION_CONFLICT",
++   "code": "NOT_READY",
+    "ok": false,
+  }
+
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx:121:21
+    119|       outcome = await result.current.send(MOVE);
+    120|     });
+    121|     expect(outcome).toMatchObject({ ok: false, code: 'VERSION_CONFLICT…
+       |                     ^
+    122|     expect(invalidate).toHaveBeenCalledWith({ queryKey: sessionKeys.de…
+    123|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[25/26]⎯
+
+ FAIL  src/games/rebellion/table/hooks/useSendCommand.test.tsx > useSendCommand — session cache (SWR-003 plan-frontend §3.1) > accepted command with a non-Rebellion view → INVALID_RESPONSE, detail invalidated
+AssertionError: expected { ok: false, code: 'NOT_READY', …(1) } to match object { ok: false, code: 'INVALID_RESPONSE' }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "code": "INVALID_RESPONSE",
++   "code": "NOT_READY",
+    "ok": false,
+  }
+
+ ❯ src/games/rebellion/table/hooks/useSendCommand.test.tsx:132:21
+    130|       outcome = await result.current.send(MOVE);
+    131|     });
+    132|     expect(outcome).toMatchObject({ ok: false, code: 'INVALID_RESPONSE…
+       |                     ^
+    133|     expect(result.current.saveStatus).toBe('error');
+    134|     expect(invalidate).toHaveBeenCalledWith({ queryKey: sessionKeys.de…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[26/26]⎯
+
+
+ Test Files  6 failed | 21 passed (27)
+      Tests  26 failed | 162 passed (188)
+   Start at  07:36:51
+   Duration  74.46s (transform 6.14s, setup 10.81s, import 16.24s, tests 96.31s, environment 27.43s)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 test: `vitest run --passWithNoTests`
+Exit status 1

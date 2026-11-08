@@ -1,0 +1,24 @@
+{
+  "backToCatalog": "All games",
+  "backToGame": "To game",
+  "actionsLabel": "Game actions",
+  "newSession": "New session",
+  "continue": "Continue session",
+  "continueEmpty": "No saved sessions",
+  "comingSoon": "This game is coming later: rules and the table are not implemented yet.",
+  "recent": {
+    "title": "Recent sessions",
+    "empty": "No sessions yet. Start a new one.",
+    "loading": "Loading sessions…"
+  },
+  "session": {
+    "line": "{{text}} · {{time}}",
+    "generic": "Session · updated {{time}}",
+    "untitled": "Session"
+  },
+  "sessionsError": "Could not load sessions.",
+  "notFound": {
+    "title": "Game not found",
+    "text": "There is no such game in the catalogue."
+  }
+}

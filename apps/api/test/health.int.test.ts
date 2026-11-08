@@ -1,5 +1,5 @@
 import type { INestApplication } from '@nestjs/common';
-import { HealthResponseSchema } from '@swr/contracts';
+import { HealthResponseSchema } from '@bga/platform';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { api, createTestDb, startApp, stopApp, type TestDb } from './support/test-app';
 

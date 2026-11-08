@@ -1,14 +1,15 @@
 // Scenario 3 — zoom & pan: TC-E2E-07..12, TC-E2E-29 (AC-5, AC-10).
+// SWR-003: sessions are created via `POST /api/sessions` and opened at `/sessions/:id`; expectations unchanged.
 // Canvas state is read via window.__boardDebug (plan-frontend §6.3) and the DOM mirrors board-canvas[data-scale].
 import { expect, test, type Page } from '@playwright/test';
-import { createGame, pickMove, type PlayerView } from './support/api';
+import { createSession, pickMove, type PlayerView } from './support/api';
 import {
   canvasBox,
   dbg,
   emptyCanvasPoint,
   expectNoCommandSent,
   mouseDrag,
-  openGame,
+  openSession,
   waitViewportStable,
 } from './support/board';
 import { CONTEXT_STATE, T } from './support/testids';
@@ -16,9 +17,9 @@ import { CONTEXT_STATE, T } from './support/testids';
 let view: PlayerView;
 
 test.beforeEach(async ({ page, request }) => {
-  const created = await createGame(request);
+  const created = await createSession(request);
   view = created.view;
-  await openGame(page, created.gameId);
+  await openSession(page, created.sessionId);
 });
 
 async function scale(page: Page) {

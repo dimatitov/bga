@@ -1,0 +1,189 @@
+$ grep -r "@swr/" --exclude-dir=node_modules --exclude-dir=docs .
+exit=1 (1 = no matches)
+
+$ grep -rn "packages/\(contracts\|game-core\|game-data\)" --exclude-dir={node_modules,docs} .
+exit=1 (1 = no matches)
+
+$ git diff --exit-code d4895ac -- apps/api/prisma/migrations/20261107235651_init apps/api/prisma/schema.prisma
+exit=0
+
+$ git status --short apps/api/prisma ; ls -la apps/api/prisma/dev.db
+-rw-r--r--@ 1 dimatitov  staff  53248 Nov  8 03:50 apps/api/prisma/dev.db
+exit=0
+
+$ cmp <(git show HEAD:pnpm-lock.yaml | awk "/^packages:/{f=1} f") <(awk "/^packages:/{f=1} f" pnpm-lock.yaml)
+exit=0 (0 = no external package resolution changed)
+
+$ rm -rf packages/platform/dist packages/games/*/dist && pnpm --filter @bga/web test && pnpm --filter "./packages/**" test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  14 passed (14)
+      Tests  91 passed (91)
+   Start at  05:22:14
+   Duration  7.04s (transform 3.85s, setup 6.81s, import 10.25s, tests 11.91s, environment 16.71s)
+
+Scope: 3 of 6 workspace projects
+packages/platform test$ vitest run
+packages/platform test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+packages/platform test:  Test Files  3 passed (3)
+packages/platform test:       Tests  32 passed (32)
+packages/platform test:    Start at  05:22:22
+packages/platform test:    Duration  601ms (transform 431ms, setup 0ms, import 756ms, tests 60ms, environment 0ms)
+packages/platform test: Done
+packages/games/forbidden-stars test$ vitest run
+packages/games/rebellion test$ vitest run
+packages/games/rebellion test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+packages/games/forbidden-stars test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/forbidden-stars
+packages/games/forbidden-stars test:  Test Files  2 passed (2)
+packages/games/forbidden-stars test:       Tests  5 passed (5)
+packages/games/forbidden-stars test:    Start at  05:22:23
+packages/games/forbidden-stars test:    Duration  858ms (transform 401ms, setup 0ms, import 665ms, tests 19ms, environment 0ms)
+packages/games/forbidden-stars test: Done
+packages/games/rebellion test:  Test Files  14 passed (14)
+packages/games/rebellion test:       Tests  108 passed (108)
+packages/games/rebellion test:    Start at  05:22:23
+packages/games/rebellion test:    Duration  2.68s (transform 2.11s, setup 0ms, import 4.81s, tests 2.12s, environment 1ms)
+packages/games/rebellion test: Done
+exit=0
+
+$ pnpm run build:packages && ls packages/games/rebellion/dist/{definition,schema,rules,scenario,board,assets,ai,server}/index.js packages/games/forbidden-stars/dist/{definition,assets}/index.js packages/platform/dist/index.js
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+packages/games/forbidden-stars/dist/assets/index.js
+packages/games/forbidden-stars/dist/definition/index.js
+packages/games/rebellion/dist/ai/index.js
+packages/games/rebellion/dist/assets/index.js
+packages/games/rebellion/dist/board/index.js
+packages/games/rebellion/dist/definition/index.js
+packages/games/rebellion/dist/rules/index.js
+packages/games/rebellion/dist/scenario/index.js
+packages/games/rebellion/dist/schema/index.js
+packages/games/rebellion/dist/server/index.js
+packages/platform/dist/index.js
+exit=0
+
+$ node --test scripts/check-web-bundle.test.mjs
+TAP version 13
+# Subtest: check-web-bundle: rules
+    # Subtest: clean bundle: schemas, i18n names, layout and testids are allowed
+    ok 1 - clean bundle: schemas, i18n names, layout and testids are allowed
+      ---
+      duration_ms: 1.883375
+      ...
+    # Subtest: scenario rebel base assignment is found (minified and JSON forms)
+    ok 2 - scenario rebel base assignment is found (minified and JSON forms)
+      ---
+      duration_ms: 1.890125
+      ...
+    # Subtest: scenario piece ids as string literals are found
+    ok 3 - scenario piece ids as string literals are found
+      ---
+      duration_ms: 0.208041
+      ...
+    # Subtest: hidden piece → typeKey mapping is found
+    ok 4 - hidden piece → typeKey mapping is found
+      ---
+      duration_ms: 0.611167
+      ...
+    # Subtest: __boardDebug hook is found
+    ok 5 - __boardDebug hook is found
+      ---
+      duration_ms: 0.195667
+      ...
+    1..5
+ok 1 - check-web-bundle: rules
+  ---
+  duration_ms: 6.410917
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: module composition (Q-23, TC-ARCH-08)
+    # Subtest: clean list: only definition/schema/board/assets of games
+    ok 1 - clean list: only definition/schema/board/assets of games
+      ---
+      duration_ms: 0.785666
+      ...
+    # Subtest: rules, scenario, server, ai (src or dist), unknown subpaths and root files are forbidden
+    ok 2 - rules, scenario, server, ai (src or dist), unknown subpaths and root files are forbidden
+      ---
+      duration_ms: 0.457834
+      ...
+    # Subtest: CLI --modules-dir: exit 0 on clean maps, 1 on a rules module, 2 without game modules
+    ok 3 - CLI --modules-dir: exit 0 on clean maps, 1 on a rules module, 2 without game modules
+      ---
+      duration_ms: 350.033167
+      ...
+    1..3
+ok 2 - check-web-bundle: module composition (Q-23, TC-ARCH-08)
+  ---
+  duration_ms: 352.307583
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: CLI
+    # Subtest: exit 0 on a clean dist, exit 1 with FORBIDDEN lines on a leaking dist
+    ok 1 - exit 0 on a clean dist, exit 1 with FORBIDDEN lines on a leaking dist
+      ---
+      duration_ms: 225.768625
+      ...
+    1..1
+ok 3 - check-web-bundle: CLI
+  ---
+  duration_ms: 226.099042
+  type: 'suite'
+  ...
+1..3
+# tests 9
+# suites 3
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 793.965
+exit=0
+
+# TC-ARCH-08 negative on a REAL build: temporarily import ./rules from apps/web/src/main.tsx (restored right after)
+$ printf "import { getLegalActions } from '@bga/game-rebellion/rules';
+console.log(getLegalActions);
+" >> apps/web/src/main.tsx && node scripts/check-web-bundle.mjs; git checkout -- apps/web/src/main.tsx
+OK check-web-bundle: 8 files in apps/web/dist, 5 rules (board-debug-hook, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-uJXSk9
+check-web-bundle: game modules in the bundle: rebellion/board (1), rebellion/rules (3), rebellion/schema (10)
+FORBIDDEN module ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/rules/internal/state.ts [game-rebellion/rules] — web may bundle only definition, schema, board, assets
+FORBIDDEN module ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/rules/mock-rules.ts [game-rebellion/rules] — web may bundle only definition, schema, board, assets
+FORBIDDEN module ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/rules/legal-actions.ts [game-rebellion/rules] — web may bundle only definition, schema, board, assets
+FAIL check-web-bundle: 3 forbidden game module(s) in the bundle
+exit=1 (expected 1)
+restored: exit=0
+
+$ node scripts/check-web-bundle.mjs --modules   # clean tree again
+OK check-web-bundle: 8 files in apps/web/dist, 5 rules (board-debug-hook, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-AbbCBk
+check-web-bundle: game modules in the bundle: rebellion/board (1), rebellion/schema (10)
+  module rebellion/board: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/board/layout.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/enums.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/setup.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/state.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/scenario.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/commands.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/view.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/errors.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/results.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/details.ts
+  module rebellion/schema: ../../../../../../../Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/src/schema/legacy-api.ts
+OK check-web-bundle modules: 565 sources, 11 game modules, only definition/schema/board/assets
+exit=0
+
+$ node scripts/check-task.mjs docs/tasks/SWR-003
+OK docs/tasks/SWR-003
+exit=0
+
+$ lsof -nP -iTCP:3000,5173,3100,5174 -sTCP:LISTEN
+exit=1 (1 = nothing listening)

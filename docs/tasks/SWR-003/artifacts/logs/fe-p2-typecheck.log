@@ -1,0 +1,17 @@
+$ pnpm --filter @bga/web typecheck
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+src/games/rebellion/board/canvas/nodes/SystemNode.tsx(1,35): error TS2307: Cannot find module '../../theme/palette' or its corresponding type declarations.
+src/games/rebellion/setup/SetupScreen.test.tsx(5,29): error TS2307: Cannot find module './NewGamePage' or its corresponding type declarations.
+src/games/rebellion/setup/SetupScreen.tsx(19,31): error TS2307: Cannot find module './hooks/useCreateGame' or its corresponding type declarations.
+src/games/rebellion/table/TableScreen.test.tsx(4,49): error TS2307: Cannot find module '@/features/game-board' or its corresponding type declarations.
+src/games/rebellion/table/TableScreen.test.tsx(13,8): error TS2307: Cannot find module '@/features/game-board/test/fixtures' or its corresponding type declarations.
+src/games/rebellion/table/TableScreen.test.tsx(16,31): error TS2307: Cannot find module './GameTablePage' or its corresponding type declarations.
+src/shared/ui/index.ts(2,52): error TS2307: Cannot find module './FactionChip' or its corresponding type declarations.
+src/shared/ui/index.ts(4,50): error TS2307: Cannot find module './PieceGlyph' or its corresponding type declarations.
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 typecheck: `tsc -b`
+Exit status 2
+exit=2

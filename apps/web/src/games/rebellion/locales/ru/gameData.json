@@ -1,0 +1,54 @@
+{
+  "systems": {
+    "sys-aurelis": "Аурелис",
+    "sys-brevora": "Бревора",
+    "sys-cindral": "Синдрал",
+    "sys-dovmaren": "Довмарен",
+    "sys-eskara": "Эскара",
+    "sys-fennix": "Феникс",
+    "sys-galdor": "Галдор",
+    "sys-hollin": "Холлин",
+    "sys-iskra": "Искра",
+    "sys-jorvan": "Йорван"
+  },
+  "regions": {
+    "reg-inner": "Внутреннее кольцо",
+    "reg-mid": "Среднее кольцо",
+    "reg-outer": "Внешнее кольцо"
+  },
+  "pieces": {
+    "unit": {
+      "empire": {
+        "capital-ship": "Крейсер",
+        "fighter-wing": "Крыло истребителей",
+        "ground-trooper": "Пехота"
+      },
+      "rebels": {
+        "cruiser": "Крейсер повстанцев",
+        "fighter-wing": "Крыло истребителей",
+        "ground-trooper": "Пехота"
+      }
+    },
+    "leader": {
+      "empire": {
+        "commander": "Командир",
+        "agent": "Агент"
+      },
+      "rebels": {
+        "captain": "Капитан",
+        "envoy": "Посланник"
+      }
+    },
+    "token": {
+      "empire": {
+        "loyalty": "Жетон лояльности",
+        "probe": "Зонд"
+      },
+      "rebels": {
+        "loyalty": "Жетон лояльности",
+        "sabotage": "Жетон саботажа",
+        "covert-cell": "Тайная ячейка"
+      }
+    }
+  }
+}

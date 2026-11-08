@@ -1,22 +1,38 @@
-// Scenario 1 — new game: TC-E2E-03, TC-E2E-04, TC-E2E-05 (AC-2, AC-3, AC-10).
-import { expect, test, type Page } from '@playwright/test';
-import { listGames, moveActions, piece, type PlayerView } from './support/api';
-import { version, waitForTable } from './support/board';
+// Scenario 1 — new game: TC-E2E-03, TC-E2E-04, TC-E2E-05 → SWR-003 TC-NEW-05, TC-NEW-06, TC-NEW-07 (AC-3).
+// SWR-003: catalog → game page → `/games/star-wars-rebellion/new` → `POST /api/sessions { gameId, setup }` → `/sessions/:id`.
+// SWR-004 (test-cases.md §8 "Замена"): rewritten on the new wire — setup `{ playerFaction, opponentType, aiDifficulty?,
+// ruleset, gameMode }`, response `{ sessionId, gameId, status, settings, view }`, view `kind: 'player'` with `viewer`.
+// Kept as separate cases next to PO TC-001..TC-003 (game-setup.spec.ts).
+import { expect, test } from '@playwright/test';
+import {
+  asPlayer,
+  DETAILS_KEYS,
+  listSessions,
+  moveActions,
+  piece,
+  REBELLION,
+  type SessionResponse,
+} from './support/api';
+import {
+  gamePath,
+  newSessionPath,
+  sessionPath,
+  urlOf,
+  version,
+  waitForTable,
+} from './support/board';
+import { idempotencyKeyOf, waitCreate } from './support/setup';
 import { T } from './support/testids';
 
-function waitCreate(page: Page) {
-  return page.waitForResponse(
-    (r) => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/games',
-  );
-}
-
-test('TC-E2E-03: menu → new game (Empire, AI, hard) → table of the created game', async ({
+test('TC-NEW-05 (was TC-E2E-03): catalog → game page → new session (Empire, AI, hard) → its table', async ({
   page,
   request,
 }) => {
   await page.goto('/');
-  await page.getByTestId(T.menuNewGame).click();
-  await expect(page).toHaveURL(/\/games\/new$/);
+  await page.getByTestId(T.gameCard(REBELLION)).click();
+  await expect(page).toHaveURL(urlOf(gamePath(REBELLION)));
+  await page.getByTestId(T.gameNewSession).click();
+  await expect(page).toHaveURL(urlOf(newSessionPath(REBELLION)));
 
   await page.getByTestId(T.setupFaction('empire')).click();
   await page.getByTestId(T.setupOpponent('ai')).click();
@@ -26,67 +42,109 @@ test('TC-E2E-03: menu → new game (Empire, AI, hard) → table of the created g
   await page.getByTestId(T.setupStart).click();
   const res = await created;
   expect(res.status()).toBe(201);
-  const body = (await res.json()) as { gameId: string; view: PlayerView };
   expect(res.request().postDataJSON()).toEqual({
-    humanFaction: 'empire',
-    opponent: { kind: 'ai', difficulty: 'hard' },
+    gameId: REBELLION,
+    setup: {
+      playerFaction: 'empire',
+      opponentType: 'ai',
+      aiDifficulty: 'hard',
+      ruleset: 'base',
+      gameMode: 'digital',
+    },
   });
+  expect(idempotencyKeyOf(res.request()), 'Idempotency-Key header').toBeTruthy();
+  const body = (await res.json()) as SessionResponse;
+  expect(Object.keys(body).sort()).toEqual(['gameId', 'sessionId', 'settings', 'status', 'view']);
+  expect(body.gameId).toBe(REBELLION);
+  expect(body.status).toBe('prototype');
+  expect(body.settings).toEqual({
+    playerFaction: 'empire',
+    opponentFaction: 'rebels',
+    opponentType: 'ai',
+    aiDifficulty: 'hard',
+    ruleset: 'base',
+    gameMode: 'digital',
+  });
+  const view = asPlayer(body.view);
+  expect(view.viewer).toBe('empire');
+  expect(view.settings).toEqual(body.settings);
+  expect(view).not.toHaveProperty('setup');
 
-  await expect(page).toHaveURL(new RegExp(`/games/${body.gameId}$`));
-  await waitForTable(page, body.gameId);
+  await expect(page).toHaveURL(urlOf(sessionPath(body.sessionId)));
+  await waitForTable(page, body.sessionId);
   expect(await version(page)).toBe(1);
 
-  const summary = (await listGames(request)).find((g) => g.gameId === body.gameId);
-  expect(summary?.setup).toEqual({
-    humanFaction: 'empire',
-    opponent: { kind: 'ai', difficulty: 'hard' },
+  const summary = (await listSessions(request, REBELLION)).find(
+    (s) => s.sessionId === body.sessionId,
+  );
+  expect(summary, 'created session is listed for its game').toBeDefined();
+  expect(summary?.gameId).toBe(REBELLION);
+  expect(summary?.status).toBe('prototype');
+  expect(Object.keys(summary?.details ?? {}).sort()).toEqual(DETAILS_KEYS);
+  expect(summary?.details).toMatchObject({
+    playerFaction: 'empire',
+    opponentFaction: 'rebels',
+    opponentType: 'ai',
+    aiDifficulty: 'hard',
+    ruleset: 'base',
+    gameMode: 'digital',
   });
 });
 
-test('TC-E2E-04: human opponent — difficulty unavailable, setup has no difficulty', async ({
+test('TC-NEW-06 (was TC-E2E-04): human opponent — difficulty unavailable, setup has no difficulty', async ({
   page,
 }) => {
-  await page.goto('/games/new');
+  await page.goto(newSessionPath(REBELLION));
   await page.getByTestId(T.setupFaction('empire')).click();
   await page.getByTestId(T.setupOpponent('human')).click();
 
-  const difficulty = page.getByTestId(T.setupDifficulty);
-  if (await difficulty.isVisible()) {
-    for (const d of ['easy', 'normal', 'hard'] as const) {
-      await expect(page.getByTestId(T.setupDifficultyOption(d))).toBeDisabled();
-    }
-  } else {
-    await expect(difficulty).toBeHidden();
-  }
+  // SWR-004 plan-frontend §2.1: the difficulty block is unmounted for a human opponent.
+  await expect(page.getByTestId(T.setupDifficulty)).toBeHidden();
 
   const created = waitCreate(page);
   await page.getByTestId(T.setupStart).click();
   const res = await created;
   expect(res.status()).toBe(201);
-  expect(res.request().postDataJSON()).toEqual({
-    humanFaction: 'empire',
-    opponent: { kind: 'human' },
+  const sent = res.request().postDataJSON() as { gameId: string; setup: Record<string, unknown> };
+  expect(sent).toEqual({
+    gameId: REBELLION,
+    setup: { playerFaction: 'empire', opponentType: 'human', ruleset: 'base', gameMode: 'digital' },
   });
-  const body = (await res.json()) as { gameId: string; view: PlayerView };
-  expect(body.view.setup.opponent).toEqual({ kind: 'human' });
-  await waitForTable(page, body.gameId);
+  expect(sent.setup).not.toHaveProperty('aiDifficulty');
+  const body = (await res.json()) as SessionResponse;
+  expect(body.settings.opponentType).toBe('human');
+  expect(body.settings.aiDifficulty).toBeNull();
+  expect(body.settings.opponentFaction).toBe('rebels');
+  await waitForTable(page, body.sessionId);
 });
 
-test('TC-E2E-05: new game as Rebellion — view is for the Rebellion', async ({ page }) => {
-  await page.goto('/games/new');
-  await page.getByTestId(T.setupFaction('rebellion')).click();
+test('TC-NEW-07 (was TC-E2E-05): new session as the Rebels — view is for the Rebels', async ({
+  page,
+}) => {
+  await page.goto(newSessionPath(REBELLION));
+  await page.getByTestId(T.setupFaction('rebels')).click();
   await page.getByTestId(T.setupOpponent('ai')).click();
 
   const created = waitCreate(page);
   await page.getByTestId(T.setupStart).click();
   const res = await created;
   expect(res.status()).toBe(201);
-  const { gameId, view } = (await res.json()) as { gameId: string; view: PlayerView };
+  const body = (await res.json()) as SessionResponse;
+  const view = asPlayer(body.view);
 
-  expect(view.setup.humanFaction).toBe('rebellion');
+  expect(view.viewer).toBe('rebels');
+  expect(body.settings.playerFaction).toBe('rebels');
   expect(view.rebelBase.systemId).not.toBeNull();
   const moves = moveActions(view);
   expect(moves.length).toBeGreaterThan(0);
-  for (const a of moves) expect(piece(view, a.pieceId).owner).toBe('rebellion');
-  await waitForTable(page, gameId);
+  for (const a of moves) expect(piece(view, a.pieceId).owner).toBe('rebels');
+  await waitForTable(page, body.sessionId);
+});
+
+test('TC-NEW-05 (old URL): SWR-002 `/games/new` is now an unknown game id → not found', async ({
+  page,
+}) => {
+  await page.goto('/games/new');
+  await expect(page.getByTestId(T.gameNotFound)).toBeVisible();
+  await expect(page.getByTestId(T.setupStart)).toHaveCount(0);
 });

@@ -1,0 +1,9 @@
+{
+  // Solution file: `tsc -b packages` builds every workspace package in dependency order (plan-backend D-9).
+  "files": [],
+  "references": [
+    { "path": "./platform" },
+    { "path": "./games/rebellion" },
+    { "path": "./games/forbidden-stars" }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "canvas": {
+    "label": "Galaxy map",
+    "instructions": "Arrow keys pan the map, plus and minus zoom, 0 fits the map, Esc clears the selection. Select objects and move them with the keyboard in the “Objects” tab.",
+    "mockCaption": "Temporary graphics · fictional systems (mock)"
+  },
+  "zoom": {
+    "in": "Zoom in",
+    "out": "Zoom out",
+    "fit": "Fit map",
+    "level": "{{percent}}%",
+    "levelLabel": "Zoom {{percent}}%"
+  },
+  "system": {
+    "unknown": "Unknown system",
+    "region": "Region: {{region}}",
+    "baseOwn": "Your base (hidden from the Empire)",
+    "baseRevealed": "Rebel base",
+    "neighbours": "Neighbours",
+    "objects_one": "Objects ({{count}})",
+    "objects_other": "Objects ({{count}})",
+    "noObjects": "No objects in this system."
+  },
+  "piece": {
+    "unknown": "Unknown object",
+    "unknownHint": "This object's type is hidden from you.",
+    "location": "Located in:"
+  },
+  "move": {
+    "success": "{{piece}} → {{system}}",
+    "successGroup_one": "{{count}} object → {{system}}",
+    "successGroup_other": "{{count}} objects → {{system}}",
+    "cancelled": "Move cancelled",
+    "illegalTarget": "Cannot move to {{system}}: no legal move"
+  },
+  "phase": {
+    "advanceMock": "End phase (mock)",
+    "advanced": "Round {{round}} · phase: {{phase}} (mock)"
+  },
+  "actions": {
+    "title": "Actions",
+    "moveTo": "Move to:",
+    "moveAll_one": "Move all mine ({{count}}) to:",
+    "moveAll_other": "Move all mine ({{count}}) to:",
+    "mockFootnote": "Targets are computed by temporary rules (mock).",
+    "enemyNoActions": "Opponent's object — no actions.",
+    "noMoves": "This object has no legal moves right now.",
+    "noMovesPhase": "No moves in this phase (mock)."
+  },
+  "panel": {
+    "emptyTitle": "Context",
+    "emptyHint": "Select a system or an object on the map or in the “Objects” tab.",
+    "gameActions": "Game actions"
+  },
+  "legend": {
+    "title": "Legend",
+    "empire": "Filled shape — {{faction}}",
+    "rebels": "Outlined shape — {{faction}}"
+  },
+  "log": {
+    "title": "Event log",
+    "GAME_CREATED": "Game created",
+    "PIECES_MOVED_one": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "PIECES_MOVED_other": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "PHASE_ADVANCED": "{{actor}}: phase {{fromPhase}} → {{phase}}, round {{round}}",
+    "TURN_ENDED": "{{actor}} passes the turn to {{toSide}}",
+    "HANDOFF_ACCEPTED": "{{actor}}: turn accepted",
+    "unknown": "Event ({{type}})",
+    "mockTag": "mock"
+  },
+  "list": {
+    "label": "Systems and objects",
+    "systemOption_one": "{{name}} · {{count}} object",
+    "systemOption_other": "{{name}} · {{count}} objects",
+    "targetSuffix": " · legal target",
+    "pieceOption": "{{name}} · {{faction}}",
+    "moveHere": "Move the selected object",
+    "moveSelected": "Move “{{piece}}” to:",
+    "moveHereTo": "Move here: {{system}}"
+  },
+  "sidebar": {
+    "label": "Game panel",
+    "tabsLabel": "Sections",
+    "tab": {
+      "log": "Log",
+      "objects": "Objects",
+      "game": "Game"
+    }
+  }
+}

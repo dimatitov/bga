@@ -1,0 +1,36 @@
+# W-API smoke: temp DB /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/smoke-wapi.db, PORT=3200 (dist from pnpm --filter @bga/api build)
+$ DATABASE_URL=file:<tmp> pnpm exec prisma migrate deploy
+Applying migration `20261107235651_init`
+Applying migration `20261108120000_sessions`
+Applying migration `20261108200000_session_status_idempotency`
+The following migration(s) have been applied:
+All migrations have been successfully applied.
+exit=0
+$ POST /api/sessions (Idempotency-Key K, defaults)
+HTTP/1.1 201 Created
+{"sessionId":"907840aa-9031-4f7e-9554-f06f680d6298","status":"prototype","settings":{"playerFaction":"rebels","opponentFaction":"empire","opponentType":"ai","aiDifficulty":"normal","ruleset":"base","gameMode":"digital"},"viewKind":"player","viewer":"rebels"}
+$ POST again (same key, same body)
+HTTP/1.1 200 OK
+Idempotent-Replay: true
+body identical to the 201 body
+$ POST same key, playerFaction empire
+{"ok":false,"error":{"code":"IDEMPOTENCY_KEY_REUSED","messageKey":"errors.idempotencyKeyReused"}} HTTP 409
+$ POST bad key
+{"ok":false,"error":{"code":"VALIDATION","messageKey":"errors.validation","details":{"issues":[{"path":["headers","idempotency-key"],"code":"invalid_format","message":"Invalid UUID"}]}}} HTTP 400
+$ POST rise-of-the-empire
+{"ok":false,"error":{"code":"SETUP_UNSUPPORTED","messageKey":"errors.rulesetUnavailable","details":{"unsupported":["ruleset"]}}} HTTP 422
+$ GET /api/sessions
+[{"sessionId":"907840aa-9031-4f7e-9554-f06f680d6298","gameId":"star-wars-rebellion","status":"prototype","version":1,"createdAt":"2026-11-08T04:56:28.425Z","updatedAt":"2026-11-08T04:56:28.425Z","details":{"playerFaction":"rebels","opponentFaction":"empire","opponentType":"ai","aiDifficulty":"normal","ruleset":"base","gameMode":"digital","round":1,"phase":"assignment"}}] HTTP 200
+$ sqlite: status / key columns
+[{"id":"907840aa-9031-4f7e-9554-f06f680d6298","status":"prototype","idempotencyKey":"3f2b8c4e-1a2b-4c3d-8e9f-0a1b2c3d4e5f"}]
+server stopped (pid 36287)
+port 3200 free
+server log:
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [RoutesResolver] SessionsController {/api/sessions}: +1ms
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +2ms
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +1ms
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +1ms
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +1ms
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [NestApplication] Nest application successfully started +2ms
+[Nest] 36287  - 11/08/2026, 7:56:28 AM     LOG [SessionsService] sessionId=907840aa-9031-4f7e-9554-f06f680d6298 gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+[Nest] 36287  - 11/08/2026, 7:56:28 AM    WARN [SessionsService] sessionId=- gameId=star-wars-rebellion code=IDEMPOTENCY_KEY_REUSED status=409

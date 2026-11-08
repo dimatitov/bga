@@ -1,0 +1,66 @@
+$ pnpm --filter @bga/api lint
+
+> @bga/api@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> eslint . --max-warnings=0
+
+exit=0
+
+$ pnpm --filter @bga/game-rebellion lint
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+exit=0
+
+$ pnpm exec eslint --max-warnings=0 eslint.config.mjs apps/web/src/games/registry.consistency.test.ts
+exit=0
+
+$ pnpm exec prettier --check apps/api packages/games/rebellion eslint.config.mjs apps/web/src/games/registry.consistency.test.ts
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ grep -rnE '@bga/game-' apps/api/src/sessions apps/api/src/common apps/api/src/persistence apps/api/src/health apps/api/src/app.module.ts apps/api/src/app.factory.ts apps/api/src/main.ts; test $? -eq 1
+exit=0
+
+$ grep -rniwE 'star-wars-rebellion|forbidden-stars|fake-game|faction|empire|rebellion|phase|round|piece|system|rebelBase' apps/api/src/sessions apps/api/src/common; test $? -eq 1
+exit=0
+
+$ grep -rnE 'import\(|require\(|createRequire|readdirSync' apps/api/src; test $? -eq 1
+exit=0
+
+$ grep -rn 'logger\.' apps/api/src
+apps/api/src/common/api-exception.filter.ts:68:      this.logger.error(
+apps/api/src/sessions/sessions.service.ts:124:      this.logger.warn(`sessionId=${row.id} gameId=${row.gameId} code=GAME_UNAVAILABLE status=422`);
+apps/api/src/sessions/sessions.service.ts:143:    this.logger.warn(`sessionId=${row.id} gameId=${row.gameId} code=${code} skipped in list`);
+apps/api/src/sessions/session-commands.service.ts:51:      this.logger.warn(`sessionId=${row.id} gameId=${row.gameId} code=VERSION_CONFLICT status=409`);
+exit=0
+
+$ ls apps/api/src/games apps/api/src/commands; test $? -ne 0
+ls: apps/api/src/commands: No such file or directory
+ls: apps/api/src/games: No such file or directory
+exit=0
+
+$ printf "import { mockScenario } from '@bga/game-rebellion/scenario';
+export const x = mockScenario;
+" > "$TMPDIR/probe.txt"; pnpm exec eslint --stdin --stdin-filename apps/api/src/app.module.ts < "$TMPDIR/probe.txt"; test $? -eq 1
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/app.module.ts
+  1:1  error  '@bga/game-rebellion/scenario' import is restricted from being used by a pattern. Shared server code must not import game packages — use the game registry (AC-5)  no-restricted-imports
+
+✖ 1 problem (1 error, 0 warnings)
+
+exit=0
+
+$ pnpm --filter @bga/api lint
+
+> @bga/api@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> eslint . --max-warnings=0
+
+exit=0
+
+$ pnpm exec prettier --check apps/api packages/games/rebellion eslint.config.mjs apps/web/src/games/registry.consistency.test.ts
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+

@@ -2,8 +2,8 @@ import swc from 'unplugin-swc';
 import { defaultServerConditions } from 'vite';
 import { defineConfig } from 'vitest/config';
 
-// `@swr/source` → workspace packages are read from TypeScript sources (no `dist` needed).
-const conditions = ['@swr/source', ...defaultServerConditions];
+// `@bga/source` → workspace packages are read from TypeScript sources (no `dist` needed).
+const conditions = ['@bga/source', ...defaultServerConditions];
 
 export default defineConfig({
   // SWC emits decorator metadata (esbuild/oxc do not) — required for Nest DI by type.
@@ -11,7 +11,7 @@ export default defineConfig({
   resolve: { conditions },
   ssr: { resolve: { conditions } },
   test: {
-    include: ['test/**/*.int.test.ts'],
+    include: ['test/**/*.int.test.ts', 'test/**/*.unit.test.ts'],
     globalSetup: ['test/global-setup.ts'],
     pool: 'forks',
     testTimeout: 20_000,

@@ -1,0 +1,15 @@
+$ pnpm --filter @bga/game-rebellion test   # 2026-11-08T04:37:51Z
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  20 passed (20)
+      Tests  200 passed (200)
+   Start at  07:37:52
+   Duration  3.14s (transform 2.96s, setup 0ms, import 7.31s, tests 3.29s, environment 2ms)
+
+exit=0

@@ -1,0 +1,13 @@
+# Vitest/node:test counts before (SWR-002 tree, `pnpm -r run test` + `node --test scripts/`, run 2026-11-08 before R1)
+# and after R1 / R2 (from w0r-r1-verify.log / w0r-r2-verify.log).
+package                         before                  after R1                after R2
+@swr/contracts                  1 file / 34 tests       -> rebellion test/schema
+@swr/game-data                  2 files / 13 tests      -> rebellion test/{board,scenario}
+@swr/game-core                  7 files / 48 tests      -> rebellion test/rules
+@bga/game-rebellion             -                       10 files / 95 tests     14 files / 108 tests (+definition, ai, assets, schema/details)
+@bga/platform                   -                       0 (--passWithNoTests)   3 files / 32 tests (flag removed)
+@bga/game-forbidden-stars       -                       -                       2 files / 5 tests
+apps/web                        14 files / 91 tests     14 files / 91 tests     14 files / 91 tests
+apps/api                        7 files / 58 tests      7 files / 58 tests      7 files / 58 tests
+scripts (node --test)           231 pass                231 pass                358 pass (+124 eslint-boundaries, +3 module-composition)
+packages total                  95                      95 (34+13+48, equal)

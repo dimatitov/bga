@@ -1,0 +1,55 @@
+{
+  "page": {
+    "title": "Game table",
+    "skipToList": "Skip to the objects list"
+  },
+  "topBar": {
+    "backToGame": "To game",
+    "vsAi": "vs AI · {{difficulty}}",
+    "vsHuman": "vs the second player",
+    "round": "Round {{round}}",
+    "phase": "Phase: {{phase}}",
+    "turn": "Turn:",
+    "endTurn": "Pass the turn",
+    "backToGameIcon": "To game",
+    "label": "Game bar"
+  },
+  "save": {
+    "idle": "Autosave",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "error": "Not saved"
+  },
+  "info": {
+    "gameId": "Game",
+    "side": "Your side",
+    "opponent": "Opponent",
+    "opponentAi": "AI · {{difficulty}}",
+    "opponentHuman": "Human at the table",
+    "version": "State version",
+    "base": "Rebel base",
+    "baseKnown": "{{system}}",
+    "baseUnknown": "unknown",
+    "status": "Status"
+  },
+  "ai": {
+    "inactive": "AI opponent: not active in the prototype"
+  },
+  "invalidView": {
+    "title": "Incompatible game data",
+    "text": "This saved game cannot be shown by this version of the app."
+  },
+  "handoff": {
+    "title": {
+      "rebels": "Pass the device to the Rebels player",
+      "empire": "Pass the device to the Empire player"
+    },
+    "text": "The map is hidden so the other side's information stays secret.",
+    "round": "Round {{round}} · {{phase}}",
+    "accept": {
+      "rebels": "I am the Rebels",
+      "empire": "I am the Empire"
+    },
+    "trustNote": "The confirmation does not check who holds the device: pass it on honestly."
+  }
+}

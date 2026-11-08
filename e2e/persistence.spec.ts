@@ -1,24 +1,37 @@
-// Scenarios 2 & 6 — save/restore: TC-E2E-22, TC-E2E-23, TC-E2E-23b (AC-3, AC-8, AC-10).
-// Relies on `workers: 1`: "Continue" opens the most recently updated game in the whole e2e DB.
+// Scenarios 2 & 6 — save/restore: TC-E2E-22, TC-E2E-23 → TC-GP-14, TC-E2E-23b → TC-GP-15 (AC-4).
+// SWR-003: reload of `/sessions/:id`; "Continue" and "recent sessions" live on the game page `/games/star-wars-rebellion`.
+// Relies on `workers: 1`: "Continue" opens the most recently updated Rebellion session of the whole e2e DB
+// (only Rebellion sessions can be created in e2e, so "latest Rebellion" = "latest overall").
 import { expect, test } from '@playwright/test';
-import { createGame, getView, listGames, pickMove, postCommand } from './support/api';
+import {
+  createSession,
+  getView,
+  listSessions,
+  pickMove,
+  postCommand,
+  RECENT_SESSIONS_LIMIT,
+  REBELLION,
+} from './support/api';
 import {
   dbg,
-  openGame,
+  gamePath,
+  openSession,
   openSidebarTab,
+  sessionPath,
+  urlOf,
   version,
   waitForCommand,
   waitForTable,
 } from './support/board';
-import { T } from './support/testids';
+import { RECENT_SESSION_ITEM, RECENT_SESSION_PREFIX, T } from './support/testids';
 
-test('TC-E2E-22: after a move, reload restores the state from the server', async ({
+test('TC-E2E-22: after a move, reload of /sessions/:id restores the state from the server', async ({
   page,
   request,
 }) => {
-  const { gameId, view } = await createGame(request);
+  const { sessionId, view } = await createSession(request);
   const move = pickMove(view);
-  await openGame(page, gameId);
+  await openSession(page, sessionId);
 
   const pos = await dbg.piecePos(page, move.pieceId);
   await page.mouse.click(pos.x, pos.y);
@@ -28,7 +41,8 @@ test('TC-E2E-22: after a move, reload restores the state from the server', async
   await expect.poll(() => version(page)).toBe(view.version + 1);
 
   await page.reload();
-  await waitForTable(page, gameId);
+  await expect(page).toHaveURL(urlOf(sessionPath(sessionId)));
+  await waitForTable(page, sessionId);
   expect(await version(page)).toBe(view.version + 1);
   await expect(page.getByTestId(T.pieceItem(move.pieceId))).toHaveAttribute(
     'data-system-id',
@@ -40,30 +54,35 @@ test('TC-E2E-22: after a move, reload restores the state from the server', async
   await expect(page.getByTestId(T.eventLogItem)).toHaveCount(view.log.length + 1);
 });
 
-test('TC-E2E-23: "Continue" in a fresh browser context opens the latest game with its state', async ({
+test('TC-GP-14 (was TC-E2E-23): "Continue" on the game page in a fresh context opens the latest session', async ({
   browser,
   request,
 }) => {
-  const { gameId, view } = await createGame(request);
+  const older = await createSession(request);
+  const { sessionId, view } = await createSession(request);
   const move = pickMove(view);
-  const res = await postCommand(request, view, {
+  const res = await postCommand(request, sessionId, view, {
     type: 'MOVE_PIECES',
     pieceIds: [move.pieceId],
     fromSystemId: move.fromSystemId,
     toSystemId: move.toSystemId,
   });
   expect(res.status()).toBe(200);
-  expect((await listGames(request))[0]?.gameId).toBe(gameId);
+  const list = await listSessions(request, REBELLION);
+  expect(list[0]?.sessionId).toBe(sessionId);
+  expect(list.map((s) => s.sessionId)).toContain(older.sessionId);
 
   const context = await browser.newContext();
   try {
     const page = await context.newPage();
     await page.goto('/');
-    const cont = page.getByTestId(T.menuContinue);
+    await page.getByTestId(T.gameCard(REBELLION)).click();
+    await expect(page).toHaveURL(urlOf(gamePath(REBELLION)));
+    const cont = page.getByTestId(T.gameContinue);
     await expect(cont).toBeEnabled();
     await cont.click();
-    await expect(page).toHaveURL(new RegExp(`/games/${gameId}$`));
-    await waitForTable(page, gameId);
+    await expect(page).toHaveURL(urlOf(sessionPath(sessionId)));
+    await waitForTable(page, sessionId);
     expect(await version(page)).toBe(view.version + 1);
     await expect(page.getByTestId(T.pieceItem(move.pieceId))).toHaveAttribute(
       'data-system-id',
@@ -76,28 +95,34 @@ test('TC-E2E-23: "Continue" in a fresh browser context opens the latest game wit
   }
 });
 
-test('TC-E2E-23b: "Recent games" lists ≤ 5 games newest first and opens the chosen one', async ({
+test('TC-GP-15 (was TC-E2E-23b): game page lists exactly 5 recent sessions newest first and opens one', async ({
   page,
   request,
 }) => {
-  const older = await createGame(request);
-  const newer = await createGame(request);
+  // ≥ 6 sessions of this game regardless of what earlier specs created.
+  for (let i = 0; i < RECENT_SESSIONS_LIMIT + 1; i++) await createSession(request);
+  const summaries = await listSessions(request, REBELLION);
+  expect(summaries.length).toBeGreaterThan(RECENT_SESSIONS_LIMIT);
+  expect(summaries.every((s) => s.gameId === REBELLION)).toBe(true);
+  const updated = summaries.map((s) => Date.parse(s.updatedAt));
+  expect(updated, 'API order: updatedAt desc').toEqual([...updated].sort((a, b) => b - a));
 
-  await page.goto('/');
-  const items = page.getByTestId(T.recentGames).locator('[data-testid^="recent-game-"]');
-  const count = await items.count();
-  expect(count).toBeGreaterThanOrEqual(2);
-  expect(count).toBeLessThanOrEqual(5);
+  await page.goto(gamePath(REBELLION));
+  const items = page.getByTestId(T.gameRecentSessions).locator(RECENT_SESSION_ITEM);
+  await expect(items).toHaveCount(RECENT_SESSIONS_LIMIT);
 
-  const ids = await items.evaluateAll((els) =>
-    els.map((el) => el.getAttribute('data-testid')!.replace('recent-game-', '')),
+  const ids = await items.evaluateAll(
+    (els, prefix) => els.map((el) => el.getAttribute('data-testid')!.slice(prefix.length)),
+    RECENT_SESSION_PREFIX,
   );
-  const summaries = await listGames(request);
-  expect(ids).toEqual(summaries.slice(0, count).map((s) => s.gameId));
-  expect(ids.indexOf(newer.gameId)).toBeLessThan(ids.indexOf(older.gameId));
+  expect(ids).toEqual(summaries.slice(0, RECENT_SESSIONS_LIMIT).map((s) => s.sessionId));
 
-  await page.getByTestId(T.recentGame(older.gameId)).click();
-  await expect(page).toHaveURL(new RegExp(`/games/${older.gameId}$`));
-  await waitForTable(page, older.gameId);
-  expect(await version(page)).toBe((await getView(request, older.gameId)).version);
+  // "Continue" points at the newest one (Q-14: it is also the first recent item).
+  await expect(page.getByTestId(T.gameContinue)).toBeEnabled();
+
+  const oldestVisible = ids.at(-1)!;
+  await page.getByTestId(T.recentSession(oldestVisible)).click();
+  await expect(page).toHaveURL(urlOf(sessionPath(oldestVisible)));
+  await waitForTable(page, oldestVisible);
+  expect(await version(page)).toBe((await getView(request, oldestVisible)).version);
 });

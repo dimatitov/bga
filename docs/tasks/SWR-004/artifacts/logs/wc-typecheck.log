@@ -1,0 +1,6 @@
+$ pnpm --filter @bga/game-rebellion typecheck   # 2026-11-08T04:37:55Z
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+exit=0

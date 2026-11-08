@@ -1,0 +1,103 @@
+# W-API smoke: built API (apps/api/dist) on PORT=3200 with a temp DB = fresh copy of the migrated dev.db copy (/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/smoke.db); the real dev.db is not used
+$ pnpm --filter @bga/api build   # see wapi-build.log
+$ DATABASE_URL=file:$S/smoke.db PORT=3200 node apps/api/dist/main.js &
+
+$ curl http://localhost:3200/api/health
+{"status":"ok"}
+HTTP 200
+exit=0
+
+$ curl http://localhost:3200/api/sessions?gameId=star-wars-rebellion
+[{"sessionId":"ff6adda5-38dc-4d11-a711-1790672e5063","gameId":"star-wars-rebellion","version":7,"createdAt":"2026-11-08T00:48:14.825Z","updatedAt":"2026-11-08T00:50:40.611Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"hard","round":2,"phase":"assignment"}},{"sessionId":"79fcaa89-4020-40a5-8527-7e4426af5e3e","gameId":"star-wars-rebellion","version":2,"createdAt":"2026-11-08T00:39:58.591Z","updatedAt":"2026-11-08T00:40:29.329Z","details":{"humanFaction":"rebellion","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}},{"sessionId":"b15cdc26-6d4e-4912-99a5-5ea115d8bc89","gameId":"star-wars-rebellion","version":1,"createdAt":"2026-11-08T00:32:27.566Z","updatedAt":"2026-11-08T00:32:27.566Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}}]
+HTTP 200
+exit=0
+
+# newest migrated session: ff6adda5-38dc-4d11-a711-1790672e5063 version=7 humanFaction=empire
+$ curl -o /dev/null http://localhost:3200/api/sessions/ff6adda5-38dc-4d11-a711-1790672e5063
+
+HTTP 200
+exit=0
+
+$ curl http://localhost:3200/api/sessions/ff6adda5-38dc-4d11-a711-1790672e5063   (summary of the body)
+{"sessionId":"ff6adda5-38dc-4d11-a711-1790672e5063","gameId":"star-wars-rebellion","viewKeys":["id","version","round","phase","setup","systems","pieces","rebelBase","log","legalActions"],"version":7,"round":2,"phase":"assignment","rebelBaseSystemId":null}
+exit=0
+
+$ curl -X POST -H Content-Type: application/json -d {"actor":"empire","expectedVersion":7,"command":{"type":"ADVANCE_PHASE"}} http://localhost:3200/api/sessions/ff6adda5-38dc-4d11-a711-1790672e5063/commands
+{"ok":true,"view":{"id":"ff6adda5-38dc-4d11-a711-1790672e5063","version":8,"round":2,"phase":"command","setup":{"humanFaction":"empire","opponent":{"kind":"ai","difficulty":"hard"}},"systems":[{"id":"sys-aurelis","nameKey":"systems.sys-aurelis","regionId":"reg-inner","adjacentSystemIds":["sys-brevora","sys-cindral"]},{"id":"sys-brevora","nameKey":"systems.sys-brevora","regionId":"reg-inner","adjacentSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"id":"sys-cindral","nameKey":"systems.sys-cindral","regionId":"reg-inner","adjacentSystemIds":["sys-aurelis","sys-brevora","sys-eskara"]},{"id":"sys-dovmaren","nameKey":"systems.sys-dovmaren","regionId":"reg-mid","adjacentSystemIds":["sys-brevora","sys-eskara","sys-fennix","sys-galdor"]},{"id":"sys-eskara","nameKey":"systems.sys-eskara","regionId":"reg-mid","adjacentSystemIds":["sys-cindral","sys-dovmaren","sys-hollin"]},{"id":"sys-fennix","nameKey":"systems.sys-fennix","regionId":"reg-mid","adjacentSystemIds":["sys-brevora","sys-dovmaren","sys-iskra"]},{"id":"sys-galdor","nameKey":"systems.sys-galdor","regionId":"reg-outer","adjacentSystemIds":["sys-dovmaren","sys-iskra","sys-hollin","sys-jorvan"]},{"id":"sys-hollin","nameKey":"systems.sys-hollin","regionId":"reg-outer","adjacentSystemIds":["sys-eskara","sys-galdor","sys-jorvan"]},{"id":"sys-iskra","nameKey":"systems.sys-iskra","regionId":"reg-outer","adjacentSystemIds":["sys-fennix","sys-galdor","sys-jorvan"]},{"id":"sys-jorvan","nameKey":"systems.sys-jorvan","regionId":"reg-outer","adjacentSystemIds":["sys-galdor","sys-hollin","sys-iskra"]}],"pieces":[{"id":"pc-01","kind":"unit","owner":"empire","typeKey":"unit.empire.capital-ship","systemId":"sys-brevora"},{"id":"pc-02","kind":"unit","owner":"empire","typeKey":"unit.empire.capital-ship","systemId":"sys-cindral"},{"id":"pc-03","kind":"unit","owner":"empire","typeKey":"unit.empire.fighter-wing","systemId":"sys-aurelis"},{"id":"pc-04","kind":"unit","owner":"empire","typeKey":"unit.empire.fighter-wing","systemId":"sys-aurelis"},{"id":"pc-05","kind":"unit","owner":"empire","typeKey":"unit.empire.ground-trooper","systemId":"sys-brevora"},{"id":"pc-06","kind":"unit","owner":"empire","typeKey":"unit.empire.ground-trooper","systemId":"sys-brevora"},{"id":"pc-07","kind":"unit","owner":"empire","typeKey":"unit.empire.ground-trooper","systemId":"sys-cindral"},{"id":"pc-08","kind":"leader","owner":"empire","typeKey":"leader.empire.commander","systemId":"sys-brevora"},{"id":"pc-09","kind":"leader","owner":"empire","typeKey":"leader.empire.agent","systemId":"sys-cindral"},{"id":"pc-10","kind":"token","owner":"empire","typeKey":"token.empire.loyalty","systemId":"sys-brevora"},{"id":"pc-11","kind":"token","owner":"empire","typeKey":"token.empire.probe","systemId":"sys-dovmaren"},{"id":"pc-12","kind":"unit","owner":"rebellion","typeKey":"unit.rebellion.cruiser","systemId":"sys-iskra"},{"id":"pc-13","kind":"unit","owner":"rebellion","typeKey":"unit.rebellion.fighter-wing","systemId":"sys-iskra"},{"id":"pc-14","kind":"unit","owner":"rebellion","typeKey":"unit.rebellion.fighter-wing","systemId":"sys-iskra"},{"id":"pc-15","kind":"unit","owner":"rebellion","typeKey":"unit.rebellion.ground-trooper","systemId":"sys-jorvan"},{"id":"pc-16","kind":"unit","owner":"rebellion","typeKey":"unit.rebellion.ground-trooper","systemId":"sys-jorvan"},{"id":"pc-17","kind":"leader","owner":"rebellion","typeKey":"leader.rebellion.captain","systemId":"sys-iskra"},{"id":"pc-18","kind":"leader","owner":"rebellion","typeKey":"leader.rebellion.envoy","systemId":"sys-hollin"},{"id":"pc-19","kind":"token","owner":"rebellion","typeKey":"token.rebellion.loyalty","systemId":"sys-hollin"},{"id":"pc-20","kind":"token","owner":"rebellion","typeKey":"token.rebellion.sabotage","systemId":"sys-galdor"},{"id":"pc-21","kind":"token","owner":"rebellion","typeKey":"unknown","systemId":"sys-fennix","hidden":true}],"rebelBase":{"systemId":null,"revealed":false},"log":[{"seq":1,"at":"2026-11-08T00:48:14.825Z","type":"GAME_CREATED","actor":"system","payload":{"scenarioId":"mock-scenario-v1"}},{"seq":2,"at":"2026-11-08T00:49:21.206Z","type":"PIECES_MOVED","actor":"empire","payload":{"pieceIds":["pc-01"],"fromSystemId":"sys-aurelis","toSystemId":"sys-brevora"}},{"seq":3,"at":"2026-11-08T00:49:36.363Z","type":"PIECES_MOVED","actor":"empire","payload":{"pieceIds":["pc-02"],"fromSystemId":"sys-aurelis","toSystemId":"sys-cindral"}},{"seq":4,"at":"2026-11-08T00:49:58.734Z","type":"PHASE_ADVANCED","actor":"empire","payload":{"fromRound":1,"fromPhase":"assignment","toRound":1,"toPhase":"command"}},{"seq":5,"at":"2026-11-08T00:49:59.811Z","type":"PHASE_ADVANCED","actor":"empire","payload":{"fromRound":1,"fromPhase":"command","toRound":1,"toPhase":"refresh"}},{"seq":6,"at":"2026-11-08T00:50:00.900Z","type":"PHASE_ADVANCED","actor":"empire","payload":{"fromRound":1,"fromPhase":"refresh","toRound":2,"toPhase":"assignment"}},{"seq":7,"at":"2026-11-08T00:50:40.611Z","type":"PIECES_MOVED","actor":"empire","payload":{"pieceIds":["pc-08"],"fromSystemId":"sys-aurelis","toSystemId":"sys-brevora"}},{"seq":8,"at":"2026-11-08T02:37:50.760Z","type":"PHASE_ADVANCED","actor":"empire","payload":{"fromRound":2,"fromPhase":"assignment","toRound":2,"toPhase":"command"}}],"legalActions":[{"type":"MOVE_PIECES","pieceId":"pc-01","toSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"type":"MOVE_PIECES","pieceId":"pc-02","toSystemIds":["sys-aurelis","sys-brevora","sys-eskara"]},{"type":"MOVE_PIECES","pieceId":"pc-03","toSystemIds":["sys-brevora","sys-cindral"]},{"type":"MOVE_PIECES","pieceId":"pc-04","toSystemIds":["sys-brevora","sys-cindral"]},{"type":"MOVE_PIECES","pieceId":"pc-05","toSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"type":"MOVE_PIECES","pieceId":"pc-06","toSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"type":"MOVE_PIECES","pieceId":"pc-07","toSystemIds":["sys-aurelis","sys-brevora","sys-eskara"]},{"type":"MOVE_PIECES","pieceId":"pc-08","toSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"type":"MOVE_PIECES","pieceId":"pc-09","toSystemIds":["sys-aurelis","sys-brevora","sys-eskara"]},{"type":"MOVE_PIECES","pieceId":"pc-10","toSystemIds":["sys-aurelis","sys-cindral","sys-dovmaren","sys-fennix"]},{"type":"MOVE_PIECES","pieceId":"pc-11","toSystemIds":["sys-brevora","sys-eskara","sys-fennix","sys-galdor"]},{"type":"ADVANCE_PHASE"}]},"events":[{"type":"PHASE_ADVANCED","actor":"empire","payload":{"fromRound":2,"fromPhase":"assignment","toRound":2,"toPhase":"command"},"seq":8,"at":"2026-11-08T02:37:50.760Z"}]}
+HTTP 200
+exit=0
+
+$ curl -X POST -H Content-Type: application/json -d {"actor":"empire","expectedVersion":7,"command":{"type":"ADVANCE_PHASE"}} http://localhost:3200/api/sessions/ff6adda5-38dc-4d11-a711-1790672e5063/commands
+{"ok":false,"error":{"code":"VERSION_CONFLICT","messageKey":"errors.versionConflict","details":{"currentVersion":8}}}
+HTTP 409
+exit=0
+
+$ curl http://localhost:3200/api/sessions?gameId=star-wars-rebellion
+[{"sessionId":"ff6adda5-38dc-4d11-a711-1790672e5063","gameId":"star-wars-rebellion","version":8,"createdAt":"2026-11-08T00:48:14.825Z","updatedAt":"2026-11-08T02:37:50.760Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"hard","round":2,"phase":"command"}},{"sessionId":"79fcaa89-4020-40a5-8527-7e4426af5e3e","gameId":"star-wars-rebellion","version":2,"createdAt":"2026-11-08T00:39:58.591Z","updatedAt":"2026-11-08T00:40:29.329Z","details":{"humanFaction":"rebellion","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}},{"sessionId":"b15cdc26-6d4e-4912-99a5-5ea115d8bc89","gameId":"star-wars-rebellion","version":1,"createdAt":"2026-11-08T00:32:27.566Z","updatedAt":"2026-11-08T00:32:27.566Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}}]
+HTTP 200
+exit=0
+
+$ curl -X POST -H Content-Type: application/json -d {"gameId":"star-wars-rebellion","setup":{"humanFaction":"empire","opponent":{"kind":"ai"}}} -o /dev/null http://localhost:3200/api/sessions
+
+HTTP 201
+exit=0
+
+$ curl http://localhost:3200/api/sessions
+[{"sessionId":"4088a20e-c081-4458-a139-04a200e1093f","gameId":"star-wars-rebellion","version":1,"createdAt":"2026-11-08T02:37:50.823Z","updatedAt":"2026-11-08T02:37:50.823Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}},{"sessionId":"ff6adda5-38dc-4d11-a711-1790672e5063","gameId":"star-wars-rebellion","version":8,"createdAt":"2026-11-08T00:48:14.825Z","updatedAt":"2026-11-08T02:37:50.760Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"hard","round":2,"phase":"command"}},{"sessionId":"79fcaa89-4020-40a5-8527-7e4426af5e3e","gameId":"star-wars-rebellion","version":2,"createdAt":"2026-11-08T00:39:58.591Z","updatedAt":"2026-11-08T00:40:29.329Z","details":{"humanFaction":"rebellion","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}},{"sessionId":"b15cdc26-6d4e-4912-99a5-5ea115d8bc89","gameId":"star-wars-rebellion","version":1,"createdAt":"2026-11-08T00:32:27.566Z","updatedAt":"2026-11-08T00:32:27.566Z","details":{"humanFaction":"empire","opponent":"ai","difficulty":"normal","round":1,"phase":"assignment"}}]
+HTTP 200
+exit=0
+
+$ curl http://localhost:3200/api/sessions?gameId=forbidden-stars
+[]
+HTTP 200
+exit=0
+
+$ curl -X POST -H Content-Type: application/json -d {"gameId":"forbidden-stars","setup":{}} http://localhost:3200/api/sessions
+{"ok":false,"error":{"code":"GAME_UNAVAILABLE","messageKey":"errors.gameUnavailable"}}
+HTTP 422
+exit=0
+
+$ curl -X POST -H Content-Type: application/json -d {"gameId":"unknown-game","setup":{}} http://localhost:3200/api/sessions
+{"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.gameNotFound"}}
+HTTP 404
+exit=0
+
+$ curl http://localhost:3200/api/sessions?gameId=a&gameId=b
+{"ok":false,"error":{"code":"VALIDATION","messageKey":"errors.validation","details":{"issues":[{"path":["gameId"],"code":"invalid_type","message":"Invalid input: expected string, received array"}]}}}
+HTTP 400
+exit=0
+
+$ curl http://localhost:3200/api/sessions/does-not-exist
+{"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.sessionNotFound"}}
+HTTP 404
+exit=0
+
+$ curl http://localhost:3200/api/games
+{"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.notFound"}}
+HTTP 404
+exit=0
+
+$ curl -X POST -H Content-Type: application/json -d {"humanFaction":"empire","opponent":{"kind":"ai"}} http://localhost:3200/api/games
+{"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.notFound"}}
+HTTP 404
+exit=0
+
+$ kill <pid>   # stop the smoke server
+exit=0
+$ lsof -nP -iTCP:3200 -sTCP:LISTEN   # port is free again
+exit=1 (1 = nothing listening)
+$ cat smoke-server.out
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +19ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGameRegistryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPersistenceModule dependencies initialized[39m[38;5;3m +5ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +14ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mHealthController {/api/health}:[39m[38;5;3m +3ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mSessionsController {/api/sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sessions, POST} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sessions, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sessions/:sessionId, GET} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/sessions/:sessionId/commands, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 44947  - [39m11/08/2026, 5:37:37 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +3ms[39m

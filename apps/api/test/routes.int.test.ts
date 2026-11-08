@@ -8,7 +8,7 @@ import { API_ROOT } from './global-setup';
 import {
   EMPIRE_AI,
   HIDDEN_REBEL,
-  createGame,
+  createRebellionSession,
   dbSnapshot,
   expectError,
   movable,
@@ -60,49 +60,75 @@ function sourceFiles(dir: string): string[] {
 describe('routes and error bodies', () => {
   let db: TestDb;
   let app: INestApplication;
-  let gameId: string;
+  let sessionId: string;
 
   beforeEach(async () => {
     db = createTestDb();
     app = await startApp(db.url);
-    gameId = (await createGame(app, EMPIRE_AI)).gameId;
+    sessionId = (await createRebellionSession(app, EMPIRE_AI)).sessionId;
   });
 
   afterEach(async () => {
     await stopApp(app, db);
   });
 
-  it('TC-API-23 / TC-ARCH-06: the only mutating routes are POST /api/games and POST /api/games/:id/commands', () => {
+  it('TC-SES-15 / TC-ARCH-03: routes are exactly the spec table; mutating only POST /api/sessions(/:id/commands)', () => {
     const routes = listRoutes(app);
     expect(routes).toEqual([
-      'GET /api/games',
-      'GET /api/games/:id',
       'GET /api/health',
-      'POST /api/games',
-      'POST /api/games/:id/commands',
+      'GET /api/sessions',
+      'GET /api/sessions/:sessionId',
+      'POST /api/sessions',
+      'POST /api/sessions/:sessionId/commands',
     ]);
     const src = sourceFiles(join(API_ROOT, 'src'));
     for (const file of src) {
       expect(readFileSync(file, 'utf8')).not.toMatch(/@(Put|Patch|Delete|All)\(/);
     }
-    // `state` is written only by GamesRepository (insertGame / commitCommand).
-    const writers = src.filter((f) =>
-      /\.(game|gameEvent)\.(create|createMany|update|updateMany|upsert|delete|deleteMany)\(/.test(
-        readFileSync(f, 'utf8'),
-      ),
-    );
-    expect(writers.map((f) => f.slice(API_ROOT.length))).toEqual(['src/games/games.repository.ts']);
+    // Session / SessionEvent are written only by SessionsRepository (insert / commit).
+    const prismaWrite =
+      /\.(session|sessionEvent)\.(create|createMany|update|updateMany|upsert|delete|deleteMany)\(/;
+    const writers = src.filter((f) => prismaWrite.test(readFileSync(f, 'utf8')));
+    expect(writers.map((f) => f.slice(API_ROOT.length))).toEqual([
+      'src/sessions/sessions.repository.ts',
+    ]);
+    // Raw SQL is not used anywhere in src.
+    for (const file of src) {
+      expect(readFileSync(file, 'utf8')).not.toMatch(/\$(executeRaw|queryRaw)/);
+    }
   });
 
   it.each(['put', 'patch', 'delete'] as const)(
-    'TC-API-24: %s /api/games/:id → 404 unified body, state unchanged',
+    'TC-API-24: %s /api/sessions/:id → 404 unified body, state unchanged',
     async (method) => {
-      const before = await dbSnapshot(app, gameId);
-      const res = await api(app)[method](`/api/games/${gameId}`).send({ version: 99 });
+      const before = await dbSnapshot(app, sessionId);
+      const res = await api(app)[method](`/api/sessions/${sessionId}`).send({ version: 99 });
       expectError(res, 404, 'NOT_FOUND', 'errors.notFound');
-      expect(await dbSnapshot(app, gameId)).toEqual(before);
+      expect(await dbSnapshot(app, sessionId)).toEqual(before);
     },
   );
+
+  it('TC-SES-14: the SWR-002 /api/games* routes are gone → 404 unified body, nothing written', async () => {
+    const before = await dbSnapshot(app, sessionId);
+    const m = movable('empire');
+    const responses = [
+      await api(app).get('/api/games'),
+      await api(app).post('/api/games').send(EMPIRE_AI),
+      await api(app).get(`/api/games/${sessionId}`),
+      await api(app)
+        .post(`/api/games/${sessionId}/commands`)
+        .send(moveEnv('empire', 1, [m.pieceId], m.from, m.adjacent)),
+    ];
+    for (const res of responses) {
+      expect(res.status).toBe(404);
+      expect(res.body).toEqual({
+        ok: false,
+        error: { code: 'NOT_FOUND', messageKey: 'errors.notFound' },
+      });
+    }
+    expect(await dbSnapshot(app, sessionId)).toEqual(before);
+    expect(await prismaOf(app).session.count()).toBe(1);
+  });
 
   it('TC-API-24: unknown route → 404 unified body', async () => {
     const res = await api(app).get('/api/nope');
@@ -116,10 +142,10 @@ describe('routes and error bodies', () => {
   it('TC-API-25: 400/404/409/422 bodies carry only the contract error', async () => {
     const m = movable('empire');
     const responses = [
-      await postCommand(app, gameId, { bad: true }),
+      await postCommand(app, sessionId, { bad: true }),
       await postCommand(app, 'missing', {}),
-      await postCommand(app, gameId, moveEnv('empire', 9, [m.pieceId], m.from, m.adjacent)),
-      await postCommand(app, gameId, moveEnv('empire', 1, [m.pieceId], m.from, m.nonAdjacent)),
+      await postCommand(app, sessionId, moveEnv('empire', 9, [m.pieceId], m.from, m.adjacent)),
+      await postCommand(app, sessionId, moveEnv('empire', 1, [m.pieceId], m.from, m.nonAdjacent)),
     ];
     expect(responses.map((r) => r.status)).toEqual([400, 404, 409, 422]);
     for (const res of responses) {
@@ -129,15 +155,18 @@ describe('routes and error bodies', () => {
     }
   });
 
-  it('TC-API-25 (Q-4): corrupted Game.state → 500 INTERNAL without internals', async () => {
-    await prismaOf(app).game.update({ where: { id: gameId }, data: { state: '{"broken":' } });
-    // GET /api/games skips corrupt rows instead of failing (review #1, games.int.test.ts).
-    const list = await api(app).get('/api/games');
+  it('TC-API-25 / TC-SES-16: corrupted Session.state → 500 INTERNAL without internals', async () => {
+    await prismaOf(app).session.update({
+      where: { id: sessionId },
+      data: { state: '{"broken":' },
+    });
+    // GET /api/sessions skips corrupt rows instead of failing (review #1, sessions.int.test.ts).
+    const list = await api(app).get('/api/sessions');
     expect(list.status).toBe(200);
     expect(list.body).toEqual([]);
     for (const res of [
-      await api(app).get(`/api/games/${gameId}`),
-      await postCommand(app, gameId, {
+      await api(app).get(`/api/sessions/${sessionId}`),
+      await postCommand(app, sessionId, {
         actor: 'empire',
         expectedVersion: 1,
         command: { type: 'ADVANCE_PHASE' },
@@ -152,8 +181,8 @@ describe('routes and error bodies', () => {
   });
 
   it('TC-API-25: schema-valid JSON but wrong snapshot shape → 500, not 400', async () => {
-    await prismaOf(app).game.update({ where: { id: gameId }, data: { state: '{"id":1}' } });
-    const res = await api(app).get(`/api/games/${gameId}`);
+    await prismaOf(app).session.update({ where: { id: sessionId }, data: { state: '{"id":1}' } });
+    const res = await api(app).get(`/api/sessions/${sessionId}`);
     expectError(res, 500, 'INTERNAL', 'errors.internal');
     expect(res.text).not.toMatch(/issues|invalid_type|expected/i);
   });

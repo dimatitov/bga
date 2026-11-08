@@ -1,0 +1,2 @@
+$ pnpm exec tsc -p e2e/tsconfig.json --noEmit  # 2026-11-08T02:35:56Z (rerun after TC-CAT-10 selector fix)
+exit=0

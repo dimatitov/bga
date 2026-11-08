@@ -1,0 +1,89 @@
+# W-C probe (not a gate): apps/api after the Rebellion wire change; api tests are W-API's to adapt
+$ pnpm --filter @bga/api test
+     × two parallel commands with the same expectedVersion → exactly one 200 and one 409 65ms
+     × TC-API-16: expectedVersion 0 ≠ 1 → 409 with currentVersion, nothing changes 36ms
+     × TC-API-16: expectedVersion 2 ≠ 1 → 409 with currentVersion, nothing changes 15ms
+       × expectedVersion as string 19ms
+⎯⎯⎯⎯⎯⎯ Failed Tests 55 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-14: legal move → 200, version 2, piece moved, PIECES_MOVED persisted
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-15: non-adjacent target → 422 errors.notAdjacent, nothing changes
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-16: expectedVersion 0 ≠ 1 → 409 with currentVersion, nothing changes
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-16: expectedVersion 2 ≠ 1 → 409 with currentVersion, nothing changes
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-16: stale version after a successful move → 409 currentVersion = 2
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > no command
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > unknown command type
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > pieceIds not an array
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > empty pieceIds
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > duplicate pieceIds
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > expectedVersion as string
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > unknown actor
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > extra key
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > empty body
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > malformed JSON
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-18: unknown session → 404 sessionNotFound for valid and schema-invalid bodies (404 first, A-5)
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > enemy piece
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > unknown piece
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > from = to
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > not your side
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > unknown system
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > piece not in fromSystem
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > A-5 order: 409 wins over 422; 400 wins over 409
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-22: ADVANCE_PHASE ×3 cycles phases and round; MOVE accepted in any phase
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12) > TC-API-26: Session.state.log equals SessionEvent rows (A-15)
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/concurrency.int.test.ts > TC-API-20: optimistic concurrency > two parallel commands with the same expectedVersion → exactly one 200 and one 409
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/concurrency.int.test.ts > TC-API-20: optimistic concurrency > repeated races keep version and event rows consistent
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/game-registry.int.test.ts > server game registry (unit) > conformance of server module star-wars-rebellion > createInitialState → version 1, events seq ≥ 1; summarize is flat; parseState(JSON roundtrip) ≡ state
+AssertionError: expected false to be true // Object.is equality
+ FAIL  test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-GP-11: the list filter is per game (the newest session of another game does not leak)
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-SES-17 (Q-7): a stored session of a game without a server module — skipped in lists, GET/command → 422
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > TC-API-11: empire never sees the rebel base or hidden typeKeys in any response
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > TC-API-12: a rebellion player sees the real base system
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > TC-API-13: hidden rebel piece — id/systemId visible, typeKey "unknown" for empire
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/persistence.int.test.ts > TC-API-21: state survives an app restart on the same DB file > app#2 returns the same view as app#1 left it
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-SES-15 / TC-ARCH-03: routes are exactly the spec table; mutating only POST /api/sessions(/:id/commands)
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-24: put /api/sessions/:id → 404 unified body, state unchanged
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-24: patch /api/sessions/:id → 404 unified body, state unchanged
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-24: delete /api/sessions/:id → 404 unified body, state unchanged
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-SES-14: the SWR-002 /api/games* routes are gone → 404 unified body, nothing written
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-24: unknown route → 404 unified body
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-25: 400/404/409/422 bodies carry only the contract error
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-25 / TC-SES-16: corrupted Session.state → 500 INTERNAL without internals
+ FAIL  test/routes.int.test.ts > routes and error bodies > TC-API-25: schema-valid JSON but wrong snapshot shape → 500, not 400
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01 (TC-API-03): rebellion vs human — base visible, legal actions only for rebel pieces
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-API-05: AI without difficulty defaults to normal (A-7), stored setup is the parsed v2 form (SWR-004)
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-07: GET /api/sessions/:id → { sessionId, gameId, view }; unknown / over-long id → 404 sessionNotFound
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-08: GET /api/sessions → strict SessionSummary list, updatedAt desc, no state
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-09 (A-18): at most 20 sessions listed, most recent first — with and without gameId
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-10 (Q-5, R-2): gameId filter edge cases
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-11: a command moves the older session to the top; version + 1
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-16 (review #1): a corrupt saved session is skipped in the list; GET → 500
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-18 (TC-API-10): ?viewer=rebellion is ignored — still the empire view
+AssertionError: expected 400 to be 201 // Object.is equality
+ FAIL  test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > GET list / GET :id: v2 factions everywhere, views equal the upcast state; rows untouched by reads
+AssertionError: expected 500 to be 200 // Object.is equality
+ FAIL  test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > a command on a v1 row → 200; the snapshot is written as v2; old mirror rows keep their actor (Q-16)
+AssertionError: expected 500 to be 200 // Object.is equality
+ Test Files  8 failed | 8 passed | 1 skipped (17)
+      Tests  55 failed | 88 passed | 1 skipped (144)
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/api@0.0.0 test: `vitest run`
+exit=1

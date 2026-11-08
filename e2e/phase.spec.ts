@@ -1,9 +1,10 @@
 // Scenario 7 — mock phase: TC-E2E-24 (AC-4, AC-7, AC-10).
+// SWR-003: sessions are created via `POST /api/sessions` and opened at `/sessions/:id`; expectations unchanged.
 import { expect, test, type Page } from '@playwright/test';
-import { createGame, pickMove } from './support/api';
+import { createSession, pickMove } from './support/api';
 import {
   dbg,
-  openGame,
+  openSession,
   openSidebarTab,
   version,
   waitForCommand,
@@ -24,11 +25,12 @@ test('TC-E2E-24: "End phase (mock)" cycles phases, increments the round and pers
   page,
   request,
 }) => {
-  const { gameId, view } = await createGame(request);
-  await openGame(page, gameId);
+  const { sessionId, view } = await createSession(request);
+  await openSession(page, sessionId);
 
-  // The mock button is explicitly labelled as temporary logic (mock badge present on the table).
-  await expect(page.getByTestId(T.mockBadge).first()).toBeVisible();
+  // The mock button is explicitly labelled as temporary logic (SWR-004: `prototype-badge` replaces `mock-badge`).
+  await expect(page.getByTestId(T.prototypeBadge)).toBeVisible();
+  await expect(page.getByTestId(T.prototypeBadge)).toHaveAttribute('data-status', 'prototype');
   await expect(page.getByTestId(T.phaseIndicator)).toHaveAttribute('data-phase', 'assignment');
   await expect(page.getByTestId(T.roundIndicator)).toContainText('1');
 
@@ -41,7 +43,7 @@ test('TC-E2E-24: "End phase (mock)" cycles phases, increments the round and pers
   await expect(page.getByTestId(T.eventLogItem)).toHaveCount(view.log.length + 3);
 
   await page.reload();
-  await waitForTable(page, gameId);
+  await waitForTable(page, sessionId);
   await expect(page.getByTestId(T.phaseIndicator)).toHaveAttribute('data-phase', 'assignment');
   await expect(page.getByTestId(T.roundIndicator)).toContainText('2');
 });
@@ -50,9 +52,9 @@ test('TC-E2E-24 (move in any phase): a move is offered and accepted in the "comm
   page,
   request,
 }) => {
-  const { gameId, view } = await createGame(request);
+  const { sessionId, view } = await createSession(request);
   const move = pickMove(view);
-  await openGame(page, gameId);
+  await openSession(page, sessionId);
   await advance(page, 'command');
 
   const pos = await dbg.piecePos(page, move.pieceId);

@@ -1,14 +1,12 @@
 {
   "app": {
-    "title": "Rebellion · AI companion",
-    "subtitle": "Prototype for a tabletop game",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "platformName": "Tabletop AI companion"
   },
   "nav": {
     "skipToContent": "Skip to content",
-    "menu": "Menu",
-    "back": "Back",
-    "settings": "Settings"
+    "settings": "Settings",
+    "catalog": "Game catalogue"
   },
   "actions": {
     "retry": "Retry",
@@ -18,36 +16,39 @@
   "mock": {
     "badge": "MOCK",
     "tooltip": "Prototype: test data and temporary rules",
-    "footer": "Prototype · test data (mock) · placeholder graphics",
-    "scenario": "Scenario: test (mock), 8+ fictional systems"
+    "footer": "Prototype · test data (mock) · placeholder graphics"
   },
-  "faction": {
-    "empire": "Empire",
-    "rebellion": "Rebellion"
-  },
-  "pieceKind": {
-    "unit": "Unit",
-    "leader": "Leader",
-    "token": "Token"
-  },
-  "phase": {
-    "assignment": "Assignment",
-    "command": "Command",
-    "refresh": "Refresh"
-  },
-  "difficulty": {
-    "easy": "Easy",
-    "normal": "Normal",
-    "hard": "Hard"
-  },
-  "opponent": {
-    "ai": "AI",
-    "human": "Human"
-  },
-  "round": "Round {{round}}",
   "notFound": {
     "title": "Page not found",
     "text": "There is no such address in the app.",
-    "toMenu": "To menu"
+    "toCatalog": "To catalogue"
+  },
+  "status": {
+    "available": "Available",
+    "comingSoon": "Coming soon"
+  },
+  "cover": {
+    "placeholderAlt": "Game cover: abstract placeholder"
+  },
+  "routeError": {
+    "title": "Could not load the game screen",
+    "text": "Check the connection and reload the page.",
+    "reload": "Reload page"
+  },
+  "players_one": "{{range}} player",
+  "players_other": "{{range}} players",
+  "ai": {
+    "supported": "AI opponent ✓",
+    "none": "No AI"
+  },
+  "disclaimer": "Unofficial companion. Game names belong to their owners; graphics are original.",
+  "time": {
+    "justNow": "just now"
+  },
+  "sessionStatus": {
+    "setup": "Setup",
+    "prototype": "Prototype",
+    "active": "In progress",
+    "completed": "Completed"
   }
 }

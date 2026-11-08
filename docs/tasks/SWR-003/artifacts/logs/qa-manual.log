@@ -1,0 +1,37 @@
+# SWR-003 QA manual pass — qa-lead, 2026-11-08 (QA_EXECUTION, after `pnpm verify` exit 0)
+# Env: `DATABASE_URL=file:<scratchpad>/qa-manual.db pnpm dev` (api :3000, web :5173). The DB is a COPY of the user's
+#      migrated apps/api/prisma/dev.db, so the real dev DB and the backup are untouched:
+#      sha256 dev.db            b878960b38796bfa…7134baf before = after
+#      sha256 dev.pre-swr003.db c81a0d79165b20e5…0685c4a before = after
+# Browser: built-in Browser pane (Chromium), 1440x900 unless stated. Checks by DOM/testid reads + real clicks/keys.
+
+M-1 Catalog ru (TC-CAT-10, TC-MAN-01): `/` lang=ru, 2 link cards in registry order:
+    game-card-star-wars-rebellion href=/games/star-wars-rebellion status=available «Доступна», «2 игрока», «AI-противник ✓», cover naturalWidth=640, alt ru (abstract description);
+    game-card-forbidden-stars href=/games/forbidden-stars status=coming_soon «Скоро», «2–4 игрока», «AI-противник ✓», cover 640, alt ru. PASS
+M-2 Settings key migration (Q-22): removed `bga.settings.v1`, set legacy `swr.settings.v1`={language:en, reduceMotion:true}, reload →
+    localStorage has ONLY `bga.settings.v1`={"state":{"language":"en","reduceMotion":true},"version":1}; legacy key removed;
+    <html lang=en>, data-reduced-motion=true. PASS
+M-3 Catalog en (TC-CAT-12): h1 «Games», no Cyrillic in body text, alts in English. Back to ru via /settings radio «Russian». PASS
+M-4 Card → game page (TC-GP-01/04/14): click Rebellion card → /games/star-wars-rebellion; continue hint «Империя vs AI (Обычная) · Р1 · Назначение · 16 мин. назад»;
+    4 recent sessions (copied dev data: «… 3 ч назад»). PASS
+M-5 New session (TC-NEW-05, TC-NEW-04): «Новая партия» → /games/star-wars-rebellion/new, `new-session-back-to-game` href=/games/star-wars-rebellion;
+    Империя + Сложная → «Начать партию» → /sessions/a7d89867-…; session-host and game-table data-session-id=<id>, data-game-id=star-wars-rebellion, data-version=1;
+    __boardDebug present; Empire view rebelBase {systemId:null, revealed:false}. PASS
+M-6 Move (TC-HOST-06 / SWR-002 regression): Objects tab → Крейсер pc-01 (Аурелис) → actions Бревора/Синдрал → «Бревора» → version 2, pc-01 at sys-brevora,
+    feedback «Крейсер → Бревора», save-status «Сохранено». PASS
+M-7 Reload /sessions/:id (AC-4): version 2, pc-01 at sys-brevora. PASS
+M-8 «К игре» → Continue (TC-HOST-07): link href=/games/star-wars-rebellion → game page; game-continue → this session, hint «… · только что» (late FE change verified),
+    first recent = this session, 5 recent shown; click «Продолжить партию» → same session, version 2, pc-01 at sys-brevora. PASS
+M-9 coming_soon (TC-GP-16 / Q-16): /games/forbidden-stars — «Игра появится позже: правила и стол ещё не реализованы.», game-new-session and game-continue disabled,
+    0 resource requests to /api/sessions on that page load. PASS
+M-10 Keyboard (TC-MAN-02, TC-CAT-11, TC-GP-18): `/` focus lands on h1 «Игры» (route focus); Tab → Rebellion card → Forbidden Stars card → skip-link → nav-catalog → mock-badge,
+    every step :focus-visible; Shift+Tab back to Rebellion card, Enter → /games/star-wars-rebellion (focus on h1); Tab → game-new-session → game-continue → recent-session-<new>
+    → recent-session-<next>, all :focus-visible. No traps. PASS
+M-11 Narrow viewports (TC-MAN-03):
+    1024x768: catalog — 2 cards side by side, no page h-scroll, long description ends with an ellipsis; game page — no page h-scroll. PASS
+    768x1024: catalog — 2 cards (354px each), no page h-scroll; game page — cover stacks above the text, no page h-scroll. PASS
+    Table (/sessions/:id): no PAGE h-scroll, but the table top bar overflows its own box (scrollWidth 1087 vs clientWidth 1009 at 1024 px, 753 at 768 px):
+    «К игре» wraps onto 2 lines, «Автосохранено» and the settings button are pushed into the bar's horizontal scroll area → DEFECT D-1 (minor).
+    Same `overflowX: 'auto'` top bar as SWR-002 (only the label changed «Меню» → «К игре»), i.e. pre-existing layout behaviour, not introduced by SWR-003.
+Console: dev.log shows no runtime errors (only tsc «Found 0 errors»).
+Cleanup: stopped only the `pnpm dev` process I started; ports 3000/5173/3100/5174 free afterwards; viewport emulation reset.

@@ -1,14 +1,14 @@
 {
-  "name": "star-wars-rebellion-ai",
+  "name": "board-game-ai",
   "private": true,
   "type": "module",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev": "pnpm run build:packages && pnpm --filter @swr/api run db:prepare && concurrently -k --names pkgs,api,web --prefix-colors gray,blue,magenta \"pnpm run watch:packages\" \"pnpm --filter @swr/api run dev\" \"pnpm --filter @swr/web run dev\"",
-    "build:packages": "tsc -b packages/contracts packages/game-data packages/game-core",
-    "watch:packages": "tsc -b packages/contracts packages/game-data packages/game-core --watch --preserveWatchOutput",
+    "dev": "pnpm run build:packages && pnpm --filter @bga/api run db:prepare && concurrently -k --names pkgs,api,web --prefix-colors gray,blue,magenta \"pnpm run watch:packages\" \"pnpm --filter @bga/api run dev\" \"pnpm --filter @bga/web run dev\"",
+    "build:packages": "tsc -b packages",
+    "watch:packages": "tsc -b packages --watch --preserveWatchOutput",
     "lint": "eslint . --max-warnings=0 && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json",

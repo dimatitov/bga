@@ -1,7 +1,8 @@
 // Scenario 5 — moving pieces: TC-E2E-17, 18, 18b, 19, 20, 21, 34 (AC-7, AC-8, AC-10).
+// SWR-003: sessions API (`POST /api/sessions/:id/commands`) and `/sessions/:id` (test-cases.md §8.1); expectations unchanged.
 import { expect, test, type Page } from '@playwright/test';
 import {
-  createGame,
+  createSession,
   enemyPieces,
   getView,
   pickMove,
@@ -14,7 +15,7 @@ import {
   dbg,
   expectNoCommandSent,
   mouseDrag,
-  openGame,
+  openSession,
   openSidebarTab,
   version,
   waitForCommand,
@@ -22,16 +23,16 @@ import {
 } from './support/board';
 import { T } from './support/testids';
 
-let gameId: string;
+let sessionId: string;
 let view: PlayerView;
 let move: MoveFixture;
 
 test.beforeEach(async ({ page, request }) => {
-  const created = await createGame(request);
-  gameId = created.gameId;
+  const created = await createSession(request);
+  sessionId = created.sessionId;
   view = created.view;
   move = pickMove(view);
-  await openGame(page, gameId);
+  await openSession(page, sessionId);
 });
 
 async function selectPiece(page: Page, pieceId: string) {
@@ -51,7 +52,7 @@ async function expectMoved(page: Page, v0: number, logCount0: number) {
   await expect(page.getByTestId(T.liveRegion)).not.toBeEmpty();
   await openSidebarTab(page, 'log');
   await expect(page.getByTestId(T.eventLogItem)).toHaveCount(logCount0 + 1);
-  const server = await getView(page.request, gameId);
+  const server = await getView(page.request, sessionId);
   expect(piece(server, move.pieceId).systemId).toBe(move.toSystemId);
   expect(server.version).toBe(v0 + 1);
   expect(server.log.at(-1)?.type).toBe('PIECES_MOVED');
@@ -130,7 +131,7 @@ test('TC-E2E-19: drop on a non-adjacent system is refused without a request and 
 test('TC-E2E-20: server rejects an illegal move with 422 and the state is unchanged', async ({
   page,
 }) => {
-  const res = await postCommand(page.request, view, {
+  const res = await postCommand(page.request, sessionId, view, {
     type: 'MOVE_PIECES',
     pieceIds: [move.pieceId],
     fromSystemId: move.fromSystemId,
@@ -182,7 +183,7 @@ test('TC-E2E-21: dragging an enemy piece sends nothing and the piece stays in it
 test('TC-E2E-34: stale view → 409, message, refetch, selection kept (A-19)', async ({ page }) => {
   // Another client (API) changes the game; this page still holds version v.
   const other = pickMove(view, [move.pieceId]);
-  const external = await postCommand(page.request, view, {
+  const external = await postCommand(page.request, sessionId, view, {
     type: 'MOVE_PIECES',
     pieceIds: [other.pieceId],
     fromSystemId: other.fromSystemId,

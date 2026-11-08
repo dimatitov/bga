@@ -1,0 +1,16 @@
+$ pnpm --filter @bga/platform test
+2026-11-08T04:25:56Z
+
+> @bga/platform@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+
+ Test Files  4 passed (4)
+      Tests  59 passed (59)
+   Start at  07:25:57
+   Duration  646ms (transform 608ms, setup 0ms, import 1.10s, tests 90ms, environment 0ms)
+
+exit=0

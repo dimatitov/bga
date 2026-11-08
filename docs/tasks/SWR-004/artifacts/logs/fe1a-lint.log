@@ -1,0 +1,4 @@
+
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+

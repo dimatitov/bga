@@ -1,0 +1,94 @@
+$ grep -r "@swr/" --exclude-dir=node_modules --exclude-dir=docs .
+exit=1 (1 = no matches)
+
+$ grep -rn "@swr" --exclude-dir={node_modules,dist,dist-e2e,.tmp,docs} .
+exit=1 (1 = no matches)
+
+$ grep -rn "packages/\(contracts\|game-core\|game-data\)" --exclude-dir={node_modules,docs} .
+exit=1 (1 = no matches)
+
+$ git diff --exit-code d4895ac -- apps/api/prisma/migrations/20261107235651_init
+exit=0
+
+$ git status --short apps/api/prisma
+exit=0
+
+$ git diff pnpm-lock.yaml | grep -E "^[+-] " (external versions changed?)
+-        version: 20.19.43
+-        version: 5.9.3
+-        version: 8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2)
+-        version: 4.1.12(@types/node@20.19.43)(jsdom@29.1.1(@noble/hashes@1.8.0))(vite@8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2))
++        version: 4.6.7
+exit=0 (1 = no external version lines changed)
+
+$ rm -rf packages/platform/dist packages/games/*/dist && pnpm --filter @bga/web test && pnpm --filter "./packages/**" test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  14 passed (14)
+      Tests  91 passed (91)
+   Start at  05:14:47
+   Duration  7.96s (transform 4.34s, setup 7.40s, import 11.79s, tests 13.93s, environment 19.47s)
+
+Scope: 2 of 5 workspace projects
+packages/platform test$ vitest run --passWithNoTests
+packages/platform test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+packages/platform test: No test files found, exiting with code 0
+packages/platform test: include: test/**/*.test.ts
+packages/platform test: exclude:  **/node_modules/**, **/.git/**
+packages/platform test: Done
+packages/games/rebellion test$ vitest run
+packages/games/rebellion test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+packages/games/rebellion test:  Test Files  10 passed (10)
+packages/games/rebellion test:       Tests  95 passed (95)
+packages/games/rebellion test:    Start at  05:14:57
+packages/games/rebellion test:    Duration  2.61s (transform 2.10s, setup 0ms, import 4.14s, tests 2.13s, environment 1ms)
+packages/games/rebellion test: Done
+exit=0
+
+$ pnpm run build:packages && ls packages/games/rebellion/dist/{schema,rules,scenario,board}/index.js
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+packages/games/rebellion/dist/board/index.js
+packages/games/rebellion/dist/rules/index.js
+packages/games/rebellion/dist/scenario/index.js
+packages/games/rebellion/dist/schema/index.js
+exit=0
+
+$ node --input-type=module < scratchpad/probe.mjs   # ad-hoc ESLint probes (R2 turns them into scripts/eslint-boundaries.test.mjs)
+PASS apps/web/src/features/x.ts import '@bga/game-rebellion/rules'; no-restricted-imports:'@bga/game-rebellion/rules' import is re
+PASS apps/web/src/features/x.ts import '@bga/game-rebellion/schema'; 
+PASS apps/web/src/features/x.ts import '@bga/game-rebellion'; no-restricted-imports:'@bga/game-rebellion' import is restrict
+PASS apps/web/src/features/x.ts export const f = () => import('@bga/game-rebellion/rules'); no-restricted-syntax:Dynamic import of game rules / scenario 
+PASS apps/web/src/features/x.ts export const f = () => import('@bga/game-rebellion/board'); 
+PASS apps/web/src/features/x.ts export const f = (id: string) => import(`@bga/game-${id}/definition`); no-restricted-syntax:Dynamic import() must use a string liter
+PASS apps/web/src/features/x.ts import '../../../../packages/games/rebellion/src/rules'; no-restricted-imports:'../../../../packages/games/rebellion/sr
+PASS apps/web/src/platform/x.ts import '@/games/registry'; 
+PASS apps/web/src/platform/x.ts import '@/games/rebellion/x'; no-restricted-imports:'@/games/rebellion/x' import is restrict
+PASS apps/web/src/shared/probe.ts import '@bga/game-rebellion/definition'; no-restricted-imports:'@bga/game-rebellion/definition' import 
+PASS packages/games/rebellion/src/board/x.ts import '../scenario'; no-restricted-imports:'../scenario' import is restricted from 
+PASS packages/games/rebellion/src/rules/x.ts import '../schema'; 
+PASS packages/games/rebellion/src/rules/x.ts export const t = Date.now(); no-restricted-properties:'Date.now' is restricted from being used
+PASS packages/platform/src/x.ts import '../../games/rebellion/src/schema'; no-restricted-imports:'../../games/rebellion/src/schema' impor
+PASS apps/api/src/common/x.ts import '../../../../packages/games/rebellion/src/schema'; no-restricted-imports:'../../../../packages/games/rebellion/sr
+PASS apps/api/src/game-registry/x.ts import '@bga/game-rebellion/server'; 
+PASS apps/api/src/game-registry/x.ts export const f = (id: string) => import(`@bga/game-${id}/definition`); no-restricted-syntax:Dynamic import() must use a string liter
+exit=0
+
+$ node scripts/check-task.mjs docs/tasks/SWR-003
+OK docs/tasks/SWR-003
+exit=0
+
+$ lsof -nP -iTCP:3000,5173,3100,5174 -sTCP:LISTEN
+exit=1 (1 = nothing listening)
+
+# The version lines above are importer entries (specifiers of the removed/renamed workspace packages), not resolutions:
+$ git show HEAD:pnpm-lock.yaml | awk "/^packages:/{f=1} f" > a; awk ... pnpm-lock.yaml > b; cmp a b
+exit=0 (0 = packages:/snapshots: sections identical — no external version changed)

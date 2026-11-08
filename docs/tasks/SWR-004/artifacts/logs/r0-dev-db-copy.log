@@ -1,0 +1,43 @@
+# SWR-004 R0 — dev DB copy check (2026-11-08T04:11:10Z); original opened read-only (copyFileSync), never written
+$ shasum -a 256 prisma/dev.db prisma/dev.pre-swr003.db prisma/dev.pre-swr004.db  # before
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.db
+c81a0d79165b20e523e9021ed015f0e6a0eeaea906a717eae19fbdecf0685c4a  prisma/dev.pre-swr003.db
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.pre-swr004.db
+$ SWR004_DEV_DB=prisma/dev.db pnpm --filter @bga/api exec vitest run test/dev-db-upgrade.int.test.ts --reporter=verbose --silent=false
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable
+[dev-db-upgrade] copy /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-ed392930-367c-465c-8049-531ca3050eda.db
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "devcopy-ed392930-367c-465c-8049-531ca3050eda.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-ed392930-367c-465c-8049-531ca3050eda.db"
+
+2 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable
+[dev-db-upgrade] 4 session row(s)
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE 79fcaa89-4020-40a5-8527-7e4426af5e3e actor=rebels → 200
+
+ ✓ test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable 2318ms
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6)
+[dev-db-upgrade] /Users/dimatitov/WebstormProjects/Game automa/apps/api/prisma/dev.db sha256 before=b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf after=b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  07:11:11
+   Duration  5.40s (transform 310ms, setup 0ms, import 749ms, tests 2.32s, environment 0ms)
+
+exit=0
+$ shasum -a 256 prisma/dev.db prisma/dev.pre-swr003.db prisma/dev.pre-swr004.db  # after
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.db
+c81a0d79165b20e523e9021ed015f0e6a0eeaea906a717eae19fbdecf0685c4a  prisma/dev.pre-swr003.db
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.pre-swr004.db
+$ ls .tmp | grep devcopy
+(none left)

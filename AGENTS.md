@@ -15,11 +15,11 @@
 
 1. **Агенты разработки** — организуют и проверяют создание приложения (этот файл, `docs/process/`).
 2. **Game-core** — единственный источник истины по правилам и состоянию (чистый TypeScript, без React/NestJS/OpenAI).
-3. **LLM в рантайме** — только выбирает среди legal actions, которые вычислил game-core.
+3. **LLM в рантайме** — только выбирает среди legal actions, которые вычислили правила игры (`packages/games/<id>/src/rules`).
 
 ## Стек (зафиксирован, менять только через Product Owner)
 
-React + TS + Vite, MUI, Zustand, TanStack Query, React Konva · NestJS · Zod (`packages/contracts`) ·
+React + TS + Vite, MUI, Zustand, TanStack Query, React Konva · NestJS · Zod (`packages/platform`, схемы игр в `packages/games/*`) ·
 SQLite + Prisma · OpenAI Responses API (только сервер) · Vitest, Playwright · pnpm workspaces ·
 ESLint, Prettier, TS strict. Не добавлять Redis, микросервисы, event bus, real-time multiplayer, 3D.
 
@@ -37,7 +37,7 @@ ESLint, Prettier, TS strict. Не добавлять Redis, микросерви
 - **Честность проверок.** Не запускалось → `not_run`. Никогда не писать `passed` без ссылки на реальный лог/тест/файл.
   В отчётах различать «выполнено» и «запланировано».
 - **Независимость.** Reviewer не ревьюит свой код. QA не чинит продуктовый код молча — заводит дефект и возвращает лиду.
-- **Владение файлами.** Worker меняет только файлы из своего назначения. Публичные контракты (`packages/contracts`,
+- **Владение файлами.** Worker меняет только файлы из своего назначения. Публичные контракты (`packages/platform`, `packages/games/*/src/schema`,
   API, схемы событий) — только с согласия лида и Analyst.
 - **Скрытая информация** фильтруется на сервере через `PlayerView`, а не в UI. Секреты одной стороны не попадают в prompts/логи другой.
 - **Секреты.** OpenAI-ключ только на сервере (`.env`, не коммитится). Не коммитить `.env`, большие traces, лицензионные ассеты.

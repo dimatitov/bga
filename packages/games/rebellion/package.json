@@ -1,0 +1,63 @@
+{
+  "name": "@bga/game-rebellion",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./definition": {
+      "@bga/source": "./src/definition/index.ts",
+      "types": "./dist/definition/index.d.ts",
+      "default": "./dist/definition/index.js"
+    },
+    "./schema": {
+      "@bga/source": "./src/schema/index.ts",
+      "types": "./dist/schema/index.d.ts",
+      "default": "./dist/schema/index.js"
+    },
+    "./rules": {
+      "@bga/source": "./src/rules/index.ts",
+      "types": "./dist/rules/index.d.ts",
+      "default": "./dist/rules/index.js"
+    },
+    "./scenario": {
+      "@bga/source": "./src/scenario/index.ts",
+      "types": "./dist/scenario/index.d.ts",
+      "default": "./dist/scenario/index.js"
+    },
+    "./board": {
+      "@bga/source": "./src/board/index.ts",
+      "types": "./dist/board/index.d.ts",
+      "default": "./dist/board/index.js"
+    },
+    "./assets": {
+      "@bga/source": "./src/assets/index.ts",
+      "types": "./dist/assets/index.d.ts",
+      "default": "./dist/assets/index.js"
+    },
+    "./ai": {
+      "@bga/source": "./src/ai/index.ts",
+      "types": "./dist/ai/index.d.ts",
+      "default": "./dist/ai/index.js"
+    },
+    "./server": {
+      "@bga/source": "./src/server/index.ts",
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bga/platform": "workspace:*",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "typescript": "5.9.3",
+    "vite": "8.3.6",
+    "vitest": "4.1.12"
+  }
+}

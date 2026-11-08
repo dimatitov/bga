@@ -1,0 +1,39 @@
+$ cat prisma/migrations/20261108200000_session_status_idempotency/migration.sql
+-- SWR-004: platform columns only (hand-written, data-preserving: no table rebuild).
+-- No game knowledge here: the JSON in `setup` / `state` is NOT rewritten (lazy upcast in the game module, Q-16).
+-- Existing rows get status 'prototype' (the only status of the mock scenario). No down migration:
+-- roll back = restore a DB copy.
+ALTER TABLE "Session" ADD COLUMN "status" TEXT NOT NULL DEFAULT 'prototype';
+ALTER TABLE "Session" ADD COLUMN "idempotencyKey" TEXT;
+ALTER TABLE "Session" ADD COLUMN "idempotencyHash" TEXT;
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Session_idempotencyKey_key" ON "Session"("idempotencyKey");
+$ pnpm --filter @bga/api exec prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url file:./.tmp/shadow-wapi.db --exit-code
+No difference detected.
+
+exit=0
+$ pnpm --filter @bga/api exec vitest run test/migration-swr004.int.test.ts test/migration.int.test.ts test/upcast-v1.int.test.ts --reporter=verbose
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-06: the init migration is unchanged since SWR-002 3ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-07: earlier migrations are unchanged (SWR-002 init, SWR-003 sessions); SWR-004 SQL is locked too 5ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-01/05: 3 SWR-002 games → Session rows byte-equal + gameId backfill; events kept; re-deploy is a no-op 8859ms
+ ✓ test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > the fixture really is v1 (legacy faction in setup, state and event actors) 8859ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-02: the migrated sessions work through the API (order, views, next command) 7525ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-01: SWR-003 DB (3 v1 sessions) → deploy: status = prototype, key/hash NULL, unique index; data and events unchanged; re-deploy no-op 13391ms
+ ✓ test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > GET list / GET :id: v2 factions everywhere, views equal the upcast state; rows untouched by reads 11696ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-03: NOT NULL gameId, (gameId, updatedAt) index, (sessionId, seq) unique, cascade delete 6620ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-04: an empty SWR-002 DB migrates to empty Session / SessionEvent 6357ms
+ ✓ test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > a command on a v1 row → 200; the snapshot is written as v2; old mirror rows keep their actor (Q-16) 10628ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > unique index: a second row with the same key fails, NULL keys may repeat 11357ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-02/03/05: migrated sessions through the API — status prototype, no legacy faction, a command works, rereads are stable 10428ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-06: SWR-002 → SWR-003 → SWR-004 in one deploy; every row prototype and readable 5866ms
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  07:55:27
+   Duration  44.35s (transform 1.07s, setup 0ms, import 2.69s, tests 101.60s, environment 0ms)
+
+exit=0

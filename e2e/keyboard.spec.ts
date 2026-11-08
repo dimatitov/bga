@@ -1,17 +1,18 @@
 // Keyboard path: TC-E2E-28 (AC-6, AC-7) — select a piece and move it without the mouse,
+// SWR-003: sessions are created via `POST /api/sessions` and opened at `/sessions/:id`; expectations unchanged.
 // via the accessible alternative list (board-list: role=listbox / role=option + aria-selected).
 import { expect, test } from '@playwright/test';
-import { createGame, pickMove } from './support/api';
-import { dbg, keyboardFocus, openGame, version, waitForCommand } from './support/board';
+import { createSession, pickMove } from './support/api';
+import { dbg, keyboardFocus, openSession, version, waitForCommand } from './support/board';
 import { T } from './support/testids';
 
 test('TC-E2E-28: keyboard-only select + move with visible focus and aria-live feedback', async ({
   page,
   request,
 }) => {
-  const { gameId, view } = await createGame(request);
+  const { sessionId, view } = await createSession(request);
   const move = pickMove(view);
-  await openGame(page, gameId);
+  await openSession(page, sessionId);
   const v0 = await version(page);
 
   // 1) Tab to the "objects" sidebar tab and activate it.

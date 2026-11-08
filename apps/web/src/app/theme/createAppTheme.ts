@@ -1,6 +1,12 @@
 import { createTheme, type Theme } from '@mui/material/styles';
 import { tokens } from './tokens';
 
+/**
+ * D-A-5 focus ring. `outlineOffset` puts it on the surface around the control, so `tokens.focus` must contrast
+ * ≥ 3:1 with the page backgrounds (`background.default` / `background.paper`) — unit-tested.
+ */
+export const FOCUS_RING = { outline: `2px solid ${tokens.focus}`, outlineOffset: 2 } as const;
+
 export interface AppThemeOptions {
   reduceMotion: boolean;
 }
@@ -13,8 +19,6 @@ export function createAppTheme({ reduceMotion }: AppThemeOptions): Theme {
       primary: { main: tokens.primary.main },
       background: { ...tokens.background },
       text: { ...tokens.text },
-      faction: { ...tokens.faction },
-      board: { ...tokens.board },
       mock: { ...tokens.mock },
       focus: tokens.focus,
     },
@@ -38,11 +42,20 @@ export function createAppTheme({ reduceMotion }: AppThemeOptions): Theme {
         }
       : undefined,
     components: {
-      MuiButtonBase: { defaultProps: { disableRipple: reduceMotion } },
+      MuiButtonBase: {
+        defaultProps: { disableRipple: reduceMotion },
+        // ButtonBase resets `outline: 0` with class specificity, which beats the global `:focus-visible` rule below;
+        // re-apply the D-A-5 ring to EVERY ButtonBase — radio cards, list rows and all buttons, contained included
+        // (Analyst decision, SWR-004): same colour and offset everywhere, on top of MUI's own focus styles.
+        // Two separate rules: a selector list containing an unsupported pseudo-class would drop both.
+        styleOverrides: {
+          root: { '&.Mui-focusVisible': FOCUS_RING, '&:focus-visible': FOCUS_RING },
+        },
+      },
       MuiCssBaseline: {
         styleOverrides: {
           // D-A-5: visible focus ring, contrasting with both background and panels.
-          ':focus-visible': { outline: `2px solid ${tokens.focus}`, outlineOffset: 2 },
+          ':focus-visible': FOCUS_RING,
           body: { fontVariantNumeric: 'tabular-nums' },
         },
       },

@@ -1,5 +1,5 @@
 {
-  "name": "@swr/web",
+  "name": "@bga/web",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -16,8 +16,9 @@
     "@emotion/styled": "11.14.1",
     "@mui/icons-material": "9.5.0",
     "@mui/material": "9.5.0",
-    "@swr/contracts": "workspace:*",
-    "@swr/game-data": "workspace:*",
+    "@bga/game-forbidden-stars": "workspace:*",
+    "@bga/game-rebellion": "workspace:*",
+    "@bga/platform": "workspace:*",
     "@tanstack/react-query": "5.107.1",
     "i18next": "26.7.2",
     "konva": "10.9.1",

@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
+import { paths } from '@/platform/paths';
 
 export function NotFoundPage() {
   const { t } = useTranslation();
@@ -22,8 +23,8 @@ export function NotFoundPage() {
         {t('common:notFound.title')}
       </Typography>
       <Typography color="text.secondary">{t('common:notFound.text')}</Typography>
-      <Button component={RouterLink} to="/" variant="contained">
-        {t('common:notFound.toMenu')}
+      <Button component={RouterLink} to={paths.catalog} variant="contained">
+        {t('common:notFound.toCatalog')}
       </Button>
     </Box>
   );

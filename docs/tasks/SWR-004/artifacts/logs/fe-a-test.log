@@ -1,0 +1,267 @@
+$ pnpm --filter @bga/web test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx (11 tests | 2 failed) 3980ms
+     × D-N-2: no side preselected → Start disabled; AI + normal by default 557ms
+     × real routes: /games/star-wars-rebellion/new renders the lazy Rebellion form under "← To game" 453ms
+ ❯ src/shared/ui/ChoiceGroup.test.tsx (5 tests | 1 failed) 1012ms
+     × disabled group: aria-disabled on the group, options are not interactive 39ms
+ ❯ src/games/rebellion/table/TableScreen.test.tsx (16 tests | 1 failed) 6172ms
+     × TC-WEB-11: renders server view with round/phase, mock badge and a mock-labelled End phase 1330ms
+ ❯ src/games/rebellion/board/sidebar/logMessage.test.ts (6 tests | 1 failed) 59ms
+     × TURN_ENDED / HANDOFF_ACCEPTED (SWR-004 hot-seat) name the sides 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/shared/ui/ChoiceGroup.test.tsx > ChoiceGroup (SWR-004 §2.6 extensions, TC-C-21) > disabled group: aria-disabled on the group, options are not interactive
+Error: Unable to perform pointer interaction as the element has `pointer-events: none`:
+
+BUTTON(testId=opt-c)(label=C)
+ ❯ assertPointerEvents ../../../Game%20automa/node_modules/.pnpm/@testing-library+user-event@14.6.8_@testing-library+dom@10.4.2/node_modules/@testing-library/user-event/dist/esm/utils/pointer/cssPointerEvents.js:45:15
+ ❯ Object.enter ../../../Game%20automa/node_modules/.pnpm/@testing-library+user-event@14.6.8_@testing-library+dom@10.4.2/node_modules/@testing-library/user-event/dist/esm/system/pointer/pointer.js:48:17
+ ❯ PointerHost.move ../../../Game%20automa/node_modules/.pnpm/@testing-library+user-event@14.6.8_@testing-library+dom@10.4.2/node_modules/@testing-library/user-event/dist/esm/system/pointer/index.js:49:79
+ ❯ pointerAction ../../../Game%20automa/node_modules/.pnpm/@testing-library+user-event@14.6.8_@testing-library+dom@10.4.2/node_modules/@testing-library/user-event/dist/esm/pointer/index.js:57:39
+ ❯ Object.pointer ../../../Game%20automa/node_modules/.pnpm/@testing-library+user-event@14.6.8_@testing-library+dom@10.4.2/node_modules/@testing-library/user-event/dist/esm/pointer/index.js:25:15
+ ❯ Object.asyncWrapper ../../node_modules/.pnpm/@testing-library+react@16.3.3_@testing-library+dom@10.4.2_@types+react-dom@19.3.0_@type_caf0c89dcd807677af52e2a43e70eff8/node_modules/@testing-library/react/dist/pure.js:88:22
+ ❯ src/shared/ui/ChoiceGroup.test.tsx:119:5
+    117|     expect(screen.getByTestId('group')).toHaveAttribute('aria-disabled…
+    118|     expect(screen.getByTestId('opt-c')).toBeDisabled();
+    119|     await userEvent.click(screen.getByTestId('opt-c'));
+       |     ^
+    120|     expect(onChange).not.toHaveBeenCalled();
+    121|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen (via SessionHost) > TC-WEB-11: renders server view with round/phase, mock badge and a mock-labelled End phase
+TestingLibraryElementError: Unable to find an element by: [data-testid="mock-badge"]
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<a[39m
+      [33mclass[39m=[32m"MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-7zss8u-MuiTypography-root-MuiLink-root"[39m
+      [33mhref[39m=[32m"#main"[39m
+    [36m>[39m
+      [0mПерейти к содержимому[0m
+    [36m</a>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"MuiBox-root css-prrujb"[39m
+    [36m>[39m
+      [36m<main[39m
+        [33mclass[39m=[32m"MuiBox-root css-o8r8uh"[39m
+        [33mid[39m=[32m"main"[39m
+        [33mtabindex[39m=[32m"-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mdata-game-id[39m=[32m"star-wars-rebellion"[39m
+          [33mdata-session-id[39m=[32m"game-fixture-1"[39m
+          [33mdata-session-status[39m=[32m"prototype"[39m
+          [33mdata-testid[39m=[32m"session-host"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"MuiBox-root css-gyecuz"[39m
+            [33mdata-game-id[39m=[32m"star-wars-rebellion"[39m
+            [33mdata-session-id[39m=[32m"game-fixture-1"[39m
+            [33mdata-testid[39m=[32m"game-table"[39m
+            [33mdata-version[39m=[32m"3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"MuiTypography-root MuiTypography-body1 css-6jephj-MuiTypography-root"[39m
+              [33mtabindex[39m=[32m"-1"[39m
+            [36m>[39m
+              [0mИгровой стол[0m
+            [36m</h1>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-sizeMedium MuiButton-colorPrimary css-72ybl3-MuiButtonBase-root-MuiButton-root"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [0mПерейти к списку объектов[0m
+            [36m</button>[39m
+            [36m<header[39m
+              [33maria-label[39m=[32m"Панель партии"[39m
+              [33mclass[39m=[32m"MuiBox-root css-1rph3ku"[39m
+              [33mdata-testid[39m=[32m"table-top-bar"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"MuiBox-root css-1k3knlr"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33maria-label[39m=[32m"К игре"[39m
+                  [33mclass[39m=[32m"MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-sizeSmall MuiButton-colorPrimary css-4extk8-MuiButtonBase-root-MuiButton-root"[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mdata-testid[39m=[32m"session-back-to-game"[39m
+                  [33mhref[39m=[32m"/games/star-wars-rebellion"[39m
+                  [33mtabindex[39m=[32m"0"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"MuiButton-icon MuiButton-startIcon css-t70kls-MuiButton-startIcon"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"[39m
+                      [33mdata-testid[39m=[32m"ArrowBackIcon"[39m
+                      [33mfocusable[39m=[32m"false"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"MuiBox-root css-u5d1ce"[39m
+                  [36m>[39m
+                    [0mК игре[0m
+                  [36m</span>[39m
+                [36m</a>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"MuiBox-root css-fnjwbo"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"MuiBox-root css-1dlhvih"[39m
+                  [33mdata-side[39m=[32m"empire"[39m
+                  [33mdata-testid[39m=[32m"active-side"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault css-w4mzrc-MuiChip-root"[39m
+                    [33mdata-faction[39m=[32m"empire"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mdata-kind[39m=[32m"unit"[39m
+                      [33mdata-owner[39m=[32m"empire"[39m
+                      [33mfocusable[39m=[32m"false"[39m
+                      [33mheight[39m=[32m"14"[39m
+                      [33mstyle[39m=[32m"flex-shrink: 0; vertical-align: middle;"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"14"[39m
+                    [36m>[39m
+                      [36m<rect[39m
+                        [33mfill[39m=[32m"#7C9CFF"[39m
+                        [33mheight[39m=[32m"18"[39m
+                        [33mstroke[39m=[32m"#7C9CFF"[39m
+                        [33mstroke-width[39m=[32m"1.5"[39m
+                        [33mwidth[39m=[32m"18"[39m
+                        [33mx[39m=[32m"3"[39m
+                        [33my[39m=[32m"3"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"MuiChip-label css-19m61dl-MuiChip-label"[39m
+                    [36m>[39m
+                      [0mИмперия[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"MuiTypography-root MuiTypography-body2 css-xi3gwi-MuiTypography-root"[39m
+                  [36m>[39m
+                    [0mпротив AI · Обычная[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"MuiBox-root css-g84933"[39m
+                [33mdata-group[39m=[32m"state"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"MuiBox-root css-psvem0"[39m
+                [36m>[39m
+                  [36m<h6[39m
+                    [33mclass[39m=[32m"MuiTypography-root MuiTypography-subtitle1 css-12n0fj5-MuiTypography-root"[39m
+                    [33mdata-round[39m=[32m"1"[39m
+                    [33mdata-testid[39m=[32m"round-indicator"[39m
+                  [36m>[39m
+                    [0mРаунд 1[0m
+                  [36m</h6>[39m
+                  [36m<h6[39m
+            ...
+ ❯ Object.getElementError ../../node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ ../../node_modules/.pnpm/@testing-library+dom@10.4.2/node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:65:19
+     63|     expect(screen.getByTestId('round-indicator')).toHaveTextContent('1…
+     64|     expect(screen.getByTestId('phase-indicator')).toHaveAttribute('dat…
+     65|     expect(screen.getByTestId('mock-badge')).toBeVisible();
+       |                   ^
+     66|     expect(screen.getByTestId('advance-phase')).toHaveTextContent(/moc…
+     67|     expect(screen.getByTestId('advance-phase-panel')).toHaveTextConten…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen > D-N-2: no side preselected → Start disabled; AI + normal by default
+Error: [2mexpect([22m[31melement[39m[2m).toBeDisabled()[22m
+
+Received element is not disabled:
+  [31m<button
+  aria-busy="false"
+  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeLarge MuiButton-colorPrimary css-1adqxu1-MuiButtonBase-root-MuiButton-root"
+  data-testid="setup-start"
+  tabindex="0"
+  type="submit"
+/>[39m
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx:44:47
+     42|     mockFetch({});
+     43|     renderPage();
+     44|     expect(screen.getByTestId('setup-start')).toBeDisabled();
+       |                                               ^
+     45|     expect(screen.getByTestId('setup-faction-empire')).toHaveAttribute…
+     46|     expect(screen.getByTestId('setup-faction-rebels')).toHaveAttribute…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen > real routes: /games/star-wars-rebellion/new renders the lazy Rebellion form under "← To game"
+Error: [2mexpect([22m[31melement[39m[2m).toBeDisabled()[22m
+
+Received element is not disabled:
+  [31m<button
+  aria-busy="false"
+  class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-sizeLarge MuiButton-colorPrimary css-1adqxu1-MuiButtonBase-root-MuiButton-root"
+  data-testid="setup-start"
+  tabindex="0"
+  type="submit"
+/>[39m
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx:200:54
+    198|     mockFetch({});
+    199|     renderWithProviders({ path: NEW_PATH });
+    200|     expect(await screen.findByTestId('setup-start')).toBeDisabled();
+       |                                                      ^
+    201|     expect(screen.getByTestId('new-session-page')).toHaveAttribute(
+    202|       'data-game-id',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/games/rebellion/board/sidebar/logMessage.test.ts > TC-WEB-13: logMessage > TURN_ENDED / HANDOFF_ACCEPTED (SWR-004 hot-seat) name the sides
+AssertionError: expected 'Empire passes the turn to Rebels' to be 'Empire passes the turn to Rebellion' // Object.is equality
+
+Expected: "Empire passes the turn to Rebellion"
+Received: "Empire passes the turn to Rebels"
+
+ ❯ src/games/rebellion/board/sidebar/logMessage.test.ts:48:7
+     46|         view,
+     47|       ),
+     48|     ).toBe('Empire passes the turn to Rebellion');
+       |       ^
+     49|   });
+     50|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  4 failed | 27 passed (31)
+      Tests  5 failed | 223 passed (228)
+   Start at  07:59:46
+   Duration  12.78s (transform 6.33s, setup 14.29s, import 18.97s, tests 27.96s, environment 34.59s)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 test: `vitest run --passWithNoTests`
+Exit status 1
+exit=1

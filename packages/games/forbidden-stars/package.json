@@ -1,0 +1,32 @@
+{
+  "name": "@bga/game-forbidden-stars",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./definition": {
+      "@bga/source": "./src/definition/index.ts",
+      "types": "./dist/definition/index.d.ts",
+      "default": "./dist/definition/index.js"
+    },
+    "./assets": {
+      "@bga/source": "./src/assets/index.ts",
+      "types": "./dist/assets/index.d.ts",
+      "default": "./dist/assets/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@bga/platform": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.43",
+    "typescript": "5.9.3",
+    "vite": "8.3.6",
+    "vitest": "4.1.12"
+  }
+}

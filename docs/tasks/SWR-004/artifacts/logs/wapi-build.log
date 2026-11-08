@@ -1,0 +1,6 @@
+$ pnpm --filter @bga/api build
+
+> @bga/api@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> nest build
+
+exit=0

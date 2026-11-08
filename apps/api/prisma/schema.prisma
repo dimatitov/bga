@@ -7,28 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Game {
-  id        String      @id
-  setup     String // JSON: GameSetup (output form)
-  state     String // JSON: full GameState — NEVER sent to clients (only PlayerView)
-  version   Int
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  events    GameEvent[]
+/// A saved play of one game (SWR-003). `gameId` is a catalogue id (`GameDefinition.id`).
+model Session {
+  id              String         @id
+  gameId          String
+  setup           String // JSON: the game's setup (output form)
+  state           String // JSON: full game state — NEVER sent to clients (only the player's view)
+  version         Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  /// SessionStatus of @bga/platform ('setup' | 'prototype' | 'active' | 'completed'); the value comes from the
+  /// game module (`initialStatus`). The DEFAULT only backfills rows created before SWR-004.
+  status          String         @default("prototype")
+  /// `Idempotency-Key` of the POST that created the session (Q-25: kept forever); null = created without a key.
+  idempotencyKey  String?        @unique
+  /// SHA-256 (hex) of the canonical JSON `{gameId, setup}` of that POST (Q-2, AM-BE-4).
+  idempotencyHash String?
+  events          SessionEvent[]
 
+  @@index([gameId, updatedAt])
   @@index([updatedAt])
 }
 
-/// Append-only mirror of GameState.log, written in the same transaction as the snapshot (A-15).
-model GameEvent {
+/// Append-only mirror of the game's event log, written in the same transaction as the snapshot (A-15).
+model SessionEvent {
   id        Int      @id @default(autoincrement())
-  gameId    String
+  sessionId String
   seq       Int
   type      String
   actor     String
   payload   String // JSON
   createdAt DateTime @default(now())
-  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  @@unique([gameId, seq])
+  @@unique([sessionId, seq])
 }

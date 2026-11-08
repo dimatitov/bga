@@ -1,0 +1,15 @@
+$ pnpm --filter @bga/web test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  17 passed (17)
+      Tests  127 passed (127)
+   Start at  05:34:06
+   Duration  9.09s (transform 5.30s, setup 9.59s, import 15.53s, tests 17.62s, environment 23.82s)
+
+exit=0

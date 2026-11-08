@@ -47,6 +47,15 @@ importers:
 
   apps/api:
     dependencies:
+      '@bga/game-forbidden-stars':
+        specifier: workspace:*
+        version: link:../../packages/games/forbidden-stars
+      '@bga/game-rebellion':
+        specifier: workspace:*
+        version: link:../../packages/games/rebellion
+      '@bga/platform':
+        specifier: workspace:*
+        version: link:../../packages/platform
       '@nestjs/common':
         specifier: 11.2.8
         version: 11.2.8(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -59,15 +68,6 @@ importers:
       '@prisma/client':
         specifier: 6.19.3
         version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
-      '@swr/contracts':
-        specifier: workspace:*
-        version: link:../../packages/contracts
-      '@swr/game-core':
-        specifier: workspace:*
-        version: link:../../packages/game-core
-      '@swr/game-data':
-        specifier: workspace:*
-        version: link:../../packages/game-data
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
@@ -117,6 +117,15 @@ importers:
 
   apps/web:
     dependencies:
+      '@bga/game-forbidden-stars':
+        specifier: workspace:*
+        version: link:../../packages/games/forbidden-stars
+      '@bga/game-rebellion':
+        specifier: workspace:*
+        version: link:../../packages/games/rebellion
+      '@bga/platform':
+        specifier: workspace:*
+        version: link:../../packages/platform
       '@emotion/react':
         specifier: 11.14.0
         version: 11.14.0(@types/react@19.3.0)(react@19.3.1)
@@ -129,12 +138,6 @@ importers:
       '@mui/material':
         specifier: 9.5.0
         version: 9.5.0(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react@19.3.1))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@swr/contracts':
-        specifier: workspace:*
-        version: link:../../packages/contracts
-      '@swr/game-data':
-        specifier: workspace:*
-        version: link:../../packages/game-data
       '@tanstack/react-query':
         specifier: 5.107.1
         version: 5.107.1(@types/react@19.3.0)(react@19.3.1)
@@ -200,8 +203,30 @@ importers:
         specifier: 4.1.12
         version: 4.1.12(@types/node@20.19.43)(jsdom@29.1.1(@noble/hashes@1.8.0))(vite@8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2))
 
-  packages/contracts:
+  packages/games/forbidden-stars:
     dependencies:
+      '@bga/platform':
+        specifier: workspace:*
+        version: link:../../platform
+    devDependencies:
+      '@types/node':
+        specifier: 20.19.43
+        version: 20.19.43
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: 8.3.6
+        version: 8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2)
+      vitest:
+        specifier: 4.1.12
+        version: 4.1.12(@types/node@20.19.43)(jsdom@29.1.1(@noble/hashes@1.8.0))(vite@8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2))
+
+  packages/games/rebellion:
+    dependencies:
+      '@bga/platform':
+        specifier: workspace:*
+        version: link:../../platform
       zod:
         specifier: 4.6.7
         version: 4.6.7
@@ -219,33 +244,11 @@ importers:
         specifier: 4.1.12
         version: 4.1.12(@types/node@20.19.43)(jsdom@29.1.1(@noble/hashes@1.8.0))(vite@8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2))
 
-  packages/game-core:
+  packages/platform:
     dependencies:
-      '@swr/contracts':
-        specifier: workspace:*
-        version: link:../contracts
-    devDependencies:
-      '@swr/game-data':
-        specifier: workspace:*
-        version: link:../game-data
-      '@types/node':
-        specifier: 20.19.43
-        version: 20.19.43
-      typescript:
-        specifier: 5.9.3
-        version: 5.9.3
-      vite:
-        specifier: 8.3.6
-        version: 8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2)
-      vitest:
-        specifier: 4.1.12
-        version: 4.1.12(@types/node@20.19.43)(jsdom@29.1.1(@noble/hashes@1.8.0))(vite@8.3.6(@types/node@20.19.43)(jiti@2.7.0)(terser@5.51.2))
-
-  packages/game-data:
-    dependencies:
-      '@swr/contracts':
-        specifier: workspace:*
-        version: link:../contracts
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
     devDependencies:
       '@types/node':
         specifier: 20.19.43

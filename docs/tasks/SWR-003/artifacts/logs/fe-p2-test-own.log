@@ -1,0 +1,39 @@
+$ (cd apps/web && npx vitest run src/app src/platform src/shared src/games/registry.test.ts src/games/registry.consistency.test.ts)
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/games/registry.test.ts (5 tests | 1 failed) 56ms
+     × available ⇒ SetupScreen and TableScreen; coming_soon ⇒ no screens (AC-6) 18ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/games/registry.test.ts > web game registry > available ⇒ SetupScreen and TableScreen; coming_soon ⇒ no screens (AC-6)
+AssertionError: star-wars-rebellion: expected [ false, false ] to deeply equal [ true, true ]
+
+- Expected
++ Received
+
+  [
+-   true,
+-   true,
++   false,
++   false,
+  ]
+
+ ❯ src/games/registry.test.ts:19:41
+     17|     for (const { definition, SetupScreen, TableScreen } of gameRegistr…
+     18|       const hasScreens = [SetupScreen !== undefined, TableScreen !== u…
+     19|       expect(hasScreens, definition.id).toEqual(
+       |                                         ^
+     20|         definition.status === 'available' ? [true, true] : [false, fal…
+     21|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 16 passed (17)
+      Tests  1 failed | 102 passed (103)
+   Start at  05:42:04
+   Duration  6.75s (transform 4.42s, setup 7.65s, import 11.45s, tests 13.21s, environment 17.45s)
+
+exit=1

@@ -1,0 +1,42 @@
+{
+  "faction": {
+    "rebels": "Повстанцы",
+    "empire": "Империя"
+  },
+  "pieceKind": {
+    "unit": "Юнит",
+    "leader": "Лидер",
+    "token": "Жетон"
+  },
+  "phase": {
+    "assignment": "Назначение",
+    "command": "Командование",
+    "refresh": "Обновление"
+  },
+  "difficulty": {
+    "easy": "Лёгкая",
+    "normal": "Обычная",
+    "hard": "Сложная"
+  },
+  "round": "Раунд {{round}}",
+  "factionShort": {
+    "rebels": "Повстанцы",
+    "empire": "Империя"
+  },
+  "factionTagline": {
+    "rebels": "Прячут базу, тянут время",
+    "empire": "Ищет скрытую базу"
+  },
+  "ruleset": {
+    "base": "Базовая игра",
+    "rise-of-the-empire": "Rise of the Empire"
+  },
+  "mode": {
+    "digital": "Цифровая партия",
+    "physical_companion": "С физическими компонентами"
+  },
+  "prototype": {
+    "badge": "Прототип",
+    "full": "Прототип: тестовая расстановка, не правила оригинальной игры"
+  }
+}

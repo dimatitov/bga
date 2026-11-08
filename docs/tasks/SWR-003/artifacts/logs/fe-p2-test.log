@@ -1,0 +1,160 @@
+$ pnpm --filter @bga/web test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/games/rebellion/setup/SetupScreen.test.tsx (0 test)
+ ❯ src/games/rebellion/table/TableScreen.test.tsx (0 test)
+ ❯ src/games/registry.test.ts (5 tests | 1 failed) 54ms
+     × available ⇒ SetupScreen and TableScreen; coming_soon ⇒ no screens (AC-6) 17ms
+ ❯ src/games/rebellion/locales.i18n.test.ts (6 tests | 4 failed) 50ms
+     × session: ru and en have the same keys (plural forms normalised), no empty texts 28ms
+     × board: ru and en have the same keys (plural forms normalised), no empty texts 7ms
+     × gameData: ru and en have the same keys (plural forms normalised), no empty texts 5ms
+     × every system, region and piece type of the scenario has ru and en names (A-12, R-14) 3ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/games/rebellion/setup/SetupScreen.test.tsx [ src/games/rebellion/setup/SetupScreen.test.tsx ]
+Error: Failed to resolve import "./NewGamePage" from "src/games/rebellion/setup/SetupScreen.test.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/dimatitov/WebstormProjects/Game automa/apps/web/src/games/rebellion/setup/SetupScreen.test.tsx:5:28
+  3  |  import { gameKeys } from "@/shared/api";
+  4  |  import { makeView, mockFetch, renderWithProviders } from "@/shared/test";
+  5  |  import { NewGamePage } from "./NewGamePage";
+     |                               ^
+  6  |  var _jsxFileName = "/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/games/rebellion/setup/SetupScreen.test...
+  7  |  import { jsxDEV as _jsxDEV } from "react/jsx-dev-runtime";
+ ❯ TransformPluginContext._formatLog ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:8861:39
+ ❯ TransformPluginContext.error ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:8858:14
+ ❯ resolveId ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:26533:18
+ ❯ ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:26632:23
+ ❯ TransformPluginContext.transform ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:26605:4
+ ❯ EnvironmentPluginContainer.transform ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:8632:14
+ ❯ loadAndTransform ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:20108:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx [ src/games/rebellion/table/TableScreen.test.tsx ]
+Error: Failed to resolve import "./GameTablePage" from "src/games/rebellion/table/TableScreen.test.tsx". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/dimatitov/WebstormProjects/Game automa/apps/web/src/games/rebellion/table/TableScreen.test.tsx:16:0
+  9  |  const __vi_import_3__ = await import("@/shared/i18n");
+  10 |  const __vi_import_4__ = await import("@/shared/test");
+  11 |  const __vi_import_5__ = await import("./GameTablePage");
+     |                                       ^
+  12 |  const __vi_import_6__ = await import("react/jsx-dev-runtime");
+  13 |  
+ ❯ TransformPluginContext._formatLog ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:8861:39
+ ❯ TransformPluginContext.error ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:8858:14
+ ❯ resolveId ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:26533:18
+ ❯ ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:26632:23
+ ❯ TransformPluginContext.transform ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:26605:4
+ ❯ EnvironmentPluginContainer.transform ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:8632:14
+ ❯ loadAndTransform ../../../Game%20automa/node_modules/.pnpm/vite@8.3.6_@types+node@20.19.43_jiti@2.7.0_terser@5.51.2/node_modules/vite/dist/node/chunks/node.js:20108:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/games/registry.test.ts > web game registry > available ⇒ SetupScreen and TableScreen; coming_soon ⇒ no screens (AC-6)
+AssertionError: star-wars-rebellion: expected [ false, false ] to deeply equal [ true, true ]
+
+- Expected
++ Received
+
+  [
+-   true,
+-   true,
++   false,
++   false,
+  ]
+
+ ❯ src/games/registry.test.ts:19:41
+     17|     for (const { definition, SetupScreen, TableScreen } of gameRegistr…
+     18|       const hasScreens = [SetupScreen !== undefined, TableScreen !== u…
+     19|       expect(hasScreens, definition.id).toEqual(
+       |                                         ^
+     20|         definition.status === 'available' ? [true, true] : [false, fal…
+     21|       );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/7]⎯
+
+ FAIL  src/games/rebellion/locales.i18n.test.ts > FE-TABLE locales > session: ru and en have the same keys (plural forms normalised), no empty texts
+AssertionError: ru session:: expected 'undefined' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "undefined"
+
+ ❯ src/games/rebellion/locales.i18n.test.ts:41:51
+     39|         for (const key of flatKeys(resources[lng]?.[ns])) {
+     40|           const v = lookup(ns, lng, key);
+     41|           expect(typeof v, `${lng} ${ns}:${key}`).toBe('string');
+       |                                                   ^
+     42|           expect(v, `${lng} ${ns}:${key}`).not.toBe('');
+     43|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/7]⎯
+
+ FAIL  src/games/rebellion/locales.i18n.test.ts > FE-TABLE locales > board: ru and en have the same keys (plural forms normalised), no empty texts
+AssertionError: ru board:: expected 'undefined' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "undefined"
+
+ ❯ src/games/rebellion/locales.i18n.test.ts:41:51
+     39|         for (const key of flatKeys(resources[lng]?.[ns])) {
+     40|           const v = lookup(ns, lng, key);
+     41|           expect(typeof v, `${lng} ${ns}:${key}`).toBe('string');
+       |                                                   ^
+     42|           expect(v, `${lng} ${ns}:${key}`).not.toBe('');
+     43|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/7]⎯
+
+ FAIL  src/games/rebellion/locales.i18n.test.ts > FE-TABLE locales > gameData: ru and en have the same keys (plural forms normalised), no empty texts
+AssertionError: ru gameData:: expected 'undefined' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "undefined"
+
+ ❯ src/games/rebellion/locales.i18n.test.ts:41:51
+     39|         for (const key of flatKeys(resources[lng]?.[ns])) {
+     40|           const v = lookup(ns, lng, key);
+     41|           expect(typeof v, `${lng} ${ns}:${key}`).toBe('string');
+       |                                                   ^
+     42|           expect(v, `${lng} ${ns}:${key}`).not.toBe('');
+     43|         }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/7]⎯
+
+ FAIL  src/games/rebellion/locales.i18n.test.ts > FE-TABLE locales > every system, region and piece type of the scenario has ru and en names (A-12, R-14)
+AssertionError: ru gameData:systems.sys-aurelis: expected 'undefined' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "undefined"
+
+ ❯ src/games/rebellion/locales.i18n.test.ts:70:79
+     68|     for (const key of keys) {
+     69|       for (const lng of ['ru', 'en'] as const) {
+     70|         expect(typeof lookup('gameData', lng, key), `${lng} gameData:$…
+       |                                                                               ^
+     71|       }
+     72|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/7]⎯
+
+
+ Test Files  4 failed | 20 passed (24)
+      Tests  5 failed | 136 passed (141)
+   Start at  05:41:48
+   Duration  9.11s (transform 4.98s, setup 11.05s, import 14.32s, tests 13.60s, environment 26.22s)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 test: `vitest run --passWithNoTests`
+Exit status 1
+exit=1

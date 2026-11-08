@@ -1,0 +1,72 @@
+$ pnpm --filter @bga/platform build
+
+> @bga/platform@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -b
+
+exit=0
+
+$ pnpm --filter @bga/game-forbidden-stars build
+
+> @bga/game-forbidden-stars@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/games/forbidden-stars
+> tsc -b
+
+exit=0
+
+$ pnpm --filter @bga/game-rebellion build
+
+> @bga/game-rebellion@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -b
+
+exit=0
+
+$ ls packages/games/rebellion/dist/server/index.js packages/games/rebellion/dist/server/rebellion-server-module.js
+packages/games/rebellion/dist/server/index.js
+packages/games/rebellion/dist/server/rebellion-server-module.js
+exit=0
+
+$ pnpm --filter @bga/api build
+
+> @bga/api@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> nest build
+
+exit=0
+
+$ ls apps/api/dist apps/api/dist/sessions apps/api/dist/game-registry
+apps/api/dist:
+app.factory.js
+app.factory.js.map
+app.module.js
+app.module.js.map
+common
+game-registry
+health
+main.js
+main.js.map
+persistence
+sessions
+
+apps/api/dist/game-registry:
+definitions.js
+definitions.js.map
+game-registry.js
+game-registry.js.map
+game-registry.module.js
+game-registry.module.js.map
+game-registry.tokens.js
+game-registry.tokens.js.map
+registry.js
+registry.js.map
+
+apps/api/dist/sessions:
+session-commands.service.js
+session-commands.service.js.map
+sessions.controller.js
+sessions.controller.js.map
+sessions.module.js
+sessions.module.js.map
+sessions.repository.js
+sessions.repository.js.map
+sessions.service.js
+sessions.service.js.map
+exit=0
+

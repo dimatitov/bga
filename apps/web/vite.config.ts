@@ -13,7 +13,7 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     // Workspace packages are consumed from TypeScript sources (no `dist` needed).
-    conditions: ['@swr/source', ...defaultClientConditions],
+    conditions: ['@bga/source', ...defaultClientConditions],
   },
   server: { port, strictPort: true, proxy },
   preview: { port, strictPort: true, proxy },

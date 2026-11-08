@@ -1,0 +1,34 @@
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/app/router.test.tsx (13 tests | 1 failed) 9687ms
+     × catalogue card → /games/star-wars-rebellion: lists its sessions with the game line; Continue → latest 1330ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/app/router.test.tsx > app routes (SWR-003 plan-frontend §2) > catalogue card → /games/star-wars-rebellion: lists its sessions with the game line; Continue → latest
+Error: [2mexpect([22m[31melement[39m[2m).toHaveTextContent()[22m
+
+Expected element to have text content:
+[32m  /Империя/[39m
+Received:
+[31m  faction.undefined vs Человек · Р2 · Командование · 5 мин. назад[39m
+ ❯ src/app/router.test.tsx:65:17
+     63|     const row = await screen.findByTestId('recent-session-r1');
+     64|     // Rebellion's describeSession (not the generic platform line) + r…
+     65|     expect(row).toHaveTextContent(/Империя/);
+       |                 ^
+     66|     expect(row).not.toHaveTextContent(/^Партия · обновлена/);
+     67|     expect(screen.getByTestId('game-continue')).toHaveAttribute('href'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 18 passed (19)
+      Tests  1 failed | 114 passed (115)
+   Start at  07:38:29
+   Duration  16.59s (transform 11.87s, setup 14.24s, import 31.50s, tests 42.12s, environment 39.59s)
+
+undefined
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run src/platform src/shared src/app src/games/registry.test.ts src/games/registry.consistency.test.ts

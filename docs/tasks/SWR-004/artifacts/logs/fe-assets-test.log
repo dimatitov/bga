@@ -1,0 +1,13 @@
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  18 passed (18)
+      Tests  145 passed (145)
+   Start at  07:19:16
+   Duration  2.68s (transform 2.34s, setup 0ms, import 5.48s, tests 2.51s, environment 2ms)
+

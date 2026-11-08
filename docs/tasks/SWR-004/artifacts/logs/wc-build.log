@@ -1,0 +1,6 @@
+$ pnpm --filter @bga/game-rebellion build   # 2026-11-08T04:38:02Z
+
+> @bga/game-rebellion@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -b
+
+exit=0

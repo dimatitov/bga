@@ -10,5 +10,4 @@ export {
   isNotFound,
 } from './errors';
 export { API_BASE } from './http';
-export { createGame, getGameView, listGames, postCommand, type CallOptions } from './games';
-export { gameKeys, gameViewQuery, gamesListQuery } from './queries';
+export { createIdempotencyKey } from './idempotency';

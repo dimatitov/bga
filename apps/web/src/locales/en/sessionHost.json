@@ -1,0 +1,15 @@
+{
+  "loading": "Loading session…",
+  "notFound": {
+    "title": "Session not found",
+    "text": "The link may be wrong or the session was deleted."
+  },
+  "unsupported": {
+    "title": "Game unavailable",
+    "text": "This session belongs to a game the current version of the app does not support."
+  },
+  "error": {
+    "title": "Could not load the session"
+  },
+  "refetchWarning": "Could not refresh the session: {{reason}} Showing the last loaded state."
+}

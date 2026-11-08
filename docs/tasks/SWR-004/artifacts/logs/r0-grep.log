@@ -1,0 +1,34 @@
+# SWR-004 R0 — TC-A-04 grep (2026-11-08T04:13:09Z)
+# Allowed (plan-backend §1.7 + Decisions after TECH_PLANNING): server/legacy-v1.ts, server/upcast.ts, v1 fixtures and their tests
+# (packages/games/rebellion/test/server/upcast.test.ts, apps/api/test/support/{legacy-faction,pre-migration-db}.ts), REBELLION_I18N_PREFIX.
+
+## 1. Raw grep (plan command), v1 fixture JSON excluded
+$ grep -rnE "['\"]rebellion['\"]|\.rebellion\.|faction\.rebellion" packages apps e2e --include='*.ts' --include='*.tsx' --include='*.json' --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.tmp | grep -v '/fixtures/v1/'
+packages/games/rebellion/test/server/upcast.test.ts:3: * The v1 fixtures keep `'rebellion'` on purpose — they are the input of the upgrade (TC-R-03).
+packages/games/rebellion/test/server/upcast.test.ts:18:const LEGACY = 'rebellion';
+packages/games/rebellion/test/server/upcast.test.ts:158:      expect(q.typeKey).toBe(p.typeKey.replace('.rebellion.', '.rebels.'));
+packages/games/rebellion/src/server/upcast.ts:6: * prefixes (`unit|leader|token.rebellion.*`) and event actors; settings get `ruleset: 'base'`,
+packages/games/rebellion/src/server/legacy-v1.ts:5: * This file (with `./upcast.ts` and the v1 fixtures) is the only place where `'rebellion'` is a faction value.
+packages/games/rebellion/src/server/legacy-v1.ts:9:export const FactionV1Schema = z.enum(['empire', 'rebellion']);
+apps/web/src/games/rebellion/i18n.ts:5:export const REBELLION_I18N_PREFIX = 'rebellion';
+apps/api/test/support/pre-migration-db.ts:5: * produce v1 data, TR-4). Its `'rebellion'` values are the input of the upgrade and are never renamed.
+apps/api/test/support/legacy-faction.ts:5:const LEGACY_FACTION = 'rebellion';
+
+## 2. Same grep minus the allowed files → must be empty
+$ <same> | grep -vE 'src/server/(legacy-v1|upcast)\.ts|test/server/upcast\.test\.ts|test/support/(legacy-faction|pre-migration-db)\.ts|REBELLION_I18N_PREFIX'
+
+matches=0
+
+## 3. Extra check: object keys / property access / testid / web code ('rebellion' only as i18n prefix)
+$ grep -rnE "[A-Za-z_)]\.rebellion|rebellion\??:|faction-rebellion" packages apps e2e scripts (ts,tsx,json,mjs) | grep -v '/fixtures/v1/' | grep -v 'star-wars-rebellion:'
+packages/games/rebellion/src/server/upcast.ts:6: * prefixes (`unit|leader|token.rebellion.*`) and event actors; settings get `ruleset: 'base'`,
+packages/games/rebellion/src/server/upcast.ts:32:const FACTION_V1_TO_V2: Record<FactionV1, FactionId> = { rebellion: 'rebels', empire: 'empire' };
+$ grep -rn "'rebellion'" apps/web/src
+apps/web/src/games/rebellion/i18n.ts:5:export const REBELLION_I18N_PREFIX = 'rebellion';
+
+## 4. v1 fixtures keep the legacy id on purpose (input of the upgrade, TC-R-03)
+$ grep -c '"rebellion"' <v1 fixtures>
+packages/games/rebellion/test/fixtures/v1/setups.v1.json:1
+apps/api/test/fixtures/v1/sessions.v1.json:41
+packages/games/rebellion/test/fixtures/v1/state.v1.empire-ai.json:10
+packages/games/rebellion/test/fixtures/v1/state.v1.rebellion-human.json:15

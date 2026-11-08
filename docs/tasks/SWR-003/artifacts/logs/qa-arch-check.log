@@ -1,0 +1,39 @@
+# AC-9 / TC-ARCH-01,04,05,03 static checks — qa-lead 2026-11-08T03:38:03Z
+$ grep -rnE "import\(" $D --include=*.ts --include=*.tsx | grep -v .test.
+apps/web/src/games/rebellion/board/hooks/useBoardDebug.ts:26:    void import('./boardDebugImpl').then((m) => {
+apps/web/src/games/rebellion/entry.ts:18:  SetupScreen: lazy(() => import('./setup/SetupScreen')),
+apps/web/src/games/rebellion/entry.ts:19:  TableScreen: lazy(() => import('./table/TableScreen')),
+exit=0
+
+$ grep -rnE "require\(|createRequire|readdirSync|@bga/game-\$\{" $D (non-test)
+exit=1 (1 = no matches)
+
+$ grep -nE "register\(|\.push\(" registries
+exit=1 (1 = no matches)
+
+$ grep -rli "admin|plugin" apps/api/src apps/web/src  → only comments stating "no plugins":
+apps/api/src/game-registry/registry.ts:6: * A plain typed array with static imports (AC-9): no plugins, no loading by name.
+apps/web/src/games/registry.ts:2: * Web game registry (spec "Реестры", plan-frontend §4): a plain typed array, no plugins, no loading by name.
+
+$ ls packages packages/games  (contracts/game-core/game-data removed)
+packages:
+games
+platform
+tsconfig.json
+
+packages/games:
+forbidden-stars
+rebellion
+
+$ grep -rln "@swr/" apps packages scripts e2e package.json tsconfig*.json pnpm-workspace.yaml (excl node_modules, dist)
+apps/api/.env
+→ only apps/api/.env: git-ignored local file of the user, line 1 is a stale comment (not code/config in the repo)
+
+$ grep -n "path:" apps/web/src/app/router.tsx   (6 routes: catalog, game, newSession, settings, *, session)
+26:          { path: routePatterns.catalog, element: <CatalogPage /> },
+27:          { path: routePatterns.game, element: <GamePage /> },
+28:          { path: routePatterns.newSession, element: <NewSessionPage /> },
+29:          { path: routePatterns.settings, element: <SettingsPage /> },
+30:          { path: routePatterns.notFound, element: <NotFoundPage /> },
+35:        children: [{ path: routePatterns.session, element: <SessionHost /> }],
+Note: useBoardDebug.ts import('./boardDebugImpl') is a literal relative import inside apps/web/src/games/rebellion/** (VITE_E2E debug hook from SWR-002), not loading by name — consistent with AC-9/TC-ARCH-01 intent.

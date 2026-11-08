@@ -9,12 +9,13 @@ import Typography from '@mui/material/Typography';
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
+import { paths } from '@/platform/paths';
 import { announce } from '@/shared/feedback';
 import { i18n } from '@/shared/i18n';
 import { type Language, LANGUAGES, useSettingsStore } from '@/shared/settings';
 import { ChoiceGroup } from '@/shared/ui';
 
-/** `/settings` — applied instantly, stored in localStorage `swr.settings.v1` (D-ST-1..3, R-13). */
+/** `/settings` — applied instantly, stored in localStorage `bga.settings.v1` (D-ST-1..3, R-13). */
 export function SettingsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -26,10 +27,10 @@ export function SettingsPage() {
   const setReduceMotion = useSettingsStore((s) => s.setReduceMotion);
 
   const handleBack = () => {
-    // D-ST-2: history back; without in-app history → menu.
+    // D-ST-2: history back; without in-app history → catalogue.
     const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
     if (idx > 0) void navigate(-1);
-    else void navigate('/');
+    else void navigate(paths.catalog);
   };
 
   const handleLanguage = (next: Language) => {

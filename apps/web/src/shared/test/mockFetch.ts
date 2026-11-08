@@ -1,15 +1,18 @@
 import { vi } from 'vitest';
 
-/** A mocked response: JSON `body` with `status`, or `'network'` to make fetch reject. */
-export type MockReply = { status: number; body?: unknown } | 'network';
+/** A mocked response: JSON `body` with `status` (+ extra `headers`), or `'network'` to make fetch reject. */
+export type MockReply =
+  { status: number; body?: unknown; headers?: Record<string, string> } | 'network';
 export type MockHandler = MockReply | ((req: MockRequest) => MockReply | Promise<MockReply>);
 
 export interface MockRequest {
   method: string;
-  /** Path without query, e.g. `/api/games`. */
+  /** Path without query, e.g. `/api/sessions`. */
   path: string;
   url: string;
   body: unknown;
+  /** Request headers, names lower-cased (e.g. `idempotency-key`). */
+  headers: Record<string, string>;
 }
 
 /**
@@ -31,7 +34,11 @@ export function mockFetch(routes: Record<string, MockHandler>) {
         body = init.body;
       }
     }
-    const req: MockRequest = { method, path, url, body };
+    const headers: Record<string, string> = {};
+    new Headers(init?.headers).forEach((value, name) => {
+      headers[name] = value;
+    });
+    const req: MockRequest = { method, path, url, body, headers };
     requests.push(req);
     const handler = routes[`${method} ${path}`];
     if (!handler) {
@@ -48,7 +55,7 @@ export function mockFetch(routes: Record<string, MockHandler>) {
     if (reply === 'network') throw new TypeError('Failed to fetch');
     return new Response(reply.body === undefined ? null : JSON.stringify(reply.body), {
       status: reply.status,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...reply.headers },
     });
   });
   vi.stubGlobal('fetch', fn);

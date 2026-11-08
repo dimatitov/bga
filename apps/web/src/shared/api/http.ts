@@ -1,4 +1,4 @@
-import { ErrorResponseSchema } from '@swr/contracts';
+import { ErrorResponseSchema } from '@bga/platform';
 import { type z } from 'zod';
 import { ApiError, CLIENT_ERROR_CODES, INTERNAL_MESSAGE_KEY, NETWORK_MESSAGE_KEY } from './errors';
 
@@ -9,6 +9,8 @@ export interface RequestOptions {
   method?: 'GET' | 'POST';
   body?: unknown;
   signal?: AbortSignal;
+  /** Extra request headers (e.g. `Idempotency-Key`), added to `Accept`/`Content-Type`. */
+  headers?: Record<string, string>;
 }
 
 export interface RawResponse {
@@ -24,15 +26,16 @@ function isAbort(e: unknown): boolean {
 
 /** Low-level fetch: never throws for HTTP statuses; throws `ApiError{status:null}` for network failures. */
 export async function requestRaw(path: string, options: RequestOptions = {}): Promise<RawResponse> {
-  const { method = 'GET', body, signal } = options;
+  const { method = 'GET', body, signal, headers: extraHeaders = {} } = options;
   let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, {
       method,
-      headers:
-        body === undefined
-          ? { Accept: 'application/json' }
-          : { Accept: 'application/json', 'Content-Type': 'application/json' },
+      headers: {
+        Accept: 'application/json',
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        ...extraHeaders,
+      },
       body: body === undefined ? undefined : JSON.stringify(body),
       signal,
     });

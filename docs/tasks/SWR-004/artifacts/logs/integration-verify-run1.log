@@ -1,0 +1,22 @@
+$ pnpm verify   # 2026-11-08T05:06:47Z, cwd=/Users/dimatitov/WebstormProjects/Game automa
+
+> board-game-ai@ verify /Users/dimatitov/WebstormProjects/Game automa
+> pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle && pnpm e2e
+
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+[warn] apps/web/src/games/rebellion/describeSession.test.ts
+[warn] apps/web/src/games/rebellion/describeSession.ts
+[warn] apps/web/src/platform/game-page/GamePage.test.tsx
+[warn] apps/web/src/platform/game-page/RecentSessions.tsx
+[warn] apps/web/src/platform/sessions/formatRelativeTime.ts
+[warn] apps/web/src/platform/sessions/useCreateSession.test.tsx
+[warn] apps/web/src/platform/ui/SessionStatusChip.test.tsx
+[warn] apps/web/src/shared/test/mockFetch.ts
+[warn] Code style issues found in 8 files. Run Prettier with --write to fix.
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1

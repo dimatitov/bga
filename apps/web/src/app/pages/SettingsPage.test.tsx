@@ -1,12 +1,12 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { CatalogPage } from '@/platform/catalog/CatalogPage';
 import { SETTINGS_STORAGE_KEY, useSettingsStore } from '@/shared/settings';
 import { mockFetch, renderWithProviders } from '@/shared/test';
-import { MainMenuPage } from './MainMenuPage';
 import { SettingsPage } from './SettingsPage';
 
 const routes = [
-  { path: '/', element: <MainMenuPage /> },
+  { path: '/', element: <CatalogPage /> },
   { path: '/settings', element: <SettingsPage /> },
 ];
 
@@ -26,7 +26,7 @@ describe('SettingsPage', () => {
   });
 
   it('TC-WEB-10: settings-language-en switches texts without reload, html lang and localStorage', async () => {
-    mockFetch({ 'GET /api/games': { status: 200, body: [] } });
+    mockFetch({});
     const { user, router } = renderWithProviders({ routes, path: '/settings' });
 
     await user.click(screen.getByTestId('settings-language-en'));
@@ -44,7 +44,8 @@ describe('SettingsPage', () => {
 
     // Other screens follow without reload.
     await act(() => router.navigate('/'));
-    expect(await screen.findByTestId('menu-new-game')).toHaveTextContent('New game');
+    expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('Games');
+    expect(screen.getAllByTestId('game-card-status')[0]).toHaveTextContent('Available');
 
     await act(() => router.navigate('/settings'));
     await user.click(screen.getByTestId('settings-language-ru'));
@@ -89,8 +90,8 @@ describe('SettingsPage', () => {
     expect(document.documentElement.dataset.reducedMotion).toBe('true');
   });
 
-  it('D-ST-2: Back without history goes to the menu', async () => {
-    mockFetch({ 'GET /api/games': { status: 200, body: [] } });
+  it('D-ST-2: Back without history goes to the catalogue', async () => {
+    mockFetch({});
     const { user, router } = renderWithProviders({ routes, path: '/settings' });
     await user.click(screen.getByTestId('settings-back'));
     await waitFor(() => expect(router.state.location.pathname).toBe('/'));

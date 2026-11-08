@@ -1,0 +1,7 @@
+$ pnpm --filter @bga/platform typecheck
+2026-11-08T04:25:57Z
+
+> @bga/platform@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -p tsconfig.test.json
+
+exit=0

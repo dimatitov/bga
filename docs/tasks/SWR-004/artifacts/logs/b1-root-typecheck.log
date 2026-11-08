@@ -1,0 +1,24 @@
+$ pnpm typecheck
+2026-11-08T04:26:04Z
+
+> board-game-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/web typecheck$ tsc -b
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/web typecheck: Done
+apps/api typecheck: Done
+e2e/support/a11y.ts(199,23): error TS2488: Type 'HTMLCollection' must have a '[Symbol.iterator]()' method that returns an iterator.
+ ELIFECYCLE  Command failed with exit code 2.
+exit=2

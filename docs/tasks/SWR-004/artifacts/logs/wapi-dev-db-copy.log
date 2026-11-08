@@ -1,0 +1,47 @@
+# SWR-004 W-API — dev DB copy check (2026-11-08T04:45:46Z); original only copied (copyFileSync), never written
+$ shasum -a 256 prisma/dev.db prisma/dev.pre-swr004.db  # before
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.db
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.pre-swr004.db
+$ SWR004_DEV_DB=prisma/dev.db pnpm --filter @bga/api exec vitest run test/dev-db-upgrade.int.test.ts --reporter=verbose --silent=false
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable
+[dev-db-upgrade] copy /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-9f0651a0-3ef6-4eb9-9065-f8de236307fe.db
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "devcopy-9f0651a0-3ef6-4eb9-9065-f8de236307fe.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-9f0651a0-3ef6-4eb9-9065-f8de236307fe.db"
+
+3 migrations found in prisma/migrations
+
+Applying migration `20261108200000_session_status_idempotency`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261108200000_session_status_idempotency/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable
+[dev-db-upgrade] status=prototype
+[dev-db-upgrade] 4 session row(s)
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE 79fcaa89-4020-40a5-8527-7e4426af5e3e actor=rebels → 200
+
+ ✓ test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6) > migrate deploy on the copy, every row readable with v2 factions, one command, restart-stable 2280ms
+stdout | test/dev-db-upgrade.int.test.ts > SWR-004 dev DB upgrade on a copy (opt-in, §1.6)
+[dev-db-upgrade] /Users/dimatitov/WebstormProjects/Game automa/apps/api/prisma/dev.db sha256 before=b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf after=b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  07:45:47
+   Duration  5.44s (transform 331ms, setup 0ms, import 795ms, tests 2.28s, environment 0ms)
+
+exit=0
+$ shasum -a 256 prisma/dev.db prisma/dev.pre-swr004.db  # after
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.db
+b878960b38796bfa5f445d41800b87af0d8dfbb967eabb1c834f3053d7134baf  prisma/dev.pre-swr004.db

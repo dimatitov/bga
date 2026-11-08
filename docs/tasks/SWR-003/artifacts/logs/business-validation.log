@@ -1,0 +1,15 @@
+# SWR-003 Business validation — Analyst, 2026-11-08 (after INTEGRATION, during CODE_REVIEW)
+# Env: `pnpm dev` on the user's real dev DB (backup: apps/api/prisma/dev.pre-swr003.db, sha256 c81a0d79165b20e5…), built-in browser 1440x900.
+
+BV-0 Migration on real dev DB: GET /api/sessions?gameId=star-wars-rebellion → 3 sessions from SWR-002, all gameId=star-wars-rebellion, details {humanFaction, opponent, difficulty, round, phase} (e.g. empire/ai/hard/round 2/assignment).
+BV-1 Catalog (/): heading «Игры», cards «Star Wars: Rebellion» (Доступна, own abstract cover, description, «2 игрока», «AI-противник ✓») and «Forbidden Stars» (Скоро, «2–4 игрока»); header with settings; mock footer.
+BV-2 Card → /games/star-wars-rebellion: hero (cover, name, status, players, AI, description), «Новая партия», «Продолжить партию» (hint «Империя vs AI (Сложная) · Р2 · Назначение · 2 ч назад»), «Недавние партии» with the 3 migrated sessions, disclaimer.
+BV-3 «Новая партия» → /games/star-wars-rebellion/new → Империя → «Начать партию» → /sessions/08e375ea-d69f-47b9-99a7-56e1f46ef0d6; table: data-game-id=star-wars-rebellion, data-session-id=<id>, version 1; Empire view shows no rebel base.
+BV-4 Select pc-01 (Аурелис) → actions «Бревора», «Синдрал» → click «Бревора» → version 2, pc-01 at sys-brevora.
+BV-5 «К игре» (href /games/star-wars-rebellion) → game-continue points to the new session (hint «Империя vs AI (Обычная) · Р1 · Назначение · в эту минуту»), recent = 4 → «Продолжить партию» → same session, version 2, pc-01 at sys-brevora.
+BV-6 /games/forbidden-stars/new → «Forbidden Stars», «← К игре», «Игра появится позже: правила и стол ещё не реализованы» (no form).
+BV-7 /games/no-such-game → «Игра не найдена · Такой игры нет в каталоге · В каталог».
+
+Verdict: AC-1..AC-4, AC-6 confirmed in the live app; sessions are bound to gameId and SWR-002 data survived the migration.
+Observation (minor, UX copy): relative time for <1 min renders as «в эту минуту» (Intl ru) — reads awkwardly; «только что» would be better. Not blocking.
+dev servers stopped afterwards (ports 3000/5173 free).

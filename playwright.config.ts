@@ -28,7 +28,7 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'pnpm --filter @swr/api run e2e:serve',
+      command: 'pnpm --filter @bga/api run e2e:serve',
       url: `http://localhost:${API_PORT}/api/health`,
       reuseExistingServer: false,
       timeout: 180_000,
@@ -36,7 +36,7 @@ export default defineConfig({
       stdout: 'pipe',
     },
     {
-      command: 'pnpm --filter @swr/web run dev',
+      command: 'pnpm --filter @bga/web run dev',
       url: `http://localhost:${WEB_PORT}`,
       reuseExistingServer: false,
       timeout: 120_000,

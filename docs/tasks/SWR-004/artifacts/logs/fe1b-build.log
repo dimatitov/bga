@@ -1,0 +1,23 @@
+$ pnpm --filter @bga/web build
+
+> @bga/web@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b && vite build
+
+vite v8.3.6 building client environment for production...
+transforming...
+✓ 1002 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                             0.68 kB │ gzip:   0.37 kB
+dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+dist/assets/PieceGlyph-CzLGtDpz.js          0.86 kB │ gzip:   0.56 kB
+dist/assets/SetupScreen-CxBSwSzP.js         3.90 kB │ gzip:   1.36 kB
+dist/assets/TableScreen-CJwYumIW.js        42.73 kB │ gzip:  13.39 kB
+dist/assets/index-CQqPts1_.js              77.42 kB │ gzip:  26.48 kB
+dist/assets/vendor-DIbOl8aa.js            186.48 kB │ gzip:  54.97 kB
+dist/assets/vendor-mui-DPocDlQo.js        253.61 kB │ gzip:  80.39 kB
+dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+dist/assets/vendor-konva-BWMWGsIW.js      330.29 kB │ gzip: 100.81 kB
+
+✓ built in 367ms
+exit=0

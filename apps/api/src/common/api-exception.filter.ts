@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { ERROR_MESSAGE_KEYS, type CommandErr } from '@swr/contracts';
+import { ERROR_MESSAGE_KEYS, type CommandErr } from '@bga/platform';
 import type { Request, Response } from 'express';
 import { ApiError } from './api-error';
 
@@ -49,7 +49,7 @@ export function toApiError(exception: unknown): ApiError {
 /**
  * Global filter (R-8): every non-2xx response under `/api` has the body
  * `{ ok: false, error: { code, messageKey, details? } }`.
- * Logs only gameId, code, status (+ error class name for 500) — never state/view/payload (TC-ARCH-11).
+ * Logs only sessionId, code, status (+ error class name for 500) — never state/view/payload (TC-ARCH-11).
  */
 @Catch()
 export class ApiExceptionFilter implements ExceptionFilter {
@@ -61,10 +61,13 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
     const error = toApiError(exception);
 
-    const gameId = typeof req.params?.id === 'string' ? req.params.id : '-';
+    const sessionId =
+      typeof req.params?.sessionId === 'string' ? req.params.sessionId.slice(0, 64) : '-';
     if (error.status >= 500) {
       const name = exception instanceof Error ? exception.constructor.name : typeof exception;
-      this.logger.error(`gameId=${gameId} code=${error.code} status=${error.status} error=${name}`);
+      this.logger.error(
+        `sessionId=${sessionId} code=${error.code} status=${error.status} error=${name}`,
+      );
     }
 
     const body: CommandErr = { ok: false, error: error.toBody() };

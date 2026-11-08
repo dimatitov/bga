@@ -7,16 +7,26 @@ export interface TranslatableError {
   details?: unknown;
 }
 
+export interface TranslateErrorOptions {
+  /** Game error namespace tried first, e.g. `'rebellion.errors'` (SWR-003 plan-frontend §5.4). */
+  gameNs?: string;
+}
+
 /**
- * `messageKey` `errors.<name>` → `errors:<name>`; no translation → `errors:code.<CODE>`; none → `errors:unknown`
- * (plan-frontend §7.3, D-i18n-4).
+ * `messageKey` `errors.<name>` → `<gameNs>:<name>` (when given) → `errors:<name>`; no translation →
+ * `errors:code.<CODE>`; none → `errors:unknown` (plan-frontend §7.3, D-i18n-4; SWR-003 §5.4).
  */
-export function translateError(t: TFunction, error: TranslatableError): string {
+export function translateError(
+  t: TFunction,
+  error: TranslatableError,
+  options: TranslateErrorOptions = {},
+): string {
   const keys: string[] = [];
   if (error.messageKey) {
     const name = error.messageKey.startsWith('errors.')
       ? error.messageKey.slice('errors.'.length)
       : error.messageKey;
+    if (name && options.gameNs) keys.push(`${options.gameNs}:${name}`);
     if (name) keys.push(`errors:${name}`);
   }
   if (error.code) keys.push(`errors:code.${error.code}`);
@@ -29,9 +39,13 @@ export function translateError(t: TFunction, error: TranslatableError): string {
 }
 
 /** Any thrown value (ApiError, Error, …) → localized text. */
-export function translateUnknownError(t: TFunction, error: unknown): string {
+export function translateUnknownError(
+  t: TFunction,
+  error: unknown,
+  options: TranslateErrorOptions = {},
+): string {
   if (isApiError(error)) {
-    return translateError(t, { code: error.code, messageKey: error.messageKey });
+    return translateError(t, { code: error.code, messageKey: error.messageKey }, options);
   }
-  return translateError(t, {});
+  return translateError(t, {}, options);
 }

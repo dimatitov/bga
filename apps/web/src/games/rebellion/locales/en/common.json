@@ -1,0 +1,42 @@
+{
+  "faction": {
+    "rebels": "Rebels",
+    "empire": "Empire"
+  },
+  "pieceKind": {
+    "unit": "Unit",
+    "leader": "Leader",
+    "token": "Token"
+  },
+  "phase": {
+    "assignment": "Assignment",
+    "command": "Command",
+    "refresh": "Refresh"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "normal": "Normal",
+    "hard": "Hard"
+  },
+  "round": "Round {{round}}",
+  "factionShort": {
+    "rebels": "Rebels",
+    "empire": "Empire"
+  },
+  "factionTagline": {
+    "rebels": "Hide the base, play for time",
+    "empire": "Hunts for the hidden base"
+  },
+  "ruleset": {
+    "base": "Base game",
+    "rise-of-the-empire": "Rise of the Empire"
+  },
+  "mode": {
+    "digital": "Digital game",
+    "physical_companion": "With physical components"
+  },
+  "prototype": {
+    "badge": "Prototype",
+    "full": "Prototype: test setup, not the rules of the original game"
+  }
+}

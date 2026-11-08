@@ -1,15 +1,17 @@
-// Scenario 3 — the table on mock data: TC-E2E-06 (AC-4, AC-10); not-found game: TC-E2E-32 (AC-2).
+// Scenario 3 — the table on mock data: TC-E2E-06 (AC-4, AC-10); not-found: TC-E2E-32 (old URL; see also
+// catalog.spec TC-GP-17 and game-page.spec TC-HOST-08).
+// SWR-003: sessions via `POST /api/sessions`, table at `/sessions/:id` (test-cases.md §8.1).
 import { expect, test } from '@playwright/test';
-import { createGame } from './support/api';
-import { dbg, openGame, openSidebarTab } from './support/board';
+import { createSession } from './support/api';
+import { dbg, openSession, openSidebarTab } from './support/board';
 import { T } from './support/testids';
 
 test('TC-E2E-06: table renders the mock scenario from the server PlayerView', async ({
   page,
   request,
 }) => {
-  const { gameId, view } = await createGame(request);
-  await openGame(page, gameId);
+  const { sessionId, view } = await createSession(request);
+  await openSession(page, sessionId);
 
   // ≥ 8 systems, each rendered on the canvas and mirrored in the accessible list.
   expect(view.systems.length).toBeGreaterThanOrEqual(8);
@@ -20,7 +22,7 @@ test('TC-E2E-06: table renders the mock scenario from the server PlayerView', as
   }
 
   // Units and tokens of both sides; every piece is on the canvas and in the list with its system.
-  for (const owner of ['empire', 'rebellion'] as const) {
+  for (const owner of ['empire', 'rebels'] as const) {
     for (const kind of ['unit', 'token'] as const) {
       expect(
         view.pieces.some((p) => p.owner === owner && p.kind === kind),
@@ -37,7 +39,7 @@ test('TC-E2E-06: table renders the mock scenario from the server PlayerView', as
   await expect(page.getByTestId(T.boardList)).toBeVisible();
   await expect(page.getByTestId(T.boardList)).toHaveAttribute('role', 'listbox');
 
-  // Header: round and phase; context panel; event log with GAME_CREATED; mock labelling.
+  // Header: round and phase; context panel; event log with GAME_CREATED; prototype labelling.
   await expect(page.getByTestId(T.roundIndicator)).toContainText('1');
   await expect(page.getByTestId(T.phaseIndicator)).toHaveAttribute('data-phase', 'assignment');
   await expect(page.getByTestId(T.contextPanel)).toBeVisible();
@@ -45,13 +47,23 @@ test('TC-E2E-06: table renders the mock scenario from the server PlayerView', as
   await expect(page.getByTestId(T.eventLog)).toBeVisible();
   await expect(page.getByTestId(T.eventLogItem)).toHaveCount(1);
   await expect(page.getByTestId(T.eventLogItem).first()).toHaveAttribute('data-seq', '1');
-  await expect(page.getByTestId(T.mockBadge).first()).toBeVisible();
+  // SWR-004 (plan-frontend §5.4): the table `mock-badge` is replaced by `prototype-badge` (status from the server).
+  const badge = page.getByTestId(T.prototypeBadge);
+  await expect(badge).toHaveCount(1);
+  await expect(badge).toBeVisible();
+  await expect(badge).toHaveAttribute('data-status', 'prototype');
+  await expect(badge).not.toBeEmpty();
   await expect(page.getByTestId(T.advancePhase)).toBeVisible();
   // NOTE: adjacency lines are canvas-only (no hook) — verified by screenshot 04 and TC-MAN-03.
 });
 
-test('TC-E2E-32: unknown game id shows a "not found" state with a way back', async ({ page }) => {
-  await page.goto('/games/does-not-exist');
+test('TC-E2E-32 (SWR-003: old SWR-002 URL): /games/<real session id> is "game not found", not the table', async ({
+  page,
+  request,
+}) => {
+  // Spec Assumptions: SWR-002 URLs `/games/<uuid>` are not supported — the id is read as an unknown game id.
+  const { sessionId } = await createSession(request);
+  await page.goto(`/games/${sessionId}`);
   const nf = page.getByTestId(T.gameNotFound);
   await expect(nf).toBeVisible();
   await expect(nf.getByRole('link').or(nf.getByRole('button')).first()).toBeVisible();

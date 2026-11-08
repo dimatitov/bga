@@ -1,0 +1,7 @@
+$ pnpm --filter @bga/platform build
+2026-11-08T04:26:03Z
+
+> @bga/platform@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -b
+
+exit=0

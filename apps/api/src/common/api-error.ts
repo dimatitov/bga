@@ -1,20 +1,18 @@
-import { ERROR_MESSAGE_KEYS, type ApiError as ApiErrorBody, type ErrorCode } from '@swr/contracts';
-import type { CoreError } from '@swr/game-core';
+import {
+  ERROR_HTTP_STATUS,
+  ERROR_MESSAGE_KEYS,
+  toValidationIssues,
+  type ApiError as ApiErrorBody,
+  type ErrorCode,
+  type GameModuleError,
+  type ValidationIssue,
+} from '@bga/platform';
 import type { ZodError } from 'zod';
 
-const STATUS_BY_CODE: Record<ErrorCode, number> = {
-  VALIDATION: 400,
-  NOT_FOUND: 404,
-  VERSION_CONFLICT: 409,
-  ILLEGAL_COMMAND: 422,
-  INTERNAL: 500,
-};
+/** HTTP status per code — the platform table (`SETUP_UNSUPPORTED` 422, `IDEMPOTENCY_KEY_REUSED` 409, …). */
+const STATUS_BY_CODE: Readonly<Record<ErrorCode, number>> = ERROR_HTTP_STATUS;
 
-export interface ValidationIssue {
-  path: (string | number)[];
-  code: string;
-  message: string;
-}
+export type { ValidationIssue };
 
 /**
  * Domain-level API error. The global ApiExceptionFilter turns it into
@@ -40,22 +38,32 @@ export class ApiError extends Error {
       : { code: this.code, messageKey: this.messageKey, details: this.details };
   }
 
+  /** Unknown route or method. */
   static notFound(): ApiError {
     return new ApiError('NOT_FOUND', ERROR_MESSAGE_KEYS.notFound);
+  }
+
+  /** `gameId` is not in the catalogue. */
+  static gameNotFound(): ApiError {
+    return new ApiError('NOT_FOUND', ERROR_MESSAGE_KEYS.gameNotFound);
+  }
+
+  /** No such session (malformed ids included). */
+  static sessionNotFound(): ApiError {
+    return new ApiError('NOT_FOUND', ERROR_MESSAGE_KEYS.sessionNotFound);
+  }
+
+  /** The game is in the catalogue but has no server module (coming_soon / removed) → 422. */
+  static gameUnavailable(): ApiError {
+    return new ApiError('GAME_UNAVAILABLE', ERROR_MESSAGE_KEYS.gameUnavailable);
   }
 
   static validation(issues: ValidationIssue[]): ApiError {
     return new ApiError('VALIDATION', ERROR_MESSAGE_KEYS.validation, { issues });
   }
 
-  static fromZod(error: ZodError): ApiError {
-    return ApiError.validation(
-      error.issues.map((issue) => ({
-        path: issue.path.map((p) => (typeof p === 'symbol' ? String(p) : p)),
-        code: issue.code,
-        message: issue.message,
-      })),
-    );
+  static fromZod(error: ZodError, prefix: (string | number)[] = []): ApiError {
+    return ApiError.validation(toValidationIssues(error, prefix));
   }
 
   static versionConflict(currentVersion: number): ApiError {
@@ -64,12 +72,22 @@ export class ApiError extends Error {
     });
   }
 
+  /** 422: the game understood the setup but cannot play it yet; key/details come from the game module. */
+  static setupUnsupported(messageKey: string, details?: unknown): ApiError {
+    return new ApiError('SETUP_UNSUPPORTED', messageKey, details);
+  }
+
+  /** 409: the `Idempotency-Key` was used with a different body. No details (nothing of the other session). */
+  static idempotencyKeyReused(): ApiError {
+    return new ApiError('IDEMPOTENCY_KEY_REUSED', ERROR_MESSAGE_KEYS.idempotencyKeyReused);
+  }
+
   static internal(): ApiError {
     return new ApiError('INTERNAL', ERROR_MESSAGE_KEYS.internal);
   }
 
-  /** Maps a game-core rejection: VALIDATION → 400, VERSION_CONFLICT → 409, ILLEGAL_COMMAND → 422. */
-  static fromCore(error: CoreError): ApiError {
+  /** Maps a game-module rejection: VALIDATION → 400, VERSION_CONFLICT → 409, ILLEGAL_COMMAND → 422. */
+  static fromModule(error: GameModuleError): ApiError {
     return new ApiError(error.code, error.messageKey, error.details);
   }
 }

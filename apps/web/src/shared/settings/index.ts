@@ -1,7 +1,9 @@
 export {
   DEFAULT_LANGUAGE,
   LANGUAGES,
+  LEGACY_SETTINGS_STORAGE_KEY,
   SETTINGS_STORAGE_KEY,
+  migrateLegacySettings,
   defaultSettings,
   isLanguage,
   resetSettingsStore,

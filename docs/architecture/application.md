@@ -1,110 +1,152 @@
-# Архитектура приложения (SWR-002: Application Foundation & UX Prototype)
+# Архитектура приложения (платформа AI-компаньонов для настольных игр)
 
-Статус: **проект** (TECH_PLANNING, 2026-11-08). Описывает целевую архитектуру поставки SWR-002; код ещё не написан.
-Детали реализации и версии — [`docs/tasks/SWR-002/plan-backend.md`](../tasks/SWR-002/plan-backend.md) (backend/workspace)
-и план FE lead (web). Контракт — `specification.md` → «Architecture contract» + «Clarifications».
+Статус: **действующий** — состояние после SWR-004 (Game Setup & Factions), 2026-11-08. История: SWR-002 (фундамент, одна
+игра) — [`docs/tasks/SWR-002/`](../tasks/SWR-002/); SWR-003 (мультиигровая платформа) — [`docs/tasks/SWR-003/`](../tasks/SWR-003/);
+SWR-004 (статус сессии, публичные настройки, идемпотентное создание, hot-seat Rebellion) — [`docs/tasks/SWR-004/`](../tasks/SWR-004/)
+(`specification.md` → Contract + Clarifications Q-1..Q-25, `plan-backend.md`, `plan-frontend.md`).
+Как добавить игру — [`adding-a-game.md`](adding-a-game.md).
 
 ## 1. Слои и пакеты
 
 ```text
-apps/web  (React SPA)          — отрисовка, жесты, выбор; НЕ знает правил
-   │  HTTP JSON /api (Vite proxy), типы и схемы из @swr/contracts, координаты из @swr/game-data/layout
+apps/web  (React SPA)                — каталог, страница игры, хост сессии (platform/**) + UI игр (games/<id>/**); НЕ знает правил
+   │  HTTP JSON /api (Vite proxy); DTO из @bga/platform; из игровых пакетов только ./definition ./schema ./board ./assets
    ▼
-apps/api  (NestJS)             — валидация (Zod), загрузка/сохранение, транзакция, маппинг ошибок
-   │  вызовы чистых функций
+apps/api  (NestJS)                   — sessions/** (общий сервис сессий), game-registry/** (единственное место, где названы игры),
+   │                                   валидация (Zod), транзакции, маппинг ошибок
+   │  ServerGameModule (интерфейс из @bga/platform)
    ▼
-packages/game-core (pure TS)   — createGame, applyCommand, getLegalActions, toPlayerView; mock-rules
-   │  типы
+packages/games/<id>  @bga/game-<id>  — всё, что специфично для игры, subpath-экспорты:
+   │   ./definition ./schema ./rules ./scenario ./board ./assets ./ai ./server
    ▼
-packages/contracts (Zod)       — GameState, PlayerView, Command(Envelope), CommandResult, API DTO
-packages/game-data             — mock-сценарий (системы, соседство, объекты, база) | layout (координаты) — два entry point
-apps/api/persistence           — SQLite через Prisma: Game (снимок state + version), GameEvent (журнал)
+packages/platform    @bga/platform   — GameDefinition, GameId, SessionStatus, SessionSummary, DTO сессий, Idempotency-Key,
+                                       единый формат ошибок, общие messageKey, ServerGameModule (типы), рамка CommandEnvelope
+apps/api/persistence                 — SQLite через Prisma: Session (gameId, setup, снимок state + version, status,
+                                       idempotencyKey/Hash), SessionEvent (журнал)
 ```
 
-Направление зависимостей строго сверху вниз. Запреты проверяются ESLint (`no-restricted-imports`):
+Игры: `star-wars-rebellion` (`@bga/game-rebellion`, `available`) и `forbidden-stars` (`@bga/game-forbidden-stars`,
+`coming_soon`: только `./definition` и `./assets`).
 
-- `game-core` не импортирует React, NestJS, Prisma, OpenAI, `node:*`, `game-data` (кроме тестов); не использует `Date`/`Math.random`
-  — время и id передаются параметром (детерминизм).
-- `apps/web` не импортирует `game-core` и сценарий `game-data`; только `@swr/contracts` и `@swr/game-data/layout`.
-- `contracts` зависит только от `zod`.
+Направление зависимостей строго сверху вниз. Запреты проверяются ESLint (`no-restricted-imports`, автотест
+`scripts/eslint-boundaries.test.mjs` в `pnpm test`):
 
-## 2. Поток данных
+- `@bga/platform` зависит только от `zod`; игровые пакеты — только от `@bga/platform` и `zod`, друг друга не импортируют.
+- `./rules` — чистый детерминированный TS: без React/NestJS/Prisma/OpenAI/`node:*`, без `Date`/`Math.random` (время и id — через ctx);
+  `./board`, `./definition`, `./schema`, `./assets` не импортируют `rules`/`scenario`/`server`/`ai`.
+- `apps/web` импортирует из игровых пакетов только `./definition`, `./schema`, `./board`, `./assets`; общий web-код
+  (`app/`, `shared/`, `platform/`) не знает игр — только `@/games/registry`.
+- Общий серверный код (`sessions/`, `common/`, `persistence/`, `health/`) не импортирует игровые пакеты — только реестр
+  `apps/api/src/game-registry/` (он видит `@bga/game-*/definition` и `/server`).
+- Нигде (кроме тестов) нет `import()` с вычисляемым именем; реестры — обычные типизированные массивы (AC-9 SWR-003).
 
-**Чтение.** `GET /api/games/:id` → API читает строку `Game`, валидирует снимок `GameStateSchema` → `toPlayerView(state, setup.humanFaction)`
-→ клиент получает `PlayerView` (включая `legalActions`) и кладёт его в кеш TanStack Query. Полный `GameState` наружу не уходит никогда.
+## 2. Реестры и поток данных
 
-**Команда.** Пользователь выбирает объект → UI показывает цели только из `view.legalActions` (подсветка, панель действий, drop-цели) →
-`POST /api/games/:id/commands` с `CommandEnvelope { actor, expectedVersion: view.version, command }` → API:
+- **Сервер:** `game-registry/definitions.ts` (`GAME_DEFINITIONS` — все игры каталога, включая `coming_soon`) и
+  `game-registry/registry.ts` (`SERVER_GAME_MODULES` — модули `available`-игр). При старте `validateRegistry` проверяет согласованность.
+- **Web:** `apps/web/src/games/registry.ts` (`gameRegistry: WebGameEntry[]` — definition, обложка, `i18nPrefix`,
+  `describeSession`, ленивые `SetupScreen`/`TableScreen`). Платформа читает его через `GameRegistryProvider`/`useGameRegistry()`.
+  Тест `games/registry.consistency.test.ts` сверяет web- и серверный списки definitions.
 
-1. игра не найдена → 404;
-2. `CommandEnvelopeSchema` (Zod) не прошла → 400 `VALIDATION`;
-3. `expectedVersion ≠ version` → 409 `VERSION_CONFLICT`;
-4. `applyCommand` (game-core) отклонил → 422 `ILLEGAL_COMMAND` с `messageKey`;
-5. успех → в одной транзакции SQLite: `UPDATE Game … WHERE id = ? AND version = expected` (0 строк → 409, откат) + вставка `GameEvent`;
-6. ответ `{ ok: true, view, events }` — новый `PlayerView`; UI заменяет кеш, показывает обратную связь (aria-live/snackbar).
+**HTTP API** (`/api`): `GET /health`; `POST /sessions { gameId, setup }` (+ необязательный заголовок `Idempotency-Key: <UUID>`)
+→ `201 { sessionId, gameId, status, settings, view }` (повтор → `200` + `Idempotent-Replay: true`);
+`GET /sessions?gameId=` → `SessionSummary[]` (`{ sessionId, gameId, version, status, createdAt, updatedAt, details }`,
+`updatedAt desc`, ≤ 20); `GET /sessions/:sessionId` → `{ sessionId, gameId, status, settings, view }`;
+`POST /sessions/:sessionId/commands` → `{ ok: true, view, events }`.
 
-UI не меняет состояние «оптимистично»: drag — только визуальный предпросмотр, который откатывается при отказе.
-Все ошибки имеют единый формат `{ ok: false, error: { code, messageKey, details? } }`; тексты — в i18n клиента по `messageKey`.
+Три слоя данных сессии (SWR-004): **метаданные** платформы (`status`, `gameId`, даты, ключ идемпотентности — колонки
+`Session`), **полное состояние** (`Session.setup` + `Session.state`, только сервер) и **представление** для стороны
+(`view` = `module.toPlayerView`). `settings` — публичные настройки, которые отдаёт игра (`module.publicSettings(setup)`);
+платформа их не интерпретирует (у Rebellion: стороны, тип противника, сложность AI, `ruleset`, `gameMode`).
+
+**Статус сессии** — `SessionStatus = 'setup' | 'prototype' | 'active' | 'completed'` (`@bga/platform`), колонка
+`Session.status`. Начальное значение задаёт игра (`module.initialStatus(setup)`; Rebellion на mock-сценарии → `prototype`);
+строки до SWR-004 получили `prototype` миграцией `20261108200000_session_status_idempotency`. В SWR-004 статус не меняется
+по ходу партии. Неизвестное значение в БД → 500 (в списке строка пропускается).
+
+**Создание.** 400 (форма тела; заголовок `Idempotency-Key` — один UUID, иначе 400 под `headers.idempotency-key`) →
+404 `errors.gameNotFound` → 422 `GAME_UNAVAILABLE` (`coming_soon`/нет модуля) → **идемпотентность** (ключ уже есть: тот же
+SHA-256 канонического `{gameId, setup}` → 200-повтор с текущим состоянием сессии; другое тело → 409 `IDEMPOTENCY_KEY_REUSED`) →
+`module.parseSetup`: `invalid` → 400 `VALIDATION`, `unsupported` → 422 `SETUP_UNSUPPORTED` (игровой `messageKey`, напр.
+`errors.rulesetUnavailable`, `details` только из запроса) → `createInitialState` → вставка `Session` (+ ключ и хеш) +
+`SessionEvent` одной транзакцией → `view`. Ключ сохраняется только вместе с успешно созданной сессией (400/422 его не
+«сжигают»); проигравший гонку по unique-индексу получает ответ как при повторе (никогда 500). Клиент генерирует новый ключ на
+каждую попытку отправки формы (`useCreateSession`); клиентской стороне противника сервер не доверяет — вычисляет её сам.
+
+**Команда.** UI показывает цели только из `view.legalActions` → `POST /api/sessions/:id/commands` с конвертом игры
+`{ actor, expectedVersion: view.version, command }` → API: 404 `errors.sessionNotFound` → 400 (рамка конверта) →
+422 (игра сессии недоступна) → 500 (битый снимок) → `module.applyCommand` (400 схема → 409 версия → 422 правила, игровой
+`messageKey`) → в одной транзакции SQLite `UPDATE Session … WHERE id = ? AND version = expected` (0 строк → 409, откат) +
+вставка `SessionEvent` → ответ с новым `view` и отфильтрованными событиями.
+
+UI не меняет состояние «оптимистично». Все ошибки — `{ ok: false, error: { code, messageKey, details? } }`; тексты — в i18n
+клиента (`translateError`: сначала `<игра>.errors`, затем общие `errors`).
 
 ## 3. Состояние, версии, журнал
 
-- Источник истины — снимок `GameState` (включая `log`) в `Game.state`; `Game.version` = `state.version`.
-- Новая партия: `version = 1`, `round = 1`, `phase = 'assignment'`, первое событие `GAME_CREATED` (`seq = 1`).
-- Каждая принятая команда: `version + 1`, одно событие в `log` (`PIECES_MOVED` / `PHASE_ADVANCED`); отклонённая — ничего не меняет.
-- Таблица `GameEvent` — append-only зеркало журнала, пишется в той же транзакции (основа будущего replay); `@@unique(gameId, seq)`.
-- Optimistic concurrency по `version` защищает от параллельных команд (двух вкладок, человека и будущего AI).
+- Источник истины — JSON-снимок состояния игры в `Session.state`; `Session.version` = `module.version(state)`;
+  `Session.gameId` связывает сессию с игрой (индекс `(gameId, updatedAt)`).
+- Новая сессия — версия 1 и начальные события; каждая принятая команда — версия + 1 и события; отклонённая — ничего не меняет.
+- `SessionEvent` — append-only зеркало журнала, пишется в той же транзакции; `@@unique(sessionId, seq)`.
+- Миграция `20261108120000_sessions` перенесла данные SWR-002 (`Game`/`GameEvent`) с `gameId = 'star-wars-rebellion'`.
 
-## 4. Правила: только mock
+## 4. Правила Rebellion: только mock (+ hot-seat)
 
-Вся временная логика сосредоточена в `packages/game-core/src/mock-rules.ts` и явно помечена как mock:
-перемещение своих объектов в соседнюю систему (всё или ничего) и цикл фаз assignment → command → refresh → (раунд + 1).
-Это **не** правила Star Wars: Rebellion; они появятся на Этапе E, заменив этот модуль без изменения слоёв выше.
-Команды в этой задаче принимаются только от `setup.humanFaction`; сторона AI не ходит.
+Вся временная логика — в `packages/games/rebellion/src/rules/mock-rules.ts` и явно помечена как mock: перемещение своих
+объектов в соседнюю систему (всё или ничего) и цикл фаз assignment → command → refresh → (раунд + 1). Это **не** правила
+Star Wars: Rebellion; они появятся позже, заменив этот модуль без изменения слоёв выше.
+
+Настройки (SWR-004): фракции `rebels | empire`; клиент шлёт `{ playerFaction, opponentType, aiDifficulty?, ruleset, gameMode }`,
+сервер вычисляет `opponentFaction = opponentOf(playerFaction)`; `ruleset: 'rise-of-the-empire'` и `gameMode: 'physical_companion'`
+→ 422. Команды принимаются только от активной стороны `state.activeSide`. В AI-партии это всегда сторона игрока (AI не ходит).
+В партии двух людей за одним устройством (`opponentType: 'human'`, `rules/turn.ts`, не mock): `END_TURN` →
+`activeSide = opponentOf(activeSide)`, `handoffPending = true`; `ACCEPT_HANDOFF` от новой активной стороны снимает ожидание.
+Подтверждение стороны доверительное (аутентификации нет). Данные SWR-002/003 (`'rebellion'`, `humanFaction`) читаются ленивым
+апкастером v1 → v2 в модуле игры.
 
 ## 5. Скрытая информация
 
-- Полный state доступен только API и БД. Каждый ответ строится через `toPlayerView(state, viewer)`; `viewer` = `setup.humanFaction`
-  (параметра выбора стороны нет — без авторизации нельзя запросить чужое представление).
-- Для Империи, пока база не раскрыта: `rebelBase.systemId = null`; у скрытых объектов Повстанцев `typeKey = 'unknown'`
-  (их `id` и `systemId` видны — как жетон, лежащий на столе рубашкой вверх). Правило симметрично для скрытых объектов любой стороны.
-- Журнал фильтруется той же функцией (`toPlayerEvents`); `legalActions` содержат только объекты зрителя.
-- Id объектов непрозрачны (`pc-NN`) и не выдают тип. Сценарий (с местоположением базы) не попадает в web-бандл: клиент импортирует
-  только `@swr/game-data/layout`.
-- Логи сервера не содержат state, view и payload — только `gameId`, код и статус.
+- Полный state доступен только API и БД. Каждый ответ строится через `module.toPlayerView(state, { status })` (у Rebellion
+  зритель = `state.activeSide`; параметра выбора стороны в API нет). `SessionSummary.details` — только несекретные поля
+  (`summarize`, значения `string | number | boolean | null`).
+- Hot-seat: пока `handoffPending`, сервер отдаёт **только** `{ kind: 'handoff', id, version, activeSide, round, phase,
+  sessionStatus }` (без систем, объектов, журнала, `legalActions`), события команды — `[]`. Клиент заменяет кеш view, сбрасывает
+  сторы доски и не монтирует карту; `window.__boardDebug` в это время отсутствует.
+- Rebellion: для Империи, пока база не раскрыта, `rebelBase.systemId = null`; у скрытых объектов противника `typeKey = 'unknown'`;
+  журнал фильтруется `toPlayerEvents`; `legalActions` — только объекты зрителя; id объектов непрозрачны (`pc-NN`).
+- Сценарий не попадает в web-бандл: `pnpm check:bundle` проверяет отсутствие секретных значений сценария и `__boardDebug`, а также
+  что в бандле нет модулей `rules|scenario|server|ai` ни одной игры (по sourcemap отдельной сборки).
+- Логи сервера не содержат state, view и payload — только `sessionId`, `gameId`, код и статус.
 
-## 6. Визуальные координаты
+## 6. Визуальные данные
 
-Координаты систем — `mapLayout: Record<SystemId, { x, y }>` в `@swr/game-data/layout` (мировые единицы, `MAP_BOUNDS`).
-Они **не** входят в `GameState` и не проходят через API. Экранная позиция объекта вычисляется UI: `piece.systemId` → `mapLayout`
-→ раскладка внутри системы (решение UI). Pan/zoom/drag — локальное состояние клиента (Zustand), не игровое.
+Координаты систем Rebellion — `mapLayout` в `@bga/game-rebellion/board` (мировые единицы, `MAP_BOUNDS`); они не входят в state
+и не проходят через API. Обложки игр и визуальные токены — `@bga/game-<id>/assets` (собственные абстрактные SVG-строки;
+палитра стола Rebellion — `rebellionVisualTokens`, единственный источник; web-обёртка `games/rebellion/theme/palette.ts`).
+Pan/zoom/drag — локальное состояние клиента (Zustand), не игровое.
 
 ## 7. Будущий AI на том же Command API
 
-AI-сторона (Этап F) получит свой `PlayerView` (тот же `toPlayerView` для своей фракции — без секретов человека), выберет действие
-**из `legalActions`**, построит такой же `CommandEnvelope { actor: <AI faction>, expectedVersion, command }` и пройдёт ту же цепочку
-валидация → `applyCommand` → транзакция → журнал. Отдельного «AI-пути» мутации состояния нет; ответ модели, не совпадающий с
-legal action, отклоняется так же, как ошибочная команда человека. OpenAI SDK и ключ — только в `apps/api` (в SWR-002 отсутствуют).
+AI-сторона получит свой `PlayerView` (без секретов человека), выберет действие **из `legalActions`**, построит такой же конверт
+команды и пройдёт ту же цепочку валидация → `applyCommand` → транзакция → журнал. Отдельного «AI-пути» мутации состояния нет.
+Параметры стратегии — данные `@bga/game-<id>/ai` (у Rebellion — уровни сложности и веса целей). OpenAI SDK и ключ — только в
+`apps/api` (пока отсутствуют).
 
 ## 8. Запуск и среды
 
 | Среда | Как | Порты / БД |
 |---|---|---|
-| dev | `pnpm install` → `pnpm dev` (сборка пакетов, `prisma generate` + `migrate deploy`, api + web параллельно) | api 3000, web 5173 (proxy `/api`), `apps/api/prisma/dev.db` |
-| integration-тесты | `pnpm test` (Vitest + supertest, реальный Nest) | файл `apps/api/.tmp/test-<uuid>.db` на каждый тестовый файл |
-| e2e | `pnpm e2e` (Playwright поднимает свои серверы) | api 3100, web 5174, `apps/api/.tmp/e2e.db` (пересоздаётся) |
+| dev | `pnpm install` → `pnpm dev` (сборка пакетов `tsc -b packages`, `prisma generate` + `migrate deploy`, api + web параллельно) | api 3000, web 5173 (proxy `/api`), `apps/api/prisma/dev.db` |
+| integration-тесты | `pnpm test` (Vitest + supertest, реальный Nest) | файл `apps/api/.tmp/test-<uuid>.db` на каждый тест |
+| e2e | `pnpm e2e` (Playwright поднимает свои серверы; API собирается в очищаемый `apps/api/dist-e2e`) | api 3100, web 5174, `apps/api/.tmp/e2e.db` (пересоздаётся) |
 
-Внутренние пакеты исполняются API из собранного `dist` (CommonJS), а Vite и Vitest читают их TypeScript-исходники через
-export-условие `@swr/source`. Runtime: Node 20.19.x; версии зависимостей подобраны под него (см. план, §10).
+Внутренние пакеты исполняются API из собранного `dist` (CommonJS), а Vite, Vitest и typecheck читают их TypeScript-исходники
+через export-условие `@bga/source`. Runtime: Node 20.19.x (NestJS 11, Prisma 6).
 
-## 9. Известные ограничения прототипа
+## 9. Известные ограничения
 
-Нет авторизации и изоляции партий; одна сторона-человек (hot-seat — позже); правила mock; карта и названия вымышленные;
-SQLite и один процесс API; NestJS 11 / CommonJS (переход на ESM и Nest 12 — отдельной задачей, вероятно вместе с Node 22).
-
-## 10. Фактическая реализация (после SWR-002, сверено Analyst)
-- Документ написан на этапе планирования; реализация ему соответствует. Отклонения и уточнения, принятые при интеграции:
-  - web: стол получает `{gameId, view, send}` через `BoardContext` от `GameTablePage` (без кросс-импортов между feature-папками); единый Konva-слой фигур вместо трёх.
-  - api: `GET /api/games` пропускает строки с повреждённым снимком (логирует только `gameId` и код), прямой `GET /api/games/:id` такой партии → 500 `INTERNAL`.
-  - Границы проверяются автоматически: ESLint (`no-restricted-imports`, запрет динамических импортов game-core/game-data в web, запрет `Date`/`Math.random` в game-core, запрет литеральных UI-строк) и `pnpm check:bundle` (в production-bundle нет базы повстанцев, id объектов сценария и `__boardDebug`).
-  - Версии: Node 20.19.5 → NestJS 11, Prisma 6, jest-dom 6 (более новые мажоры требуют Node 22).
-- Решения по стыкам и поправки к контракту: `docs/tasks/SWR-002/specification.md` (Clarifications, Approved amendments), `docs/tasks/SWR-002/implementation-plan.md`.
+Нет авторизации и изоляции сессий; hot-seat — доверительный (кто держит устройство, не проверяется); AI-соперник сохраняет
+сложность, но не ходит; Rise of the Empire и режим с физическими компонентами — только 422; правила Rebellion — mock, карта и
+названия вымышленные; Forbidden Stars —
+только карточка каталога; SQLite и один процесс API; NestJS 11 / CommonJS (переход на ESM и Nest 12 — отдельной задачей,
+вероятно вместе с Node 22).

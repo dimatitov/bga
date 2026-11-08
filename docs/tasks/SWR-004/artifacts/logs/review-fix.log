@@ -1,0 +1,2118 @@
+$ pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle
+# 2026-11-08T05:41:05Z — SWR-004 review fixes #1..#4 (e2e not run here: QA runs full verify)
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> board-game-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/web typecheck$ tsc -b
+apps/web typecheck: Done
+apps/api typecheck: Done
+
+> board-game-ai@ test /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run test:process && pnpm -r run test
+
+
+> board-game-ai@ test:process /Users/dimatitov/WebstormProjects/Game automa
+> node --test scripts/
+
+TAP version 13
+# Subtest: AC-5: valid inputs and CLI contract
+    # Subtest: TC-50 valid fixture (in place) has no problems
+    ok 1 - TC-50 valid fixture (in place) has no problems
+      ---
+      duration_ms: 62.32625
+      ...
+    # Subtest: TC-51 valid fixture copied to temp dir has no problems
+    ok 2 - TC-51 valid fixture copied to temp dir has no problems
+      ---
+      duration_ms: 18.412166
+      ...
+    # Subtest: TC-52 CLI on valid fixture -> exit 0 and "OK <taskDir>"
+    ok 3 - TC-52 CLI on valid fixture -> exit 0 and "OK <taskDir>"
+      ---
+      duration_ms: 204.714042
+      ...
+    # Subtest: TC-53 fresh docs/tasks/_template has no problems (honest template)
+    ok 4 - TC-53 fresh docs/tasks/_template has no problems (honest template)
+      ---
+      duration_ms: 6.306292
+      ...
+    # Subtest: TC-54 CLI on docs/tasks/_template -> exit 0
+    ok 5 - TC-54 CLI on docs/tasks/_template -> exit 0
+      ---
+      duration_ms: 137.370042
+      ...
+    # Subtest: TC-55 CLI with no arguments -> exit 2
+    ok 6 - TC-55 CLI with no arguments -> exit 2
+      ---
+      duration_ms: 116.990084
+      ...
+    # Subtest: TC-56 CLI with non-existent directory -> exit 2
+    ok 7 - TC-56 CLI with non-existent directory -> exit 2
+      ---
+      duration_ms: 117.555584
+      ...
+    # Subtest: TC-57 CLI with one valid and one invalid dir -> exit 1, OK for one and FAIL for other
+    ok 8 - TC-57 CLI with one valid and one invalid dir -> exit 1, OK for one and FAIL for other
+      ---
+      duration_ms: 215.161958
+      ...
+    # Subtest: TC-58 CLI problem lines are "<taskDir>/<file>: ..." and FAIL count matches checkTask
+    ok 9 - TC-58 CLI problem lines are "<taskDir>/<file>: ..." and FAIL count matches checkTask
+      ---
+      duration_ms: 201.282166
+      ...
+    # Subtest: TC-59 importing the module does not run the CLI
+    ok 10 - TC-59 importing the module does not run the CLI
+      ---
+      duration_ms: 115.424917
+      ...
+    1..10
+ok 1 - AC-5: valid inputs and CLI contract
+  ---
+  duration_ms: 1198.670292
+  type: 'suite'
+  ...
+# Subtest: AC-1: required files (R1)
+    # Subtest: TC-10 missing request.md -> "request.md" [R1]
+    ok 1 - TC-10 missing request.md -> "request.md" [R1]
+      ---
+      duration_ms: 7.341417
+      ...
+    # Subtest: TC-10 missing specification.md -> "specification.md" [R1]
+    ok 2 - TC-10 missing specification.md -> "specification.md" [R1]
+      ---
+      duration_ms: 5.440958
+      ...
+    # Subtest: TC-10 missing implementation-plan.md -> "implementation-plan.md" [R1]
+    ok 3 - TC-10 missing implementation-plan.md -> "implementation-plan.md" [R1]
+      ---
+      duration_ms: 5.587583
+      ...
+    # Subtest: TC-10 missing test-cases.md -> "test-cases.md" [R1]
+    ok 4 - TC-10 missing test-cases.md -> "test-cases.md" [R1]
+      ---
+      duration_ms: 6.487625
+      ...
+    # Subtest: TC-10 missing review.md -> "review.md" [R1]
+    ok 5 - TC-10 missing review.md -> "review.md" [R1]
+      ---
+      duration_ms: 6.559375
+      ...
+    # Subtest: TC-10 missing qa-results.md -> "qa-results.md" [R1]
+    ok 6 - TC-10 missing qa-results.md -> "qa-results.md" [R1]
+      ---
+      duration_ms: 6.63275
+      ...
+    # Subtest: TC-10 missing acceptance.md -> "acceptance.md" [R1]
+    ok 7 - TC-10 missing acceptance.md -> "acceptance.md" [R1]
+      ---
+      duration_ms: 8.896708
+      ...
+    # Subtest: TC-10 missing delivery-report.md -> "delivery-report.md" [R1]
+    ok 8 - TC-10 missing delivery-report.md -> "delivery-report.md" [R1]
+      ---
+      duration_ms: 7.569833
+      ...
+    # Subtest: TC-10 missing status.md -> "status.md" [R1]
+    ok 9 - TC-10 missing status.md -> "status.md" [R1]
+      ---
+      duration_ms: 5.661167
+      ...
+    # Subtest: TC-11 empty task directory -> every required file reported with [R1]
+    ok 10 - TC-11 empty task directory -> every required file reported with [R1]
+      ---
+      duration_ms: 0.654458
+      ...
+    # Subtest: TC-12 two files missing -> both reported (no early stop)
+    ok 11 - TC-12 two files missing -> both reported (no early stop)
+      ---
+      duration_ms: 5.645625
+      ...
+    # Subtest: TC-13 CLI with a missing file -> exit 1 and FAIL line
+    ok 12 - TC-13 CLI with a missing file -> exit 1 and FAIL line
+      ---
+      duration_ms: 196.050417
+      ...
+    # Subtest: TC-14 extra unrelated files do not cause problems (boundary)
+    ok 13 - TC-14 extra unrelated files do not cause problems (boundary)
+      ---
+      duration_ms: 6.09425
+      ...
+    1..13
+ok 2 - AC-1: required files (R1)
+  ---
+  duration_ms: 270.669458
+  type: 'suite'
+  ...
+# Subtest: AC-2: AC tables evidence (R5, R6)
+    # Subtest: TC-20 acceptance.md: passed with empty evidence -> [R5]
+    ok 1 - TC-20 acceptance.md: passed with empty evidence -> [R5]
+      ---
+      duration_ms: 5.741583
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "-" -> [R5]
+    ok 2 - TC-21 acceptance.md: passed with placeholder evidence "-" -> [R5]
+      ---
+      duration_ms: 7.328917
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "—" -> [R5]
+    ok 3 - TC-21 acceptance.md: passed with placeholder evidence "—" -> [R5]
+      ---
+      duration_ms: 6.392042
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "TBD" -> [R5]
+    ok 4 - TC-21 acceptance.md: passed with placeholder evidence "TBD" -> [R5]
+      ---
+      duration_ms: 5.6025
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "TODO" -> [R5]
+    ok 5 - TC-21 acceptance.md: passed with placeholder evidence "TODO" -> [R5]
+      ---
+      duration_ms: 5.198333
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "n/a" -> [R5]
+    ok 6 - TC-21 acceptance.md: passed with placeholder evidence "n/a" -> [R5]
+      ---
+      duration_ms: 6.077125
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "tbd" -> [R5]
+    ok 7 - TC-21 acceptance.md: passed with placeholder evidence "tbd" -> [R5]
+      ---
+      duration_ms: 6.470542
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "N/A" -> [R5]
+    ok 8 - TC-21 acceptance.md: passed with placeholder evidence "N/A" -> [R5]
+      ---
+      duration_ms: 5.179375
+      ...
+    # Subtest: TC-21 acceptance.md: passed with placeholder evidence "Todo" -> [R5]
+    ok 9 - TC-21 acceptance.md: passed with placeholder evidence "Todo" -> [R5]
+      ---
+      duration_ms: 9.341375
+      ...
+    # Subtest: TC-22 acceptance.md: invalid AC status "done" -> [R5]
+    ok 10 - TC-22 acceptance.md: invalid AC status "done" -> [R5]
+      ---
+      duration_ms: 7.014417
+      ...
+    # Subtest: TC-23 acceptance.md: passed with non-existent path (with "/") -> [R6]
+    ok 11 - TC-23 acceptance.md: passed with non-existent path (with "/") -> [R6]
+      ---
+      duration_ms: 5.937459
+      ...
+    # Subtest: TC-24 acceptance.md: passed with non-existent file name (".ext", no "/") -> [R6]
+    ok 12 - TC-24 acceptance.md: passed with non-existent file name (".ext", no "/") -> [R6]
+      ---
+      duration_ms: 7.080417
+      ...
+    # Subtest: TC-25 acceptance.md: one existing + one missing path in the same cell -> [R6]
+    ok 13 - TC-25 acceptance.md: one existing + one missing path in the same cell -> [R6]
+      ---
+      duration_ms: 5.988417
+      ...
+    # Subtest: TC-20 qa-results.md: passed with empty evidence -> [R5]
+    ok 14 - TC-20 qa-results.md: passed with empty evidence -> [R5]
+      ---
+      duration_ms: 6.714333
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "-" -> [R5]
+    ok 15 - TC-21 qa-results.md: passed with placeholder evidence "-" -> [R5]
+      ---
+      duration_ms: 4.435334
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "—" -> [R5]
+    ok 16 - TC-21 qa-results.md: passed with placeholder evidence "—" -> [R5]
+      ---
+      duration_ms: 4.533583
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "TBD" -> [R5]
+    ok 17 - TC-21 qa-results.md: passed with placeholder evidence "TBD" -> [R5]
+      ---
+      duration_ms: 4.542167
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "TODO" -> [R5]
+    ok 18 - TC-21 qa-results.md: passed with placeholder evidence "TODO" -> [R5]
+      ---
+      duration_ms: 5.346208
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "n/a" -> [R5]
+    ok 19 - TC-21 qa-results.md: passed with placeholder evidence "n/a" -> [R5]
+      ---
+      duration_ms: 4.693333
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "tbd" -> [R5]
+    ok 20 - TC-21 qa-results.md: passed with placeholder evidence "tbd" -> [R5]
+      ---
+      duration_ms: 5.332958
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "N/A" -> [R5]
+    ok 21 - TC-21 qa-results.md: passed with placeholder evidence "N/A" -> [R5]
+      ---
+      duration_ms: 4.417833
+      ...
+    # Subtest: TC-21 qa-results.md: passed with placeholder evidence "Todo" -> [R5]
+    ok 22 - TC-21 qa-results.md: passed with placeholder evidence "Todo" -> [R5]
+      ---
+      duration_ms: 4.402417
+      ...
+    # Subtest: TC-22 qa-results.md: invalid AC status "done" -> [R5]
+    ok 23 - TC-22 qa-results.md: invalid AC status "done" -> [R5]
+      ---
+      duration_ms: 4.532
+      ...
+    # Subtest: TC-23 qa-results.md: passed with non-existent path (with "/") -> [R6]
+    ok 24 - TC-23 qa-results.md: passed with non-existent path (with "/") -> [R6]
+      ---
+      duration_ms: 4.430958
+      ...
+    # Subtest: TC-24 qa-results.md: passed with non-existent file name (".ext", no "/") -> [R6]
+    ok 25 - TC-24 qa-results.md: passed with non-existent file name (".ext", no "/") -> [R6]
+      ---
+      duration_ms: 4.952666
+      ...
+    # Subtest: TC-25 qa-results.md: one existing + one missing path in the same cell -> [R6]
+    ok 26 - TC-25 qa-results.md: one existing + one missing path in the same cell -> [R6]
+      ---
+      duration_ms: 4.812959
+      ...
+    # Subtest: TC-26 command token `node --test scripts/` is not a path (boundary)
+    ok 27 - TC-26 command token `node --test scripts/` is not a path (boundary)
+      ---
+      duration_ms: 5.90225
+      ...
+    # Subtest: TC-27 token with spaces (`pnpm run test`) is not a path (boundary)
+    ok 28 - TC-27 token with spaces (`pnpm run test`) is not a path (boundary)
+      ---
+      duration_ms: 5.905
+      ...
+    # Subtest: TC-28 bare word token without "/" or ".ext" (`unit`) is not a path (boundary)
+    ok 29 - TC-28 bare word token without "/" or ".ext" (`unit`) is not a path (boundary)
+      ---
+      duration_ms: 5.686625
+      ...
+    # Subtest: TC-29 non-passed statuses with empty evidence are fine for R5/R6 (boundary)
+    ok 30 - TC-29 non-passed statuses with empty evidence are fine for R5/R6 (boundary)
+      ---
+      duration_ms: 5.470417
+      ...
+    # Subtest: TC-30 path that exists only relative to repoRoot is accepted
+    ok 31 - TC-30 path that exists only relative to repoRoot is accepted
+      ---
+      duration_ms: 5.539375
+      ...
+    # Subtest: TC-31 acceptance.md without "\#\# Acceptance criteria" section -> acceptance.md [R5]
+    ok 32 - TC-31 acceptance.md without "\#\# Acceptance criteria" section -> acceptance.md [R5]
+      ---
+      duration_ms: 4.746875
+      ...
+    # Subtest: TC-32 qa-results.md without "\#\# Acceptance criteria" section -> qa-results.md [R5]
+    ok 33 - TC-32 qa-results.md without "\#\# Acceptance criteria" section -> qa-results.md [R5]
+      ---
+      duration_ms: 4.462291
+      ...
+    # Subtest: TC-33 CLI: passed with placeholder evidence -> exit 1
+    ok 34 - TC-33 CLI: passed with placeholder evidence -> exit 1
+      ---
+      duration_ms: 190.496542
+      ...
+    1..34
+ok 3 - AC-2: AC tables evidence (R5, R6)
+  ---
+  duration_ms: 376.187125
+  type: 'suite'
+  ...
+# Subtest: AC-2: Verification section (R7)
+    # Subtest: TC-34 qa-results.md: "- unit: passed" without evidence -> [R7]
+    ok 1 - TC-34 qa-results.md: "- unit: passed" without evidence -> [R7]
+      ---
+      duration_ms: 5.365458
+      ...
+    # Subtest: TC-35 qa-results.md: "- unit: passed — " (dash, empty evidence) -> [R7]
+    ok 2 - TC-35 qa-results.md: "- unit: passed — " (dash, empty evidence) -> [R7]
+      ---
+      duration_ms: 4.208458
+      ...
+    # Subtest: TC-36 qa-results.md: invalid status "ok" -> [R7]
+    ok 3 - TC-36 qa-results.md: invalid status "ok" -> [R7]
+      ---
+      duration_ms: 4.333917
+      ...
+    # Subtest: TC-37 qa-results.md: passed with non-existent path -> [R7] or [R6]
+    ok 4 - TC-37 qa-results.md: passed with non-existent path -> [R7] or [R6]
+      ---
+      duration_ms: 3.994625
+      ...
+    # Subtest: TC-38 qa-results.md: missing "\#\# Verification" section -> qa-results.md [R7]
+    ok 5 - TC-38 qa-results.md: missing "\#\# Verification" section -> qa-results.md [R7]
+      ---
+      duration_ms: 4.003833
+      ...
+    # Subtest: TC-34 delivery-report.md: "- unit: passed" without evidence -> [R7]
+    ok 6 - TC-34 delivery-report.md: "- unit: passed" without evidence -> [R7]
+      ---
+      duration_ms: 4.550084
+      ...
+    # Subtest: TC-35 delivery-report.md: "- unit: passed — " (dash, empty evidence) -> [R7]
+    ok 7 - TC-35 delivery-report.md: "- unit: passed — " (dash, empty evidence) -> [R7]
+      ---
+      duration_ms: 4.799875
+      ...
+    # Subtest: TC-36 delivery-report.md: invalid status "ok" -> [R7]
+    ok 8 - TC-36 delivery-report.md: invalid status "ok" -> [R7]
+      ---
+      duration_ms: 4.855166
+      ...
+    # Subtest: TC-37 delivery-report.md: passed with non-existent path -> [R7] or [R6]
+    ok 9 - TC-37 delivery-report.md: passed with non-existent path -> [R7] or [R6]
+      ---
+      duration_ms: 4.741292
+      ...
+    # Subtest: TC-38 delivery-report.md: missing "\#\# Verification" section -> delivery-report.md [R7]
+    ok 10 - TC-38 delivery-report.md: missing "\#\# Verification" section -> delivery-report.md [R7]
+      ---
+      duration_ms: 4.2575
+      ...
+    # Subtest: TC-39 not_run / blocked / failed lines without evidence are fine (boundary)
+    ok 11 - TC-39 not_run / blocked / failed lines without evidence are fine (boundary)
+      ---
+      duration_ms: 4.156541
+      ...
+    # Subtest: TC-40 Verification evidence with a command token is not a path (boundary)
+    ok 12 - TC-40 Verification evidence with a command token is not a path (boundary)
+      ---
+      duration_ms: 4.143875
+      ...
+    1..12
+ok 4 - AC-2: Verification section (R7)
+  ---
+  duration_ms: 53.762916
+  type: 'suite'
+  ...
+# Subtest: AC-3: status.md (R2, R3, R4)
+    # Subtest: TC-60 missing stage row -> status.md [R2]
+    ok 1 - TC-60 missing stage row -> status.md [R2]
+      ---
+      duration_ms: 4.279958
+      ...
+    # Subtest: TC-61 duplicated stage row -> status.md [R2]
+    ok 2 - TC-61 duplicated stage row -> status.md [R2]
+      ---
+      duration_ms: 4.736041
+      ...
+    # Subtest: TC-62 two stages swapped (all passed) -> status.md [R2]
+    ok 3 - TC-62 two stages swapped (all passed) -> status.md [R2]
+      ---
+      duration_ms: 4.608083
+      ...
+    # Subtest: TC-63 invalid stage status "done" -> status.md [R2]
+    ok 4 - TC-63 invalid stage status "done" -> status.md [R2]
+      ---
+      duration_ms: 4.145416
+      ...
+    # Subtest: TC-64 passed stage after a "pending" stage -> status.md [R3]
+    ok 5 - TC-64 passed stage after a "pending" stage -> status.md [R3]
+      ---
+      duration_ms: 4.0655
+      ...
+    # Subtest: TC-64 passed stage after a "in_progress" stage -> status.md [R3]
+    ok 6 - TC-64 passed stage after a "in_progress" stage -> status.md [R3]
+      ---
+      duration_ms: 4.68675
+      ...
+    # Subtest: TC-64 passed stage after a "failed" stage -> status.md [R3]
+    ok 7 - TC-64 passed stage after a "failed" stage -> status.md [R3]
+      ---
+      duration_ms: 4.391584
+      ...
+    # Subtest: TC-64 passed stage after a "blocked" stage -> status.md [R3]
+    ok 8 - TC-64 passed stage after a "blocked" stage -> status.md [R3]
+      ---
+      duration_ms: 5.052709
+      ...
+    # Subtest: TC-65 first stage not passed, all later passed -> [R3] (boundary: first stage)
+    ok 9 - TC-65 first stage not passed, all later passed -> [R3] (boundary: first stage)
+      ---
+      duration_ms: 5.06025
+      ...
+    # Subtest: TC-66 passed prefix followed only by non-passed stages -> no [R3] (boundary)
+    ok 10 - TC-66 passed prefix followed only by non-passed stages -> no [R3] (boundary)
+      ---
+      duration_ms: 5.115459
+      ...
+    # Subtest: TC-67 passed stage with non-existent artifact -> status.md [R4]
+    ok 11 - TC-67 passed stage with non-existent artifact -> status.md [R4]
+      ---
+      duration_ms: 4.188833
+      ...
+    # Subtest: TC-68 passed stage whose artifact file was deleted (review.md) -> [R1] and status.md [R4]
+    ok 12 - TC-68 passed stage whose artifact file was deleted (review.md) -> [R1] and status.md [R4]
+      ---
+      duration_ms: 3.902792
+      ...
+    # Subtest: TC-69 non-passed stage with non-existent artifact -> no [R4] (boundary)
+    ok 13 - TC-69 non-passed stage with non-existent artifact -> no [R4] (boundary)
+      ---
+      duration_ms: 4.923875
+      ...
+    # Subtest: TC-70 passed stage with empty Artifact cell -> status.md [R4] (D9)
+    ok 14 - TC-70 passed stage with empty Artifact cell -> status.md [R4] (D9)
+      ---
+      duration_ms: 4.351625
+      ...
+    # Subtest: TC-71 passed stage artifact resolved relative to repoRoot -> no [R4]
+    ok 15 - TC-71 passed stage artifact resolved relative to repoRoot -> no [R4]
+      ---
+      duration_ms: 4.649542
+      ...
+    # Subtest: TC-72 status.md without a stage table -> status.md [R2]
+    ok 16 - TC-72 status.md without a stage table -> status.md [R2]
+      ---
+      duration_ms: 3.314209
+      ...
+    # Subtest: TC-73 every stage name is recognised (all 11 present in fixture, canonical order)
+    ok 17 - TC-73 every stage name is recognised (all 11 present in fixture, canonical order)
+      ---
+      duration_ms: 0.285917
+      ...
+    # Subtest: TC-74 CLI: duplicated stage -> exit 1 with status.md [R2] line
+    ok 18 - TC-74 CLI: duplicated stage -> exit 1 with status.md [R2] line
+      ---
+      duration_ms: 176.33775
+      ...
+    1..18
+ok 5 - AC-3: status.md (R2, R3, R4)
+  ---
+  duration_ms: 248.625
+  type: 'suite'
+  ...
+# Subtest: AC-4: review verdict, final decision, accepted gate (R8, R9, R10)
+    # Subtest: TC-80 review verdict not in allowed set ("lgtm") -> review.md [R8]
+    ok 1 - TC-80 review verdict not in allowed set ("lgtm") -> review.md [R8]
+      ---
+      duration_ms: 4.779958
+      ...
+    # Subtest: TC-81 review.md without "\#\# Verdict" -> review.md [R8]
+    ok 2 - TC-81 review.md without "\#\# Verdict" -> review.md [R8]
+      ---
+      duration_ms: 4.498708
+      ...
+    # Subtest: TC-82 verdict after blank lines is still read (boundary: first NON-empty line)
+    ok 3 - TC-82 verdict after blank lines is still read (boundary: first NON-empty line)
+      ---
+      duration_ms: 4.468417
+      ...
+    # Subtest: TC-83 accepted with review verdict "changes_requested" -> [R10]
+    ok 4 - TC-83 accepted with review verdict "changes_requested" -> [R10]
+      ---
+      duration_ms: 4.583
+      ...
+    # Subtest: TC-83 accepted with review verdict "blocked" -> [R10]
+    ok 5 - TC-83 accepted with review verdict "blocked" -> [R10]
+      ---
+      duration_ms: 4.621334
+      ...
+    # Subtest: TC-84 accepted with an AC "failed" in acceptance.md -> [R10]
+    ok 6 - TC-84 accepted with an AC "failed" in acceptance.md -> [R10]
+      ---
+      duration_ms: 4.592667
+      ...
+    # Subtest: TC-84 accepted with an AC "not_run" in acceptance.md -> [R10]
+    ok 7 - TC-84 accepted with an AC "not_run" in acceptance.md -> [R10]
+      ---
+      duration_ms: 4.361
+      ...
+    # Subtest: TC-84 accepted with an AC "blocked" in acceptance.md -> [R10]
+    ok 8 - TC-84 accepted with an AC "blocked" in acceptance.md -> [R10]
+      ---
+      duration_ms: 5.421166
+      ...
+    # Subtest: TC-85 accepted with zero AC rows in acceptance.md -> [R10]
+    ok 9 - TC-85 accepted with zero AC rows in acceptance.md -> [R10]
+      ---
+      duration_ms: 4.185167
+      ...
+    # Subtest: TC-86 accepted with FINAL_ACCEPTANCE "in_progress" -> [R10]
+    ok 10 - TC-86 accepted with FINAL_ACCEPTANCE "in_progress" -> [R10]
+      ---
+      duration_ms: 4.254583
+      ...
+    # Subtest: TC-86 accepted with FINAL_ACCEPTANCE "pending" -> [R10]
+    ok 11 - TC-86 accepted with FINAL_ACCEPTANCE "pending" -> [R10]
+      ---
+      duration_ms: 3.847375
+      ...
+    # Subtest: TC-86 accepted with FINAL_ACCEPTANCE "failed" -> [R10]
+    ok 12 - TC-86 accepted with FINAL_ACCEPTANCE "failed" -> [R10]
+      ---
+      duration_ms: 4.434584
+      ...
+    # Subtest: TC-86 accepted with FINAL_ACCEPTANCE "blocked" -> [R10]
+    ok 13 - TC-86 accepted with FINAL_ACCEPTANCE "blocked" -> [R10]
+      ---
+      duration_ms: 4.420166
+      ...
+    # Subtest: TC-87 accepted only in delivery-report.md (acceptance.md blocked) + AC failed -> [R10]
+    ok 14 - TC-87 accepted only in delivery-report.md (acceptance.md blocked) + AC failed -> [R10]
+      ---
+      duration_ms: 4.084291
+      ...
+    # Subtest: TC-88 accepted only in acceptance.md (delivery-report blocked) + review changes_requested -> [R10]
+    ok 15 - TC-88 accepted only in acceptance.md (delivery-report blocked) + review changes_requested -> [R10]
+      ---
+      duration_ms: 4.003333
+      ...
+    # Subtest: TC-89 acceptance.md: Final decision first word not allowed ("approved") -> acceptance.md [R9]
+    ok 16 - TC-89 acceptance.md: Final decision first word not allowed ("approved") -> acceptance.md [R9]
+      ---
+      duration_ms: 4.676583
+      ...
+    # Subtest: TC-90 acceptance.md: missing "\#\# Final decision" -> acceptance.md [R9]
+    ok 17 - TC-90 acceptance.md: missing "\#\# Final decision" -> acceptance.md [R9]
+      ---
+      duration_ms: 3.91225
+      ...
+    # Subtest: TC-91 acceptance.md: empty "\#\# Final decision" section -> acceptance.md [R9]
+    ok 18 - TC-91 acceptance.md: empty "\#\# Final decision" section -> acceptance.md [R9]
+      ---
+      duration_ms: 4.713459
+      ...
+    # Subtest: TC-89 delivery-report.md: Final decision first word not allowed ("approved") -> delivery-report.md [R9]
+    ok 19 - TC-89 delivery-report.md: Final decision first word not allowed ("approved") -> delivery-report.md [R9]
+      ---
+      duration_ms: 5.461459
+      ...
+    # Subtest: TC-90 delivery-report.md: missing "\#\# Final decision" -> delivery-report.md [R9]
+    ok 20 - TC-90 delivery-report.md: missing "\#\# Final decision" -> delivery-report.md [R9]
+      ---
+      duration_ms: 4.900958
+      ...
+    # Subtest: TC-91 delivery-report.md: empty "\#\# Final decision" section -> delivery-report.md [R9]
+    ok 21 - TC-91 delivery-report.md: empty "\#\# Final decision" section -> delivery-report.md [R9]
+      ---
+      duration_ms: 4.088792
+      ...
+    # Subtest: TC-92 "rejected"/"blocked" decisions with failing AC and unapproved review -> no [R10] (boundary)
+    ok 22 - TC-92 "rejected"/"blocked" decisions with failing AC and unapproved review -> no [R10] (boundary)
+      ---
+      duration_ms: 4.115708
+      ...
+    # Subtest: TC-93 decision word followed by text on the same line is OK (boundary: first word)
+    ok 23 - TC-93 decision word followed by text on the same line is OK (boundary: first word)
+      ---
+      duration_ms: 3.938083
+      ...
+    # Subtest: TC-94 CLI: accepted with a not_run AC -> exit 1 with [R10]
+    ok 24 - TC-94 CLI: accepted with a not_run AC -> exit 1 with [R10]
+      ---
+      duration_ms: 176.589333
+      ...
+    1..24
+ok 6 - AC-4: review verdict, final decision, accepted gate (R8, R9, R10)
+  ---
+  duration_ms: 279.461833
+  type: 'suite'
+  ...
+# Subtest: Regression f1 / D1: fenced code and HTML comments are not live markdown
+    # Subtest: TC-100 ``` fenced decoy AC section before the real one; real AC-2 failed + accepted -> [R10]
+    ok 1 - TC-100 ``` fenced decoy AC section before the real one; real AC-2 failed + accepted -> [R10]
+      ---
+      duration_ms: 5.015083
+      ...
+    # Subtest: TC-101 ~~~ fenced decoy verdict "approved" before real changes_requested + accepted -> [R10]
+    ok 2 - TC-101 ~~~ fenced decoy verdict "approved" before real changes_requested + accepted -> [R10]
+      ---
+      duration_ms: 4.354083
+      ...
+    # Subtest: TC-102 status.md: all-passed example table inside <!-- --> before real table with FINAL_ACCEPTANCE pending -> [R10]
+    ok 3 - TC-102 status.md: all-passed example table inside <!-- --> before real table with FINAL_ACCEPTANCE pending -> [R10]
+      ---
+      duration_ms: 4.637833
+      ...
+    # Subtest: TC-103 fenced block with bogus rows/sections AFTER real sections does not create problems (boundary)
+    ok 4 - TC-103 fenced block with bogus rows/sections AFTER real sections does not create problems (boundary)
+      ---
+      duration_ms: 4.330458
+      ...
+    1..4
+ok 7 - Regression f1 / D1: fenced code and HTML comments are not live markdown
+  ---
+  duration_ms: 18.469375
+  type: 'suite'
+  ...
+# Subtest: Regression f2 / D2: duplicated checked sections
+    # Subtest: TC-104 two "\#\# Acceptance criteria" in acceptance.md -> acceptance.md [R5]
+    ok 1 - TC-104 two "\#\# Acceptance criteria" in acceptance.md -> acceptance.md [R5]
+      ---
+      duration_ms: 4.42025
+      ...
+    # Subtest: TC-105 two "\#\# Final decision" (blocked, then accepted) -> acceptance.md [R9]
+    ok 2 - TC-105 two "\#\# Final decision" (blocked, then accepted) -> acceptance.md [R9]
+      ---
+      duration_ms: 4.562333
+      ...
+    # Subtest: TC-106 two "\#\# Verification" in qa-results.md -> qa-results.md [R7]
+    ok 3 - TC-106 two "\#\# Verification" in qa-results.md -> qa-results.md [R7]
+      ---
+      duration_ms: 4.518417
+      ...
+    # Subtest: TC-106 two "\#\# Verification" in delivery-report.md -> delivery-report.md [R7]
+    ok 4 - TC-106 two "\#\# Verification" in delivery-report.md -> delivery-report.md [R7]
+      ---
+      duration_ms: 5.208542
+      ...
+    # Subtest: TC-107 two "\#\# Verdict" in review.md -> review.md [R8]
+    ok 5 - TC-107 two "\#\# Verdict" in review.md -> review.md [R8]
+      ---
+      duration_ms: 5.277167
+      ...
+    1..5
+ok 8 - Regression f2 / D2: duplicated checked sections
+  ---
+  duration_ms: 24.213
+  type: 'suite'
+  ...
+# Subtest: Regression f3 / D3: table rows must be contiguous
+    # Subtest: TC-108 acceptance.md: blank line before AC-2 row -> acceptance.md [R5]
+    ok 1 - TC-108 acceptance.md: blank line before AC-2 row -> acceptance.md [R5]
+      ---
+      duration_ms: 4.576709
+      ...
+    # Subtest: TC-109 acceptance.md: blank line before a failed AC-2 + accepted -> [R5] (not silently OK)
+    ok 2 - TC-109 acceptance.md: blank line before a failed AC-2 + accepted -> [R5] (not silently OK)
+      ---
+      duration_ms: 4.277208
+      ...
+    # Subtest: TC-110 qa-results.md: text line splitting the AC table -> qa-results.md [R5]
+    ok 3 - TC-110 qa-results.md: text line splitting the AC table -> qa-results.md [R5]
+      ---
+      duration_ms: 3.866875
+      ...
+    # Subtest: TC-111 status.md: blank line inside the stage table -> status.md [R2]
+    ok 4 - TC-111 status.md: blank line inside the stage table -> status.md [R2]
+      ---
+      duration_ms: 3.612
+      ...
+    1..4
+ok 9 - Regression f3 / D3: table rows must be contiguous
+  ---
+  duration_ms: 16.465917
+  type: 'suite'
+  ...
+# Subtest: Regression f4 / D4: struck-through text is removed entirely
+    # Subtest: TC-112 verdict "~~approved~~ changes_requested" + accepted -> [R10], no [R8]
+    ok 1 - TC-112 verdict "~~approved~~ changes_requested" + accepted -> [R10], no [R8]
+      ---
+      duration_ms: 4.593291
+      ...
+    # Subtest: TC-113 decision "~~blocked~~ accepted" with failed AC -> acceptance.md [R10]
+    ok 2 - TC-113 decision "~~blocked~~ accepted" with failed AC -> acceptance.md [R10]
+      ---
+      duration_ms: 4.210042
+      ...
+    # Subtest: TC-114 verdict "~~approved~~" only, decisions accepted -> review.md [R8] or [R10] (never clean)
+    ok 3 - TC-114 verdict "~~approved~~" only, decisions accepted -> review.md [R8] or [R10] (never clean)
+      ---
+      duration_ms: 3.924041
+      ...
+    # Subtest: TC-115 verdict "approved — no blockers" (explanation after verdict) is clean (R8 clarification)
+    ok 4 - TC-115 verdict "approved — no blockers" (explanation after verdict) is clean (R8 clarification)
+      ---
+      duration_ms: 4.194792
+      ...
+    1..4
+ok 10 - Regression f4 / D4: struck-through text is removed entirely
+  ---
+  duration_ms: 17.030833
+  type: 'suite'
+  ...
+# Subtest: D5: passed requires at least one existing path token
+    # Subtest: TC-116 acceptance.md: passed with evidence "all good, trust me" -> acceptance.md [R5]
+    ok 1 - TC-116 acceptance.md: passed with evidence "all good, trust me" -> acceptance.md [R5]
+      ---
+      duration_ms: 3.953125
+      ...
+    # Subtest: TC-116 acceptance.md: passed with evidence "`node --test scripts/`" -> acceptance.md [R5]
+    ok 2 - TC-116 acceptance.md: passed with evidence "`node --test scripts/`" -> acceptance.md [R5]
+      ---
+      duration_ms: 4.068333
+      ...
+    # Subtest: TC-116 acceptance.md: passed with evidence "**TBD**" -> acceptance.md [R5]
+    ok 3 - TC-116 acceptance.md: passed with evidence "**TBD**" -> acceptance.md [R5]
+      ---
+      duration_ms: 5.12675
+      ...
+    # Subtest: TC-116 acceptance.md: passed with evidence "_TODO_" -> acceptance.md [R5]
+    ok 4 - TC-116 acceptance.md: passed with evidence "_TODO_" -> acceptance.md [R5]
+      ---
+      duration_ms: 4.389292
+      ...
+    # Subtest: TC-116 acceptance.md: passed with evidence "TBD." -> acceptance.md [R5]
+    ok 5 - TC-116 acceptance.md: passed with evidence "TBD." -> acceptance.md [R5]
+      ---
+      duration_ms: 4.755083
+      ...
+    # Subtest: TC-116 acceptance.md: passed with evidence "`pnpm test`" -> acceptance.md [R5]
+    ok 6 - TC-116 acceptance.md: passed with evidence "`pnpm test`" -> acceptance.md [R5]
+      ---
+      duration_ms: 5.183
+      ...
+    # Subtest: TC-116 acceptance.md: passed with evidence "`unit`" -> acceptance.md [R5]
+    ok 7 - TC-116 acceptance.md: passed with evidence "`unit`" -> acceptance.md [R5]
+      ---
+      duration_ms: 4.387875
+      ...
+    # Subtest: TC-117 qa-results.md: passed with free-text evidence -> qa-results.md [R5]
+    ok 8 - TC-117 qa-results.md: passed with free-text evidence -> qa-results.md [R5]
+      ---
+      duration_ms: 3.866334
+      ...
+    # Subtest: TC-118 qa-results.md: "- unit: passed — yes" (no path) -> qa-results.md [R7]
+    ok 9 - TC-118 qa-results.md: "- unit: passed — yes" (no path) -> qa-results.md [R7]
+      ---
+      duration_ms: 3.743042
+      ...
+    # Subtest: TC-118 delivery-report.md: "- unit: passed — yes" (no path) -> delivery-report.md [R7]
+    ok 10 - TC-118 delivery-report.md: "- unit: passed — yes" (no path) -> delivery-report.md [R7]
+      ---
+      duration_ms: 3.7545
+      ...
+    # Subtest: TC-118 qa-results.md: "- unit: passed — `none`" (no path) -> qa-results.md [R7]
+    ok 11 - TC-118 qa-results.md: "- unit: passed — `none`" (no path) -> qa-results.md [R7]
+      ---
+      duration_ms: 4.073875
+      ...
+    # Subtest: TC-118 delivery-report.md: "- unit: passed — `none`" (no path) -> delivery-report.md [R7]
+    ok 12 - TC-118 delivery-report.md: "- unit: passed — `none`" (no path) -> delivery-report.md [R7]
+      ---
+      duration_ms: 3.826875
+      ...
+    # Subtest: TC-118 qa-results.md: "- unit: passed — `node --test scripts/`" (no path) -> qa-results.md [R7]
+    ok 13 - TC-118 qa-results.md: "- unit: passed — `node --test scripts/`" (no path) -> qa-results.md [R7]
+      ---
+      duration_ms: 4.265625
+      ...
+    # Subtest: TC-118 delivery-report.md: "- unit: passed — `node --test scripts/`" (no path) -> delivery-report.md [R7]
+    ok 14 - TC-118 delivery-report.md: "- unit: passed — `node --test scripts/`" (no path) -> delivery-report.md [R7]
+      ---
+      duration_ms: 4.150667
+      ...
+    # Subtest: TC-118 qa-results.md: "- unit: passed — see logs" (no path) -> qa-results.md [R7]
+    ok 15 - TC-118 qa-results.md: "- unit: passed — see logs" (no path) -> qa-results.md [R7]
+      ---
+      duration_ms: 3.798792
+      ...
+    # Subtest: TC-118 delivery-report.md: "- unit: passed — see logs" (no path) -> delivery-report.md [R7]
+    ok 16 - TC-118 delivery-report.md: "- unit: passed — see logs" (no path) -> delivery-report.md [R7]
+      ---
+      duration_ms: 3.731625
+      ...
+    1..16
+ok 11 - D5: passed requires at least one existing path token
+  ---
+  duration_ms: 67.38625
+  type: 'suite'
+  ...
+# Subtest: D6 / R11: evidence paths must be relative, inside repoRoot, regular files
+    # Subtest: TC-119 acceptance.md AC evidence absolute /etc/hosts -> acceptance.md [R11]
+    ok 1 - TC-119 acceptance.md AC evidence absolute /etc/hosts -> acceptance.md [R11]
+      ---
+      duration_ms: 5.216542
+      ...
+    # Subtest: TC-119 acceptance.md AC evidence root / -> acceptance.md [R11]
+    ok 2 - TC-119 acceptance.md AC evidence root / -> acceptance.md [R11]
+      ---
+      duration_ms: 4.946459
+      ...
+    # Subtest: TC-119 acceptance.md AC evidence /dev/null -> acceptance.md [R11]
+    ok 3 - TC-119 acceptance.md AC evidence /dev/null -> acceptance.md [R11]
+      ---
+      duration_ms: 4.498125
+      ...
+    # Subtest: TC-119 acceptance.md AC evidence ..-escape -> acceptance.md [R11]
+    ok 4 - TC-119 acceptance.md AC evidence ..-escape -> acceptance.md [R11]
+      ---
+      duration_ms: 5.841
+      ...
+    # Subtest: TC-119 acceptance.md AC evidence directory artifacts/logs/ -> acceptance.md [R11]
+    ok 5 - TC-119 acceptance.md AC evidence directory artifacts/logs/ -> acceptance.md [R11]
+      ---
+      duration_ms: 5.177625
+      ...
+    # Subtest: TC-119 acceptance.md AC evidence directory artifacts/logs -> acceptance.md [R11]
+    ok 6 - TC-119 acceptance.md AC evidence directory artifacts/logs -> acceptance.md [R11]
+      ---
+      duration_ms: 4.824833
+      ...
+    # Subtest: TC-120 Verification evidence absolute path -> qa-results.md [R11]
+    ok 7 - TC-120 Verification evidence absolute path -> qa-results.md [R11]
+      ---
+      duration_ms: 5.54625
+      ...
+    # Subtest: TC-121 ..-escape to a file that exists just outside repoRoot -> [R11]
+    ok 8 - TC-121 ..-escape to a file that exists just outside repoRoot -> [R11]
+      ---
+      duration_ms: 4.430583
+      ...
+    # Subtest: TC-122 ".." that stays inside repoRoot and points to a file is OK (boundary)
+    ok 9 - TC-122 ".." that stays inside repoRoot and points to a file is OK (boundary)
+      ---
+      duration_ms: 4.168708
+      ...
+    # Subtest: TC-123 passed stage with artifact `/` -> status.md [R4] or [R11]
+    ok 10 - TC-123 passed stage with artifact `/` -> status.md [R4] or [R11]
+      ---
+      duration_ms: 4.301041
+      ...
+    1..10
+ok 12 - D6 / R11: evidence paths must be relative, inside repoRoot, regular files
+  ---
+  duration_ms: 49.190833
+  type: 'suite'
+  ...
+# Subtest: D7: unreadable task files / dir -> exit 2 without stack trace
+    # Subtest: TC-124 chmod 000 status.md -> CLI exit 2, no stack trace
+    ok 1 - TC-124 chmod 000 status.md -> CLI exit 2, no stack trace
+      ---
+      duration_ms: 123.320708
+      ...
+    # Subtest: TC-125 chmod 000 task directory -> CLI exit 2, no stack trace
+    ok 2 - TC-125 chmod 000 task directory -> CLI exit 2, no stack trace
+      ---
+      duration_ms: 112.481333
+      ...
+    1..2
+ok 13 - D7: unreadable task files / dir -> exit 2 without stack trace
+  ---
+  duration_ms: 236.493375
+  type: 'suite'
+  ...
+# Subtest: D8: Verification bullets
+    # Subtest: TC-126 indented sub-bullets under a check are ignored
+    ok 1 - TC-126 indented sub-bullets under a check are ignored
+      ---
+      duration_ms: 6.336041
+      ...
+    # Subtest: TC-127 check name containing ":" — "- unit (node:test): passed — `...`" is OK
+    ok 2 - TC-127 check name containing ":" — "- unit (node:test): passed — `...`" is OK
+      ---
+      duration_ms: 5.272166
+      ...
+    # Subtest: TC-128 top-level free-text bullet -> qa-results.md [R7]
+    ok 3 - TC-128 top-level free-text bullet -> qa-results.md [R7]
+      ---
+      duration_ms: 4.955291
+      ...
+    # Subtest: TC-129 empty "\#\# Verification" section -> qa-results.md [R7]
+    ok 4 - TC-129 empty "\#\# Verification" section -> qa-results.md [R7]
+      ---
+      duration_ms: 4.616916
+      ...
+    1..4
+ok 14 - D8: Verification bullets
+  ---
+  duration_ms: 21.376792
+  type: 'suite'
+  ...
+# Subtest: D9: passed stage needs at least one existing artifact path
+    # Subtest: TC-130 passed stage whose Artifact has only a non-path token -> status.md [R4]
+    ok 1 - TC-130 passed stage whose Artifact has only a non-path token -> status.md [R4]
+      ---
+      duration_ms: 4.788875
+      ...
+    # Subtest: TC-131 non-passed stage with empty Artifact is fine (template honesty, boundary)
+    ok 2 - TC-131 non-passed stage with empty Artifact is fine (template honesty, boundary)
+      ---
+      duration_ms: 5.045708
+      ...
+    1..2
+ok 15 - D9: passed stage needs at least one existing artifact path
+  ---
+  duration_ms: 9.951208
+  type: 'suite'
+  ...
+# Subtest: D10: delivery-report AC table (R5) and qa-results AC in the accepted gate (R10)
+    # Subtest: TC-132 delivery-report.md: passed with evidence "" -> delivery-report.md [R5]
+    ok 1 - TC-132 delivery-report.md: passed with evidence "" -> delivery-report.md [R5]
+      ---
+      duration_ms: 3.943292
+      ...
+    # Subtest: TC-132 delivery-report.md: passed with evidence "TBD" -> delivery-report.md [R5]
+    ok 2 - TC-132 delivery-report.md: passed with evidence "TBD" -> delivery-report.md [R5]
+      ---
+      duration_ms: 4.211625
+      ...
+    # Subtest: TC-132 delivery-report.md: passed with evidence "all fine" -> delivery-report.md [R5]
+    ok 3 - TC-132 delivery-report.md: passed with evidence "all fine" -> delivery-report.md [R5]
+      ---
+      duration_ms: 3.891208
+      ...
+    # Subtest: TC-133 delivery-report.md: invalid AC status "ok" -> delivery-report.md [R5]
+    ok 4 - TC-133 delivery-report.md: invalid AC status "ok" -> delivery-report.md [R5]
+      ---
+      duration_ms: 3.89675
+      ...
+    # Subtest: TC-134 delivery-report.md: missing "\#\# Acceptance criteria" -> delivery-report.md [R5]
+    ok 5 - TC-134 delivery-report.md: missing "\#\# Acceptance criteria" -> delivery-report.md [R5]
+      ---
+      duration_ms: 3.826041
+      ...
+    # Subtest: TC-135 accepted with qa-results.md AC "failed" (acceptance.md all passed) -> [R10] in both accepted files
+    ok 6 - TC-135 accepted with qa-results.md AC "failed" (acceptance.md all passed) -> [R10] in both accepted files
+      ---
+      duration_ms: 4.313167
+      ...
+    # Subtest: TC-135 accepted with qa-results.md AC "not_run" (acceptance.md all passed) -> [R10] in both accepted files
+    ok 7 - TC-135 accepted with qa-results.md AC "not_run" (acceptance.md all passed) -> [R10] in both accepted files
+      ---
+      duration_ms: 4.44175
+      ...
+    # Subtest: TC-135 accepted with qa-results.md AC "blocked" (acceptance.md all passed) -> [R10] in both accepted files
+    ok 8 - TC-135 accepted with qa-results.md AC "blocked" (acceptance.md all passed) -> [R10] in both accepted files
+      ---
+      duration_ms: 3.911667
+      ...
+    1..8
+ok 16 - D10: delivery-report AC table (R5) and qa-results AC in the accepted gate (R10)
+  ---
+  duration_ms: 32.609125
+  type: 'suite'
+  ...
+# Subtest: D11: verbatim CLI label and lowercase, case-sensitive keywords
+    # Subtest: TC-136 CLI arg with trailing "/" is used verbatim in problem and FAIL lines
+    ok 1 - TC-136 CLI arg with trailing "/" is used verbatim in problem and FAIL lines
+      ---
+      duration_ms: 176.622667
+      ...
+    # Subtest: TC-137 CLI relative arg "task" -> lines "task/<file>: ..." and "FAIL task (n problems)"
+    ok 2 - TC-137 CLI relative arg "task" -> lines "task/<file>: ..." and "FAIL task (n problems)"
+      ---
+      duration_ms: 176.326417
+      ...
+    # Subtest: TC-138 CLI relative valid arg -> "OK task"
+    ok 3 - TC-138 CLI relative valid arg -> "OK task"
+      ---
+      duration_ms: 176.930917
+      ...
+    # Subtest: TC-139 acceptance.md AC status "Passed" -> acceptance.md [R5]
+    ok 4 - TC-139 acceptance.md AC status "Passed" -> acceptance.md [R5]
+      ---
+      duration_ms: 4.873958
+      ...
+    # Subtest: TC-139 qa-results.md AC status "PASSED" -> qa-results.md [R5]
+    ok 5 - TC-139 qa-results.md AC status "PASSED" -> qa-results.md [R5]
+      ---
+      duration_ms: 4.512584
+      ...
+    # Subtest: TC-139 Verification status "Passed" -> qa-results.md [R7]
+    ok 6 - TC-139 Verification status "Passed" -> qa-results.md [R7]
+      ---
+      duration_ms: 4.693792
+      ...
+    # Subtest: TC-139 stage status "Passed" -> status.md [R2]
+    ok 7 - TC-139 stage status "Passed" -> status.md [R2]
+      ---
+      duration_ms: 3.921209
+      ...
+    # Subtest: TC-139 verdict "Approved" -> review.md [R8]
+    ok 8 - TC-139 verdict "Approved" -> review.md [R8]
+      ---
+      duration_ms: 3.860375
+      ...
+    # Subtest: TC-139 decision "Accepted" -> acceptance.md [R9]
+    ok 9 - TC-139 decision "Accepted" -> acceptance.md [R9]
+      ---
+      duration_ms: 3.84625
+      ...
+    1..9
+ok 17 - D11: verbatim CLI label and lowercase, case-sensitive keywords
+  ---
+  duration_ms: 555.836875
+  type: 'suite'
+  ...
+# Subtest: Review f11(d): remaining gaps
+    # Subtest: TC-140 R6 also applies to non-passed AC rows: failed with missing path -> [R6]
+    ok 1 - TC-140 R6 also applies to non-passed AC rows: failed with missing path -> [R6]
+      ---
+      duration_ms: 4.040333
+      ...
+    # Subtest: TC-141 evidence path with ":12" suffix is resolved without it
+    ok 2 - TC-141 evidence path with ":12" suffix is resolved without it
+      ---
+      duration_ms: 4.354625
+      ...
+    # Subtest: TC-141 evidence path with "\#L3" suffix is resolved without it
+    ok 3 - TC-141 evidence path with "\#L3" suffix is resolved without it
+      ---
+      duration_ms: 4.053
+      ...
+    # Subtest: TC-142 misspelled stage name ("INTEGRATON") -> status.md [R2]
+    ok 4 - TC-142 misspelled stage name ("INTEGRATON") -> status.md [R2]
+      ---
+      duration_ms: 3.897
+      ...
+    # Subtest: TC-143 CRLF line endings: valid fixture stays clean
+    ok 5 - TC-143 CRLF line endings: valid fixture stays clean
+      ---
+      duration_ms: 4.52675
+      ...
+    # Subtest: TC-144 CRLF line endings: failed AC + accepted still -> [R10]
+    ok 6 - TC-144 CRLF line endings: failed AC + accepted still -> [R10]
+      ---
+      duration_ms: 4.668792
+      ...
+    # Subtest: TC-145 taskDir path containing spaces: valid -> exit 0, missing file -> exit 1
+    ok 7 - TC-145 taskDir path containing spaces: valid -> exit 0, missing file -> exit 1
+      ---
+      duration_ms: 351.593917
+      ...
+    1..7
+ok 18 - Review f11(d): remaining gaps
+  ---
+  duration_ms: 377.375083
+  type: 'suite'
+  ...
+# Subtest: D12: accepted requires >=1 AC, all passed, in qa-results.md AND delivery-report.md
+    # Subtest: TC-146 accepted + qa-results.md AC table with zero rows -> [R10] in both accepted files
+    ok 1 - TC-146 accepted + qa-results.md AC table with zero rows -> [R10] in both accepted files
+      ---
+      duration_ms: 5.326042
+      ...
+    # Subtest: TC-147 accepted + qa-results.md AC-1 "not_run" -> [R10] in both accepted files
+    ok 2 - TC-147 accepted + qa-results.md AC-1 "not_run" -> [R10] in both accepted files
+      ---
+      duration_ms: 5.276417
+      ...
+    # Subtest: TC-147 accepted + qa-results.md AC-1 "failed" -> [R10] in both accepted files
+    ok 3 - TC-147 accepted + qa-results.md AC-1 "failed" -> [R10] in both accepted files
+      ---
+      duration_ms: 4.332667
+      ...
+    # Subtest: TC-148 qa-results.md AC-1 "failed" with decisions blocked -> no [R10] (boundary)
+    ok 4 - TC-148 qa-results.md AC-1 "failed" with decisions blocked -> no [R10] (boundary)
+      ---
+      duration_ms: 4.0835
+      ...
+    # Subtest: TC-146 accepted + delivery-report.md AC table with zero rows -> [R10] in both accepted files
+    ok 5 - TC-146 accepted + delivery-report.md AC table with zero rows -> [R10] in both accepted files
+      ---
+      duration_ms: 3.812708
+      ...
+    # Subtest: TC-147 accepted + delivery-report.md AC-1 "not_run" -> [R10] in both accepted files
+    ok 6 - TC-147 accepted + delivery-report.md AC-1 "not_run" -> [R10] in both accepted files
+      ---
+      duration_ms: 4.676375
+      ...
+    # Subtest: TC-147 accepted + delivery-report.md AC-1 "failed" -> [R10] in both accepted files
+    ok 7 - TC-147 accepted + delivery-report.md AC-1 "failed" -> [R10] in both accepted files
+      ---
+      duration_ms: 3.902917
+      ...
+    # Subtest: TC-148 delivery-report.md AC-1 "failed" with decisions blocked -> no [R10] (boundary)
+    ok 8 - TC-148 delivery-report.md AC-1 "failed" with decisions blocked -> no [R10] (boundary)
+      ---
+      duration_ms: 3.954
+      ...
+    1..8
+ok 19 - D12: accepted requires >=1 AC, all passed, in qa-results.md AND delivery-report.md
+  ---
+  duration_ms: 35.558166
+  type: 'suite'
+  ...
+# Subtest: D13: R11 containment = repo root OR task folder
+    # Subtest: TC-149 task folder outside repoRoot, evidence inside the task folder -> clean
+    ok 1 - TC-149 task folder outside repoRoot, evidence inside the task folder -> clean
+      ---
+      duration_ms: 3.985167
+      ...
+    # Subtest: TC-150 task folder outside repoRoot, evidence escaping both via ".." -> acceptance.md [R11]
+    ok 2 - TC-150 task folder outside repoRoot, evidence escaping both via ".." -> acceptance.md [R11]
+      ---
+      duration_ms: 4.140458
+      ...
+    1..2
+ok 20 - D13: R11 containment = repo root OR task folder
+  ---
+  duration_ms: 8.187375
+  type: 'suite'
+  ...
+# Subtest: D14: AC set comes from specification.md
+    # Subtest: TC-151 fixture specification.md lists exactly AC-1, AC-2 as "- **AC-n:**" under "\#\# Acceptance criteria"
+    ok 1 - TC-151 fixture specification.md lists exactly AC-1, AC-2 as "- **AC-n:**" under "\#\# Acceptance criteria"
+      ---
+      duration_ms: 1.069875
+      ...
+    # Subtest: TC-152 AC-2 deleted from all three tables while spec defines it + accepted -> [R10] in both accepted files
+    ok 2 - TC-152 AC-2 deleted from all three tables while spec defines it + accepted -> [R10] in both accepted files
+      ---
+      duration_ms: 4.713
+      ...
+    # Subtest: TC-153 AC-2 deleted only from acceptance.md + accepted -> [R10]
+    ok 3 - TC-153 AC-2 deleted only from acceptance.md + accepted -> [R10]
+      ---
+      duration_ms: 3.896542
+      ...
+    # Subtest: TC-153 AC-2 deleted only from qa-results.md + accepted -> [R10]
+    ok 4 - TC-153 AC-2 deleted only from qa-results.md + accepted -> [R10]
+      ---
+      duration_ms: 4.431666
+      ...
+    # Subtest: TC-153 AC-2 deleted only from delivery-report.md + accepted -> [R10]
+    ok 5 - TC-153 AC-2 deleted only from delivery-report.md + accepted -> [R10]
+      ---
+      duration_ms: 4.559417
+      ...
+    # Subtest: TC-154 spec defines AC-3 that no table lists + accepted -> [R10]
+    ok 6 - TC-154 spec defines AC-3 that no table lists + accepted -> [R10]
+      ---
+      duration_ms: 4.459833
+      ...
+    # Subtest: TC-155 spec "\#\# Acceptance criteria" with no AC items + accepted -> [R10]
+    ok 7 - TC-155 spec "\#\# Acceptance criteria" with no AC items + accepted -> [R10]
+      ---
+      duration_ms: 4.496875
+      ...
+    # Subtest: TC-156 spec without "\#\# Acceptance criteria" heading + accepted -> [R10]
+    ok 8 - TC-156 spec without "\#\# Acceptance criteria" heading + accepted -> [R10]
+      ---
+      duration_ms: 3.956375
+      ...
+    # Subtest: TC-157 acceptance.md: AC-3 row (not in spec) -> acceptance.md [R5]
+    ok 9 - TC-157 acceptance.md: AC-3 row (not in spec) -> acceptance.md [R5]
+      ---
+      duration_ms: 4.129333
+      ...
+    # Subtest: TC-157 qa-results.md: AC-3 row (not in spec) -> qa-results.md [R5]
+    ok 10 - TC-157 qa-results.md: AC-3 row (not in spec) -> qa-results.md [R5]
+      ---
+      duration_ms: 3.969375
+      ...
+    # Subtest: TC-157 delivery-report.md: AC-3 row (not in spec) -> delivery-report.md [R5]
+    ok 11 - TC-157 delivery-report.md: AC-3 row (not in spec) -> delivery-report.md [R5]
+      ---
+      duration_ms: 3.9485
+      ...
+    # Subtest: TC-158 AC-2 missing from tables but decisions blocked -> no [R10] (boundary)
+    ok 12 - TC-158 AC-2 missing from tables but decisions blocked -> no [R10] (boundary)
+      ---
+      duration_ms: 4.121125
+      ...
+    # Subtest: TC-159 "- **AC-9:**" under another spec heading is not part of the AC set (boundary)
+    ok 13 - TC-159 "- **AC-9:**" under another spec heading is not part of the AC set (boundary)
+      ---
+      duration_ms: 4.536583
+      ...
+    1..13
+ok 21 - D14: AC set comes from specification.md
+  ---
+  duration_ms: 52.841375
+  type: 'suite'
+  ...
+# Subtest: D15: fence/comment detection must not hide visible content
+    # Subtest: TC-160 N1b inline ```code``` at line start, then visible duplicate AC section with failed AC -> acceptance.md [R5]
+    ok 1 - TC-160 N1b inline ```code``` at line start, then visible duplicate AC section with failed AC -> acceptance.md [R5]
+      ---
+      duration_ms: 4.580166
+      ...
+    # Subtest: TC-161 N1b inline ```code``` at line start alone is harmless -> clean (boundary)
+    ok 2 - TC-161 N1b inline ```code``` at line start alone is harmless -> clean (boundary)
+      ---
+      duration_ms: 4.11525
+      ...
+    # Subtest: TC-160 N2b comment opener inside inline code, then visible duplicate AC section with failed AC -> acceptance.md [R5]
+    ok 3 - TC-160 N2b comment opener inside inline code, then visible duplicate AC section with failed AC -> acceptance.md [R5]
+      ---
+      duration_ms: 4.115458
+      ...
+    # Subtest: TC-161 N2b comment opener inside inline code alone is harmless -> clean (boundary)
+    ok 4 - TC-161 N2b comment opener inside inline code alone is harmless -> clean (boundary)
+      ---
+      duration_ms: 4.385542
+      ...
+    # Subtest: TC-162 N2b in review.md above "\#\# Verdict" does not hide the verdict -> clean
+    ok 5 - TC-162 N2b in review.md above "\#\# Verdict" does not hide the verdict -> clean
+      ---
+      duration_ms: 5.211625
+      ...
+    # Subtest: TC-163 unterminated ``` fence at EOF of acceptance.md -> acceptance.md [R1]
+    ok 6 - TC-163 unterminated ``` fence at EOF of acceptance.md -> acceptance.md [R1]
+      ---
+      duration_ms: 5.302167
+      ...
+    # Subtest: TC-163 unterminated ``` fence at EOF of review.md -> review.md [R1]
+    ok 7 - TC-163 unterminated ``` fence at EOF of review.md -> review.md [R1]
+      ---
+      duration_ms: 4.480375
+      ...
+    # Subtest: TC-163 unterminated ~~~ fence at EOF of acceptance.md -> acceptance.md [R1]
+    ok 8 - TC-163 unterminated ~~~ fence at EOF of acceptance.md -> acceptance.md [R1]
+      ---
+      duration_ms: 4.758833
+      ...
+    # Subtest: TC-163 unterminated ~~~ fence at EOF of review.md -> review.md [R1]
+    ok 9 - TC-163 unterminated ~~~ fence at EOF of review.md -> review.md [R1]
+      ---
+      duration_ms: 5.528625
+      ...
+    # Subtest: TC-163 unterminated <!-- comment at EOF of acceptance.md -> acceptance.md [R1]
+    ok 10 - TC-163 unterminated <!-- comment at EOF of acceptance.md -> acceptance.md [R1]
+      ---
+      duration_ms: 4.208375
+      ...
+    # Subtest: TC-163 unterminated <!-- comment at EOF of review.md -> review.md [R1]
+    ok 11 - TC-163 unterminated <!-- comment at EOF of review.md -> review.md [R1]
+      ---
+      duration_ms: 5.180875
+      ...
+    1..11
+ok 22 - D15: fence/comment detection must not hide visible content
+  ---
+  duration_ms: 52.111042
+  type: 'suite'
+  ...
+# Subtest: D16: struck-through evidence is removed before path search
+    # Subtest: TC-164 passed with only ~~`artifacts/logs/unit.log`~~ -> acceptance.md [R5]
+    ok 1 - TC-164 passed with only ~~`artifacts/logs/unit.log`~~ -> acceptance.md [R5]
+      ---
+      duration_ms: 4.085667
+      ...
+    # Subtest: TC-165 Verification passed with only struck path -> qa-results.md [R7]
+    ok 2 - TC-165 Verification passed with only struck path -> qa-results.md [R7]
+      ---
+      duration_ms: 4.246667
+      ...
+    # Subtest: TC-166 struck missing path + live existing path -> clean (boundary)
+    ok 3 - TC-166 struck missing path + live existing path -> clean (boundary)
+      ---
+      duration_ms: 4.143709
+      ...
+    1..3
+ok 23 - D16: struck-through evidence is removed before path search
+  ---
+  duration_ms: 12.560375
+  type: 'suite'
+  ...
+# Subtest: R2-4: absolute path pointing inside the repo is still rejected
+    # Subtest: TC-167 AC evidence = absolute path of an existing file inside repoRoot -> acceptance.md [R11]
+    ok 1 - TC-167 AC evidence = absolute path of an existing file inside repoRoot -> acceptance.md [R11]
+      ---
+      duration_ms: 4.142625
+      ...
+    # Subtest: TC-168 Verification evidence = absolute path inside repoRoot -> qa-results.md [R11]
+    ok 2 - TC-168 Verification evidence = absolute path inside repoRoot -> qa-results.md [R11]
+      ---
+      duration_ms: 5.332792
+      ...
+    1..2
+ok 24 - R2-4: absolute path pointing inside the repo is still rejected
+  ---
+  duration_ms: 9.548583
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: rules
+    # Subtest: clean bundle: schemas, i18n names, layout and testids are allowed
+    ok 1 - clean bundle: schemas, i18n names, layout and testids are allowed
+      ---
+      duration_ms: 2.320417
+      ...
+    # Subtest: scenario rebel base assignment is found (minified and JSON forms)
+    ok 2 - scenario rebel base assignment is found (minified and JSON forms)
+      ---
+      duration_ms: 2.239666
+      ...
+    # Subtest: scenario piece ids as string literals are found
+    ok 3 - scenario piece ids as string literals are found
+      ---
+      duration_ms: 0.243208
+      ...
+    # Subtest: hidden piece → typeKey mapping is found
+    ok 4 - hidden piece → typeKey mapping is found
+      ---
+      duration_ms: 0.80825
+      ...
+    # Subtest: __boardDebug hook is found
+    ok 5 - __boardDebug hook is found
+      ---
+      duration_ms: 0.225584
+      ...
+    1..5
+ok 25 - check-web-bundle: rules
+  ---
+  duration_ms: 7.824208
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: module composition (Q-23, TC-ARCH-08)
+    # Subtest: clean list: only definition/schema/board/assets of games
+    ok 1 - clean list: only definition/schema/board/assets of games
+      ---
+      duration_ms: 0.922334
+      ...
+    # Subtest: rules, scenario, server, ai (src or dist), unknown subpaths and root files are forbidden
+    ok 2 - rules, scenario, server, ai (src or dist), unknown subpaths and root files are forbidden
+      ---
+      duration_ms: 0.533875
+      ...
+    # Subtest: CLI --modules-dir: exit 0 on clean maps, 1 on a rules module, 2 without game modules
+    ok 3 - CLI --modules-dir: exit 0 on clean maps, 1 on a rules module, 2 without game modules
+      ---
+      duration_ms: 388.982292
+      ...
+    1..3
+ok 26 - check-web-bundle: module composition (Q-23, TC-ARCH-08)
+  ---
+  duration_ms: 391.684
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: CLI
+    # Subtest: exit 0 on a clean dist, exit 1 with FORBIDDEN lines on a leaking dist
+    ok 1 - exit 0 on a clean dist, exit 1 with FORBIDDEN lines on a leaking dist
+      ---
+      duration_ms: 252.774833
+      ...
+    1..1
+ok 27 - check-web-bundle: CLI
+  ---
+  duration_ms: 253.133833
+  type: 'suite'
+  ...
+# Subtest: ESLint architecture boundaries (TR-7)
+    # Subtest: rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion';
+    ok 1 - rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion';
+      ---
+      duration_ms: 968.938084
+      ...
+    # Subtest: rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion/definition';
+    ok 2 - rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 8.757041
+      ...
+    # Subtest: rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion/schema';
+    ok 3 - rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 5.2195
+      ...
+    # Subtest: rejects apps/api/src/sessions/probe.ts: import '@bga/game-forbidden-stars/definition';
+    ok 4 - rejects apps/api/src/sessions/probe.ts: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 3.890958
+      ...
+    # Subtest: rejects apps/api/src/sessions/probe.ts: import '../../../../packages/games/rebellion/src/definition';
+    ok 5 - rejects apps/api/src/sessions/probe.ts: import '../../../../packages/games/rebellion/src/definition';
+      ---
+      duration_ms: 7.385833
+      ...
+    # Subtest: rejects apps/api/src/common/probe.ts: import '@bga/game-rebellion';
+    ok 6 - rejects apps/api/src/common/probe.ts: import '@bga/game-rebellion';
+      ---
+      duration_ms: 12.619166
+      ...
+    # Subtest: rejects apps/api/src/common/probe.ts: import '@bga/game-rebellion/definition';
+    ok 7 - rejects apps/api/src/common/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 7.599958
+      ...
+    # Subtest: rejects apps/api/src/common/probe.ts: import '@bga/game-rebellion/schema';
+    ok 8 - rejects apps/api/src/common/probe.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 4.54825
+      ...
+    # Subtest: rejects apps/api/src/common/probe.ts: import '@bga/game-forbidden-stars/definition';
+    ok 9 - rejects apps/api/src/common/probe.ts: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 5.521709
+      ...
+    # Subtest: rejects apps/api/src/common/probe.ts: import '../../../../packages/games/rebellion/src/definition';
+    ok 10 - rejects apps/api/src/common/probe.ts: import '../../../../packages/games/rebellion/src/definition';
+      ---
+      duration_ms: 14.393917
+      ...
+    # Subtest: rejects apps/web/src/app/probe.tsx: import '@bga/game-rebellion';
+    ok 11 - rejects apps/web/src/app/probe.tsx: import '@bga/game-rebellion';
+      ---
+      duration_ms: 43.519709
+      ...
+    # Subtest: rejects apps/web/src/app/probe.tsx: import '@bga/game-rebellion/definition';
+    ok 12 - rejects apps/web/src/app/probe.tsx: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 8.975125
+      ...
+    # Subtest: rejects apps/web/src/app/probe.tsx: import '@bga/game-rebellion/schema';
+    ok 13 - rejects apps/web/src/app/probe.tsx: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 6.576042
+      ...
+    # Subtest: rejects apps/web/src/app/probe.tsx: import '@bga/game-forbidden-stars/definition';
+    ok 14 - rejects apps/web/src/app/probe.tsx: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 9.770083
+      ...
+    # Subtest: rejects apps/web/src/app/probe.tsx: import '../../../../packages/games/rebellion/src/definition';
+    ok 15 - rejects apps/web/src/app/probe.tsx: import '../../../../packages/games/rebellion/src/definition';
+      ---
+      duration_ms: 5.181375
+      ...
+    # Subtest: rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion';
+    ok 16 - rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion';
+      ---
+      duration_ms: 17.059209
+      ...
+    # Subtest: rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion/definition';
+    ok 17 - rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 3.822834
+      ...
+    # Subtest: rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion/schema';
+    ok 18 - rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 2.943834
+      ...
+    # Subtest: rejects apps/web/src/shared/probe.ts: import '@bga/game-forbidden-stars/definition';
+    ok 19 - rejects apps/web/src/shared/probe.ts: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 2.963833
+      ...
+    # Subtest: rejects apps/web/src/shared/probe.ts: import '../../../../packages/games/rebellion/src/definition';
+    ok 20 - rejects apps/web/src/shared/probe.ts: import '../../../../packages/games/rebellion/src/definition';
+      ---
+      duration_ms: 7.066
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.tsx: import '@bga/game-rebellion';
+    ok 21 - rejects apps/web/src/platform/probe.tsx: import '@bga/game-rebellion';
+      ---
+      duration_ms: 6.934542
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.tsx: import '@bga/game-rebellion/definition';
+    ok 22 - rejects apps/web/src/platform/probe.tsx: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 2.67125
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.tsx: import '@bga/game-rebellion/schema';
+    ok 23 - rejects apps/web/src/platform/probe.tsx: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 3.058667
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.tsx: import '@bga/game-forbidden-stars/definition';
+    ok 24 - rejects apps/web/src/platform/probe.tsx: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 4.493459
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.tsx: import '../../../../packages/games/rebellion/src/definition';
+    ok 25 - rejects apps/web/src/platform/probe.tsx: import '../../../../packages/games/rebellion/src/definition';
+      ---
+      duration_ms: 2.64975
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import '@bga/game-rebellion';
+    ok 26 - rejects packages/platform/src/probe.ts: import '@bga/game-rebellion';
+      ---
+      duration_ms: 9.850459
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import '@bga/game-rebellion/definition';
+    ok 27 - rejects packages/platform/src/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 2.47225
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import '@bga/game-rebellion/schema';
+    ok 28 - rejects packages/platform/src/probe.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 1.59675
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import '@bga/game-forbidden-stars/definition';
+    ok 29 - rejects packages/platform/src/probe.ts: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 1.887625
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import '../../games/rebellion/src/definition';
+    ok 30 - rejects packages/platform/src/probe.ts: import '../../games/rebellion/src/definition';
+      ---
+      duration_ms: 1.542709
+      ...
+    # Subtest: rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion/definition';
+    ok 31 - rejects apps/web/src/shared/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 6.260959
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.ts: import '@/games/rebellion/x';
+    ok 32 - rejects apps/web/src/platform/probe.ts: import '@/games/rebellion/x';
+      ---
+      duration_ms: 3.444042
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.ts: import '@/features/game-setup';
+    ok 33 - rejects apps/web/src/platform/probe.ts: import '@/features/game-setup';
+      ---
+      duration_ms: 2.524833
+      ...
+    # Subtest: rejects apps/web/src/app/probe.tsx: import '../games/rebellion/entry';
+    ok 34 - rejects apps/web/src/app/probe.tsx: import '../games/rebellion/entry';
+      ---
+      duration_ms: 1.81225
+      ...
+    # Subtest: allows  apps/web/src/platform/probe.ts: import '@/games/registry';
+    ok 35 - allows  apps/web/src/platform/probe.ts: import '@/games/registry';
+      ---
+      duration_ms: 3.784958
+      ...
+    # Subtest: allows  apps/web/src/platform/probe.ts: import '@bga/platform';
+    ok 36 - allows  apps/web/src/platform/probe.ts: import '@bga/platform';
+      ---
+      duration_ms: 1.932625
+      ...
+    # Subtest: allows  packages/platform/src/probe.ts: import 'zod';
+    ok 37 - allows  packages/platform/src/probe.ts: import 'zod';
+      ---
+      duration_ms: 1.32025
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import 'react';
+    ok 38 - rejects packages/platform/src/probe.ts: import 'react';
+      ---
+      duration_ms: 1.287084
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: import 'node:fs';
+    ok 39 - rejects packages/platform/src/probe.ts: import 'node:fs';
+      ---
+      duration_ms: 1.070833
+      ...
+    # Subtest: allows  apps/api/src/game-registry/probe.ts: import '@bga/game-rebellion/server';
+    ok 40 - allows  apps/api/src/game-registry/probe.ts: import '@bga/game-rebellion/server';
+      ---
+      duration_ms: 10.897208
+      ...
+    # Subtest: allows  apps/api/src/game-registry/probe.ts: import '@bga/game-forbidden-stars/definition';
+    ok 41 - allows  apps/api/src/game-registry/probe.ts: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 1.800875
+      ...
+    # Subtest: allows  apps/web/src/games/probe.ts: import '@bga/game-rebellion/definition';
+    ok 42 - allows  apps/web/src/games/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 13.436584
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/definition';
+    ok 43 - allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 17.320792
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/rules';
+    ok 44 - rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/rules';
+      ---
+      duration_ms: 2.966458
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/scenario';
+    ok 45 - rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/scenario';
+      ---
+      duration_ms: 2.500333
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/server';
+    ok 46 - rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/server';
+      ---
+      duration_ms: 2.288416
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/ai';
+    ok 47 - rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/ai';
+      ---
+      duration_ms: 3.886084
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: export * from '@bga/game-rebellion/rules';
+    ok 48 - rejects apps/web/src/games/rebellion/probe.tsx: export * from '@bga/game-rebellion/rules';
+      ---
+      duration_ms: 3.459292
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: export const load = () => import('@bga/game-rebellion/scenario');
+    ok 49 - rejects apps/web/src/games/rebellion/probe.tsx: export const load = () => import('@bga/game-rebellion/scenario');
+      ---
+      duration_ms: 9.513584
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/src/rules';
+    ok 50 - rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/src/rules';
+      ---
+      duration_ms: 2.306459
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '../../../../../packages/games/rebellion/src/rules';
+    ok 51 - rejects apps/web/src/games/rebellion/probe.tsx: import '../../../../../packages/games/rebellion/src/rules';
+      ---
+      duration_ms: 4.814041
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion';
+    ok 52 - rejects apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion';
+      ---
+      duration_ms: 2.817291
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/definition';
+    ok 53 - allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 2.173667
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/schema';
+    ok 54 - allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 2.110917
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/board';
+    ok 55 - allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/board';
+      ---
+      duration_ms: 4.221167
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/assets';
+    ok 56 - allows  apps/web/src/games/rebellion/probe.tsx: import '@bga/game-rebellion/assets';
+      ---
+      duration_ms: 2.6935
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: export const load = () => import('@bga/game-rebellion/board');
+    ok 57 - allows  apps/web/src/games/rebellion/probe.tsx: export const load = () => import('@bga/game-rebellion/board');
+      ---
+      duration_ms: 4.456042
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@/games/registry';
+    ok 58 - rejects apps/web/src/games/rebellion/probe.tsx: import '@/games/registry';
+      ---
+      duration_ms: 2.257833
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: import '@/games/forbidden-stars/entry';
+    ok 59 - rejects apps/web/src/games/rebellion/probe.tsx: import '@/games/forbidden-stars/entry';
+      ---
+      duration_ms: 3.456334
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/probe.tsx: import '@/games/types';
+    ok 60 - allows  apps/web/src/games/rebellion/probe.tsx: import '@/games/types';
+      ---
+      duration_ms: 2.115167
+      ...
+    # Subtest: rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/rules';
+    ok 61 - rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/rules';
+      ---
+      duration_ms: 8.726167
+      ...
+    # Subtest: rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/scenario';
+    ok 62 - rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/scenario';
+      ---
+      duration_ms: 3.2665
+      ...
+    # Subtest: rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/server';
+    ok 63 - rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/server';
+      ---
+      duration_ms: 4.3445
+      ...
+    # Subtest: rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/ai';
+    ok 64 - rejects apps/web/src/features/probe.ts: import '@bga/game-rebellion/ai';
+      ---
+      duration_ms: 1.968541
+      ...
+    # Subtest: rejects apps/web/src/features/probe.ts: import '@prisma/client';
+    ok 65 - rejects apps/web/src/features/probe.ts: import '@prisma/client';
+      ---
+      duration_ms: 1.914
+      ...
+    # Subtest: rejects apps/web/src/features/probe.ts: import '@nestjs/common';
+    ok 66 - rejects apps/web/src/features/probe.ts: import '@nestjs/common';
+      ---
+      duration_ms: 2.188792
+      ...
+    # Subtest: rejects apps/web/src/games/forbidden-stars/probe.ts: import '@bga/game-rebellion/definition';
+    ok 67 - rejects apps/web/src/games/forbidden-stars/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 17.590375
+      ...
+    # Subtest: rejects apps/web/src/games/forbidden-stars/probe.ts: import '@bga/game-forbidden-stars/schema';
+    ok 68 - rejects apps/web/src/games/forbidden-stars/probe.ts: import '@bga/game-forbidden-stars/schema';
+      ---
+      duration_ms: 2.632416
+      ...
+    # Subtest: allows  apps/web/src/games/forbidden-stars/probe.ts: import '@bga/game-forbidden-stars/assets';
+    ok 69 - allows  apps/web/src/games/forbidden-stars/probe.ts: import '@bga/game-forbidden-stars/assets';
+      ---
+      duration_ms: 4.391875
+      ...
+    # Subtest: allows  apps/web/src/games/forbidden-stars/probe.ts: import '@bga/platform';
+    ok 70 - allows  apps/web/src/games/forbidden-stars/probe.ts: import '@bga/platform';
+      ---
+      duration_ms: 2.484166
+      ...
+    # Subtest: allows  apps/web/src/games/rebellion/locales.i18n.test.ts: import '@bga/game-rebellion/scenario';
+    ok 71 - allows  apps/web/src/games/rebellion/locales.i18n.test.ts: import '@bga/game-rebellion/scenario';
+      ---
+      duration_ms: 12.668833
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/locales.i18n.test.ts: import '@bga/game-rebellion/rules';
+    ok 72 - rejects apps/web/src/games/rebellion/locales.i18n.test.ts: import '@bga/game-rebellion/rules';
+      ---
+      duration_ms: 3.708958
+      ...
+    # Subtest: allows  apps/web/src/games/registry.consistency.test.ts: import '../../../api/src/game-registry/definitions';
+    ok 73 - allows  apps/web/src/games/registry.consistency.test.ts: import '../../../api/src/game-registry/definitions';
+      ---
+      duration_ms: 10.69375
+      ...
+    # Subtest: rejects apps/web/src/games/registry.consistency.test.ts: import '../../../api/src/game-registry/registry';
+    ok 74 - rejects apps/web/src/games/registry.consistency.test.ts: import '../../../api/src/game-registry/registry';
+      ---
+      duration_ms: 2.332583
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.ts: import '../../../api/src/game-registry/definitions';
+    ok 75 - rejects apps/web/src/platform/probe.ts: import '../../../api/src/game-registry/definitions';
+      ---
+      duration_ms: 3.942083
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import 'react';
+    ok 76 - rejects packages/games/rebellion/src/rules/probe.ts: import 'react';
+      ---
+      duration_ms: 16.181167
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '@nestjs/core';
+    ok 77 - rejects packages/games/rebellion/src/rules/probe.ts: import '@nestjs/core';
+      ---
+      duration_ms: 2.211916
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '@prisma/client';
+    ok 78 - rejects packages/games/rebellion/src/rules/probe.ts: import '@prisma/client';
+      ---
+      duration_ms: 3.5
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import 'openai';
+    ok 79 - rejects packages/games/rebellion/src/rules/probe.ts: import 'openai';
+      ---
+      duration_ms: 1.430375
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '@bga/game-forbidden-stars/definition';
+    ok 80 - rejects packages/games/rebellion/src/rules/probe.ts: import '@bga/game-forbidden-stars/definition';
+      ---
+      duration_ms: 2.632375
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '@bga/game-rebellion/schema';
+    ok 81 - rejects packages/games/rebellion/src/rules/probe.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 1.14725
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import 'node:fs';
+    ok 82 - rejects packages/games/rebellion/src/rules/probe.ts: import 'node:fs';
+      ---
+      duration_ms: 1.105125
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '../../../../../apps/web/src/main';
+    ok 83 - rejects packages/games/rebellion/src/rules/probe.ts: import '../../../../../apps/web/src/main';
+      ---
+      duration_ms: 1.11425
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '../../../forbidden-stars/src/definition';
+    ok 84 - rejects packages/games/rebellion/src/rules/probe.ts: import '../../../forbidden-stars/src/definition';
+      ---
+      duration_ms: 1.083708
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: export const t = Date.now();
+    ok 85 - rejects packages/games/rebellion/src/rules/probe.ts: export const t = Date.now();
+      ---
+      duration_ms: 3.939042
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: export const r = Math.random();
+    ok 86 - rejects packages/games/rebellion/src/rules/probe.ts: export const r = Math.random();
+      ---
+      duration_ms: 1.722458
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: export const d = new Date();
+    ok 87 - rejects packages/games/rebellion/src/rules/probe.ts: export const d = new Date();
+      ---
+      duration_ms: 2.729833
+      ...
+    # Subtest: allows  packages/games/rebellion/src/rules/probe.ts: import '@bga/platform';
+    ok 88 - allows  packages/games/rebellion/src/rules/probe.ts: import '@bga/platform';
+      ---
+      duration_ms: 1.332
+      ...
+    # Subtest: allows  packages/games/rebellion/src/rules/probe.ts: import 'zod';
+    ok 89 - allows  packages/games/rebellion/src/rules/probe.ts: import 'zod';
+      ---
+      duration_ms: 1.038709
+      ...
+    # Subtest: allows  packages/games/rebellion/src/rules/probe.ts: import '../schema';
+    ok 90 - allows  packages/games/rebellion/src/rules/probe.ts: import '../schema';
+      ---
+      duration_ms: 0.996834
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: import '../scenario';
+    ok 91 - rejects packages/games/rebellion/src/rules/probe.ts: import '../scenario';
+      ---
+      duration_ms: 4.530541
+      ...
+    # Subtest: rejects packages/games/forbidden-stars/src/definition/probe.ts: import '@bga/game-rebellion/definition';
+    ok 92 - rejects packages/games/forbidden-stars/src/definition/probe.ts: import '@bga/game-rebellion/definition';
+      ---
+      duration_ms: 10.359375
+      ...
+    # Subtest: allows  packages/games/forbidden-stars/src/definition/probe.ts: import '@bga/platform';
+    ok 93 - allows  packages/games/forbidden-stars/src/definition/probe.ts: import '@bga/platform';
+      ---
+      duration_ms: 1.375459
+      ...
+    # Subtest: rejects packages/games/rebellion/src/board/probe.ts: import '../scenario';
+    ok 94 - rejects packages/games/rebellion/src/board/probe.ts: import '../scenario';
+      ---
+      duration_ms: 3.25025
+      ...
+    # Subtest: rejects packages/games/rebellion/src/schema/probe.ts: import '../rules';
+    ok 95 - rejects packages/games/rebellion/src/schema/probe.ts: import '../rules';
+      ---
+      duration_ms: 2.811333
+      ...
+    # Subtest: rejects packages/games/rebellion/src/definition/probe.ts: import '../schema';
+    ok 96 - rejects packages/games/rebellion/src/definition/probe.ts: import '../schema';
+      ---
+      duration_ms: 2.772875
+      ...
+    # Subtest: allows  packages/games/rebellion/src/assets/probe.ts: import './cover';
+    ok 97 - allows  packages/games/rebellion/src/assets/probe.ts: import './cover';
+      ---
+      duration_ms: 3.278417
+      ...
+    # Subtest: allows  packages/games/rebellion/src/scenario/probe.ts: import '../schema';
+    ok 98 - allows  packages/games/rebellion/src/scenario/probe.ts: import '../schema';
+      ---
+      duration_ms: 10.328708
+      ...
+    # Subtest: rejects packages/games/rebellion/src/scenario/probe.ts: import '../rules';
+    ok 99 - rejects packages/games/rebellion/src/scenario/probe.ts: import '../rules';
+      ---
+      duration_ms: 5.707167
+      ...
+    # Subtest: allows  packages/games/rebellion/src/ai/probe.ts: import '../schema';
+    ok 100 - allows  packages/games/rebellion/src/ai/probe.ts: import '../schema';
+      ---
+      duration_ms: 9.054791
+      ...
+    # Subtest: rejects packages/games/rebellion/src/ai/probe.ts: import '../rules';
+    ok 101 - rejects packages/games/rebellion/src/ai/probe.ts: import '../rules';
+      ---
+      duration_ms: 1.227583
+      ...
+    # Subtest: rejects packages/games/rebellion/src/ai/probe.ts: import 'openai';
+    ok 102 - rejects packages/games/rebellion/src/ai/probe.ts: import 'openai';
+      ---
+      duration_ms: 1.002291
+      ...
+    # Subtest: allows  packages/games/rebellion/src/server/probe.ts: import '../rules';
+    ok 103 - allows  packages/games/rebellion/src/server/probe.ts: import '../rules';
+      ---
+      duration_ms: 8.889083
+      ...
+    # Subtest: allows  packages/games/rebellion/src/server/probe.ts: import '../scenario';
+    ok 104 - allows  packages/games/rebellion/src/server/probe.ts: import '../scenario';
+      ---
+      duration_ms: 2.041292
+      ...
+    # Subtest: rejects packages/games/rebellion/src/server/probe.ts: import '../board';
+    ok 105 - rejects packages/games/rebellion/src/server/probe.ts: import '../board';
+      ---
+      duration_ms: 1.047458
+      ...
+    # Subtest: rejects apps/api/src/game-registry/probe.ts: import '@bga/game-rebellion/rules';
+    ok 106 - rejects apps/api/src/game-registry/probe.ts: import '@bga/game-rebellion/rules';
+      ---
+      duration_ms: 1.117167
+      ...
+    # Subtest: rejects apps/api/src/game-registry/probe.ts: import '@bga/game-rebellion/schema';
+    ok 107 - rejects apps/api/src/game-registry/probe.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 1.049083
+      ...
+    # Subtest: rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion/server';
+    ok 108 - rejects apps/api/src/sessions/probe.ts: import '@bga/game-rebellion/server';
+      ---
+      duration_ms: 1.242125
+      ...
+    # Subtest: allows  apps/api/src/sessions/probe.ts: import '@bga/platform';
+    ok 109 - allows  apps/api/src/sessions/probe.ts: import '@bga/platform';
+      ---
+      duration_ms: 1.27625
+      ...
+    # Subtest: allows  apps/api/src/sessions/probe.ts: import '../game-registry/registry';
+    ok 110 - allows  apps/api/src/sessions/probe.ts: import '../game-registry/registry';
+      ---
+      duration_ms: 1.144208
+      ...
+    # Subtest: rejects apps/api/src/main.ts: import '@bga/game-rebellion/scenario';
+    ok 111 - rejects apps/api/src/main.ts: import '@bga/game-rebellion/scenario';
+      ---
+      duration_ms: 6.553542
+      ...
+    # Subtest: rejects apps/api/src/common/probe.ts: import 'react';
+    ok 112 - rejects apps/api/src/common/probe.ts: import 'react';
+      ---
+      duration_ms: 1.018583
+      ...
+    # Subtest: rejects apps/api/test/support/fake-game.ts: import '@bga/game-rebellion/schema';
+    ok 113 - rejects apps/api/test/support/fake-game.ts: import '@bga/game-rebellion/schema';
+      ---
+      duration_ms: 10.331333
+      ...
+    # Subtest: allows  apps/api/test/support/fake-game.ts: import '@bga/platform';
+    ok 114 - allows  apps/api/test/support/fake-game.ts: import '@bga/platform';
+      ---
+      duration_ms: 1.160917
+      ...
+    # Subtest: rejects apps/web/src/platform/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 115 - rejects apps/web/src/platform/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 6.407584
+      ...
+    # Subtest: rejects apps/web/src/games/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 116 - rejects apps/web/src/games/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 4.4625
+      ...
+    # Subtest: rejects apps/web/src/games/rebellion/probe.tsx: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 117 - rejects apps/web/src/games/rebellion/probe.tsx: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 8.115083
+      ...
+    # Subtest: rejects apps/api/src/game-registry/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 118 - rejects apps/api/src/game-registry/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 2.972833
+      ...
+    # Subtest: rejects apps/api/src/sessions/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 119 - rejects apps/api/src/sessions/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 3.162959
+      ...
+    # Subtest: rejects packages/platform/src/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 120 - rejects packages/platform/src/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 2.686042
+      ...
+    # Subtest: rejects packages/games/rebellion/src/server/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 121 - rejects packages/games/rebellion/src/server/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 2.303125
+      ...
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 122 - rejects packages/games/rebellion/src/rules/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 2.083334
+      ...
+    # Subtest: allows  apps/web/src/app/probe.tsx: export const load = () => import('./pages/SettingsPage');
+    ok 123 - allows  apps/web/src/app/probe.tsx: export const load = () => import('./pages/SettingsPage');
+      ---
+      duration_ms: 4.064083
+      ...
+    1..123
+ok 28 - ESLint architecture boundaries (TR-7)
+  ---
+  duration_ms: 1571.858125
+  type: 'suite'
+  ...
+1..28
+# tests 357
+# suites 28
+# pass 357
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4659.390209
+Scope: 5 of 6 workspace projects
+packages/platform test$ vitest run
+packages/platform test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+packages/platform test:  Test Files  4 passed (4)
+packages/platform test:       Tests  64 passed (64)
+packages/platform test:    Start at  08:41:38
+packages/platform test:    Duration  662ms (transform 708ms, setup 0ms, import 1.18s, tests 90ms, environment 0ms)
+packages/platform test: Done
+packages/games/forbidden-stars test$ vitest run
+packages/games/rebellion test$ vitest run
+packages/games/rebellion test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+packages/games/forbidden-stars test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/forbidden-stars
+packages/games/forbidden-stars test:  Test Files  2 passed (2)
+packages/games/forbidden-stars test:       Tests  5 passed (5)
+packages/games/forbidden-stars test:    Start at  08:41:39
+packages/games/forbidden-stars test:    Duration  776ms (transform 309ms, setup 0ms, import 577ms, tests 22ms, environment 0ms)
+packages/games/forbidden-stars test: Done
+packages/games/rebellion test:  Test Files  20 passed (20)
+packages/games/rebellion test:       Tests  201 passed (201)
+packages/games/rebellion test:    Start at  08:41:39
+packages/games/rebellion test:    Duration  2.81s (transform 2.67s, setup 0ms, import 6.45s, tests 2.93s, environment 2ms)
+packages/games/rebellion test: Done
+apps/api test$ vitest run
+apps/web test$ vitest run --passWithNoTests
+apps/web test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+apps/api test:  RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:50 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:50 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=01018929-73dd-4470-885a-ba0caa1baa2d code=INTERNAL status=500 error=Error[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68634  - [39m11/08/2026, 8:41:51 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=3879aa9e-3f79-4da2-be90-c70b631b8d44 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+apps/api test: [31m[Nest] 68637  - [39m11/08/2026, 8:41:53 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+apps/api test: [31m[Nest] 68635  - [39m11/08/2026, 8:41:53 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=f22c7562-8d70-4fca-ac16-5b9c7561f2a5 code=INTERNAL status=500 error=ZodError[39m
+apps/api test: [31m[Nest] 68635  - [39m11/08/2026, 8:41:53 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=f22c7562-8d70-4fca-ac16-5b9c7561f2a5 code=INTERNAL status=500 error=ZodError[39m
+apps/api test: [31m[Nest] 68814  - [39m11/08/2026, 8:41:58 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=7b745ac1-2adf-4695-bb69-a54895366634 code=INTERNAL status=500 error=SyntaxError[39m
+apps/api test: [31m[Nest] 68814  - [39m11/08/2026, 8:41:58 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=7b745ac1-2adf-4695-bb69-a54895366634 code=INTERNAL status=500 error=SyntaxError[39m
+apps/api test: [31m[Nest] 68814  - [39m11/08/2026, 8:41:58 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=f180da6e-8f2d-4d4a-aa04-3e414566ee15 code=INTERNAL status=500 error=ZodError[39m
+apps/web test:  Test Files  33 passed (33)
+apps/web test:       Tests  255 passed (255)
+apps/web test:    Start at  08:41:43
+apps/web test:    Duration  24.60s (transform 8.88s, setup 22.93s, import 31.24s, tests 76.86s, environment 59.60s)
+apps/web test: Done
+apps/api test:  Test Files  19 passed | 1 skipped (20)
+apps/api test:       Tests  181 passed | 1 skipped (182)
+apps/api test:    Start at  08:41:43
+apps/api test:    Duration  58.32s (transform 6.65s, setup 0ms, import 39.64s, tests 208.19s, environment 2ms)
+apps/api test: Done
+
+> board-game-ai@ build /Users/dimatitov/WebstormProjects/Game automa
+> pnpm -r run build
+
+Scope: 5 of 6 workspace projects
+packages/platform build$ tsc -b
+packages/platform build: Done
+packages/games/forbidden-stars build$ tsc -b
+packages/games/rebellion build$ tsc -b
+packages/games/forbidden-stars build: Done
+packages/games/rebellion build: Done
+apps/api build$ nest build
+apps/web build$ tsc -b && vite build
+apps/api build: Done
+apps/web build: vite v8.3.6 building client environment for production...
+apps/web build: transforming...
+apps/web build: ✓ 1022 modules transformed.
+apps/web build: rendering chunks...
+apps/web build: computing gzip size...
+apps/web build: dist/index.html                             0.68 kB │ gzip:   0.37 kB
+apps/web build: dist/assets/FactionEmblem-C8TA5Iep.js       0.34 kB │ gzip:   0.27 kB
+apps/web build: dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+apps/web build: dist/assets/SetupScreen-CtFbY0lK.js         6.60 kB │ gzip:   2.29 kB
+apps/web build: dist/assets/TableScreen-XPipfv48.js        48.19 kB │ gzip:  14.90 kB
+apps/web build: dist/assets/index-DoMORgwM.js              83.32 kB │ gzip:  28.13 kB
+apps/web build: dist/assets/vendor-DIbOl8aa.js            186.48 kB │ gzip:  54.97 kB
+apps/web build: dist/assets/vendor-mui-CHVuejTS.js        254.61 kB │ gzip:  80.97 kB
+apps/web build: dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+apps/web build: dist/assets/vendor-konva-BWMWGsIW.js      330.29 kB │ gzip: 100.81 kB
+apps/web build: ✓ built in 310ms
+apps/web build: Done
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 10 files in apps/web/dist, 5 rules (board-debug-hook, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-KVxi5x
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (1), rebellion/definition (1), rebellion/schema (11)
+OK check-web-bundle modules: 633 sources, 20 game modules, only definition/schema/board/assets
+exit=0

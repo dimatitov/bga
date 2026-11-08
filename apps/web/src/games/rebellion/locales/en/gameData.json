@@ -1,0 +1,54 @@
+{
+  "systems": {
+    "sys-aurelis": "Aurelis",
+    "sys-brevora": "Brevora",
+    "sys-cindral": "Cindral",
+    "sys-dovmaren": "Dovmaren",
+    "sys-eskara": "Eskara",
+    "sys-fennix": "Fennix",
+    "sys-galdor": "Galdor",
+    "sys-hollin": "Hollin",
+    "sys-iskra": "Iskra",
+    "sys-jorvan": "Jorvan"
+  },
+  "regions": {
+    "reg-inner": "Inner Ring",
+    "reg-mid": "Mid Ring",
+    "reg-outer": "Outer Ring"
+  },
+  "pieces": {
+    "unit": {
+      "empire": {
+        "capital-ship": "Capital ship",
+        "fighter-wing": "Fighter wing",
+        "ground-trooper": "Ground troopers"
+      },
+      "rebels": {
+        "cruiser": "Rebel cruiser",
+        "fighter-wing": "Fighter wing",
+        "ground-trooper": "Ground troopers"
+      }
+    },
+    "leader": {
+      "empire": {
+        "commander": "Commander",
+        "agent": "Agent"
+      },
+      "rebels": {
+        "captain": "Captain",
+        "envoy": "Envoy"
+      }
+    },
+    "token": {
+      "empire": {
+        "loyalty": "Loyalty token",
+        "probe": "Probe"
+      },
+      "rebels": {
+        "loyalty": "Loyalty token",
+        "sabotage": "Sabotage token",
+        "covert-cell": "Covert cell"
+      }
+    }
+  }
+}

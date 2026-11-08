@@ -1,22 +1,23 @@
 // Scenario 4 — selection: TC-E2E-13..16 (AC-6, AC-10).
+// SWR-003: sessions are created via `POST /api/sessions` and opened at `/sessions/:id`; expectations unchanged.
 import { expect, test } from '@playwright/test';
 import {
-  createGame,
+  createSession,
   enemyPieces,
   moveActions,
   pickMove,
   piece,
   type PlayerView,
 } from './support/api';
-import { dbg, emptyCanvasPoint, openGame } from './support/board';
+import { dbg, emptyCanvasPoint, openSession } from './support/board';
 import { CONTEXT_STATE, T } from './support/testids';
 
 let view: PlayerView;
 
 test.beforeEach(async ({ page, request }) => {
-  const created = await createGame(request);
+  const created = await createSession(request);
   view = created.view;
-  await openGame(page, created.gameId);
+  await openSession(page, created.sessionId);
 });
 
 test('TC-E2E-13: clicking a system selects it and opens the system panel', async ({ page }) => {

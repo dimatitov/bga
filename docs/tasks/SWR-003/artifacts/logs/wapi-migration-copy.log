@@ -1,0 +1,92 @@
+# W-API TC-MIG-07 (backend part): migration on a COPY of apps/api/prisma/dev.db; S=/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check (scratch, outside repo)
+
+$ rm -rf "$S" && mkdir -p "$S"
+exit=0
+
+$ shasum -a 256 apps/api/prisma/dev.db
+c81a0d79165b20e523e9021ed015f0e6a0eeaea906a717eae19fbdecf0685c4a  apps/api/prisma/dev.db
+exit=0
+
+$ cp apps/api/prisma/dev.db "$S/dev-copy.db"
+exit=0
+
+$ sqlite3 "$S/dev-copy.db" "select migration_name from _prisma_migrations; select count(*) from Game; select count(*) from GameEvent;"
+20261107235651_init
+3
+10
+exit=0
+
+$ sqlite3 "$S/dev-copy.db" "select id, setup, state, version, createdAt, updatedAt from Game order by id" > "$S/before-rows.txt"; sqlite3 "$S/dev-copy.db" "select id, gameId, seq, type, actor, payload, createdAt from GameEvent order by id" > "$S/before-events.txt"; wc -l "$S/before-rows.txt" "$S/before-events.txt"; shasum -a 256 "$S/before-rows.txt" "$S/before-events.txt"
+       3 /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/before-rows.txt
+      10 /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/before-events.txt
+      13 total
+18a7fc1e7f777a04915256b9a23da6618a5ff5a949ca95927bef99d00a32cf1d  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/before-rows.txt
+2305520c63c89f671b65407353df6b9f18d7550d7c00a67ac5ae93d3090b5da3  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/before-events.txt
+exit=0
+
+$ cd apps/api && DATABASE_URL="file:$S/dev-copy.db" pnpm exec prisma migrate deploy
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "dev-copy.db" at "file:/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/dev-copy.db"
+
+2 migrations found in prisma/migrations
+
+Applying migration `20261108120000_sessions`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261108120000_sessions/
+    └─ migration.sql
+      
+All migrations have been successfully applied.
+exit=0
+
+$ cd apps/api && DATABASE_URL="file:$S/dev-copy.db" pnpm exec prisma migrate status
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "dev-copy.db" at "file:/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/dev-copy.db"
+
+2 migrations found in prisma/migrations
+
+Database schema is up to date!
+exit=0
+
+$ sqlite3 "$S/dev-copy.db" "select migration_name from _prisma_migrations order by migration_name; select count(*) from Session; select count(*) from SessionEvent; select gameId, count(*) from Session group by gameId; PRAGMA foreign_key_check; PRAGMA integrity_check; select count(*) from sqlite_master where type=\"table\" and name like \"Game%\";"
+20261107235651_init
+20261108120000_sessions
+3
+10
+star-wars-rebellion|3
+ok
+0
+exit=0
+
+$ sqlite3 "$S/dev-copy.db" "select id, setup, state, version, createdAt, updatedAt from Session order by id" > "$S/after-rows.txt"; sqlite3 "$S/dev-copy.db" "select id, sessionId, seq, type, actor, payload, createdAt from SessionEvent order by id" > "$S/after-events.txt"; shasum -a 256 "$S/after-rows.txt" "$S/after-events.txt"; diff "$S/before-rows.txt" "$S/after-rows.txt" && diff "$S/before-events.txt" "$S/after-events.txt" && echo IDENTICAL
+18a7fc1e7f777a04915256b9a23da6618a5ff5a949ca95927bef99d00a32cf1d  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/after-rows.txt
+2305520c63c89f671b65407353df6b9f18d7550d7c00a67ac5ae93d3090b5da3  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/after-events.txt
+IDENTICAL
+exit=0
+
+$ cd apps/api && DATABASE_URL="file:$S/dev-copy.db" pnpm exec prisma migrate deploy
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "dev-copy.db" at "file:/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/5fb2a43d-99ee-4ebb-9469-aeb1fec27115/scratchpad/migration-check/dev-copy.db"
+
+2 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+exit=0
+
+$ cd apps/api && rm -f .tmp/shadow.db && pnpm exec prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url "file:$PWD/.tmp/shadow.db" --exit-code
+No difference detected.
+
+exit=0
+
+$ shasum -a 256 apps/api/prisma/dev.db; sqlite3 -readonly apps/api/prisma/dev.db "select migration_name from _prisma_migrations; select count(*) from Game;"
+c81a0d79165b20e523e9021ed015f0e6a0eeaea906a717eae19fbdecf0685c4a  apps/api/prisma/dev.db
+20261107235651_init
+3
+exit=0
+

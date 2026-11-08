@@ -1,0 +1,6 @@
+{
+  "opponentAi": "против AI ({{difficulty}})",
+  "opponentAiPlain": "против AI",
+  "opponentHuman": "против второго игрока",
+  "progress": "Р{{round}} · {{phase}}"
+}

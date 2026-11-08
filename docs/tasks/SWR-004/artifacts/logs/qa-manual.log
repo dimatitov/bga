@@ -1,0 +1,47 @@
+# SWR-004 QA manual pass — qa-lead, 2026-11-08 (QA_EXECUTION, final code after review fixes)
+# Env: API `DATABASE_URL=file:<scratchpad>/qa-manual.db PORT=3000 pnpm --filter @bga/api run dev` (copy of apps/api/prisma/dev.db,
+#      sha256 de7e1f86… equal to the original at copy time; `prisma migrate deploy` on the copy → "No pending migrations");
+#      web `pnpm --filter @bga/web run dev` (:5173, proxy → :3000). Built-in browser (Claude Browser pane), ru UI (default).
+# Ports 3000/5173/3100/5174 were free before; both servers were started by QA and stopped by QA afterwards (ports free again).
+# dev.db / dev.pre-swr003.db / dev.pre-swr004.db sha256 unchanged (artifacts/logs/qa-artifacts-sha.log).
+
+M-1  TC-001 1440×900: catalog → «Star Wars: Rebellion» → game page (list rows: side · opponent (+difficulty) · round · phase, chip «Прототип», relative date)
+     → «Новая партия» → /games/star-wars-rebellion/new. Focus on h1 «Новая партия». Defaults: rebels aria-checked=true + data-selected + «Выбрано»,
+     AI, caption «AI играет за Империю» (data-opponent-faction=empire), «Обычная», «Базовая игра», «Цифровая партия»; RotE / physical «· скоро»
+     aria-disabled=true; clicks on them do not change the selection (base/digital stay checked). Prototype note shown.
+     «Начать игру» → /sessions/45a8ef18-…; GET: status=prototype, settings {rebels, empire, ai, normal, base, digital}, view kind=player viewer=rebels;
+     table: badge «Прототип: тестовая расстановка, не правила оригинальной игры», no «Передать ход». → passed
+M-2  TC-002: re-opened /new shows defaults again (Q-19); Empire card → caption «AI играет за Повстанцев»; «Сложная» → start →
+     /sessions/07efbb89-…: settings {empire, rebels, ai, hard, base, digital}, viewer=empire, rebelBase {systemId:null, revealed:false},
+     active-side data-side=empire, no end-turn. → passed
+M-3  TC-003 + keyboard path (TC-VA-09): only keys. Tab from h1 → setup-faction-rebels (one tab stop); Tab → opponent group;
+     ArrowRight → setup-opponent-human checked, caption «Второй игрок играет за Империю», difficulty block collapses (gone in the screenshot);
+     Tab → setup-ruleset-base, ArrowRight stays on base (disabled RotE skipped); Tab → mode; Tab → setup-start (visible focus ring);
+     Enter → /sessions/e912bded-…: settings {rebels, empire, human, aiDifficulty:null, base, digital}; «Передать ход» shown. → passed
+M-4  Hot-seat (TC-E2E-HS manual): click «Передать ход» → handoff screen «Передайте устройство игроку за Империю», «Карта скрыта…»,
+     «Раунд 1 · Назначение», prototype badge, «Я — Империя», trust note. GET view keys exactly
+     [activeSide,id,kind,phase,round,sessionStatus,version] (version 2); 0 <canvas>; window.__boardDebug undefined; focus on handoff-title.
+     Enter while focus on the title → nothing happens (still handoff, OQ-1). Tab → handoff-accept, Enter → Empire table: viewer=empire,
+     rebelBase.systemId null, version 3, selection {kind:null,id:null}; log «Повстанцы передаёт ход: Империя», «Империя: ход принят». → passed
+M-5  D-1 top bar (human game, Empire turn): 1024×768 → two rows (← К игре · Ход: Империя · против второго игрока · badge · Автосохранение · ⚙ /
+     Раунд 1 · Фаза · Завершить фазу (mock) · Передать ход) — no overlap, nothing cut; 768×1024 → same two-row layout, scrollWidth 768 = innerWidth. → passed
+M-6  375×812: game page scrollWidth 375 = innerWidth, 5 rows with status chip, buttons full width; form: cards stacked (rebels y=235, empire y=344),
+     segments stacked, «Начать игру» 44 px high, scrollWidth 375 = innerWidth. → passed
+M-7  Contrast (manual computed-style check, WCAG formula, dark theme): «Выбрано» rgb(45,212,191) 8.09:1; «Rise of the Empire» / «С физическими
+     компонентами» / «· скоро» rgb(154,164,181) 6.94:1 (opacity 1 along the chain — not MUI disabled alpha); prototype note 6.94:1;
+     opponent caption 14.47:1; table prototype badge text 6.6:1. All ≥ 4.5:1. → passed
+M-8  TC-004 / AC-08: Empire session 07efbb89: «Завершить фазу (mock)» → reload → phase=command, version 2 restored. Then API process stopped and
+     restarted on the same DB copy → GET /api/sessions/07efbb89-… → status prototype, same settings (empire/rebels/ai/hard/base/digital),
+     version 2, phase command; list returns 9 sessions (6 from the dev-DB copy incl. 4 upgraded SWR-002/003 rows + 3 created in M-1..M-3). → passed
+M-9  TC-005 (real outage): on /new with Empire selected, API stopped → «Начать игру» → proxy 502 → stays on /new, alert role=alert
+     «Внутренняя ошибка сервера. Попробуйте позже.», Empire still selected, start enabled, aria-busy=false, focus on setup-start.
+     API restarted → «Начать игру» → 201 → /sessions/82fc166e-… (empire, ai, normal). Network: POST 502, then POST 201. → passed
+     Note: a 502 from the dev proxy (backend down) is shown with the generic "internal error" text — understandable, not a defect.
+M-10 TC-006: double click on «Начать игру» → exactly one POST /api/sessions (201) in the network log, one new session e61a2df6-…. → passed
+     (Delayed-response variant and API idempotency are covered by e2e TC-006 in qa-verify.log.)
+
+Observations (not SWR-004 defects, no AC impact):
+O-1 At 1440×900 the human-game top bar also wraps into 2 rows (badge moves to the 2nd row); plan-frontend §5.5 described one row at ≥1200.
+    No overflow/overlap (D-1 criterion met); cosmetic deviation from the plan → for frontend-lead.
+O-2 At 768/1024 (fresh load and after resize) "fit" does not show the whole map (left/right systems partly cut, zoom 40–70%); pre-existing
+    board behaviour (zoom min / fit on resize), outside SWR-004 scope.

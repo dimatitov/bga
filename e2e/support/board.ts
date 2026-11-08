@@ -1,9 +1,9 @@
 /// <reference lib="dom" />
 // Board helpers: `window.__boardDebug` (plan-frontend.md §6.3, R-11 — read-only, enabled by VITE_E2E=1),
-// mouse gestures, keyboard walking, network recording and AC-11 screenshots.
+// mouse gestures, keyboard walking, network recording and screenshots (SWR-004: per-task screenshot routing).
 import path from 'node:path';
 import { expect, test, type Locator, type Page, type Request } from '@playwright/test';
-import { type PlayerView } from './api';
+import { API, REBELLION, type PlayerView } from './api';
 import { T } from './testids';
 
 export interface Point {
@@ -27,16 +27,37 @@ declare global {
   }
 }
 
-/** Opens `/games/:id` and waits until the table and the debug hook are ready. */
-export async function openGame(page: Page, gameId: string): Promise<void> {
-  await page.goto(`/games/${gameId}`);
-  await waitForTable(page, gameId);
+/** URL path of a session table (`/sessions/:sessionId`). */
+export const sessionPath = (sessionId: string) => `/sessions/${encodeURIComponent(sessionId)}`;
+/** URL path of a game page (`/games/:gameId`). */
+export const gamePath = (gameId: string) => `/games/${encodeURIComponent(gameId)}`;
+/** URL path of the new-session screen of a game (`/games/:gameId/new`). */
+export const newSessionPath = (gameId: string) => `${gamePath(gameId)}/new`;
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/** Matches a full URL whose pathname is exactly `urlPath` (any origin, optional query/hash). */
+export const urlOf = (urlPath: string) =>
+  new RegExp(`^[a-z]+://[^/]+${escapeRe(urlPath)}(?:[?#].*)?$`);
+/** Matches a session table URL and captures the session id. */
+export const SESSION_URL = /^[a-z]+:\/\/[^/]+\/sessions\/([^/?#]+)(?:[?#].*)?$/;
+
+/** Opens `/sessions/:id` and waits until the table and the debug hook are ready. */
+export async function openSession(page: Page, sessionId: string): Promise<void> {
+  await page.goto(sessionPath(sessionId));
+  await waitForTable(page, sessionId);
 }
 
-export async function waitForTable(page: Page, gameId?: string): Promise<void> {
+/**
+ * Waits for the Rebellion table. With `sessionId` it also checks `game-table[data-session-id]` (Q-10, TR-1) and
+ * that `data-game-id` is the game id (not the session id as in SWR-002).
+ */
+export async function waitForTable(page: Page, sessionId?: string): Promise<void> {
   const table = page.getByTestId(T.gameTable);
   await expect(table).toBeVisible();
-  if (gameId) await expect(table).toHaveAttribute('data-game-id', gameId);
+  if (sessionId) {
+    await expect(table).toHaveAttribute('data-session-id', sessionId);
+    await expect(table).toHaveAttribute('data-game-id', REBELLION);
+  }
   await page.waitForFunction(() => window.__boardDebug !== undefined, undefined, {
     timeout: 10_000,
   });
@@ -96,7 +117,7 @@ const dist = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 /**
  * Finds a point on the canvas that is as far as possible from every system and piece and outside the overlay
- * controls (zoom buttons, mock badge). Used for background clicks and pan gestures.
+ * controls (zoom buttons, prototype badge). Used for background clicks and pan gestures.
  */
 export async function emptyCanvasPoint(
   page: Page,
@@ -111,7 +132,7 @@ export async function emptyCanvasPoint(
     if (pos) occupied.push(pos);
   }
   const overlays: { x: number; y: number; width: number; height: number }[] = [];
-  for (const id of [T.zoomIn, T.zoomOut, T.zoomFit, T.zoomLevel, T.mockBadge]) {
+  for (const id of [T.zoomIn, T.zoomOut, T.zoomFit, T.zoomLevel, T.prototypeBadge]) {
     const loc = page.getByTestId(id);
     for (const handle of await loc.all()) {
       const b = await handle.boundingBox();
@@ -149,7 +170,7 @@ export async function mouseDrag(page: Page, from: Point, to: Point, steps = 15):
 }
 
 export function isCommandPost(r: Request): boolean {
-  return r.method() === 'POST' && /\/api\/games\/[^/]+\/commands$/.test(new URL(r.url()).pathname);
+  return r.method() === 'POST' && API.commands.test(new URL(r.url()).pathname);
 }
 
 export function waitForCommand(page: Page) {
@@ -226,10 +247,38 @@ export async function keyboardFocus(page: Page, target: Locator, maxSteps = 250)
   throw new Error(`could not reach target by keyboard in ${maxSteps} steps`);
 }
 
-/** Saves an AC-11 screenshot to docs/tasks/SWR-002/artifacts/screenshots/<name>.png. */
-export async function saveScreenshot(page: Page, name: string): Promise<void> {
+/**
+ * Screenshot routing (SWR-004 test-cases.md §5 "Screenshots"):
+ * - every screenshot belongs to a task (`saveScreenshot(page, name, task)`, default {@link CURRENT_SCREENSHOT_TASK});
+ * - it is written into the tracked evidence folder `docs/tasks/<task>/artifacts/screenshots/<name>.png` **only** when
+ *   `task` is the evidence task of this run: env `SCREENSHOT_TASK` if set, otherwise {@link CURRENT_SCREENSHOT_TASK};
+ * - screenshots of any other task go to the untracked `test-results/screenshots/<task>/<name>.png` (the screens are
+ *   still exercised, but historical evidence of finished tasks — SWR-002, SWR-003 — is never rewritten by a run).
+ * Regenerate old evidence deliberately: `SCREENSHOT_TASK=SWR-003 pnpm e2e` (then SWR-004 shots go to test-results).
+ */
+export const CURRENT_SCREENSHOT_TASK = 'SWR-004';
+
+/** Task whose evidence folder receives screenshots in this run. */
+export function evidenceTask(): string {
+  return process.env.SCREENSHOT_TASK?.trim() || CURRENT_SCREENSHOT_TASK;
+}
+
+/** Absolute path where `saveScreenshot(…, name, task)` writes (exported for the docs/tests of the routing rule). */
+export function screenshotPath(repoRoot: string, name: string, task: string): string {
+  const dir =
+    task === evidenceTask()
+      ? path.join(repoRoot, 'docs', 'tasks', task, 'artifacts', 'screenshots')
+      : path.join(repoRoot, 'test-results', 'screenshots', task);
+  return path.join(dir, `${name}.png`);
+}
+
+/** Saves a viewport screenshot of `task` (see the routing rule above). */
+export async function saveScreenshot(
+  page: Page,
+  name: string,
+  task: string = CURRENT_SCREENSHOT_TASK,
+): Promise<void> {
   const { configFile } = test.info().config;
   const repoRoot = configFile ? path.dirname(configFile) : process.cwd();
-  const dir = path.join(repoRoot, 'docs', 'tasks', 'SWR-002', 'artifacts', 'screenshots');
-  await page.screenshot({ path: path.join(dir, `${name}.png`), animations: 'disabled' });
+  await page.screenshot({ path: screenshotPath(repoRoot, name, task), animations: 'disabled' });
 }

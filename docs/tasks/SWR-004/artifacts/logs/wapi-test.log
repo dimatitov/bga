@@ -1,0 +1,51 @@
+$ pnpm --filter @bga/api test
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5f2d65d1-153b-4ebc-91d7-aec6ef250079 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32491  - [39m11/08/2026, 7:53:55 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=09671ae4-c8cd-407c-b59b-14a17ab58c2e code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 32495  - [39m11/08/2026, 7:53:56 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=c417f397-378e-4041-9171-cc839cb723eb code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 32495  - [39m11/08/2026, 7:53:56 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=c417f397-378e-4041-9171-cc839cb723eb code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 32495  - [39m11/08/2026, 7:53:56 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=fe2b643c-286e-4883-987e-c4663ebeedfe code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 32493  - [39m11/08/2026, 7:53:56 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 32622  - [39m11/08/2026, 7:53:59 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=0aeb8a93-67ef-465a-9eb9-2b7cdafd8176 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 32622  - [39m11/08/2026, 7:53:59 AM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=0aeb8a93-67ef-465a-9eb9-2b7cdafd8176 code=INTERNAL status=500 error=ZodError[39m
+
+ Test Files  18 passed | 1 skipped (19)
+      Tests  178 passed | 1 skipped (179)
+   Start at  07:53:51
+   Duration  45.77s (transform 3.68s, setup 0ms, import 19.77s, tests 131.58s, environment 2ms)
+
+exit=0
+
+$ pnpm --filter @bga/api exec vitest run test/idempotency.int.test.ts -t 'TC-I-2[01]'   # race repeat 1/5 (each run = 5 rounds)
+      Tests  2 passed | 21 skipped (23)
+exit=0
+
+$ pnpm --filter @bga/api exec vitest run test/idempotency.int.test.ts -t 'TC-I-2[01]'   # race repeat 2/5 (each run = 5 rounds)
+      Tests  2 passed | 21 skipped (23)
+exit=0
+
+$ pnpm --filter @bga/api exec vitest run test/idempotency.int.test.ts -t 'TC-I-2[01]'   # race repeat 3/5 (each run = 5 rounds)
+      Tests  2 passed | 21 skipped (23)
+exit=0
+
+$ pnpm --filter @bga/api exec vitest run test/idempotency.int.test.ts -t 'TC-I-2[01]'   # race repeat 4/5 (each run = 5 rounds)
+      Tests  2 passed | 21 skipped (23)
+exit=0
+
+$ pnpm --filter @bga/api exec vitest run test/idempotency.int.test.ts -t 'TC-I-2[01]'   # race repeat 5/5 (each run = 5 rounds)
+      Tests  2 passed | 21 skipped (23)
+exit=0

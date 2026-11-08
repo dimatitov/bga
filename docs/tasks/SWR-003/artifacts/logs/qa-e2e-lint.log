@@ -1,0 +1,7 @@
+$ pnpm exec eslint e2e  # 2026-11-08T02:35:58Z (rerun after TC-CAT-10 selector fix)
+exit=0
+
+$ pnpm exec prettier --check e2e
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

@@ -1,0 +1,18 @@
+# SWR-004 Business validation — Analyst, 2026-11-08 (after INTEGRATION, during CODE_REVIEW)
+# Env: `pnpm dev` on the user's real dev DB (backup before SWR-004: apps/api/prisma/dev.pre-swr004.db), built-in browser 1440x900 and 375x812, curl via web proxy :5173.
+
+BV-0 Data upgrade on real dev DB: GET /api/sessions?gameId=star-wars-rebellion → 4 SWR-002/003 sessions, all status=prototype, details {playerFaction: empire|rebels, opponentFaction derived, opponentType: ai, aiDifficulty, ruleset: base, gameMode: digital, round, phase} — no 'rebellion' faction left (AC-15).
+BV-1 /games/star-wars-rebellion/new defaults (AC-02): Повстанцы «Выбрано», AI, caption «AI играет за Империю», Обычная, Базовая игра, Цифровая партия; «Rise of the Empire · скоро» and «С физическими компонентами · скоро» disabled; prototype note shown.
+BV-2 Empire + «Второй игрок за этим устройством» (AC-03, AC-04): caption «Второй игрок играет за Повстанцев»; difficulty block removed from DOM after collapse.
+BV-3 «Начать игру» → /sessions/abf3f8ae-… (AC-06, AC-07): GET returns status=prototype, settings {playerFaction: empire, opponentFaction: rebels, opponentType: human, aiDifficulty: null, ruleset: base, gameMode: digital}; table shows «Прототип: тестовая расстановка, не правила оригинальной игры», «Ход: Империя», «Передать ход» (AC-13).
+BV-4 «Передать ход» (AC-14): GET view = exactly {kind: handoff, id, version: 2, activeSide: rebels, round, phase, sessionStatus}; no pc-/sys- ids in view; no <canvas>; window.__boardDebug undefined; focus on handoff-title; screen «Передайте устройство игроку за Повстанцев» + trust note.
+BV-5 «Я — Повстанцы» → player view viewer=rebels, activeSide=rebels, own base sys-hollin visible, version 3, selection reset {kind:null,id:null}.
+BV-6 Server validation (AC-05) via curl:
+  setup with aiFaction → 400
+  ruleset rise-of-the-empire → 422 {"code":"SETUP_UNSUPPORTED","messageKey":"errors.rulesetUnavailable","details":{"unsupported":["ruleset"]}}
+  human + aiDifficulty → 400
+BV-7 Idempotency (AC-10): two POSTs with the same Idempotency-Key → 201 then 200 + `idempotent-replay: true`, same sessionId a4f0521c-….
+BV-8 375x812 (AC-11): form fits (scrollWidth 375 = innerWidth), faction cards stacked, «Выбрано» with check icon, difficulty buttons in one row.
+
+Verdict: the PO's business scenario works end-to-end on real data; settings are persisted server-side with server-derived opponent; prototype boundary is explicit; hot-seat handoff reveals no secrets.
+dev servers stopped afterwards (ports 3000/5173 free).

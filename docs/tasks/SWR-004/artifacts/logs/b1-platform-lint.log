@@ -1,0 +1,7 @@
+$ pnpm --filter @bga/platform lint
+2026-11-08T04:26:00Z
+
+> @bga/platform@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> eslint . --max-warnings=0
+
+exit=0
