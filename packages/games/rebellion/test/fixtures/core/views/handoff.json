@@ -1,0 +1,10 @@
+{
+  "kind": "handoff",
+  "rulesEngine": "core-v1",
+  "id": "golden-empire-win-3",
+  "version": 4,
+  "activeSide": "empire",
+  "round": 1,
+  "phase": "command",
+  "sessionStatus": "prototype"
+}

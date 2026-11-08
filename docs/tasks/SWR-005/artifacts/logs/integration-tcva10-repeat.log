@@ -1,0 +1,115 @@
+[WebServer] 
+[WebServer] > @bga/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+
+[WebServer] Environment variables loaded from .env
+
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+
+[WebServer] 
+[WebServer] 3 migrations found in prisma/migrations
+[WebServer] 
+
+[WebServer] Applying migration `20261107235651_init`
+
+[WebServer] Applying migration `20261108120000_sessions`
+
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+
+[WebServer] 
+
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [NestFactory] Starting Nest application...
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [InstanceLoader] AppModule dependencies initialized +20ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +8ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +15ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RoutesResolver] HealthController {/api/health}: +3ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +3ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +2ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +1ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +1ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +1ms
+
+[WebServer] [Nest] 83379  - 11/08/2026, 7:01:40 PM     LOG [NestApplication] Nest application successfully started +3ms
+
+
+Running 5 tests using 1 worker
+
+[1/5] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[2/5] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+  1) [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" 
+
+    Error: handoff accept :focus-visible
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+       at support/a11y.ts:170
+
+      168 | export async function expectVisibleFocus(loc: Locator, label: string): Promise<void> {
+      169 |   await expect(loc, `${label} is focused`).toBeFocused();
+    > 170 |   expect(await loc.evaluate((el) => el.matches(':focus-visible')), `${label} :focus-visible`).toBe(
+          |                                                                                               ^
+      171 |     true,
+      172 |   );
+      173 |   const raw = await rawStyles(loc);
+        at expectVisibleFocus (/Users/dimatitov/WebstormProjects/Game automa/e2e/support/a11y.ts:170:95)
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/visual-a11y.spec.ts:305:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat1/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[3/5] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[4/5] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[5/5] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+  1 failed
+    [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" 
+  4 passed (23.4s)

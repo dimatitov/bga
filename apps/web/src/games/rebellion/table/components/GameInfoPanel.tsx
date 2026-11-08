@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import type { PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { PlayerViewMock } from '@bga/game-rebellion/schema';
 import { useTranslation } from 'react-i18next';
 import type { TableScreenProps } from '@/games/types';
 import { factionName } from '../../board';
@@ -14,7 +14,7 @@ export function GameInfoPanel({
   view,
   status,
 }: {
-  view: PlayerViewPlayer;
+  view: PlayerViewMock;
   status: TableScreenProps['status'];
 }) {
   const { t } = useTranslation();

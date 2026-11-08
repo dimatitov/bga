@@ -1,7 +1,13 @@
-import type { CommandEnvelope, PlayerView } from '@bga/game-rebellion/schema';
+import type {
+  CommandEnvelope,
+  HandoffView,
+  PlayerView,
+  PlayerViewCore,
+} from '@bga/game-rebellion/schema';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/shared/i18n';
+import { sessionKeys } from '@/platform';
 import { mockFetch, renderWithProviders, type MockHandler } from '@/shared/test';
 import { useDragStore, useSelectionStore } from '../board';
 import {
@@ -16,6 +22,13 @@ import {
   S_B,
   SESSION_ID,
 } from '../test/fixtures';
+import {
+  CORE_SESSION_ID,
+  makeCoreActivationView,
+  makeCoreHandoffView,
+  makeCoreSession,
+  makeCoreView,
+} from '../test/coreFixtures';
 
 // Konva needs a real <canvas>; the canvas is covered by Playwright (plan-frontend §6.4).
 vi.mock('../board/canvas/BoardStage', () => ({
@@ -53,6 +66,9 @@ describe('Rebellion TableScreen (via SessionHost)', () => {
   it('TC-WEB-11: renders server view with round/phase, prototype badge and a mock-labelled End phase', async () => {
     renderTable({ [VIEW_PATH]: session() });
     const table = await screen.findByTestId('game-table');
+    // SWR-005 FE-0: an old (mock-v1) session renders the legacy table.
+    expect(table).toHaveAttribute('data-rules-engine', 'mock-v1');
+    expect(screen.getByTestId('board-canvas')).toBeInTheDocument();
     // Q-10: data-game-id = game id, data-session-id = session id.
     expect(table).toHaveAttribute('data-game-id', 'star-wars-rebellion');
     expect(table).toHaveAttribute('data-session-id', SESSION_ID);
@@ -314,7 +330,9 @@ describe('Rebellion TableScreen (via SessionHost)', () => {
     await screen.findByTestId('game-table');
     const badge = screen.getByTestId('prototype-badge');
     expect(badge).toHaveAttribute('data-status', 'prototype');
-    expect(badge).toHaveTextContent(i18n.t('rebellion.common:prototype.full'));
+    // SWR-005 (TC-C-14, D-SW5-1): an old mock-v1 session shows the legacy variant «Старый прототип: тестовые правила».
+    expect(badge).toHaveAttribute('data-variant', 'legacy');
+    expect(badge).toHaveTextContent(i18n.t('rebellion.common:prototype.legacy'));
     expect(within(screen.getByTestId('table-top-bar')).getByTestId('prototype-badge')).toBe(badge);
     await user.click(screen.getByTestId('sidebar-tab-game'));
     const status = screen.getByTestId('game-info-status');
@@ -476,5 +494,92 @@ describe('Rebellion TableScreen (via SessionHost)', () => {
     await user.click(screen.getByTestId('advance-phase'));
     expect(await screen.findByTestId('session-not-found')).toBeInTheDocument();
     expect(gets).toBe(2);
+  });
+});
+
+describe('Rebellion TableScreen — dispatch by rules engine (SWR-005 FE-0, plan-frontend §3.1)', () => {
+  const CORE_VIEW_PATH = `GET /api/sessions/${CORE_SESSION_ID}`;
+
+  function renderCore(routes: Record<string, MockHandler>) {
+    const api = mockFetch(routes);
+    const utils = renderWithProviders({ path: `/sessions/${CORE_SESSION_ID}` });
+    return { ...utils, api };
+  }
+
+  it('core-v1 view → CoreTable: game-table[data-rules-engine=core-v1] with a heading, no legacy board', async () => {
+    renderCore({ [CORE_VIEW_PATH]: { status: 200, body: makeCoreSession(makeCoreView()) } });
+    const table = await screen.findByTestId('game-table');
+    expect(table).toHaveAttribute('data-rules-engine', 'core-v1');
+    expect(table).toHaveAttribute('data-session-id', CORE_SESSION_ID);
+    expect(table).toHaveAttribute('data-game-id', 'star-wars-rebellion');
+    expect(table).toHaveAttribute('data-version', '2');
+    expect(table).toHaveAttribute('data-phase', 'command');
+    expect(table).toHaveAttribute('data-active-side', 'rebels');
+    expect(within(table).getByRole('heading', { level: 1 })).toHaveTextContent(
+      i18n.t('rebellion.session:page.title'),
+    );
+    expect(within(table).getByTestId('session-back-to-game')).toHaveAttribute(
+      'href',
+      '/games/star-wars-rebellion',
+    );
+    // The core table is mounted (turn panel, core sidebar); nothing of the legacy mock board / top bar is.
+    expect(within(table).getByTestId('turn-panel')).toBeInTheDocument();
+    expect(within(table).getByTestId('core-sidebar')).toBeInTheDocument();
+    expect(screen.queryByTestId('advance-phase')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('end-turn')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('round-indicator')).not.toBeInTheDocument();
+    expect(screen.queryByTestId(`piece-item-${P_R1}`)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('table-invalid-view')).not.toBeInTheDocument();
+  });
+
+  it('a core view of the wrong shape (mock fields under core-v1) → table-invalid-view', async () => {
+    renderCore({
+      [CORE_VIEW_PATH]: {
+        status: 200,
+        body: { ...makeCoreSession(), view: { ...makeView(), rulesEngine: 'core-v1' } },
+      },
+    });
+    expect(await screen.findByTestId('table-invalid-view')).toBeInTheDocument();
+    expect(screen.queryByTestId('game-table')).not.toBeInTheDocument();
+  });
+
+  it('core-v1 handoff view → the unchanged handoff screen (no table)', async () => {
+    renderCore({
+      [CORE_VIEW_PATH]: {
+        status: 200,
+        body: makeCoreSession(makeCoreHandoffView({ activeSide: 'empire', version: 9 })),
+      },
+    });
+    const handoff = await screen.findByTestId('handoff-screen');
+    expect(handoff).toHaveAttribute('data-active-side', 'empire');
+    expect(handoff).toHaveAttribute('data-version', '9');
+    expect(screen.queryByTestId('game-table')).not.toBeInTheDocument();
+  });
+
+  it('a new viewer remounts the core table and a handoff in between focuses the new heading', async () => {
+    const { queryClient } = renderCore({
+      [CORE_VIEW_PATH]: { status: 200, body: makeCoreSession(makeCoreView()) },
+    });
+    const first = await screen.findByTestId('game-table');
+    const setView = (view: PlayerViewCore | HandoffView) =>
+      act(() => {
+        queryClient.setQueryData(sessionKeys.detail(CORE_SESSION_ID), makeCoreSession(view));
+      });
+    // Same viewer, new version: same element (no remount).
+    setView(makeCoreActivationView());
+    await waitFor(() =>
+      expect(screen.getByTestId('game-table')).toHaveAttribute('data-version', '3'),
+    );
+    expect(screen.getByTestId('game-table')).toBe(first);
+    // Hot-seat: handoff, then the other side's table.
+    setView(makeCoreHandoffView({ activeSide: 'empire', version: 4 }));
+    await screen.findByTestId('handoff-screen');
+    setView(makeCoreView({ viewer: 'empire', activeSide: 'empire', version: 5, legalActions: [] }));
+    const second = await screen.findByTestId('game-table');
+    expect(second).not.toBe(first);
+    expect(second).toHaveAttribute('data-active-side', 'empire');
+    await waitFor(() =>
+      expect(document.activeElement).toBe(within(second).getByRole('heading', { level: 1 })),
+    );
   });
 });

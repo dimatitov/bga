@@ -1,7 +1,8 @@
 # Как добавить игру на платформу
 
 Статус: действующий (SWR-003, INTEGRATION, 2026-11-08; обновлён на INTEGRATION SWR-004 — статус сессии, публичные
-настройки, `Idempotency-Key`, `parseSetup` invalid/unsupported, новые методы `ServerGameModule`). Автор — backend-lead; раздел 7 (Web) составлен по
+настройки, `Idempotency-Key`, `parseSetup` invalid/unsupported, новые методы `ServerGameModule`; на INTEGRATION SWR-005 —
+обязательный `statusOf`, версия ≥ 1 при создании, несколько движков правил в одной игре). Автор — backend-lead; раздел 7 (Web) составлен по
 `docs/tasks/SWR-003/plan-frontend.md` §4–§5 и фактическому коду, ревью — frontend-lead.
 Архитектура в целом — [`application.md`](application.md).
 
@@ -74,7 +75,7 @@ web-запись **без** экранов (§7). Правил, схем, кар
 | `./rules` | Чистый TS: без React/Nest/Prisma/OpenAI/`node:*`, без `Date`/`Math.random` (время и id — через ctx). Отказ — результат, не исключение. Вход не мутируется |
 | `./scenario` | Данные старта; видит только `../schema`. Не попадает в web-бандл |
 | `./board` | Только данные отрисовки; **не импортирует** другие подпапки (в т.ч. `scenario`) |
-| `./ai` | Только данные (уровни сложности, веса целей), без логики и без OpenAI. AI никогда не получает скрытую информацию |
+| `./ai` | Данные стратегии (уровни сложности, веса целей) и чистые детерминированные политики хода (у Rebellion — `chooseAutoCommand`, авто-пас), без OpenAI; видит только `../schema`. Политика получает **только** view своей стороны и выбирает из его `legalActions`; AI никогда не получает скрытую информацию |
 | `./server` | `defineServerGameModule({...})` — реализация `ServerGameModule` (`@bga/platform`, §5.1) |
 
 ### 5.1 `ServerGameModule`
@@ -85,16 +86,25 @@ web-запись **без** экранов (§7). Правил, схем, кар
 | `parseSetup(input)` | сначала схема, потом поддержка: `{ ok: true, value }` (дефолты применены) · `{ ok: false, kind: 'invalid', issues }` → `400 VALIDATION` (path с префиксом `['setup']`) · `{ ok: false, kind: 'unsupported', messageKey, details? }` → `422 SETUP_UNSUPPORTED` (игровой `errors.<name>` или `ERROR_MESSAGE_KEYS.setupUnsupported`; `details` — только эхо полей запроса). Никогда не бросает на клиентском вводе |
 | `parseStoredSetup(raw)` | `Session.setup` любой сохранённой версии (уже `JSON.parse`) → текущий setup (место для апкастера старых данных); битые данные → `throw` (500) |
 | `initialStatus(setup)` | `SessionStatus` новой сессии (`'setup' \| 'prototype' \| 'active' \| 'completed'`), пишется в `Session.status`; игра на временных данных/правилах обязана вернуть `'prototype'` |
+| `statusOf(state)` | **обязателен** (SWR-005): `SessionStatus` после принятой команды; чистая функция от state. Сервис сессий пишет его в `Session.status` в том же commit, что и state (откат вместе при 409), и строит view с ним; значение вне `SessionStatusSchema` → `500 INTERNAL`. Платформа значение не интерпретирует — победы/фракции знает только игра (Rebellion: `core-v1` + `outcome` → `'completed'`, иначе `'prototype'`). Игра без конца партии просто возвращает тот же статус, что `initialStatus` |
 | `publicSettings(setup)` | **несекретный** JSON-объект → `SessionResponse.settings` (платформа не интерпретирует; клиентские поля, которым нельзя доверять, вычисляет игра — у Rebellion `opponentFaction`) |
 | `setupOf(state)` | setup, с которым создан state, в **текущей** сохранённой форме. Единый источник настроек (SWR-004 review #1): при каждой записи state платформа перезаписывает `Session.setup` значением `setupOf(newState)` (старая строка становится текущей версией при первой команде), а при чтении сверяет `publicSettings(parseStoredSetup(Session.setup))` с `publicSettings(setupOf(state))` — расхождение → `500 INTERNAL` (лог: только `sessionId`, `gameId`, `code=SETTINGS_MISMATCH`), в списке строка пропускается. Значит, настройки должны храниться и в state (у Rebellion — `state.settings` → `toStoredSetup`) |
-| `createInitialState(setup, { sessionId, now })` | `{ state, events }`, версия 1, события seq ≥ 1; детерминированно |
+| `createInitialState(setup, { sessionId, now })` | `{ state, events }`, версия **≥ 1**, события seq ≥ 1 (подряд); детерминированно (одинаковые `setup`, `sessionId`, `now` → побайтно одинаковый state). Может применять автоматические ходы до первого ответа — каждый такой ход +1 к версии (Rebellion: AI-партия за Империю создаётся с версией 2, пас AI-Повстанцев уже применён) |
 | `parseState(raw, { sessionId, version })` | снимок из БД; несоответствие → `throw` (сервис отвечает `500 INTERNAL`, не раскрывая деталей) |
 | `version(state)` | текущая версия (optimistic concurrency) |
-| `applyCommand(state, envelope, { now })` | порядок внутри: 400 (схема конверта) → 409 (`expectedVersion`) → 422 (правила, игровой `messageKey`) |
+| `applyCommand(state, envelope, { now })` | порядок внутри: 400 (схема конверта) → 409 (`expectedVersion`) → 422 (правила, игровой `messageKey`); игра может поставить свой ранний отказ раньше 409 (Rebellion `core-v1`: 422 `gameOver` сразу после 400). Одна команда может дать несколько событий и включать автоматические ходы противника (одна версия + 1 на каждую команду движка, всё — один commit); ошибка авто-хода — `throw` (→ 500, ничего не записано) |
 | `toPlayerView(state, { status })` / `toPlayerEvents(events, state)` | только видимое текущему зрителю, провалидировано схемой view; `status` — `Session.status` (можно показать в view). Зритель выбирается игрой из state (у Rebellion — активная сторона; при передаче хода — отдельная «заслонка» без игровых данных) |
 | `summarize(state)` | плоские **несекретные** поля (`string \| number \| boolean \| null`) → `SessionSummary.details` |
 
 Методы объявлены method-синтаксисом (бивариантность параметров) — не менять на property-синтаксис.
+
+**Несколько движков правил в одной игре (SWR-005).** Игра может держать несколько движков (у Rebellion — замороженный
+`mock-v1` для старых сессий и `core-v1` для новых). Рекомендуемая форма: дискриминатор движка в state
+(`rulesEngine`, discriminated union схемы state), неизменный в течение сессии; диспетчеризация в одном месте `./rules`
+(`switch` по движку с `never`-проверкой в `applyCommand`/`legalActions`/view/events); общая схема конверта команды, а команда
+чужого движка — 422 игрового `commandUnavailable`, не 400; ленивый апкастер старых снимков в `parseState` назначает им старый
+движок без изменения `version`. Платформа и API про движки не знают; движок в view/`details` — публичный факт (если UI нужен).
+Старый движок не развивается: его поведение держат регрессионные тесты на засеянных строках прошлых версий.
 
 **Чтение строк `SessionEvent` (SWR-004 review #4).** `SessionEvent` — append-only зеркало журнала: строки пишутся в той
 версии данных, что была на момент записи, и **не переписываются** при апгрейде схемы игры (апкаст state/setup ленивый,
@@ -224,7 +234,8 @@ export const myGameEntry: WebGameEntry = {
 **Запускаются для новой игры автоматически (без правок):**
 
 - `apps/api/test/game-registry.int.test.ts` — `validateRegistry` на реальном реестре и conformance **каждого** модуля
-  `SERVER_GAME_MODULES` (definition валидна и `available`; `createInitialState` → версия 1, события seq ≥ 1; `summarize` плоский;
+  `SERVER_GAME_MODULES` (definition валидна и `available`; `createInitialState` → версия ≥ 1, события seq ≥ 1; `statusOf` начального
+  state — валидный `SessionStatus`; `summarize` плоский;
   `parseState` после JSON-roundtrip ≡ state, чужой `sessionId` → throw; `applyCommand(state, {})` → `VALIDATION`) — после
   добавления записи в `setupFor` (см. выше).
 - `apps/web/src/games/registry.test.ts` — инварианты каждой записи (кроме списка id): `GameDefinitionSchema`, уникальность id,
@@ -247,7 +258,8 @@ export const myGameEntry: WebGameEntry = {
 - [ ] `gameId` выбран; название — номинативно; обложка — собственная.
 - [ ] Пакет `packages/games/<id>` с нужными subpath, ссылкой в `packages/tsconfig.json`, зависимостями в apps.
 - [ ] Definition в `GAME_DEFINITIONS`; для `available` — модуль в `SERVER_GAME_MODULES` со всеми методами §5.1
-      (`parseSetup` различает `invalid`/`unsupported`; `initialStatus` — `'prototype'`, пока правила временные).
+      (`parseSetup` различает `invalid`/`unsupported`; `initialStatus` — `'prototype'`, пока правила временные; `statusOf`
+      реализован — `'completed'` только по окончании партии).
 - [ ] Web: папка `games/<id>/`, `entry.ts`, строка в `gameRegistry`, локали `<id>.meta` (+ остальные), ru == en.
 - [ ] Не изменён производственный код платформы: `apps/web/src/{app,platform}/**` (тесты — только guard-списки §10), `apps/api/src/sessions/**`, Prisma-схема, маршруты.
 - [ ] Guard-тесты §10 обновлены: `setupFor` и TC-FS-03 в `apps/api/test/game-registry.int.test.ts`; списки id в

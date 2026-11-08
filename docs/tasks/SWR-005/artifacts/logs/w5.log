@@ -1,0 +1,130 @@
+### pnpm --filter @bga/game-rebellion test  (Sun Nov  8 17:10:45 MSK 2026)
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+ ❯ test/rules/core/invariants.test.ts (3 tests | 1 failed) 8965ms
+     × hot-seat: 10 games × up to 250 commands 6462ms
+ ❯ test/rules/core/hidden-info.test.ts (12 tests | 1 failed) 17315ms
+     × seeded random games before the reveal: hot-seat 8464ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > seeded random games before the reveal: hot-seat
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/rules/core/hidden-info.test.ts:461:5
+    459|     ['Empire vs AI', EMPIRE_VS_AI],
+    460|   ] as const) {
+    461|     it(`seeded random games before the reveal: ${name}`, () => {
+       |     ^
+    462|       let compared = 0;
+    463|       for (let seed = 1; seed <= 4; seed += 1) {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/rules/core/invariants.test.ts > invariants on seeded random legal play > hot-seat: 10 games × up to 250 commands
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ test/rules/core/invariants.test.ts:71:5
+     69|     ['Empire vs AI', EMPIRE_VS_AI],
+     70|   ] as const) {
+     71|     it(`${name}: 10 games × up to 250 commands`, () => {
+       |     ^
+     72|       let rounds = 0;
+     73|       let commands = 0;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 39 passed (41)
+      Tests  2 failed | 394 passed (396)
+   Start at  17:10:47
+   Duration  20.40s (transform 10.64s, setup 0ms, import 40.46s, tests 52.27s, environment 5ms)
+
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/game-rebellion@0.0.0 test: `vitest run`
+Exit status 1
+exit=1
+
+### rerun alone: vitest run test/rules/core/hidden-info.test.ts test/rules/core/invariants.test.ts  (load: 17:11  up 1 day, 23:01, 1 user, load averages: 15.70 15.64 16.45)
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  17:11:22
+   Duration  7.38s (transform 826ms, setup 0ms, import 1.26s, tests 8.22s, environment 0ms)
+
+exit=0
+
+### second full run: pnpm --filter @bga/game-rebellion test  (load: 17:11  up 1 day, 23:01, 1 user, load averages: 14.50 15.38 16.35)
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  41 passed (41)
+      Tests  396 passed (396)
+   Start at  17:11:31
+   Duration  10.50s (transform 4.63s, setup 0ms, import 19.34s, tests 25.70s, environment 5ms)
+
+exit=
+(second full run: 41 files / 396 passed — exit code not captured by the pipe, see summary above)
+
+### pnpm --filter @bga/game-rebellion typecheck
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+test/server/server-module.test.ts(290,23): error TS2345: Argument of type 'unknown' is not assignable to parameter of type '{ schemaVersion: 3; rulesEngine: "mock-v1"; id: string; version: number; round: number; phase: "assignment" | "command" | "refresh"; settings: { playerFaction: "rebels" | "empire"; opponentFaction: "rebels" | "empire"; opponentType: "human" | "ai"; aiDifficulty: "easy" | ... 2 more ... | null; ruleset: "base" | "ris...'.
+/Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/game-rebellion@0.0.0 typecheck: `tsc -p tsconfig.test.json`
+Exit status 2
+exit=0
+
+### pnpm --filter @bga/game-rebellion lint
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+
+/Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion/test/server/auto-play-fault.test.ts
+  14:35  error  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+
+✖ 1 problem (1 error, 0 warnings)
+
+/Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/game-rebellion@0.0.0 lint: `eslint . --max-warnings=0`
+Exit status 1
+exit=0
+
+### after fixes (type assertion in server-module.test.ts, type import in auto-play-fault.test.ts, server index exports):
+### pnpm --filter @bga/game-rebellion typecheck
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+exit=0
+### pnpm --filter @bga/game-rebellion lint
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+### npx prettier --check (W5 files)
+Checking formatting...
+All matched files use Prettier code style!
+### pnpm --filter @bga/game-rebellion test
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  41 passed (41)
+      Tests  396 passed (396)
+   Start at  17:12:45
+   Duration  9.23s (transform 4.26s, setup 0ms, import 16.25s, tests 21.09s, environment 4ms)
+

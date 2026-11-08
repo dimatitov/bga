@@ -2,10 +2,10 @@
  * `window.__boardDebug` (R-11, plan-frontend §6.3). Read-only: returns copies, cannot change game state.
  * Loaded only via dynamic import from `useBoardDebug` under `DEV || VITE_E2E === '1'`.
  */
-import type { PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { PlayerViewMock } from '@bga/game-rebellion/schema';
 import type { MapPoint } from '@bga/game-rebellion/board';
 import type { BoardLayout } from '../model/boardLayout';
-import { MAX_SCALE, MIN_SCALE } from '../model/constants';
+import { MAX_SCALE } from '../model/constants';
 import { useDragStore } from '../model/dragStore';
 import { worldToScreen } from '../model/geometry';
 import { highlightedSystemIds } from '../model/legal';
@@ -31,7 +31,7 @@ declare global {
 export interface BoardDebugContext {
   container: HTMLElement | null;
   layout: BoardLayout;
-  view: PlayerViewPlayer;
+  view: PlayerViewMock;
 }
 
 export function installBoardDebug(get: () => BoardDebugContext): () => void {
@@ -44,7 +44,7 @@ export function installBoardDebug(get: () => BoardDebugContext): () => void {
   };
   const api: BoardDebug = {
     getViewport: () => ({ ...useViewportStore.getState().viewport }),
-    getZoomLimits: () => ({ min: MIN_SCALE, max: MAX_SCALE }),
+    getZoomLimits: () => ({ min: useViewportStore.getState().minScale, max: MAX_SCALE }),
     getSystemScreenPos: (id) => toPage(get().layout.centers.get(id)),
     getPieceScreenPos: (id) => toPage(get().layout.slots.get(id)),
     getSelection: () => {

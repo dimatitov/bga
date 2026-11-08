@@ -8,8 +8,12 @@ import {
 } from './enums';
 import { opponentOf } from './factions';
 
-/** Current version of Rebellion's stored data (`Session.setup` and the state snapshot). */
-export const REBELLION_SCHEMA_VERSION = 2;
+/**
+ * Versions of Rebellion's stored data are separate (SWR-005, AM-BE-9): the stored setup (`Session.setup`)
+ * did not change in SWR-005 and stays `2`; the state snapshot is `3` (`rulesEngine` union, BD-1).
+ */
+export const REBELLION_SETUP_SCHEMA_VERSION = 2;
+export const REBELLION_STATE_SCHEMA_VERSION = 3;
 
 const settingsShape = {
   playerFaction: FactionIdSchema,
@@ -46,12 +50,15 @@ export type RebellionSettings = z.infer<typeof RebellionSettingsSchema>;
 
 /** Content of the `Session.setup` column (Q-16: `schemaVersion` lives in the settings too). */
 export const StoredRebellionSetupSchema = z
-  .strictObject({ schemaVersion: z.literal(REBELLION_SCHEMA_VERSION), ...settingsShape })
+  .strictObject({ schemaVersion: z.literal(REBELLION_SETUP_SCHEMA_VERSION), ...settingsShape })
   .superRefine(checkSettings);
 export type StoredRebellionSetup = z.infer<typeof StoredRebellionSetupSchema>;
 
 export function toStoredSetup(settings: RebellionSettings): StoredRebellionSetup {
-  return StoredRebellionSetupSchema.parse({ schemaVersion: REBELLION_SCHEMA_VERSION, ...settings });
+  return StoredRebellionSetupSchema.parse({
+    schemaVersion: REBELLION_SETUP_SCHEMA_VERSION,
+    ...settings,
+  });
 }
 
 export function settingsOfStoredSetup(stored: StoredRebellionSetup): RebellionSettings {

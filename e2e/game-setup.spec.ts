@@ -1,19 +1,20 @@
 // SWR-004 PO scenarios TC-001..TC-006 (test-cases.md §5) + TC-E2E-RT-01 — AC-01..AC-10, AC-13.
 // Every case checks the UI, the network (request/response bodies) and the server state through the public API.
 // Texts are not asserted (Q-18): testids and attributes only. Failure injection: `page.route` only (TR-3).
+// SWR-005: new sessions are core-v1 — table checks use the core header (`turn-indicator`, `time-track`), the details
+// carry `rulesEngine/winner/reputation`, TC-004's "move" is an activation (AI answers nothing during it).
 import { expect, test } from '@playwright/test';
 import {
-  asPlayer,
+  actionOf,
+  asCore,
   createSession,
   DETAILS_KEYS,
   EMPIRE_VS_AI_HARD,
   getSession,
   IDEMPOTENT_REPLAY_HEADER,
   listSessions,
-  moveActions,
   newIdempotencyKey,
-  pickMove,
-  piece,
+  planActivation,
   postSession,
   REBELLION,
   SETTINGS_KEYS,
@@ -29,10 +30,10 @@ import {
   sessionPath,
   urlOf,
   version,
-  waitForCommand,
   waitForTable,
-  dbg,
 } from './support/board';
+import { storedRebelBase } from './support/seed';
+import { armLeader, clickSystem, commandViaUi } from './support/core';
 import {
   expectCaption,
   expectErrorState,
@@ -94,7 +95,7 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
       ruleset: 'base',
       gameMode: 'digital',
     });
-    const view = asPlayer(body.view);
+    const view = asCore(body.view);
     expect(view.viewer).toBe('rebels');
     expect(view.activeSide).toBe('rebels');
 
@@ -103,7 +104,7 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
     await waitForTable(page, body.sessionId);
     await expect(page.getByTestId(T.prototypeBadge)).toBeVisible();
     await expect(page.getByTestId(T.prototypeBadge)).toHaveAttribute('data-status', 'prototype');
-    await expect(page.getByTestId(T.activeSide)).toHaveAttribute('data-side', 'rebels');
+    await expect(page.getByTestId(T.turnIndicator)).toHaveAttribute('data-side', 'rebels');
     await expect(page.getByTestId(T.endTurn), 'no "pass the turn" against AI').toHaveCount(0);
 
     // AC-06: exactly one new session, stored with its settings and status.
@@ -113,7 +114,14 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
     );
     expect(summary?.status).toBe('prototype');
     expect(Object.keys(summary?.details ?? {}).sort()).toEqual(DETAILS_KEYS);
-    expect(summary?.details).toEqual({ ...body.settings, round: 1, phase: 'assignment' });
+    expect(summary?.details).toEqual({
+      ...body.settings,
+      round: 1,
+      phase: 'command',
+      rulesEngine: 'core-v1',
+      winner: null,
+      reputation: 14,
+    });
     const stored = await getSession(request, body.sessionId);
     expect(stored.settings).toEqual(body.settings);
     expect(stored.status).toBe('prototype');
@@ -146,16 +154,18 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
     });
     const body = (await res.json()) as SessionResponse;
     expect(body.settings.opponentFaction).toBe('rebels');
-    const view = asPlayer(body.view);
+    const view = asCore(body.view);
     expect(view.viewer).toBe('empire');
     // Hidden information is checked on the server response, not the DOM (browser-qa §4).
     expect(view.rebelBase.systemId).toBeNull();
-    const moves = moveActions(view);
-    expect(moves.length).toBeGreaterThan(0);
-    for (const a of moves) expect(piece(view, a.pieceId).owner).toBe('empire');
+    const activate = actionOf(view, 'ACTIVATE_SYSTEM');
+    expect(activate?.leaderIds.length).toBeGreaterThan(0);
+    for (const id of activate!.leaderIds) {
+      expect(view.leaders.find((l) => l.id === id)?.owner).toBe('empire');
+    }
 
-    await waitForTable(page, body.sessionId);
-    await expect(page.getByTestId(T.activeSide)).toHaveAttribute('data-side', 'empire');
+    await waitForTable(page, body.sessionId, { engine: 'core-v1' });
+    await expect(page.getByTestId(T.turnIndicator)).toHaveAttribute('data-side', 'empire');
   });
 
   test('TC-003: against a second player — difficulty hidden, no aiDifficulty sent, null stored, pass-turn shown', async ({
@@ -189,11 +199,12 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
     });
     expect((await getSession(request, body.sessionId)).settings.aiDifficulty).toBeNull();
 
-    await waitForTable(page, body.sessionId);
-    const endTurn = page.getByTestId(T.endTurn);
-    await expect(endTurn).toBeVisible();
-    await expect(endTurn).toBeEnabled();
-    expect(asPlayer(body.view).legalActions.some((a) => a.type === 'END_TURN')).toBe(true);
+    // SWR-005: in core-v1 the turn passes automatically (no "pass the turn" button, spec Hot-seat).
+    await waitForTable(page, body.sessionId, { engine: 'core-v1' });
+    await expect(page.getByTestId(T.endTurn)).toHaveCount(0);
+    await expect(page.getByTestId(T.passTurn)).toBeEnabled();
+    await expect(page.getByTestId(T.turnIndicator)).toContainText(/\S/);
+    expect(asCore(body.view).legalActions.map((a) => a.type)).toContain('PASS');
   });
 
   test('TC-004: restore — reload and a fresh browser context show the same session, settings and move', async ({
@@ -207,24 +218,21 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
       description: 'backend restart part of TC-004 is covered by integration TC-I-24 (Q-14)',
     });
     const { sessionId, view, settings } = await createSession(request, EMPIRE_VS_AI_HARD);
-    const move = pickMove(view);
+    const plan = planActivation(view, [await storedRebelBase(sessionId)]);
 
-    // (a) one move through the UI, then reload.
+    // (a) one move (an activation) through the UI, then reload.
     await page.goto(sessionPath(sessionId));
-    await waitForTable(page, sessionId);
-    const pos = await dbg.piecePos(page, move.pieceId);
-    await page.mouse.click(pos.x, pos.y);
-    const cmd = waitForCommand(page);
-    await page.getByTestId(T.actionMove(move.pieceId, move.toSystemId)).click();
-    expect((await cmd).status()).toBe(200);
+    await waitForTable(page, sessionId, { engine: 'core-v1' });
+    await armLeader(page, plan.leaderId);
+    await commandViaUi(page, () => clickSystem(page, plan.systemId));
     await expect.poll(() => version(page)).toBe(view.version + 1);
 
     await page.reload();
-    await waitForTable(page, sessionId);
+    await waitForTable(page, sessionId, { engine: 'core-v1' });
     expect(await version(page)).toBe(view.version + 1);
-    await expect(page.getByTestId(T.pieceItem(move.pieceId))).toHaveAttribute(
-      'data-system-id',
-      move.toSystemId,
+    await expect(page.getByTestId(T.systemItem(plan.systemId))).toHaveAttribute(
+      'data-activated',
+      'true',
     );
     await openSidebarTab(page, 'game');
     await expect(page.getByTestId(T.gameInfoStatus)).toHaveAttribute('data-status', 'prototype');
@@ -254,9 +262,9 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
       await p2.goBack();
       await p2.getByTestId(T.recentSession(sessionId)).click();
       await waitForTable(p2, sessionId);
-      await expect(p2.getByTestId(T.pieceItem(move.pieceId))).toHaveAttribute(
-        'data-system-id',
-        move.toSystemId,
+      await expect(p2.getByTestId(T.systemItem(plan.systemId))).toHaveAttribute(
+        'data-activated',
+        'true',
       );
     } finally {
       await context.close();
@@ -264,7 +272,7 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
     const after = await getSession(request, sessionId);
     expect(after.settings).toEqual(settings);
     expect(after.status).toBe('prototype');
-    expect(asPlayer(after.view).version).toBe(view.version + 1);
+    expect(asCore(after.view).version).toBe(view.version + 1);
   });
 
   test('TC-005: server errors (500, 422, network) keep the form, show an alert and a retry works', async ({

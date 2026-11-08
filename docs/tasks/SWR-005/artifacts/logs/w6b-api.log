@@ -1,0 +1,54 @@
+# SWR-005 W6b — 2026-11-08T14:33:48Z
+$ pnpm --filter @bga/api test
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[Nest] 43632  - 11/08/2026, 5:33:57 PM   ERROR [ApiExceptionFilter] sessionId=session-002 code=INTERNAL status=500 error=SyntaxError
+[Nest] 43975  - 11/08/2026, 5:34:03 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:03 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:03 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=Error
+[Nest] 43975  - 11/08/2026, 5:34:03 PM   ERROR [ApiExceptionFilter] sessionId=4611d9f2-e01c-46c3-9144-10558284fa9a code=INTERNAL status=500 error=Error
+[Nest] 43975  - 11/08/2026, 5:34:03 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:04 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:04 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:04 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:04 PM   ERROR [ApiExceptionFilter] sessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43975  - 11/08/2026, 5:34:04 PM   ERROR [ApiExceptionFilter] sessionId=67bf078c-a238-444f-b43b-37b62bfac807 code=INTERNAL status=500 error=PrismaClientKnownRequestError
+[Nest] 43976  - 11/08/2026, 5:34:08 PM   ERROR [ApiExceptionFilter] sessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError
+[Nest] 43976  - 11/08/2026, 5:34:08 PM   ERROR [ApiExceptionFilter] sessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError
+[Nest] 43976  - 11/08/2026, 5:34:08 PM   ERROR [ApiExceptionFilter] sessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError
+[Nest] 44458  - 11/08/2026, 5:34:17 PM   ERROR [ApiExceptionFilter] sessionId=c0ab36f3-827f-471b-8dec-33db445032f9 code=INTERNAL status=500 error=ZodError
+[Nest] 44458  - 11/08/2026, 5:34:17 PM   ERROR [ApiExceptionFilter] sessionId=c0ab36f3-827f-471b-8dec-33db445032f9 code=INTERNAL status=500 error=ZodError
+[Nest] 44486  - 11/08/2026, 5:34:18 PM   ERROR [ApiExceptionFilter] sessionId=golden-empire-win code=INTERNAL status=500 error=ZodError
+[Nest] 44605  - 11/08/2026, 5:34:21 PM   ERROR [SessionCommandsService] sessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500
+[Nest] 44605  - 11/08/2026, 5:34:21 PM   ERROR [ApiExceptionFilter] sessionId=session-001 code=INTERNAL status=500 error=ApiError
+
+ Test Files  26 passed | 1 skipped (27)
+      Tests  221 passed | 1 skipped (222)
+   Start at  17:33:50
+   Duration  60.92s (transform 5.26s, setup 0ms, import 38.21s, tests 274.46s, environment 4ms)
+
+exit=0
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm --filter @bga/api lint
+
+> @bga/api@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> eslint . --max-warnings=0
+
+exit=0
+
+$ pnpm exec prettier --check <W6b files>
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

@@ -1,4 +1,4 @@
-import { PlayerViewSchema, UNKNOWN_TYPE_KEY, type GameState } from '../../src/schema';
+import { PlayerViewSchema, UNKNOWN_TYPE_KEY, type MockGameState } from '../../src/schema';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, toPlayerEvents, toPlayerView, toSideView } from '../../src/rules';
 import {
@@ -18,9 +18,9 @@ import {
 
 /** State assembled in the test: empire piece made hidden (the mock scenario has none). */
 function withHiddenEmpirePiece(
-  state: GameState,
+  state: MockGameState,
   typeKey: string,
-): { state: GameState; id: string } {
+): { state: MockGameState; id: string } {
   const target = state.pieces.find((p) => p.owner === 'empire')!;
   return {
     id: target.id,
@@ -158,6 +158,7 @@ describe('toPlayerView — hidden information (A-11, Q-2)', () => {
         expect(Object.keys(view).sort()).toEqual(
           [
             'kind',
+            'rulesEngine',
             'viewer',
             'activeSide',
             'settings',

@@ -69,9 +69,17 @@ export interface ServerGameModule<
   parseStoredSetup(raw: unknown): Setup;
   /** Status of a new session (stored in `Session.status`). */
   initialStatus(setup: Setup): SessionStatus;
+  /**
+   * Status after an accepted command (SWR-005, AM-BE-1): the session service writes it to `Session.status`
+   * in the same commit as the state. Pure; the platform never interprets game data.
+   */
+  statusOf(state: State): SessionStatus;
   /** Public settings for the session envelope (`SessionResponse.settings`); nothing secret (Q-24). */
   publicSettings(setup: Setup): SessionSettings;
-  /** New session: version 1; `events` are the initial events (seq ≥ 1) for `SessionEvent`. */
+  /**
+   * New session: version ≥ 1 (the game may apply automatic moves on creation, AM-BE-2);
+   * `events` are the initial events (seq ≥ 1) for `SessionEvent`.
+   */
   createInitialState(setup: Setup, ctx: CreateSessionContext): { state: State; events: Event[] };
   /**
    * The setup a state was created with, in the CURRENT stored form (review #1: single source of settings).

@@ -1,4 +1,4 @@
-import type { Faction, PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { Faction, PlayerViewMock } from '@bga/game-rebellion/schema';
 import { type MapLayout, type MapPoint, mapLayout } from '@bga/game-rebellion/board';
 import { computeBounds, type Bounds } from './geometry';
 import { layoutAllPieces } from './pieceLayout';
@@ -14,7 +14,7 @@ const warned = new Set<string>();
 
 /** World positions of systems (from `mapLayout`) and pieces (deterministic UI layout) for a view. */
 export function computeBoardLayout(
-  view: Pick<PlayerViewPlayer, 'systems' | 'pieces'>,
+  view: Pick<PlayerViewMock, 'systems' | 'pieces'>,
   layout: MapLayout = mapLayout,
 ): BoardLayout {
   const centers = new Map<string, MapPoint>();

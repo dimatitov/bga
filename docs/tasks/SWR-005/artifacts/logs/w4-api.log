@@ -1,0 +1,50 @@
+# W4 2026-11-08T13:43:11Z
+$ pnpm --filter @bga/api exec vitest run test/status.int.test.ts test/sessions-repository.int.test.ts test/game-registry.int.test.ts test/architecture.int.test.ts
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 22318  - [39m11/08/2026, 4:43:18 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 22318  - [39m11/08/2026, 4:43:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  4 passed (4)
+      Tests  38 passed (38)
+   Start at  16:43:13
+   Duration  5.17s (transform 1.33s, setup 0ms, import 3.98s, tests 1.68s, environment 0ms)
+
+exit=0
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+test/sessions.int.test.ts(93,26): error TS2339: Property 'pieces' does not exist on type '{ kind: "player"; rulesEngine: "mock-v1"; viewer: "rebels" | "empire"; activeSide: "rebels" | "empire"; settings: { playerFaction: "rebels" | "empire"; opponentFaction: "rebels" | "empire"; opponentType: "human" | "ai"; aiDifficulty: "easy" | ... 2 more ... | null; ruleset: "base" | "rise-of-the-empire"; gameMode: "...'.
+  Property 'pieces' does not exist on type '{ kind: "player"; rulesEngine: "core-v1"; viewer: "rebels" | "empire"; activeSide: "rebels" | "empire"; settings: { playerFaction: "rebels" | "empire"; opponentFaction: "rebels" | "empire"; opponentType: "human" | "ai"; aiDifficulty: "easy" | ... 2 more ... | null; ruleset: "base" | "rise-of-the-empire"; gameMode: "...'.
+test/sessions.int.test.ts(93,39): error TS7006: Parameter 'p' implicitly has an 'any' type.
+test/sessions.int.test.ts(93,56): error TS2339: Property 'pieceId' does not exist on type '{ type: "MOVE_PIECES"; pieceId: string; toSystemIds: string[]; } | { type: "MOVE_PIECES"; fromSystemId: string; toSystemId: string; pieces: { pieceId: string; transportCapacity: number; requiresTransport: boolean; }[]; }'.
+  Property 'pieceId' does not exist on type '{ type: "MOVE_PIECES"; fromSystemId: string; toSystemId: string; pieces: { pieceId: string; transportCapacity: number; requiresTransport: boolean; }[]; }'.
+test/sessions.int.test.ts(210,24): error TS2339: Property 'pieces' does not exist on type '{ kind: "player"; rulesEngine: "mock-v1"; viewer: "rebels" | "empire"; activeSide: "rebels" | "empire"; settings: { playerFaction: "rebels" | "empire"; opponentFaction: "rebels" | "empire"; opponentType: "human" | "ai"; aiDifficulty: "easy" | ... 2 more ... | null; ruleset: "base" | "rise-of-the-empire"; gameMode: "...'.
+  Property 'pieces' does not exist on type '{ kind: "player"; rulesEngine: "core-v1"; viewer: "rebels" | "empire"; activeSide: "rebels" | "empire"; settings: { playerFaction: "rebels" | "empire"; opponentFaction: "rebels" | "empire"; opponentType: "human" | "ai"; aiDifficulty: "easy" | ... 2 more ... | null; ruleset: "base" | "rise-of-the-empire"; gameMode: "...'.
+test/sessions.int.test.ts(210,37): error TS7006: Parameter 'p' implicitly has an 'any' type.
+/Users/dimatitov/WebstormProjects/Game automa/apps/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/api@0.0.0 typecheck: `tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit`
+Exit status 2
+exit=2
+$ pnpm --filter @bga/api lint
+
+> @bga/api@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> eslint . --max-warnings=0
+
+exit=0
+$ (apps/api) pnpm exec tsc -p tsconfig.build.json --noEmit   # second half of typecheck, skipped above by && after the first half failed
+src/sessions/session-commands.service.ts(47,48): error TS2339: Property 'statusOf' does not exist on type 'ServerGameModule<unknown, unknown, SessionEventRecord>'.
+exit=2
+$ (apps/api) pnpm exec tsc -p tsconfig.json --noEmit | grep -v sessions.int.test.ts  # errors outside W6a-owned file
+errors-outside-sessions.int.test.ts: 0
+$ pnpm --filter @bga/platform build   # refresh gitignored dist (root typecheck does build:packages first)
+
+> @bga/platform@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -b
+
+exit=0
+$ (apps/api) pnpm exec tsc -p tsconfig.build.json --noEmit
+exit=0

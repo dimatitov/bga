@@ -4,14 +4,18 @@
 // `SCREENSHOT_TASK=SWR-003` is set (deliberate regeneration). SWR-002 screenshots are never touched.
 // 01-catalog and 02-game-page-empty are captured by 00-empty-db.spec.ts (need an empty DB).
 // Platform screens: 01b, 03–09. Table regression (SWR-002 04–15 on the new routes): table-NN-*.
+// SWR-005 (Q-1): the table regression walk is the mock table → it runs on a SEEDED legacy row (frozen v2, Empire vs
+// AI hard). SWR-005 evidence screenshots are taken by core-screenshots.spec.ts.
 import { expect, test, type Page } from '@playwright/test';
 import {
   createSession,
   FORBIDDEN_STARS,
+  getView,
   pickMove,
   REBELLION,
   type MoveFixture,
 } from './support/api';
+import { seedLegacyV2 } from './support/seed';
 import {
   dbg,
   emptyCanvasPoint,
@@ -98,10 +102,11 @@ test('SWR-003 platform screenshots: catalog, game pages, new session, session ta
 
 test('TC-E2E-33 (SWR-003 routes): table regression screenshots', async ({ page, request }) => {
   test.setTimeout(120_000);
-  const { sessionId, view } = await createSession(request);
+  const { sessionId } = await seedLegacyV2('empireAi');
+  const view = await getView(request, sessionId);
   const move = pickMove(view);
 
-  await openSession(page, sessionId);
+  await openSession(page, sessionId, { engine: 'mock-v1' });
   await saveScreenshot(page, 'table-04-board-initial', SWR003);
 
   await page.getByTestId(T.zoomIn).click();

@@ -1,4 +1,4 @@
-import type { Faction, GameState } from '../../src/schema';
+import type { Faction, MockGameState } from '../../src/schema';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, getLegalActions, toSideView } from '../../src/rules';
 import {
@@ -12,7 +12,7 @@ import {
   newGame,
 } from './helpers';
 
-function checkLegalActionsFor(state: GameState, viewer: Faction) {
+function checkLegalActionsFor(state: MockGameState, viewer: Faction) {
   const actions = getLegalActions(state, viewer);
   const moves = actions.filter((a) => a.type === 'MOVE_PIECES');
   const own = state.pieces.filter((p) => p.owner === viewer);

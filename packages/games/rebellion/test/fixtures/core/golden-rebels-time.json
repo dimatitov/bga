@@ -1,0 +1,1804 @@
+{
+  "sessionId": "golden-rebels-time",
+  "now": "2026-11-08T10:00:00.000Z",
+  "eventCount": 93,
+  "events": [
+    "1 GAME_CREATED system",
+    "2 PHASE_STARTED system",
+    "3 PHASE_STARTED system",
+    "4 PASSED rebels",
+    "5 PASSED empire",
+    "6 PHASE_STARTED system",
+    "7 LEADERS_RETURNED system",
+    "8 TIME_ADVANCED system",
+    "9 PHASE_STARTED system",
+    "10 PHASE_STARTED system",
+    "11 PASSED rebels",
+    "12 PASSED empire",
+    "13 PHASE_STARTED system",
+    "14 LEADERS_RETURNED system",
+    "15 TIME_ADVANCED system",
+    "16 PHASE_STARTED system",
+    "17 PHASE_STARTED system",
+    "18 PASSED rebels",
+    "19 PASSED empire",
+    "20 PHASE_STARTED system",
+    "21 LEADERS_RETURNED system",
+    "22 TIME_ADVANCED system",
+    "23 PHASE_STARTED system",
+    "24 PHASE_STARTED system",
+    "25 PASSED rebels",
+    "26 PASSED empire",
+    "27 PHASE_STARTED system",
+    "28 LEADERS_RETURNED system",
+    "29 TIME_ADVANCED system",
+    "30 PHASE_STARTED system",
+    "31 PHASE_STARTED system",
+    "32 PASSED rebels",
+    "33 PASSED empire",
+    "34 PHASE_STARTED system",
+    "35 LEADERS_RETURNED system",
+    "36 TIME_ADVANCED system",
+    "37 PHASE_STARTED system",
+    "38 PHASE_STARTED system",
+    "39 PASSED rebels",
+    "40 PASSED empire",
+    "41 PHASE_STARTED system",
+    "42 LEADERS_RETURNED system",
+    "43 TIME_ADVANCED system",
+    "44 PHASE_STARTED system",
+    "45 PHASE_STARTED system",
+    "46 PASSED rebels",
+    "47 PASSED empire",
+    "48 PHASE_STARTED system",
+    "49 LEADERS_RETURNED system",
+    "50 TIME_ADVANCED system",
+    "51 PHASE_STARTED system",
+    "52 PHASE_STARTED system",
+    "53 PASSED rebels",
+    "54 PASSED empire",
+    "55 PHASE_STARTED system",
+    "56 LEADERS_RETURNED system",
+    "57 TIME_ADVANCED system",
+    "58 PHASE_STARTED system",
+    "59 PHASE_STARTED system",
+    "60 PASSED rebels",
+    "61 PASSED empire",
+    "62 PHASE_STARTED system",
+    "63 LEADERS_RETURNED system",
+    "64 TIME_ADVANCED system",
+    "65 PHASE_STARTED system",
+    "66 PHASE_STARTED system",
+    "67 PASSED rebels",
+    "68 PASSED empire",
+    "69 PHASE_STARTED system",
+    "70 LEADERS_RETURNED system",
+    "71 TIME_ADVANCED system",
+    "72 PHASE_STARTED system",
+    "73 PHASE_STARTED system",
+    "74 PASSED rebels",
+    "75 PASSED empire",
+    "76 PHASE_STARTED system",
+    "77 LEADERS_RETURNED system",
+    "78 TIME_ADVANCED system",
+    "79 PHASE_STARTED system",
+    "80 PHASE_STARTED system",
+    "81 PASSED rebels",
+    "82 PASSED empire",
+    "83 PHASE_STARTED system",
+    "84 LEADERS_RETURNED system",
+    "85 TIME_ADVANCED system",
+    "86 PHASE_STARTED system",
+    "87 PHASE_STARTED system",
+    "88 PASSED rebels",
+    "89 PASSED empire",
+    "90 PHASE_STARTED system",
+    "91 LEADERS_RETURNED system",
+    "92 TIME_ADVANCED system",
+    "93 GAME_OVER system"
+  ],
+  "finalState": {
+    "schemaVersion": 3,
+    "rulesEngine": "core-v1",
+    "id": "golden-rebels-time",
+    "version": 27,
+    "settings": {
+      "playerFaction": "rebels",
+      "opponentFaction": "empire",
+      "opponentType": "ai",
+      "aiDifficulty": "normal",
+      "ruleset": "base",
+      "gameMode": "digital"
+    },
+    "activeSide": "empire",
+    "handoffPending": false,
+    "scenarioId": "rebellion-base-v1",
+    "round": 14,
+    "reputation": 14,
+    "phase": "refresh",
+    "passed": {
+      "rebels": true,
+      "empire": true
+    },
+    "activation": null,
+    "map": {
+      "regions": [
+        {
+          "id": "r1"
+        },
+        {
+          "id": "r2"
+        },
+        {
+          "id": "r3"
+        },
+        {
+          "id": "r4"
+        },
+        {
+          "id": "r5"
+        },
+        {
+          "id": "r6"
+        },
+        {
+          "id": "r7"
+        },
+        {
+          "id": "r8"
+        }
+      ],
+      "systems": [
+        {
+          "id": "alderaan",
+          "regionId": "r6",
+          "adjacentSystemIds": [
+            "cato-neimoidia",
+            "corellia",
+            "coruscant",
+            "kashyyyk",
+            "mandalore",
+            "ord-mantell"
+          ],
+          "remote": false
+        },
+        {
+          "id": "bespin",
+          "regionId": "r5",
+          "adjacentSystemIds": ["endor", "hoth", "mustafar", "sullust"],
+          "remote": false
+        },
+        {
+          "id": "bothawui",
+          "regionId": "r2",
+          "adjacentSystemIds": ["malastare", "nal-hutta", "rodia", "tatooine", "toydaria"],
+          "remote": false
+        },
+        {
+          "id": "cato-neimoidia",
+          "regionId": "r6",
+          "adjacentSystemIds": ["alderaan", "corellia", "kashyyyk", "malastare", "sullust"],
+          "remote": false
+        },
+        {
+          "id": "corellia",
+          "regionId": "r6",
+          "adjacentSystemIds": ["alderaan", "cato-neimoidia", "coruscant", "sullust"],
+          "remote": false
+        },
+        {
+          "id": "coruscant",
+          "regionId": "r6",
+          "adjacentSystemIds": ["alderaan", "corellia", "ord-mantell"],
+          "remote": false
+        },
+        {
+          "id": "dagobah",
+          "regionId": "r4",
+          "adjacentSystemIds": ["mustafar", "naboo", "sullust", "utapau"],
+          "remote": true
+        },
+        {
+          "id": "dantooine",
+          "regionId": "r8",
+          "adjacentSystemIds": ["dathomir", "mygeeto"],
+          "remote": true
+        },
+        {
+          "id": "dathomir",
+          "regionId": "r7",
+          "adjacentSystemIds": ["dantooine", "mandalore", "mygeeto", "yavin"],
+          "remote": true
+        },
+        {
+          "id": "endor",
+          "regionId": "r5",
+          "adjacentSystemIds": ["bespin", "hoth"],
+          "remote": true
+        },
+        {
+          "id": "felucia",
+          "regionId": "r1",
+          "adjacentSystemIds": ["mandalore", "mon-calamari", "saleucami", "yavin"],
+          "remote": false
+        },
+        {
+          "id": "geonosis",
+          "regionId": "r3",
+          "adjacentSystemIds": ["naboo", "rodia", "ryloth", "tatooine", "utapau"],
+          "remote": false
+        },
+        {
+          "id": "hoth",
+          "regionId": "r5",
+          "adjacentSystemIds": ["bespin", "endor", "mustafar"],
+          "remote": true
+        },
+        {
+          "id": "ilum",
+          "regionId": "r8",
+          "adjacentSystemIds": ["mygeeto", "ord-mantell"],
+          "remote": true
+        },
+        {
+          "id": "kashyyyk",
+          "regionId": "r7",
+          "adjacentSystemIds": [
+            "alderaan",
+            "cato-neimoidia",
+            "malastare",
+            "mandalore",
+            "saleucami",
+            "toydaria"
+          ],
+          "remote": false
+        },
+        {
+          "id": "kessel",
+          "regionId": "r2",
+          "adjacentSystemIds": ["nal-hutta", "saleucami", "toydaria"],
+          "remote": false
+        },
+        {
+          "id": "malastare",
+          "regionId": "r7",
+          "adjacentSystemIds": [
+            "bothawui",
+            "cato-neimoidia",
+            "kashyyyk",
+            "naboo",
+            "rodia",
+            "sullust",
+            "toydaria"
+          ],
+          "remote": false
+        },
+        {
+          "id": "mandalore",
+          "regionId": "r7",
+          "adjacentSystemIds": [
+            "alderaan",
+            "dathomir",
+            "felucia",
+            "kashyyyk",
+            "mygeeto",
+            "ord-mantell",
+            "saleucami",
+            "yavin"
+          ],
+          "remote": false
+        },
+        {
+          "id": "mon-calamari",
+          "regionId": "r1",
+          "adjacentSystemIds": ["felucia", "saleucami"],
+          "remote": false
+        },
+        {
+          "id": "mustafar",
+          "regionId": "r5",
+          "adjacentSystemIds": ["bespin", "dagobah", "hoth", "sullust"],
+          "remote": false
+        },
+        {
+          "id": "mygeeto",
+          "regionId": "r8",
+          "adjacentSystemIds": ["dantooine", "dathomir", "ilum", "mandalore", "ord-mantell"],
+          "remote": false
+        },
+        {
+          "id": "naboo",
+          "regionId": "r4",
+          "adjacentSystemIds": ["dagobah", "geonosis", "malastare", "rodia", "sullust", "utapau"],
+          "remote": false
+        },
+        {
+          "id": "nal-hutta",
+          "regionId": "r2",
+          "adjacentSystemIds": ["bothawui", "kessel", "toydaria"],
+          "remote": false
+        },
+        {
+          "id": "ord-mantell",
+          "regionId": "r8",
+          "adjacentSystemIds": ["alderaan", "coruscant", "ilum", "mandalore", "mygeeto"],
+          "remote": false
+        },
+        {
+          "id": "rodia",
+          "regionId": "r3",
+          "adjacentSystemIds": ["bothawui", "geonosis", "malastare", "naboo", "tatooine"],
+          "remote": false
+        },
+        {
+          "id": "ryloth",
+          "regionId": "r3",
+          "adjacentSystemIds": ["geonosis", "tatooine"],
+          "remote": false
+        },
+        {
+          "id": "saleucami",
+          "regionId": "r1",
+          "adjacentSystemIds": [
+            "felucia",
+            "kashyyyk",
+            "kessel",
+            "mandalore",
+            "mon-calamari",
+            "toydaria"
+          ],
+          "remote": false
+        },
+        {
+          "id": "sullust",
+          "regionId": "r4",
+          "adjacentSystemIds": [
+            "bespin",
+            "cato-neimoidia",
+            "corellia",
+            "dagobah",
+            "malastare",
+            "mustafar",
+            "naboo"
+          ],
+          "remote": false
+        },
+        {
+          "id": "tatooine",
+          "regionId": "r3",
+          "adjacentSystemIds": ["bothawui", "geonosis", "rodia", "ryloth"],
+          "remote": true
+        },
+        {
+          "id": "toydaria",
+          "regionId": "r2",
+          "adjacentSystemIds": [
+            "bothawui",
+            "kashyyyk",
+            "kessel",
+            "malastare",
+            "nal-hutta",
+            "saleucami"
+          ],
+          "remote": false
+        },
+        {
+          "id": "utapau",
+          "regionId": "r4",
+          "adjacentSystemIds": ["dagobah", "geonosis", "naboo"],
+          "remote": false
+        },
+        {
+          "id": "yavin",
+          "regionId": "r1",
+          "adjacentSystemIds": ["dathomir", "felucia", "mandalore"],
+          "remote": true
+        }
+      ]
+    },
+    "unitTypes": [
+      {
+        "typeKey": "unit.empire.star-destroyer",
+        "owner": "empire",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 6,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.empire.assault-carrier",
+        "owner": "empire",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 4,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.empire.super-star-destroyer",
+        "owner": "empire",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 8,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.empire.death-star",
+        "owner": "empire",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 8,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.empire.death-star-under-construction",
+        "owner": "empire",
+        "arena": "space",
+        "mobility": "immobile",
+        "transportCapacity": 0,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.empire.tie-fighter",
+        "owner": "empire",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": true
+      },
+      {
+        "typeKey": "unit.empire.stormtrooper",
+        "owner": "empire",
+        "arena": "ground",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": true
+      },
+      {
+        "typeKey": "unit.empire.at-st",
+        "owner": "empire",
+        "arena": "ground",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": true
+      },
+      {
+        "typeKey": "unit.empire.at-at",
+        "owner": "empire",
+        "arena": "ground",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": true
+      },
+      {
+        "typeKey": "unit.rebels.corellian-corvette",
+        "owner": "rebels",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 2,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.rebels.rebel-transport",
+        "owner": "rebels",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 4,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.rebels.mon-calamari-cruiser",
+        "owner": "rebels",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 4,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.rebels.x-wing",
+        "owner": "rebels",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.rebels.y-wing",
+        "owner": "rebels",
+        "arena": "space",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.rebels.rebel-trooper",
+        "owner": "rebels",
+        "arena": "ground",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": true
+      },
+      {
+        "typeKey": "unit.rebels.airspeeder",
+        "owner": "rebels",
+        "arena": "ground",
+        "mobility": "mobile",
+        "transportCapacity": 0,
+        "requiresTransport": true
+      },
+      {
+        "typeKey": "unit.rebels.shield-generator",
+        "owner": "rebels",
+        "arena": "ground",
+        "mobility": "immobile",
+        "transportCapacity": 0,
+        "requiresTransport": false
+      },
+      {
+        "typeKey": "unit.rebels.ion-cannon",
+        "owner": "rebels",
+        "arena": "ground",
+        "mobility": "immobile",
+        "transportCapacity": 0,
+        "requiresTransport": false
+      }
+    ],
+    "units": [
+      {
+        "id": "u-01",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.corellian-corvette",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-02",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-transport",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-03",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.x-wing",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-04",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.y-wing",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-05",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-trooper",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-06",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-trooper",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-07",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-trooper",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-08",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.airspeeder",
+        "systemId": "bothawui"
+      },
+      {
+        "id": "u-09",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.x-wing",
+        "systemId": "ryloth"
+      },
+      {
+        "id": "u-10",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.y-wing",
+        "systemId": "ryloth"
+      },
+      {
+        "id": "u-11",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-trooper",
+        "systemId": "ryloth"
+      },
+      {
+        "id": "u-12",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-trooper",
+        "systemId": "ryloth"
+      },
+      {
+        "id": "u-13",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.rebel-trooper",
+        "systemId": "ryloth"
+      },
+      {
+        "id": "u-14",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.airspeeder",
+        "systemId": "ryloth"
+      },
+      {
+        "id": "u-15",
+        "owner": "empire",
+        "typeKey": "unit.empire.star-destroyer",
+        "systemId": "saleucami"
+      },
+      {
+        "id": "u-16",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "saleucami"
+      },
+      {
+        "id": "u-17",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "saleucami"
+      },
+      {
+        "id": "u-18",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "saleucami"
+      },
+      {
+        "id": "u-19",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "saleucami"
+      },
+      {
+        "id": "u-20",
+        "owner": "empire",
+        "typeKey": "unit.empire.at-st",
+        "systemId": "saleucami"
+      },
+      {
+        "id": "u-21",
+        "owner": "empire",
+        "typeKey": "unit.empire.death-star",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-22",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-23",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-24",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-25",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-26",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-27",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-28",
+        "owner": "empire",
+        "typeKey": "unit.empire.at-st",
+        "systemId": "mandalore"
+      },
+      {
+        "id": "u-29",
+        "owner": "empire",
+        "typeKey": "unit.empire.star-destroyer",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-30",
+        "owner": "empire",
+        "typeKey": "unit.empire.assault-carrier",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-31",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-32",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-33",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-34",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-35",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-36",
+        "owner": "empire",
+        "typeKey": "unit.empire.at-at",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-37",
+        "owner": "empire",
+        "typeKey": "unit.empire.at-st",
+        "systemId": "coruscant"
+      },
+      {
+        "id": "u-38",
+        "owner": "empire",
+        "typeKey": "unit.empire.assault-carrier",
+        "systemId": "corellia"
+      },
+      {
+        "id": "u-39",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "corellia"
+      },
+      {
+        "id": "u-40",
+        "owner": "empire",
+        "typeKey": "unit.empire.star-destroyer",
+        "systemId": "sullust"
+      },
+      {
+        "id": "u-41",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "sullust"
+      },
+      {
+        "id": "u-42",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "sullust"
+      },
+      {
+        "id": "u-43",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "sullust"
+      },
+      {
+        "id": "u-44",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "sullust"
+      },
+      {
+        "id": "u-45",
+        "owner": "empire",
+        "typeKey": "unit.empire.at-st",
+        "systemId": "sullust"
+      },
+      {
+        "id": "u-46",
+        "owner": "empire",
+        "typeKey": "unit.empire.assault-carrier",
+        "systemId": "mustafar"
+      },
+      {
+        "id": "u-47",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "mustafar"
+      },
+      {
+        "id": "u-48",
+        "owner": "empire",
+        "typeKey": "unit.empire.tie-fighter",
+        "systemId": "mustafar"
+      },
+      {
+        "id": "u-49",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "mustafar"
+      },
+      {
+        "id": "u-50",
+        "owner": "empire",
+        "typeKey": "unit.empire.stormtrooper",
+        "systemId": "mustafar"
+      },
+      {
+        "id": "u-51",
+        "owner": "empire",
+        "typeKey": "unit.empire.at-st",
+        "systemId": "mustafar"
+      }
+    ],
+    "leaders": [
+      {
+        "id": "palpatine",
+        "owner": "empire",
+        "canActivate": true,
+        "systemId": null
+      },
+      {
+        "id": "vader",
+        "owner": "empire",
+        "canActivate": true,
+        "systemId": null
+      },
+      {
+        "id": "tarkin",
+        "owner": "empire",
+        "canActivate": true,
+        "systemId": null
+      },
+      {
+        "id": "tagge",
+        "owner": "empire",
+        "canActivate": true,
+        "systemId": null
+      },
+      {
+        "id": "mon-mothma",
+        "owner": "rebels",
+        "canActivate": false,
+        "systemId": null
+      },
+      {
+        "id": "leia",
+        "owner": "rebels",
+        "canActivate": true,
+        "systemId": null
+      },
+      {
+        "id": "dodonna",
+        "owner": "rebels",
+        "canActivate": true,
+        "systemId": null
+      },
+      {
+        "id": "rieekan",
+        "owner": "rebels",
+        "canActivate": true,
+        "systemId": null
+      }
+    ],
+    "rebelBase": {
+      "systemId": "ryloth",
+      "revealed": false
+    },
+    "outcome": {
+      "winner": "rebels",
+      "reason": "timeReachedReputation"
+    },
+    "log": [
+      {
+        "seq": 1,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "GAME_CREATED",
+        "actor": "system",
+        "payload": {
+          "scenarioId": "rebellion-base-v1"
+        }
+      },
+      {
+        "seq": 2,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 1,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 3,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 1,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 4,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 5,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 6,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 1,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 7,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 8,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 1,
+          "to": 2
+        }
+      },
+      {
+        "seq": 9,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 2,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 10,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 2,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 11,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 12,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 13,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 2,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 14,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 15,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 2,
+          "to": 3
+        }
+      },
+      {
+        "seq": 16,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 3,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 17,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 3,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 18,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 19,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 20,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 3,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 21,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 22,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 3,
+          "to": 4
+        }
+      },
+      {
+        "seq": 23,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 4,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 24,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 4,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 25,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 26,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 27,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 4,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 28,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 29,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 4,
+          "to": 5
+        }
+      },
+      {
+        "seq": 30,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 5,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 31,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 5,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 32,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 33,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 34,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 5,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 35,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 36,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 5,
+          "to": 6
+        }
+      },
+      {
+        "seq": 37,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 6,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 38,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 6,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 39,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 40,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 41,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 6,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 42,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 43,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 6,
+          "to": 7
+        }
+      },
+      {
+        "seq": 44,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 7,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 45,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 7,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 46,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 47,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 48,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 7,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 49,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 50,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 7,
+          "to": 8
+        }
+      },
+      {
+        "seq": 51,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 8,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 52,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 8,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 53,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 54,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 55,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 8,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 56,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 57,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 8,
+          "to": 9
+        }
+      },
+      {
+        "seq": 58,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 9,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 59,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 9,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 60,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 61,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 62,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 9,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 63,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 64,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 9,
+          "to": 10
+        }
+      },
+      {
+        "seq": 65,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 10,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 66,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 10,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 67,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 68,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 69,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 10,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 70,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 71,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 10,
+          "to": 11
+        }
+      },
+      {
+        "seq": 72,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 11,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 73,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 11,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 74,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 75,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 76,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 11,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 77,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 78,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 11,
+          "to": 12
+        }
+      },
+      {
+        "seq": 79,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 12,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 80,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 12,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 81,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 82,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 83,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 12,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 84,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 85,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 12,
+          "to": 13
+        }
+      },
+      {
+        "seq": 86,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 13,
+          "phase": "assignment"
+        }
+      },
+      {
+        "seq": 87,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 13,
+          "phase": "command"
+        }
+      },
+      {
+        "seq": 88,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "rebels",
+        "payload": {
+          "auto": false
+        }
+      },
+      {
+        "seq": 89,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PASSED",
+        "actor": "empire",
+        "payload": {
+          "auto": true
+        }
+      },
+      {
+        "seq": 90,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "PHASE_STARTED",
+        "actor": "system",
+        "payload": {
+          "round": 13,
+          "phase": "refresh"
+        }
+      },
+      {
+        "seq": 91,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "LEADERS_RETURNED",
+        "actor": "system",
+        "payload": {
+          "leaderIds": []
+        }
+      },
+      {
+        "seq": 92,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "TIME_ADVANCED",
+        "actor": "system",
+        "payload": {
+          "from": 13,
+          "to": 14
+        }
+      },
+      {
+        "seq": 93,
+        "at": "2026-11-08T10:00:00.000Z",
+        "type": "GAME_OVER",
+        "actor": "system",
+        "payload": {
+          "winner": "rebels",
+          "reason": "timeReachedReputation"
+        }
+      }
+    ]
+  }
+}

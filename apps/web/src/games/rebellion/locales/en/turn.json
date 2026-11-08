@@ -1,0 +1,109 @@
+{
+  "skip": {
+    "toTurn": "To the turn panel",
+    "toList": "To the object list"
+  },
+  "panel": {
+    "title": "Turn",
+    "yourTurn": "Your turn: pick a leader and activate a system, or pass.",
+    "opponentPassed": {
+      "rebels": "The Rebels passed for the rest of the phase: you take consecutive turns until you pass.",
+      "empire": "The Empire passed for the rest of the phase: you take consecutive turns until you pass."
+    },
+    "waiting": "{{side}} to play. Wait for your turn.",
+    "youPassed": "You passed: you take no more turns in this command phase.",
+    "noLeaders": "No leader in your pool can activate a system — you can only pass.",
+    "gameOver": "The game is over — no more turns."
+  },
+  "pool": {
+    "label": "Your leader pool",
+    "empty": "All your leaders are on the map.",
+    "hint": "Pick a leader, then a highlighted system on the map or in the field below.",
+    "unavailable": "cannot activate",
+    "armed_one": "Leader {{leader}} selected: {{count}} system available.",
+    "armed_other": "Leader {{leader}} selected: {{count}} systems available.",
+    "disarmed": "Leader deselected."
+  },
+  "activate": {
+    "select": "System to activate",
+    "noOptions": "No matching systems",
+    "confirm": "Activate {{system}}",
+    "confirmEmpty": "Activate",
+    "done": "{{leader}} activates {{system}}.",
+    "cancelled": "Activation cancelled.",
+    "notTarget": "Not a valid target for the selected leader.",
+    "inList": " · can be activated",
+    "withLeader": "Activate {{system}} with {{leader}}"
+  },
+  "move": {
+    "title": "Activation: {{system}} · {{leader}}",
+    "titleZone": "Activation in the hidden base zone · {{leader}}",
+    "intro": "Move units from adjacent systems into the activated one, or finish the activation.",
+    "none": "No adjacent units can move.",
+    "source": "From {{system}}",
+    "selectAll": "Select all",
+    "needsTransport": "needs transport",
+    "carries": "capacity {{count}}",
+    "capacity": "Capacity {{required}}/{{capacity}}",
+    "capacityLabel": "Slots needed: {{required}}, ship capacity: {{capacity}}",
+    "capacityOver": "Transport looks insufficient. The server makes the final check.",
+    "submit_one": "Move ({{count}}) to {{system}}",
+    "submit_other": "Move ({{count}}) to {{system}}",
+    "done_one": "{{count}} unit → {{system}}.",
+    "done_other": "{{count}} units → {{system}}.",
+    "pinnedHint": "Units in systems with your leader do not move."
+  },
+  "controls": {
+    "label": "Turn actions",
+    "finish": "Finish activation",
+    "pass": "Pass"
+  },
+  "finish": {
+    "done": "Activation finished."
+  },
+  "pass": {
+    "confirmTitle": "Pass?",
+    "confirmText_one": "Your pool still has {{count}} leader who can activate a system. Passing lasts until the end of the command phase: you will take no more turns in this phase.",
+    "confirmText_other": "Your pool still has {{count}} leaders who can activate a system. Passing lasts until the end of the command phase: you will take no more turns in this phase.",
+    "confirm": "Pass",
+    "cancel": "Cancel",
+    "done": "You passed."
+  },
+  "context": {
+    "label": "Selected object",
+    "empty": "Select a system, leader or unit on the map or in the Objects tab.",
+    "region": "Region: {{region}}",
+    "remote": "Remote system",
+    "contested": "Contested: units of both sides are here. Combat comes in a later version.",
+    "activated": "Activated",
+    "rebelBase": "Rebel base",
+    "leaders": "Leaders: {{names}}",
+    "units": "Units: {{side}}",
+    "noUnits": "No units.",
+    "unitCount": "{{name}} × {{count}}",
+    "side": "Side: {{side}}",
+    "inPool": "In the leader pool",
+    "inSystem": "In {{system}}",
+    "inZone": "In the hidden base zone",
+    "cannotActivate": "Cannot activate systems.",
+    "unitIn": "Location: {{place}}"
+  },
+  "zone": {
+    "title": "Rebel base — location unknown",
+    "explain": "The Empire does not know where the base is: its units and leaders are shown apart from the map.",
+    "empty": "Nothing in the hidden zone."
+  },
+  "list": {
+    "label": "Table objects",
+    "region": "Region {{region}}",
+    "system": "{{name}} ({{count}})",
+    "remote": " · remote",
+    "contested": " · contested",
+    "activated": " · activated",
+    "zone": "Rebel base — location unknown ({{count}})",
+    "pool": "Pool: {{side}}",
+    "unit": "{{name}} · {{side}}",
+    "leader": "Leader {{name}} · {{side}}",
+    "activateHere": "Activate {{system}}"
+  }
+}

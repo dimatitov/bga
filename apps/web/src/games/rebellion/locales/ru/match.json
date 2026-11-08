@@ -1,0 +1,97 @@
+{
+  "track": {
+    "label": "Трек времени и репутации",
+    "text": "Время {{time}} · Репутация {{reputation}}",
+    "aria": "Время {{time}} из {{reputation}}: Повстанцы побеждают, когда время дойдёт до репутации",
+    "time": "Время",
+    "reputation": "Репутация"
+  },
+  "phase": {
+    "label": "Фаза: {{phase}}"
+  },
+  "turn": {
+    "label": "Очередь хода",
+    "of": "Ход: {{side}}",
+    "you": "(вы)",
+    "vsAi": "против AI · {{difficulty}}",
+    "vsAiPlain": "против AI",
+    "vsHuman": "против второго игрока"
+  },
+  "passed": {
+    "label": "Спасовали",
+    "side": "{{side}}: пас",
+    "none": "Никто не пасовал"
+  },
+  "outcome": {
+    "label": "Итог партии",
+    "winner": {
+      "rebels": "Победа Повстанцев",
+      "empire": "Победа Империи"
+    },
+    "reason": {
+      "timeReachedReputation": "Время дошло до репутации",
+      "rebelBaseCaptured": "База Повстанцев захвачена: в её системе войска Империи и ни одного юнита Повстанцев"
+    },
+    "over": "Партия завершена — ходы больше не принимаются. Карту и журнал можно смотреть.",
+    "back": "К игре"
+  },
+  "log": {
+    "title": "Журнал",
+    "empty": "Событий пока нет",
+    "GAME_CREATED": "Партия создана",
+    "HANDOFF_ACCEPTED": "Ход принят: {{actor}}",
+    "HANDOFF_ACCEPTED_rebels": "{{actor}} принимают ход",
+    "HANDOFF_ACCEPTED_empire": "{{actor}} принимает ход",
+    "PHASE_STARTED": "Раунд {{round}}: фаза «{{phase}}»",
+    "SYSTEM_ACTIVATED": "{{actor}}: {{leader}} активирует систему {{system}}",
+    "PIECES_MOVED": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "ACTIVATION_FINISHED": "Активация завершена: {{actor}}",
+    "ACTIVATION_FINISHED_rebels": "{{actor}} завершают активацию",
+    "ACTIVATION_FINISHED_empire": "{{actor}} завершает активацию",
+    "ACTIVATION_FINISHED_auto": "Активация завершена: {{actor}} (AI)",
+    "ACTIVATION_FINISHED_auto_rebels": "{{actor}} (AI) завершают активацию",
+    "ACTIVATION_FINISHED_auto_empire": "{{actor}} (AI) завершает активацию",
+    "PASSED": "Пас: {{actor}}",
+    "PASSED_rebels": "{{actor}} пасуют",
+    "PASSED_empire": "{{actor}} пасует",
+    "PASSED_auto": "Пас: {{actor}} (AI)",
+    "PASSED_auto_rebels": "{{actor}} (AI) пасуют",
+    "PASSED_auto_empire": "{{actor}} (AI) пасует",
+    "LEADERS_RETURNED": "Лидеры вернулись в пулы: {{leaders}}",
+    "LEADERS_RETURNED_none": "Лидеры вернулись в пулы",
+    "TIME_ADVANCED": "Маркер времени: {{from}} → {{to}}",
+    "BASE_REVEALED": "База Повстанцев раскрыта: {{system}}",
+    "GAME_OVER": "Партия окончена. {{winner}}: {{reason}}",
+    "unknown": "Событие: {{type}}",
+    "hiddenZone": "скрытая зона",
+    "unknownUnit": "юнит",
+    "autoTag": "авто",
+    "autoHint": "AI Commander ещё не реализован: AI-сторона всегда пасует"
+  },
+  "announce": {
+    "autoPass": "Пас AI ({{side}}) — авто: AI Commander ещё не реализован",
+    "autoPass_rebels": "{{side}} (AI) пасуют — авто: AI Commander ещё не реализован",
+    "autoPass_empire": "{{side}} (AI) пасует — авто: AI Commander ещё не реализован",
+    "autoFinish": "Активация AI ({{side}}) завершена — авто",
+    "autoFinish_rebels": "{{side}} (AI) завершают активацию — авто",
+    "autoFinish_empire": "{{side}} (AI) завершает активацию — авто",
+    "opponentPassed": "Пас: {{side}}",
+    "opponentPassed_rebels": "{{side}} пасуют",
+    "opponentPassed_empire": "{{side}} пасует",
+    "leadersReturned_one": "Новый раунд: {{count}} лидер вернулся в пул",
+    "leadersReturned_few": "Новый раунд: {{count}} лидера вернулись в пулы",
+    "leadersReturned_many": "Новый раунд: {{count}} лидеров вернулись в пулы",
+    "leadersReturned_other": "Новый раунд: {{count}} лидера вернулись в пулы",
+    "newRound": "Раунд {{round}}: маркер времени сдвинут",
+    "baseRevealed": "База Повстанцев раскрыта: {{systemId}}",
+    "gameOver": "Партия окончена. {{winner}}: {{reason}}"
+  },
+  "info": {
+    "time": "Время",
+    "reputation": "Репутация",
+    "phase": "Фаза",
+    "passed": "Спасовали",
+    "rules": "Правила",
+    "rulesValue": "Срез core-v1: раунд и активация лидерами"
+  }
+}

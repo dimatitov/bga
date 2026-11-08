@@ -7,6 +7,7 @@ import {
 } from '@bga/platform';
 import {
   GameStateSchema,
+  PlayerViewPlayerSchema,
   RebellionSessionDetailsSchema,
   StoredRebellionSetupSchema,
 } from '@bga/game-rebellion/schema';
@@ -17,9 +18,11 @@ import {
   R,
   REBELS_HUMAN,
   DEF,
+  SEEDED,
   createRebellionSession,
+  createSeededDb,
   expectError,
-  movable,
+  movableIn,
   moveEnv,
   playerView,
   postCommand,
@@ -59,23 +62,37 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
     ]);
     expect(body.gameId).toBe(R);
     expect(body.sessionId).toBe('session-001');
-    const view = playerView(body.view);
-    expect(view.id).toBe(body.sessionId);
-    expect(view.version).toBe(1);
-    expect(view.round).toBe(1);
-    expect(view.phase).toBe('assignment');
+    // SWR-005 W6a: engine-independent fields only (the mock-v1 initial position — version 1, round 1,
+    // `assignment` — is a property of the mock rules, checked on seeded rows / in the rebellion package).
+    const view = PlayerViewPlayerSchema.parse(body.view);
+    expect(view).toMatchObject({ kind: 'player', id: body.sessionId, viewer: 'empire' });
     expect(view.log[0]).toMatchObject({ seq: 1, type: 'GAME_CREATED' });
     expect(view.legalActions.length).toBeGreaterThan(0);
 
     const prisma = prismaOf(app);
     const row = await prisma.session.findUniqueOrThrow({ where: { id: body.sessionId } });
-    expect(row).toMatchObject({ gameId: R, version: 1 });
-    const events = await prisma.sessionEvent.findMany({ where: { sessionId: body.sessionId } });
-    expect(events).toHaveLength(1);
+    expect(row).toMatchObject({ gameId: R, version: view.version });
+    const events = await prisma.sessionEvent.findMany({
+      where: { sessionId: body.sessionId },
+      orderBy: { seq: 'asc' },
+    });
+    // SWR-005 W6b (W5 accepted): "one event per version" (A-15) does not hold for core-v1 — event rows are
+    // consecutive from seq 1 and mirror the stored log; every engine command is version + 1. Empire vs AI:
+    // creation (version 1: GAME_CREATED + two PHASE_STARTED) + the AI Rebels' automatic pass (version 2).
+    expect(events.map((e) => e.seq)).toEqual(events.map((_, i) => i + 1));
     expect(events[0]).toMatchObject({ seq: 1, type: 'GAME_CREATED', actor: 'system' });
+    expect(events.map((e) => [e.type, e.actor])).toEqual([
+      ['GAME_CREATED', 'system'],
+      ['PHASE_STARTED', 'system'],
+      ['PHASE_STARTED', 'system'],
+      ['PASSED', 'rebels'],
+    ]);
+    expect(JSON.parse(events[3]!.payload)).toEqual({ auto: true });
+    expect(view.version).toBe(2);
+    expect(view.log.map((e) => e.seq)).toEqual(events.map((e) => e.seq));
   });
 
-  it('TC-SES-01 (TC-API-03): rebellion vs human — base visible, legal actions only for rebel pieces', async () => {
+  it('TC-SES-01 (TC-API-03): rebellion vs human — settings, base visible (legal actions: seeded block below)', async () => {
     const { view } = await createRebellionSession(app, REBELS_HUMAN);
     expect(view.settings).toEqual({
       playerFaction: 'rebels',
@@ -87,12 +104,6 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
     });
     expect(view.viewer).toBe('rebels');
     expect(view.rebelBase.systemId).not.toBeNull();
-    const owners = new Set(
-      view.legalActions
-        .filter((a) => a.type === 'MOVE_PIECES')
-        .map((a) => view.pieces.find((p) => p.id === a.pieceId)?.owner),
-    );
-    expect([...owners]).toEqual(['rebels']);
   });
 
   describe('TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted', () => {
@@ -187,7 +198,8 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
       ruleset: 'base',
       gameMode: 'digital',
     });
-    expect(GameStateSchema.parse(JSON.parse(row.state)).schemaVersion).toBe(2);
+    // The rules engine of a new session changes in SWR-005 W5; mock-v1 rows: upcast-v2.int.test.ts.
+    expect(GameStateSchema.parse(JSON.parse(row.state)).schemaVersion).toBe(3);
   });
 
   it('TC-SES-07: GET /api/sessions/:id → { sessionId, gameId, view }; unknown / over-long id → 404 sessionNotFound', async () => {
@@ -202,11 +214,7 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
       settings: created.settings,
       view: created,
     });
-    for (const action of playerView(body.view).legalActions) {
-      if (action.type === 'MOVE_PIECES') {
-        expect(created.pieces.find((p) => p.id === action.pieceId)?.owner).toBe('empire');
-      }
-    }
+    // MOVE_PIECES legal actions of the mock board: seeded block below (TC-SES-07 seeded).
 
     for (const id of ['unknown-id', 'x'.repeat(65), 'x'.repeat(1000)]) {
       const missing = await api(app).get(`/api/sessions/${id}`);
@@ -248,25 +256,24 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
       }
       RebellionSessionDetailsSchema.parse(summary.details);
     }
-    expect(list[2]?.details).toEqual({
+    // Engine-independent part; the exact mock-v1 details (round/phase/rulesEngine/reputation): seeded block.
+    expect(list[2]?.details).toMatchObject({
       playerFaction: 'empire',
       opponentFaction: 'rebels',
       opponentType: 'ai',
       aiDifficulty: 'hard',
       ruleset: 'base',
       gameMode: 'digital',
-      round: 1,
-      phase: 'assignment',
+      winner: null,
     });
-    expect(list[1]?.details).toEqual({
+    expect(list[1]?.details).toMatchObject({
       playerFaction: 'rebels',
       opponentFaction: 'empire',
       opponentType: 'human',
       aiDifficulty: null,
       ruleset: 'base',
       gameMode: 'digital',
-      round: 1,
-      phase: 'assignment',
+      winner: null,
     });
     expect(list[0]?.details).toMatchObject({ playerFaction: 'rebels', aiDifficulty: 'normal' });
     expect(res.text).not.toMatch(/"state"|"view"|"setup"|"pieces"|"rebelBase"/);
@@ -310,27 +317,6 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
     }
   });
 
-  it('TC-SES-11: a command moves the older session to the top; version + 1', async () => {
-    const older = await createRebellionSession(app, EMPIRE_AI);
-    const newer = await createRebellionSession(app, REBELS_HUMAN);
-    let res = await api(app).get('/api/sessions');
-    expect(ids(res.body)).toEqual([newer.sessionId, older.sessionId]);
-
-    const m = movable('empire');
-    const moved = await postCommand(
-      app,
-      older.sessionId,
-      moveEnv('empire', 1, [m.pieceId], m.from, m.adjacent),
-    );
-    expect(moved.status).toBe(200);
-
-    res = await api(app).get('/api/sessions');
-    const list = ListSessionsResponseSchema.parse(res.body);
-    expect(ids(list)).toEqual([older.sessionId, newer.sessionId]);
-    expect(list[0]?.version).toBe(2);
-    expect(Date.parse(list[0]!.updatedAt)).toBeGreaterThan(Date.parse(list[0]!.createdAt));
-  });
-
   it('TC-SES-16 (review #1): a corrupt saved session is skipped in the list; GET → 500', async () => {
     const healthy = await createRebellionSession(app, EMPIRE_AI);
     const broken = await createRebellionSession(app, REBELS_HUMAN);
@@ -355,6 +341,130 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
   it('TC-SES-18 (TC-API-10): ?viewer=rebels is ignored — still the empire view', async () => {
     const { sessionId } = await createRebellionSession(app, EMPIRE_AI);
     const res = await api(app).get(`/api/sessions/${sessionId}?viewer=rebels`);
+    expect(res.status).toBe(200);
+    const view = PlayerViewPlayerSchema.parse(SessionResponseSchema.parse(res.body).view);
+    expect(view.viewer).toBe('empire');
+    expect(view.rebelBase.systemId).toBeNull();
+  });
+});
+
+/**
+ * SWR-005 W6a (Q-1): mock-v1 boards, details and commands on the seeded SWR-004 rows (frozen v2 snapshot;
+ * real clock — the seeded `updatedAt` values are in the past).
+ */
+describe('sessions endpoints on seeded mock-v1 rows', () => {
+  let db: TestDb;
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    db = await createSeededDb();
+    app = await startApp(db.url);
+  });
+
+  afterEach(async () => {
+    await stopApp(app, db);
+  });
+
+  it("TC-SES-01 (TC-API-03, seeded): legal MOVE_PIECES actions only for the viewer's own pieces", async () => {
+    for (const row of [SEEDED.rebelsAi, SEEDED.empireAi]) {
+      const res = await api(app).get(`/api/sessions/${row.id}`);
+      expect(res.status).toBe(200);
+      const view = playerView(res.body.view);
+      const owners = new Set(
+        view.legalActions
+          .filter((a) => a.type === 'MOVE_PIECES')
+          .map((a) => view.pieces.find((p) => p.id === a.pieceId)?.owner),
+      );
+      expect([...owners]).toEqual([view.viewer]);
+    }
+  });
+
+  it('TC-SES-07 (seeded): GET → { sessionId, gameId, status, settings, view }; MOVE_PIECES only empire pieces', async () => {
+    const row = SEEDED.empireAi;
+    const res = await api(app).get(`/api/sessions/${row.id}`);
+    expect(res.status).toBe(200);
+    const body = SessionResponseSchema.parse(res.body);
+    expect(Object.keys(res.body).sort()).toEqual([
+      'gameId',
+      'sessionId',
+      'settings',
+      'status',
+      'view',
+    ]);
+    expect(body).toMatchObject({ sessionId: row.id, gameId: R, status: 'prototype' });
+    const view = playerView(body.view);
+    expect(body.settings).toEqual(view.settings);
+    expect(view.version).toBe(row.version);
+    for (const action of view.legalActions) {
+      if (action.type === 'MOVE_PIECES') {
+        expect(view.pieces.find((p) => p.id === action.pieceId)?.owner).toBe('empire');
+      }
+    }
+  });
+
+  it('TC-SES-08 (seeded): exact mock-v1 details, updatedAt desc', async () => {
+    const res = await api(app).get('/api/sessions');
+    const list = ListSessionsResponseSchema.parse(res.body);
+    expect(ids(list)).toEqual([SEEDED.hotseat.id, SEEDED.empireAi.id, SEEDED.rebelsAi.id]);
+    const mock = {
+      rulesEngine: 'mock-v1',
+      winner: null,
+      reputation: null,
+      ruleset: 'base',
+      gameMode: 'digital',
+    };
+    expect(list[0]?.details).toEqual({
+      ...mock,
+      playerFaction: 'rebels',
+      opponentFaction: 'empire',
+      opponentType: 'human',
+      aiDifficulty: null,
+      round: 1,
+      phase: 'assignment',
+    });
+    expect(list[1]?.details).toEqual({
+      ...mock,
+      playerFaction: 'empire',
+      opponentFaction: 'rebels',
+      opponentType: 'ai',
+      aiDifficulty: 'hard',
+      round: 1,
+      phase: 'assignment',
+    });
+    expect(list[2]?.details).toEqual({
+      ...mock,
+      playerFaction: 'rebels',
+      opponentFaction: 'empire',
+      opponentType: 'ai',
+      aiDifficulty: 'normal',
+      round: 1,
+      phase: 'command',
+    });
+    expect(res.text).not.toMatch(/"state"|"view"|"setup"|"pieces"|"rebelBase"/);
+  });
+
+  it('TC-SES-11: a command moves the older session to the top; version + 1', async () => {
+    const older = SEEDED.rebelsAi;
+    let res = await api(app).get('/api/sessions');
+    expect(ids(res.body).at(-1)).toBe(older.id);
+
+    const m = movableIn(older, 'rebels');
+    const moved = await postCommand(
+      app,
+      older.id,
+      moveEnv('rebels', older.version, [m.pieceId], m.from, m.adjacent),
+    );
+    expect(moved.status).toBe(200);
+
+    res = await api(app).get('/api/sessions');
+    const list = ListSessionsResponseSchema.parse(res.body);
+    expect(ids(list)).toEqual([older.id, SEEDED.hotseat.id, SEEDED.empireAi.id]);
+    expect(list[0]?.version).toBe(older.version + 1);
+    expect(Date.parse(list[0]!.updatedAt)).toBeGreaterThan(Date.parse(list[0]!.createdAt));
+  });
+
+  it('TC-SES-18 (TC-API-10, seeded): ?viewer=rebels is ignored — still the empire view, hidden types masked', async () => {
+    const res = await api(app).get(`/api/sessions/${SEEDED.empireAi.id}?viewer=rebels`);
     expect(res.status).toBe(200);
     const view = playerView(SessionResponseSchema.parse(res.body).view);
     expect(view.viewer).toBe('empire');

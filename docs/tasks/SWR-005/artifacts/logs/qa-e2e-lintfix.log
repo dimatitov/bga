@@ -1,0 +1,8 @@
+$ pnpm exec eslint e2e --max-warnings=0
+EXIT=0
+$ pnpm exec prettier --check e2e
+Checking formatting...
+All matched files use Prettier code style!
+EXIT=0
+$ npx tsc -p e2e/tsconfig.json
+EXIT=0

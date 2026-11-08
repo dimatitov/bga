@@ -221,6 +221,7 @@ describe('ServerGameModule', () => {
             },
       parseStoredSetup: (raw) => raw as { start: number },
       initialStatus: () => 'active',
+      statusOf: (s) => (s.n >= 3 ? 'completed' : 'active'),
       publicSettings: (setup) => ({ start: setup.start }),
       createInitialState: (setup, ctx) => ({
         state: { id: ctx.sessionId, version: 1, n: setup.start },
@@ -251,6 +252,16 @@ describe('ServerGameModule', () => {
     expect(m.toPlayerView(state, { status: 'prototype' })).toEqual({ n: 2, status: 'prototype' });
     const res = m.applyCommand(state, {}, { now: AT });
     expect(res.ok && m.summarize(res.state)).toEqual({ n: 3 });
+    // SWR-005 AM-BE-1: the status after a command comes from the module (the platform does not interpret it).
+    expect(m.statusOf(state)).toBe('active');
+    expect(res.ok && m.statusOf(res.state)).toBe('completed');
+  });
+
+  it('statusOf is a REQUIRED member of ServerGameModule (SWR-005, AM-BE-1)', () => {
+    type HasStatusOf = 'statusOf' extends keyof ServerGameModule ? true : false;
+    type Required = undefined extends ServerGameModule['statusOf'] ? false : true;
+    const checks: [HasStatusOf, Required] = [true, true];
+    expect(checks).toEqual([true, true]);
   });
 
   it('SetupParseResult distinguishes invalid (400) from unsupported (422)', () => {

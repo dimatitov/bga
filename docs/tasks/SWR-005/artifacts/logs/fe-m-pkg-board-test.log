@@ -1,0 +1,10 @@
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  2 passed (2)
+      Tests  12 passed (12)
+   Start at  17:20:35
+   Duration  828ms (transform 545ms, setup 0ms, import 893ms, tests 69ms, environment 0ms)
+
+exit 0

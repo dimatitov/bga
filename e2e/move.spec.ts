@@ -1,8 +1,9 @@
 // Scenario 5 — moving pieces: TC-E2E-17, 18, 18b, 19, 20, 21, 34 (AC-7, AC-8, AC-10).
 // SWR-003: sessions API (`POST /api/sessions/:id/commands`) and `/sessions/:id` (test-cases.md §8.1); expectations unchanged.
+// SWR-005 (Q-1, TR-4): mock-rules regression — new sessions are core-v1, so every test runs on a SEEDED legacy row
+// (frozen SWR-004 v2 snapshot «Empire vs AI hard, round 1, assignment», cloned under a new id, `support/seed.ts`).
 import { expect, test, type Page } from '@playwright/test';
 import {
-  createSession,
   enemyPieces,
   getView,
   pickMove,
@@ -15,12 +16,13 @@ import {
   dbg,
   expectNoCommandSent,
   mouseDrag,
-  openSession,
+  openLegacy,
   openSidebarTab,
   version,
   waitForCommand,
   waitViewportStable,
 } from './support/board';
+import { seedLegacyV2 } from './support/seed';
 import { T } from './support/testids';
 
 let sessionId: string;
@@ -28,11 +30,11 @@ let view: PlayerView;
 let move: MoveFixture;
 
 test.beforeEach(async ({ page, request }) => {
-  const created = await createSession(request);
-  sessionId = created.sessionId;
-  view = created.view;
+  sessionId = (await seedLegacyV2('empireAi')).sessionId;
+  view = await getView(request, sessionId);
+  expect(view.rulesEngine).toBe('mock-v1');
   move = pickMove(view);
-  await openSession(page, sessionId);
+  await openLegacy(page, sessionId);
 });
 
 async function selectPiece(page: Page, pieceId: string) {

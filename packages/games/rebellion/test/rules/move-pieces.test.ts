@@ -1,5 +1,5 @@
 import { ERROR_MESSAGE_KEYS } from '@bga/platform';
-import { REBELLION_ERROR_MESSAGE_KEYS, type GameState } from '../../src/schema';
+import { REBELLION_ERROR_MESSAGE_KEYS, type MockGameState } from '../../src/schema';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, type ApplyResult } from '../../src/rules';
 import {
@@ -31,8 +31,8 @@ function fixture() {
 }
 
 function expectRejected(
-  state: GameState,
-  snapshot: GameState,
+  state: MockGameState,
+  snapshot: MockGameState,
   result: ApplyResult,
   code: string,
   messageKey: string,

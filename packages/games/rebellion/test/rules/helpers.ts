@@ -1,8 +1,9 @@
 import {
   settingsFromSetupInput,
   type CommandEnvelope,
+  type CoreGameState,
   type Faction,
-  type GameState,
+  type MockGameState,
   type Piece,
   type RebellionSettings,
 } from '../../src/schema';
@@ -34,7 +35,7 @@ export const REBELS_VS_HUMAN: RebellionSettings = settingsFromSetupInput({
   ...BASE,
 });
 
-export function newGame(setup: RebellionSettings = EMPIRE_VS_AI): GameState {
+export function newGame(setup: RebellionSettings = EMPIRE_VS_AI): MockGameState {
   return createGame(setup, SCENARIO, CREATE_CTX);
 }
 
@@ -60,7 +61,7 @@ export function mulberry32(seed: number): () => number {
 }
 
 export function env(
-  state: GameState,
+  state: Pick<MockGameState | CoreGameState, 'activeSide' | 'version'>,
   command: CommandEnvelope['command'],
   overrides: Partial<Pick<CommandEnvelope, 'actor' | 'expectedVersion'>> = {},
 ): CommandEnvelope {
@@ -79,20 +80,20 @@ export const ADVANCE = { type: 'ADVANCE_PHASE' as const };
 export const END_TURN = { type: 'END_TURN' as const };
 export const ACCEPT = { type: 'ACCEPT_HANDOFF' as const };
 
-export function piece(state: GameState, id: string): Piece {
+export function piece(state: MockGameState, id: string): Piece {
   const found = state.pieces.find((p) => p.id === id);
   if (!found) throw new Error(`fixture: no piece ${id}`);
   return found;
 }
 
-export function adjacent(state: GameState, systemId: string): string[] {
+export function adjacent(state: MockGameState, systemId: string): string[] {
   const sys = state.systems.find((s) => s.id === systemId);
   if (!sys) throw new Error(`fixture: no system ${systemId}`);
   return sys.adjacentSystemIds;
 }
 
 /** A system that is neither `systemId` nor adjacent to it. */
-export function pickNonAdjacent(state: GameState, systemId: string): string {
+export function pickNonAdjacent(state: MockGameState, systemId: string): string {
   const adj = adjacent(state, systemId);
   const found = state.systems.find((s) => s.id !== systemId && !adj.includes(s.id));
   if (!found) throw new Error(`fixture: every system is adjacent to ${systemId}`);
@@ -101,7 +102,7 @@ export function pickNonAdjacent(state: GameState, systemId: string): string {
 
 /** First system with ≥ 2 pieces of `owner` (R-3), with those piece ids. */
 export function stackOf(
-  state: GameState,
+  state: MockGameState,
   owner: Faction,
 ): { systemId: string; pieceIds: string[] } {
   for (const sys of state.systems) {
@@ -114,7 +115,7 @@ export function stackOf(
 }
 
 /** First hidden piece of `owner`. */
-export function hiddenPieceOf(state: GameState, owner: Faction): Piece {
+export function hiddenPieceOf(state: MockGameState, owner: Faction): Piece {
   const found = state.pieces.find((p) => p.owner === owner && p.hidden === true);
   if (!found) throw new Error(`fixture: no hidden ${owner} piece`);
   return found;

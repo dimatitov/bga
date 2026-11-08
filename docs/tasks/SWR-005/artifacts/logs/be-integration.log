@@ -1,0 +1,217 @@
+# SWR-005 INTEGRATION (backend-lead) — 2026-11-08T14:38:09Z; load averages: 7.20 8.21 9.81
+
+===== $ pnpm lint  [start 14:38:09; load averages: 7.20 8.21 9.81]
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+[warn] e2e/core-hidden-base.spec.ts
+[warn] e2e/core-turn.spec.ts
+[warn] e2e/core-victory.spec.ts
+[warn] e2e/hot-seat.spec.ts
+[warn] e2e/legacy.spec.ts
+[warn] e2e/support/a11y.ts
+[warn] e2e/support/api.ts
+[warn] e2e/support/board.ts
+[warn] e2e/support/seed.ts
+[warn] e2e/zz-probe.spec.ts
+[warn] Code style issues found in 10 files. Run Prettier with --write to fix.
+ ELIFECYCLE  Command failed with exit code 1.
+===== exit 1  (pnpm lint) [end 14:38:27]
+
+===== $ pnpm typecheck  [start 14:38:27; load averages: 6.98 8.08 9.72]
+
+> board-game-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/web typecheck$ tsc -b
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/api typecheck: Done
+apps/web typecheck: Done
+e2e/architecture.spec.ts(36,17): error TS2339: Property 'pieces' does not exist on type 'CorePlayerView'.
+e2e/architecture.spec.ts(36,32): error TS7006: Parameter 'p' implicitly has an 'any' type.
+e2e/architecture.spec.ts(36,77): error TS7006: Parameter 'p' implicitly has an 'any' type.
+e2e/architecture.spec.ts(38,30): error TS2339: Property 'pieces' does not exist on type 'CorePlayerView'.
+e2e/architecture.spec.ts(38,43): error TS7006: Parameter 'p' implicitly has an 'any' type.
+e2e/board-view.spec.ts(17,15): error TS2339: Property 'systems' does not exist on type 'CorePlayerView'.
+e2e/board-view.spec.ts(18,24): error TS2339: Property 'systems' does not exist on type 'CorePlayerView'.
+e2e/board-view.spec.ts(28,14): error TS2339: Property 'pieces' does not exist on type 'CorePlayerView'.
+e2e/board-view.spec.ts(28,27): error TS7006: Parameter 'p' implicitly has an 'any' type.
+e2e/board-view.spec.ts(33,24): error TS2339: Property 'pieces' does not exist on type 'CorePlayerView'.
+e2e/game-setup.spec.ts(217,27): error TS2345: Argument of type 'CorePlayerView' is not assignable to parameter of type 'PlayerView'.
+  Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/keyboard.spec.ts(14,25): error TS2345: Argument of type 'CorePlayerView' is not assignable to parameter of type 'PlayerView'.
+  Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/persistence.spec.ts(33,25): error TS2345: Argument of type 'CorePlayerView' is not assignable to parameter of type 'PlayerView'.
+  Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/persistence.spec.ts(63,25): error TS2345: Argument of type 'CorePlayerView' is not assignable to parameter of type 'PlayerView'.
+  Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/screenshots.spec.ts(102,25): error TS2345: Argument of type 'CorePlayerView' is not assignable to parameter of type 'PlayerView'.
+  Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/screenshots.spec.ts(108,46): error TS2345: Argument of type 'CorePlayerView' is not assignable to parameter of type 'PlayerView'.
+  Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/selection.spec.ts(19,3): error TS2739: Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+e2e/zoom-pan.spec.ts(21,3): error TS2739: Type 'CorePlayerView' is missing the following properties from type 'PlayerView': systems, pieces
+ ELIFECYCLE  Command failed with exit code 2.
+===== exit 2  (pnpm typecheck) [end 14:38:48]
+
+===== $ pnpm --filter @bga/platform test  [start 14:38:48; load averages: 7.03 8.03 9.67]
+
+> @bga/platform@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+
+ Test Files  4 passed (4)
+      Tests  65 passed (65)
+   Start at  17:38:50
+   Duration  743ms (transform 791ms, setup 0ms, import 1.29s, tests 101ms, environment 0ms)
+
+===== exit 0  (pnpm --filter @bga/platform test) [end 14:38:50]
+
+===== $ pnpm --filter @bga/game-rebellion test  [start 14:38:50; load averages: 7.43 8.09 9.68]
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  41 passed (41)
+      Tests  396 passed (396)
+   Start at  17:38:52
+   Duration  9.62s (transform 4.58s, setup 0ms, import 17.88s, tests 23.15s, environment 5ms)
+
+===== exit 0  (pnpm --filter @bga/game-rebellion test) [end 14:39:01]
+
+===== $ pnpm --filter @bga/api test  [start 14:39:01; load averages: 8.00 8.20 9.70]
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 47029  - [39m11/08/2026, 5:39:10 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=bfcd0cfb-e098-4a14-a5d0-6e9fa98a64a0 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47682  - [39m11/08/2026, 5:39:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5d7287a6-2971-4133-9cf2-417b49cbaef5 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 47689  - [39m11/08/2026, 5:39:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 47689  - [39m11/08/2026, 5:39:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 47689  - [39m11/08/2026, 5:39:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 47846  - [39m11/08/2026, 5:39:30 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=28d099c6-7c09-479e-a2a0-a39c167dcdb5 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 47846  - [39m11/08/2026, 5:39:30 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=28d099c6-7c09-479e-a2a0-a39c167dcdb5 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 47889  - [39m11/08/2026, 5:39:31 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 47995  - [39m11/08/2026, 5:39:33 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 47995  - [39m11/08/2026, 5:39:33 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  26 passed | 1 skipped (27)
+      Tests  221 passed | 1 skipped (222)
+   Start at  17:39:03
+   Duration  64.35s (transform 4.99s, setup 0ms, import 36.00s, tests 286.59s, environment 5ms)
+
+===== exit 0  (pnpm --filter @bga/api test) [end 14:40:07]
+
+===== $ pnpm build  [start 14:40:07; load averages: 11.86 9.51 10.09]
+
+> board-game-ai@ build /Users/dimatitov/WebstormProjects/Game automa
+> pnpm -r run build
+
+Scope: 5 of 6 workspace projects
+packages/platform build$ tsc -b
+packages/platform build: Done
+packages/games/forbidden-stars build$ tsc -b
+packages/games/rebellion build$ tsc -b
+packages/games/forbidden-stars build: Done
+packages/games/rebellion build: Done
+apps/api build$ nest build
+apps/web build$ tsc -b && vite build
+apps/api build: Done
+apps/web build: vite v8.3.6 building client environment for production...
+apps/web build: transforming...
+apps/web build: ✓ 1182 modules transformed.
+apps/web build: rendering chunks...
+apps/web build: computing gzip size...
+apps/web build: dist/index.html                             0.68 kB │ gzip:   0.37 kB
+apps/web build: dist/assets/FactionEmblem-Be9WdHGg.js       0.35 kB │ gzip:   0.27 kB
+apps/web build: dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+apps/web build: dist/assets/SetupScreen-fLA8xNDI.js         6.60 kB │ gzip:   2.29 kB
+apps/web build: dist/assets/TableScreen-E2hJFxR9.js       121.61 kB │ gzip:  34.74 kB
+apps/web build: dist/assets/index-Cv5hV24P.js             125.13 kB │ gzip:  39.31 kB
+apps/web build: dist/assets/vendor-DIbOl8aa.js            186.48 kB │ gzip:  54.97 kB
+apps/web build: dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+apps/web build: dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+apps/web build: dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+apps/web build: ✓ built in 381ms
+apps/web build: Done
+===== exit 0  (pnpm build) [end 14:40:20]
+
+===== $ pnpm check:bundle  [start 14:40:20; load averages: 11.55 9.53 10.09]
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 10 files in apps/web/dist, 5 rules (board-debug-hook, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-NLljYd
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 770 sources, 23 game modules, only definition/schema/board/assets
+===== exit 0  (pnpm check:bundle) [end 14:40:22]
+
+# Re-run after adding test/schema/web-safe-no-base-choice.test.ts (backend-lead seam) and editing docs/architecture/*.md
+
+===== $ pnpm --filter @bga/game-rebellion typecheck  [start 14:40:55]
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+===== exit 0  (pnpm --filter @bga/game-rebellion typecheck) [end 14:41:00]
+
+===== $ pnpm --filter @bga/game-rebellion lint  [start 14:41:00]
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+===== exit 0  (pnpm --filter @bga/game-rebellion lint) [end 14:41:03]
+
+===== $ pnpm --filter @bga/game-rebellion test  [start 14:41:03]
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  42 passed (42)
+      Tests  404 passed (404)
+   Start at  17:41:05
+   Duration  10.77s (transform 4.63s, setup 0ms, import 18.47s, tests 26.91s, environment 5ms)
+
+===== exit 0  (pnpm --filter @bga/game-rebellion test) [end 14:41:16]
+
+===== $ npx prettier --check docs/architecture/application.md docs/architecture/adding-a-game.md packages/games/rebellion/test/schema/web-safe-no-base-choice.test.ts  [start 14:41:16]
+Checking formatting...
+All matched files use Prettier code style!
+===== exit 0  (npx prettier --check docs/architecture/application.md docs/architecture/adding-a-game.md packages/games/rebellion/test/schema/web-safe-no-base-choice.test.ts) [end 14:41:17]

@@ -1,0 +1,197 @@
+# SWR-005 W6a — 2026-11-08T13:48:11Z
+
+$ pnpm --filter @bga/api exec vitest run test/{hotseat,commands,hidden-info,persistence,sessions,concurrency,routes,rebellion-contract,upcast-v1,upcast-v2}.int.test.ts
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-01: defaults → 201 {sessionId, gameId, status, settings, view}; row status/key/v2 state; GAME_CREATED 1937ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted 1836ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01 (TC-API-03): rebellion vs human — settings, base visible (legal actions: seeded block below) 313ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > empty setup 167ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > setup not an object 69ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > unknown faction 50ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-02 / TC-I-05 / TC-I-06: opponentFaction = opponentOf(playerFaction) in POST, GET and list details 515ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > legacy faction id 102ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > unknown opponent type 55ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-03: human opponent — aiDifficulty omitted or null → stored and returned as null 126ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > unknown difficulty 40ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > extra key 58ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > legacy faction 95ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown faction 51ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > SWR-003 setup shape 76ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-02: invalid Rebellion setup → 400 VALIDATION with paths under setup, nothing persisted > human with difficulty (A-7) 43ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown opponentType 88ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown difficulty 33ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown ruleset 32ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > empty body 31ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > no gameId 73ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown mode 148ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > aiFaction 56ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > gameId is a number 143ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > gameId empty 90ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > opponentFaction 117ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > legacy humanFaction 127ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > gameId malformed 164ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > extra key 45ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > legacy opponent 65ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > SWR-002 body (setup only) 64ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > no setup key → 400 from the body schema, before the game lookup (Q-3) 49ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > human + difficulty (TC-I-09) 153ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-03: malformed body → 400 VALIDATION, nothing persisted > malformed JSON (no parser text in the body) 65ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > ai + null difficulty (Q-6) 110ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > no ruleset (Q-7) 110ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > no gameMode (Q-7) 62ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > no playerFaction 96ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-04/05/06: unknown game → 404 gameNotFound; Forbidden Stars → 422 GAME_UNAVAILABLE (before setup validation) 230ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-API-05: AI without difficulty defaults to normal (A-7), stored setup is the parsed v2 form (SWR-004) 39ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > extra top-level field (aiFaction) → 400 from the body schema 80ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-07: GET /api/sessions/:id → { sessionId, gameId, view }; unknown / over-long id → 404 sessionNotFound 177ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-11 / TC-I-12 / TC-I-13: unsupported ruleset / mode → 422 SETUP_UNSUPPORTED; schema errors first 147ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-14: order 400 body → 404 → 422 GAME_UNAVAILABLE → idempotency → 400 setup → 422 SETUP_UNSUPPORTED 121ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-08: GET /api/sessions → strict SessionSummary list, updatedAt desc, no state 289ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > Rebellion idempotency: replay 200 + header; another faction → 409; key not burnt by 400/422 (TC-I-15/16/22/23) 197ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-20 (Rebellion): 10 parallel identical POSTs → one session, never 500 542ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-09 (A-18): at most 20 sessions listed, most recent first — with and without gameId 788ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-38 (creation): status is prototype in the POST / GET / list responses and in the row 156ms
+[Nest] 24235  - 11/08/2026, 4:48:29 PM   ERROR [ApiExceptionFilter] sessionId=session-002 code=INTERNAL status=500 error=SyntaxError
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-10 (Q-5, R-2): gameId filter edge cases 151ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-SES-15 / TC-ARCH-03: routes are exactly the spec table; mutating only POST /api/sessions(/:id/commands) 12595ms
+stdout | test/hotseat.int.test.ts > hot-seat (human vs human on one device, seeded mock-v1 row) > TC-I-25 / TC-I-26 / TC-I-27: END_TURN → bare handoff view (POST, GET, ?viewer=, list)
+[hotseat-leak] checked 52 scenario ids/typeKeys: none in the handoff body
+
+ ✓ test/concurrency.int.test.ts > TC-API-20: optimistic concurrency (seeded mock-v1 rows) > two parallel commands with the same expectedVersion → exactly one 200 and one 409 338ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-14: legal move → 200, version + 1, piece moved, PIECES_MOVED persisted 12809ms
+ ✓ test/persistence.int.test.ts > TC-API-21: state survives an app restart on the same DB file > app#2 returns the same view as app#1 left it (seeded mock-v1 row after a move and ADVANCE_PHASE) 13042ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: put /api/sessions/:id → 404 unified body, state unchanged 293ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: patch /api/sessions/:id → 404 unified body, state unchanged 221ms
+ ✓ test/hotseat.int.test.ts > hot-seat (human vs human on one device, seeded mock-v1 row) > TC-I-25 / TC-I-26 / TC-I-27: END_TURN → bare handoff view (POST, GET, ?viewer=, list) 12962ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-15: non-adjacent target → 422 errors.notAdjacent, nothing changes 256ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: delete /api/sessions/:id → 404 unified body, state unchanged 75ms
+ ✓ test/hotseat.int.test.ts > hot-seat (human vs human on one device, seeded mock-v1 row) > TC-I-28: during a handoff — other side → notYourTurn; active side non-ACCEPT → handoffPending; nothing changes 272ms
+ ✓ test/persistence.int.test.ts > TC-API-21: state survives an app restart on the same DB file > a new session: app#2 returns the same response as app#1 (engine-independent) 277ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-16: expectedVersion 0 ≠ 2 → 409 with currentVersion, nothing changes 116ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-16: expectedVersion 1 ≠ 2 → 409 with currentVersion, nothing changes 89ms
+ ✓ test/concurrency.int.test.ts > TC-API-20: optimistic concurrency (seeded mock-v1 rows) > repeated races keep version and event rows consistent 464ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-SES-14: the SWR-002 /api/games* routes are gone → 404 unified body, nothing written 97ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: unknown route → 404 unified body 19ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-16: expectedVersion 3 ≠ 2 → 409 with currentVersion, nothing changes 30ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-16: stale version after a successful move → 409 currentVersion = V0 + 1 46ms
+ ✓ test/hotseat.int.test.ts > hot-seat (human vs human on one device, seeded mock-v1 row) > TC-I-29: ACCEPT_HANDOFF by the Empire → Empire player view; base and hidden rebel types masked 122ms
+ ✓ test/hotseat.int.test.ts > hot-seat (human vs human on one device, seeded mock-v1 row) > TC-I-30: Empire active, no handoff — a Rebels command → 422 notYourTurn, state unchanged 61ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > no command 55ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-25: 400/404/409/422 bodies carry only the contract error 163ms
+[Nest] 24238  - 11/08/2026, 4:48:37 PM   ERROR [ApiExceptionFilter] sessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError
+[Nest] 24238  - 11/08/2026, 4:48:37 PM   ERROR [ApiExceptionFilter] sessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > unknown command type 160ms
+[Nest] 24238  - 11/08/2026, 4:48:37 PM   ERROR [ApiExceptionFilter] sessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-25 / TC-SES-16: corrupted Session.state → 500 INTERNAL without internals 193ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-25: schema-valid JSON but wrong snapshot shape → 500, not 400 124ms
+ ✓ test/hotseat.int.test.ts > hot-seat (human vs human on one device, seeded mock-v1 row) > TC-I-32: two parallel ACCEPT_HANDOFF with one expectedVersion → exactly one 200 and one 409 222ms
+ ✓ test/hotseat.int.test.ts > TC-I-31: END_TURN / ACCEPT_HANDOFF in an AI game → 422 handoffNotAvailable (seeded mock-v1 row) > rejected, nothing changes; the AI side → notYourSide 132ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > pieceIds not an array 123ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > empty pieceIds 143ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > duplicate pieceIds 102ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > expectedVersion as string 37ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > unknown actor 185ms
+ ✓ test/hotseat.int.test.ts > TC-I-24: restart on the same DB file (AI game + human game in handoff + idempotent replay) > app#2 returns identical settings/status/views; the list is the same; the key replays the same session 589ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > extra key 208ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > empty body 117ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-17: malformed envelope → 400 VALIDATION, nothing changes > malformed JSON 226ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-18: unknown session → 404 sessionNotFound for valid and schema-invalid bodies (404 first, A-5) 138ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > enemy piece 151ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > unknown piece 135ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > from = to 57ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > not your side 73ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > unknown system 31ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-19: semantic rejections → 422 with messageKey, nothing changes > piece not in fromSystem 26ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > A-5 order: 409 wins over 422; 400 wins over 409 161ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-22: ADVANCE_PHASE ×3 cycles phases and round; MOVE accepted in any phase 272ms
+ ✓ test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-26: Session.state.log equals SessionEvent rows (A-15) 287ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-16 (review #1): a corrupt saved session is skipped in the list; GET → 500 94ms
+ ✓ test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-18 (TC-API-10): ?viewer=rebels is ignored — still the empire view 41ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-35 (creation): no forbidden field in POST / replay / 409 / GET / list / setup errors 201ms
+ ✓ test/sessions.int.test.ts > sessions endpoints on seeded mock-v1 rows > TC-SES-01 (TC-API-03, seeded): legal MOVE_PIECES actions only for the viewer's own pieces 11497ms
+ ✓ test/sessions.int.test.ts > sessions endpoints on seeded mock-v1 rows > TC-SES-07 (seeded): GET → { sessionId, gameId, status, settings, view }; MOVE_PIECES only empire pieces 74ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion — commands on seeded mock-v1 rows > TC-I-38 / TC-M-14: status is prototype in every response and does not change after commands (Q-9) 11609ms
+ ✓ test/sessions.int.test.ts > sessions endpoints on seeded mock-v1 rows > TC-SES-08 (seeded): exact mock-v1 details, updatedAt desc 33ms
+ ✓ test/sessions.int.test.ts > sessions endpoints on seeded mock-v1 rows > TC-SES-11: a command moves the older session to the top; version + 1 134ms
+ ✓ test/sessions.int.test.ts > sessions endpoints on seeded mock-v1 rows > TC-SES-18 (TC-API-10, seeded): ?viewer=rebels is ignored — still the empire view, hidden types masked 31ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion — commands on seeded mock-v1 rows > TC-I-35 (commands): no forbidden field in command responses incl. errors and handoff 200ms
+ ✓ test/upcast-v2.int.test.ts > SWR-004 DB with v2 data → API (mock-v1, lazy upcast v2 → v3) > the fixture really is v2 (no rulesEngine; AI-rebels, AI-empire, hot-seat in a handoff) 12122ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > new sessions (engine-independent) > TC-API-11 (creation): an Empire player does not get the stored rebel base in the POST / GET response 479ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > seeded mock-v1 rows > TC-API-11: empire never sees the rebel base or hidden typeKeys in any response 3131ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > seeded mock-v1 rows > TC-API-12: a rebellion player sees the real base system 35ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > seeded mock-v1 rows > TC-API-13: hidden rebel piece — id/systemId visible, typeKey "unknown" for empire 26ms
+ ✓ test/upcast-v2.int.test.ts > SWR-004 DB with v2 data → API (mock-v1, lazy upcast v2 → v3) > TC-M-08: GET list / GET :id → 200 on mock-v1; hot-seat in a handoff stays a handoff; reads write nothing 6783ms
+ ✓ test/upcast-v2.int.test.ts > SWR-004 DB with v2 data → API (mock-v1, lazy upcast v2 → v3) > TC-M-09 / TC-M-14: one mock command per row → 200; row becomes v3 mock-v1, setup v2 unchanged, status prototype; views survive a restart 2935ms
+ ✓ test/hotseat.int.test.ts > TC-M-04: a migrated SWR-003 human game supports hot-seat (Q-17) > END_TURN → handoff → ACCEPT_HANDOFF on an upcast v1 row 14455ms
+ ✓ test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > the fixture really is v1 (legacy faction in setup, state and event actors) 23445ms
+ ✓ test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > GET list / GET :id: v2 factions everywhere, views equal the upcast state; rows untouched by reads 11863ms
+ ✓ test/upcast-v1.int.test.ts > SWR-003 DB with v1 data → API (lazy upcast v1 → v2) > a command on a v1 row → 200; the snapshot is written as v3 mock-v1 (SWR-005); old mirror rows keep their actor (Q-16) 13005ms
+
+ Test Files  10 passed (10)
+      Tests  117 passed (117)
+   Start at  16:48:15
+   Duration  56.14s (transform 6.45s, setup 0ms, import 23.88s, tests 193.49s, environment 1ms)
+
+exit: 0
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit: 0
+
+$ pnpm --filter @bga/api lint
+
+> @bga/api@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> eslint . --max-warnings=0
+
+exit: 0
+
+$ grep -n "ADVANCE_PHASE\|END_TURN" apps/api/test/*.ts
+apps/api/test/commands.int.test.ts:222:  it('TC-API-22: ADVANCE_PHASE ×3 cycles phases and round; MOVE accepted in any phase', async () => {
+apps/api/test/dev-db-upgrade.int.test.ts:85:      console.log(`[dev-db-upgrade] ADVANCE_PHASE ${target.id} actor=${actor} → ${res.status}`);
+apps/api/test/persistence.int.test.ts:17:  it('app#2 returns the same view as app#1 left it (seeded mock-v1 row after a move and ADVANCE_PHASE)', async () => {
+apps/api/test/hotseat.int.test.ts:2: * SWR-004 hot-seat through the API (AC-14, TC-I-24..32, TC-M-04): after END_TURN the server sends only the
+apps/api/test/hotseat.int.test.ts:62: * v3, already in a handoff to the Empire after the Rebels' END_TURN) and the AI row `empireAi`; core-v1
+apps/api/test/hotseat.int.test.ts:82:  it('TC-I-25 / TC-I-26 / TC-I-27: END_TURN → bare handoff view (POST, GET, ?viewer=, list)', async () => {
+apps/api/test/hotseat.int.test.ts:165:    expect(view.legalActions.some((a) => a.type === 'END_TURN')).toBe(true);
+apps/api/test/hotseat.int.test.ts:208:describe('TC-I-31: END_TURN / ACCEPT_HANDOFF in an AI game → 422 handoffNotAvailable (seeded mock-v1 row)', () => {
+apps/api/test/hotseat.int.test.ts:310:    it('END_TURN → handoff → ACCEPT_HANDOFF on an upcast v1 row', async () => {
+apps/api/test/upcast-v2.int.test.ts:35:/** One mock-v1 command per seeded row (move / ADVANCE_PHASE / ACCEPT_HANDOFF). */
+
+$ grep -n "advanceEnv(\|endTurnEnv(" apps/api/test/*.ts  (helper call sites)
+apps/api/test/concurrency.int.test.ts:35:      postCommand(app, row.id, advanceEnv('empire', v0)),
+apps/api/test/concurrency.int.test.ts:53:        [0, 1, 2].map(() => postCommand(app, row.id, advanceEnv('rebels', v))),
+apps/api/test/commands.int.test.ts:112:    const res = await postCommand(app, sessionId, advanceEnv('empire', V0));
+apps/api/test/commands.int.test.ts:182:      ['not your side', () => advanceEnv('rebels', V0), 'errors.notYourSide'],
+apps/api/test/commands.int.test.ts:218:    const res409b = await postCommand(app, sessionId, advanceEnv('rebels', 7));
+apps/api/test/commands.int.test.ts:226:      const res = await postCommand(app, sessionId, advanceEnv('empire', version));
+apps/api/test/commands.int.test.ts:248:    res = await postCommand(app, sessionId, advanceEnv('empire', V0 + 4));
+apps/api/test/commands.int.test.ts:264:    expect((await postCommand(app, sessionId, advanceEnv('empire', V0 + 1))).status).toBe(200);
+apps/api/test/commands.int.test.ts:265:    expect((await postCommand(app, sessionId, advanceEnv('empire', V0 + 2))).status).toBe(200);
+apps/api/test/dev-db-upgrade.int.test.ts:82:      const res = await postCommand(app, target.id, advanceEnv(actor, target.version));
+apps/api/test/rebellion-contract.int.test.ts:365:    const res = await postCommand(app, sessionId, advanceEnv('empire', version));
+apps/api/test/rebellion-contract.int.test.ts:379:    responses.push(await postCommand(app, id, advanceEnv('rebels', v))); // 422 notYourTurn
+apps/api/test/rebellion-contract.int.test.ts:380:    responses.push(await postCommand(app, id, advanceEnv('empire', v))); // 422 handoffPending
+apps/api/test/rebellion-contract.int.test.ts:382:    responses.push(await postCommand(app, id, advanceEnv('empire', v + 1)));
+apps/api/test/rebellion-contract.int.test.ts:383:    responses.push(await postCommand(app, id, endTurnEnv('empire', v + 2))); // → handoff
+apps/api/test/hidden-info.int.test.ts:106:      const advanced = await postCommand(app, sessionId, advanceEnv('empire', row.version + 1));
+apps/api/test/persistence.int.test.ts:29:      const last = await postCommand(app1, sessionId, advanceEnv('empire', v0 + 1));
+apps/api/test/settings-source.int.test.ts:54:          const res = await postCommand(app, row.id, advanceEnv(actor, row.version));
+apps/api/test/settings-source.int.test.ts:116:    const cmd = await postCommand(app, bad.sessionId, advanceEnv('empire', 1));
+apps/api/test/settings-source.int.test.ts:135:    const res = await postCommand(app, s.sessionId, advanceEnv('empire', 1));
+apps/api/test/hotseat.int.test.ts:92:    const res = await postCommand(app, sessionId, endTurnEnv('empire', HS_V + 1));
+apps/api/test/hotseat.int.test.ts:140:      [advanceEnv('empire', HS_V), 'errors.handoffPending'],
+apps/api/test/hotseat.int.test.ts:141:      [endTurnEnv('empire', HS_V), 'errors.handoffPending'],
+apps/api/test/hotseat.int.test.ts:216:        await postCommand(app, sessionId, endTurnEnv('empire', version)),
+apps/api/test/hotseat.int.test.ts:228:        await postCommand(app, sessionId, endTurnEnv('rebels', version)),
+apps/api/test/hotseat.int.test.ts:265:      expect((await postCommand(app1, human, endTurnEnv('empire', HS_V + 1))).status).toBe(200);
+apps/api/test/hotseat.int.test.ts:323:        const ended = await postCommand(app, row!.id, endTurnEnv(side, row!.version));
+apps/api/test/migration.int.test.ts:146:      const res = await postCommand(app, played.id, advanceEnv(actor, played.version));
+apps/api/test/migration-swr004.int.test.ts:174:        const res = await postCommand(app, row.id, advanceEnv(actor, row.version));
+apps/api/test/upcast-v2.int.test.ts:38:  if (row.id === SEEDED.empireAi.id) return advanceEnv('empire', row.version);
+apps/api/test/routes.int.test.ts:182:      await postCommand(app, sessionId, advanceEnv('empire', ROW.version)),
+apps/api/test/upcast-v1.int.test.ts:89:      const res = await postCommand(app, played.id, advanceEnv(actor, played.version));

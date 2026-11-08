@@ -1,0 +1,65 @@
+# SWR-005 QA static checks (qa-lead) 2026-11-08T16:50:36Z
+## TC-A-04 docs/game-rules/rebellion-core-v1.md: R-n / D-n / sources
+-rw-r--r--@ 1 dimatitov  staff  6865 Nov  8 18:44 docs/game-rules/rebellion-core-v1.md
+R-1: 0
+R-2: 0
+R-3: 0
+R-4: 0
+R-5: 0
+R-6: 0
+R-7: 0
+R-8: 0
+R-9: 0
+R-10: 0
+D-1: 1
+D-2: 1
+D-3: 1
+D-4: 1
+D-5: 1
+D-6: 1
+D-7: 1
+headings:
+1:# Rebellion — движок правил `core-v1` (срез 1: раунд и активация)
+8:## Что реализовано
+10:### Компоненты
+18:### Раунд
+25:### Активация системы
+33:### База Повстанцев и победа
+40:### AI-противник
+43:## Отклонения от оригинала (осознанные, временно)
+54:## Что сверить с коробкой (PO)
+## TC-A-05 architecture docs mention core-v1 concepts (counts)
+docs/architecture/application.md rulesEngine: 8
+docs/architecture/application.md statusOf: 4
+docs/architecture/application.md core-v1: 19
+docs/architecture/application.md mock-v1: 9
+docs/architecture/application.md auto-pass: 1
+docs/architecture/application.md авто-пас: 5
+docs/architecture/application.md redact: 1
+docs/architecture/application.md handoff: 5
+docs/architecture/adding-a-game.md rulesEngine: 1
+docs/architecture/adding-a-game.md statusOf: 4
+docs/architecture/adding-a-game.md core-v1: 3
+docs/architecture/adding-a-game.md mock-v1: 1
+docs/architecture/adding-a-game.md auto-pass: 0
+docs/architecture/adding-a-game.md авто-пас: 1
+docs/architecture/adding-a-game.md redact: 0
+docs/architecture/adding-a-game.md handoff: 0
+git diff --stat (vs HEAD):
+ docs/architecture/adding-a-game.md |  24 +++++--
+ docs/architecture/application.md   | 141 +++++++++++++++++++++++++++++--------
+ 2 files changed, 131 insertions(+), 34 deletions(-)
+## TC-A-06 new/changed binary images in packages/ apps/ docs/game-rules/ (untracked or modified)
+(none)
+## TC-A-07 screenshot routing
+359: * - every screenshot belongs to a task (`saveScreenshot(page, name, task)`, default {@link CURRENT_SCREENSHOT_TASK});
+361: *   `task` is the evidence task of this run: env `SCREENSHOT_TASK` if set, otherwise {@link CURRENT_SCREENSHOT_TASK};
+364: * Regenerate old evidence deliberately: `SCREENSHOT_TASK=SWR-003 pnpm e2e` (then SWR-004 shots go to test-results).
+366:export const CURRENT_SCREENSHOT_TASK = 'SWR-005';
+370:  return process.env.SCREENSHOT_TASK?.trim() || CURRENT_SCREENSHOT_TASK;
+git status SWR-002..004 screenshots after QA e2e runs:
+(end)
+## TC-A-11 node --test scripts/ — executed inside pnpm verify (test:process): see qa-verify.log '# tests 369 / # pass 369 / # fail 0'
+2082:# tests 369
+2084:# pass 369
+2085:# fail 0

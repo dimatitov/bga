@@ -1,3 +1,6 @@
+import { copyFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+import { join } from 'node:path';
 import type { INestApplication } from '@nestjs/common';
 import { CommandErrSchema, SessionResponseSchema } from '@bga/platform';
 import { REBELLION_GAME_ID } from '@bga/game-rebellion/definition';
@@ -6,6 +9,7 @@ import {
   PlayerViewSchema,
   type CommandEnvelope,
   type Faction,
+  type MockPlayerView,
   type PlayerViewPlayer,
   type RebellionSetupInput,
 } from '@bga/game-rebellion/schema';
@@ -13,7 +17,9 @@ import { mockScenario } from '@bga/game-rebellion/scenario';
 import { expect } from 'vitest';
 import type { Clock, IdGenerator } from '../../src/common/runtime.tokens';
 import { PrismaService } from '../../src/persistence/prisma.service';
-import { api } from './test-app';
+import { TMP_DIR } from '../global-setup';
+import { createSwr004Db, v2Sessions, type Swr004Db, type V2SessionFixture } from './swr004-db';
+import { api, type TestDb } from './test-app';
 
 export const R = REBELLION_GAME_ID;
 export const FS = 'forbidden-stars';
@@ -99,7 +105,11 @@ export async function createSession(
   return SessionResponseSchema.parse(res.body);
 }
 
-/** A Rebellion session (the only real playable game); a new session always shows the board (`kind: 'player'`). */
+/**
+ * A Rebellion session (the only real playable game); a new session always shows the board (`kind: 'player'`).
+ * SWR-005 W6a: the view is the board of EITHER engine — creation tests assert only engine-independent fields;
+ * mock-v1 behaviour is checked on seeded v2 rows (`createSeededDb`), so W5 can switch new sessions to core-v1.
+ */
 export async function createRebellionSession(
   app: INestApplication,
   setup: RebellionSetupInput = EMPIRE_AI,
@@ -113,10 +123,11 @@ export async function createRebellionSession(
   };
 }
 
-/** Narrows a Rebellion view to the board projection (fails on a handoff view). */
-export function playerView(view: unknown): PlayerViewPlayer {
+/** Narrows a Rebellion view to the mock-v1 board projection (fails on a handoff view or a core-v1 board). */
+export function playerView(view: unknown): MockPlayerView {
   const parsed = PlayerViewSchema.parse(view);
   if (parsed.kind !== 'player') throw new Error(`expected a player view, got ${parsed.kind}`);
+  if (parsed.rulesEngine !== 'mock-v1') throw new Error('expected a mock-v1 board');
   return parsed;
 }
 
@@ -181,6 +192,87 @@ export async function dbSnapshot(app: INestApplication, sessionId: string) {
   return { session, events };
 }
 
-export function pieceIn(view: Pick<PlayerViewPlayer, 'pieces'>, pieceId: string) {
+export function pieceIn(view: Pick<MockPlayerView, 'pieces'>, pieceId: string) {
   return view.pieces.find((p) => p.id === pieceId);
+}
+
+// ---------------------------------------------------------------------------------------------------------
+// SWR-005 W6a: seeded mock-v1 rows (frozen v2 snapshot written by the SWR-004 code, Q-1)
+// ---------------------------------------------------------------------------------------------------------
+
+/** The three rows of `test/fixtures/v2/sessions.v2.json`, by their setup. */
+export type SeededKind = 'rebelsAi' | 'empireAi' | 'hotseat';
+
+interface SeededSettings {
+  playerFaction: Faction;
+  opponentFaction: Faction;
+  opponentType: 'ai' | 'human';
+}
+
+/** `settings` of a stored v2 state (the snapshot is typed loosely in `swr004-db.ts`). */
+export function seededSettings(row: V2SessionFixture): SeededSettings {
+  return row.state.settings as SeededSettings;
+}
+
+function kindOf(row: V2SessionFixture): SeededKind {
+  const settings = seededSettings(row);
+  if (settings.opponentType === 'human') return 'hotseat';
+  return settings.playerFaction === 'rebels' ? 'rebelsAi' : 'empireAi';
+}
+
+/**
+ * Seeded rows by kind (read synchronously from the snapshot, so `it.each` tables can use their versions):
+ * `rebelsAi` — Rebels vs AI, v3, round 1 `command`, Rebels active (move + ADVANCE_PHASE);
+ * `empireAi` — Empire vs AI/hard, v2, round 1 `assignment`, Empire active (one move);
+ * `hotseat` — Rebels vs human, v3, in a handoff to the Empire (move + END_TURN).
+ */
+export const SEEDED: Record<SeededKind, V2SessionFixture> = (() => {
+  const rows = Object.fromEntries(v2Sessions().map((row) => [kindOf(row), row]));
+  for (const kind of ['rebelsAi', 'empireAi', 'hotseat'] as const) {
+    if (!rows[kind]) throw new Error(`v2 snapshot has no ${kind} row`);
+  }
+  return rows as Record<SeededKind, V2SessionFixture>;
+})();
+
+let seededTemplate: Swr004Db | undefined;
+
+/**
+ * A fresh per-test copy of an SWR-004-shaped DB with all v2 rows (`createSwr004Db`, built once per test file:
+ * `migrate deploy` is slow). Remove it with `removeTestDb` / `stopApp(app, db)` like any `TestDb`.
+ */
+export async function createSeededDb(): Promise<TestDb> {
+  if (!seededTemplate) {
+    const template = await createSwr004Db();
+    seededTemplate = template;
+    process.once('exit', () => template.remove());
+  }
+  const file = join(TMP_DIR, `test-seeded-${randomUUID()}.db`);
+  copyFileSync(seededTemplate.file, file);
+  return { file, url: `file:${file}` };
+}
+
+/** Stored piece of a seeded mock state (minimal shape for picking moves). */
+interface SeededPiece {
+  id: string;
+  owner: Faction;
+  systemId: string;
+  hidden?: boolean;
+}
+
+export function seededPieces(row: V2SessionFixture): SeededPiece[] {
+  return row.state.pieces as SeededPiece[];
+}
+
+/** Like `movable`, but from the CURRENT positions of a seeded row (its pieces may have moved already). */
+export function movableIn(row: V2SessionFixture, owner: Faction) {
+  const piece = seededPieces(row).find((p) => p.owner === owner && !p.hidden);
+  if (!piece) throw new Error(`no ${owner} piece in seeded row`);
+  const from = systemsById.get(piece.systemId);
+  if (!from) throw new Error('bad seeded row');
+  const adjacent = from.adjacentSystemIds[0];
+  const nonAdjacent = mockScenario.systems.find(
+    (s) => s.id !== from.id && !from.adjacentSystemIds.includes(s.id),
+  )?.id;
+  if (!adjacent || !nonAdjacent) throw new Error('bad seeded row');
+  return { pieceId: piece.id, from: from.id, adjacent, nonAdjacent };
 }

@@ -1,0 +1,28 @@
+# W4 2026-11-08T13:42:03Z
+$ pnpm --filter @bga/platform test
+
+> @bga/platform@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+
+ Test Files  4 passed (4)
+      Tests  65 passed (65)
+   Start at  16:42:04
+   Duration  796ms (transform 941ms, setup 0ms, import 1.53s, tests 97ms, environment 0ms)
+
+exit=0
+$ pnpm --filter @bga/platform typecheck
+
+> @bga/platform@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -p tsconfig.test.json
+
+exit=0
+$ pnpm --filter @bga/platform lint
+
+> @bga/platform@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> eslint . --max-warnings=0
+
+exit=0

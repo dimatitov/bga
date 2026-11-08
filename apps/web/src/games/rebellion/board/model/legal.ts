@@ -2,11 +2,11 @@
  * Derived data from `view.legalActions` ONLY (plan-frontend §0.2, §3.3). The UI never computes rule
  * legality: these helpers just look up / intersect sets the server already computed.
  */
-import type { PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { PlayerViewMock } from '@bga/game-rebellion/schema';
 import type { DragState } from './dragStore';
 import type { Selection } from './selectionStore';
 
-type LegalView = Pick<PlayerViewPlayer, 'legalActions'>;
+type LegalView = Pick<PlayerViewMock, 'legalActions'>;
 
 /** `toSystemIds` of the MOVE_PIECES legal action for this piece, or `[]`. */
 export function moveTargetsForPiece(view: LegalView, pieceId: string): string[] {
@@ -26,7 +26,7 @@ export function isListedTarget(targets: readonly string[], systemId: string): bo
  * intersection of their `toSystemIds`. `null` if fewer than 2 such pieces or the intersection is empty.
  */
 export function groupMoveForSystem(
-  view: Pick<PlayerViewPlayer, 'legalActions' | 'pieces'>,
+  view: Pick<PlayerViewMock, 'legalActions' | 'pieces'>,
   systemId: string,
 ): { pieceIds: string[]; toSystemIds: string[] } | null {
   const inSystem = new Set(view.pieces.filter((p) => p.systemId === systemId).map((p) => p.id));

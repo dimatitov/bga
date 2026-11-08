@@ -1,0 +1,33 @@
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 57924  - [39m11/08/2026, 6:25:05 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 58256  - [39m11/08/2026, 6:25:16 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 58256  - [39m11/08/2026, 6:25:16 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 58256  - [39m11/08/2026, 6:25:16 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=0e4e34f5-2fb2-4558-a756-8ba5038820b7 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58572  - [39m11/08/2026, 6:25:18 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=2a8ef36d-d33f-487b-91d5-42e3cb5435f1 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 58735  - [39m11/08/2026, 6:25:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 58733  - [39m11/08/2026, 6:25:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=a8520b11-4baa-430d-a365-6b799738f8e3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 58733  - [39m11/08/2026, 6:25:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=a8520b11-4baa-430d-a365-6b799738f8e3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 58846  - [39m11/08/2026, 6:25:25 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 58846  - [39m11/08/2026, 6:25:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  26 passed | 1 skipped (27)
+      Tests  221 passed | 1 skipped (222)
+   Start at  18:24:59
+   Duration  55.77s (transform 5.05s, setup 0ms, import 32.50s, tests 245.44s, environment 3ms)
+
+EXIT=0

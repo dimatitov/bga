@@ -57,8 +57,15 @@ export const SETTINGS_KEYS = [
   'playerFaction',
   'ruleset',
 ] as const;
-/** Rebellion `SessionSummary.details` keys (TC-U-14, Q-20). */
-export const DETAILS_KEYS = [...SETTINGS_KEYS, 'phase', 'round'].sort();
+/** Rebellion `SessionSummary.details` keys (TC-U-14, Q-20; SWR-005: + rulesEngine, winner, reputation). */
+export const DETAILS_KEYS = [
+  ...SETTINGS_KEYS,
+  'phase',
+  'round',
+  'rulesEngine',
+  'winner',
+  'reputation',
+].sort();
 /** Handoff view keys (spec + AM-BE-1/Q-12): nothing else is allowed. */
 export const HANDOFF_VIEW_KEYS = [
   'activeSide',
@@ -66,6 +73,7 @@ export const HANDOFF_VIEW_KEYS = [
   'kind',
   'phase',
   'round',
+  'rulesEngine',
   'sessionStatus',
   'version',
 ] as const;
@@ -123,6 +131,8 @@ export type LegalAction =
 /** `kind: 'player'` — the view of the active side (`viewer`); no `setup`, settings live in `settings` (Q-11). */
 export interface PlayerView {
   kind: 'player';
+  /** SWR-005: the mock rules (old sessions / until the switch to core-v1). */
+  rulesEngine: 'mock-v1';
   viewer: Faction;
   activeSide: Faction;
   settings: Settings;
@@ -140,6 +150,7 @@ export interface PlayerView {
 /** `kind: 'handoff'` — public metadata only (spec Hot-seat, Q-12). */
 export interface HandoffView {
   kind: 'handoff';
+  rulesEngine: 'mock-v1' | 'core-v1';
   id: string;
   version: number;
   activeSide: Faction;
@@ -148,14 +159,24 @@ export interface HandoffView {
   sessionStatus: SessionStatus;
 }
 
-export type AnyView = PlayerView | HandoffView;
+export type AnyView = PlayerView | CorePlayerView | HandoffView;
 
 export const isHandoff = (view: AnyView): view is HandoffView => view.kind === 'handoff';
 
-/** Narrows a view to `kind: 'player'` (fails the test otherwise). */
+/** Narrows a view to a `mock-v1` player view (legacy sessions; fails the test otherwise). */
 export function asPlayer(view: AnyView): PlayerView {
   expect(view.kind, 'expected a player view').toBe('player');
+  expect((view as PlayerView).rulesEngine, 'expected a mock-v1 (legacy) player view').toBe(
+    'mock-v1',
+  );
   return view as PlayerView;
+}
+
+/** Narrows a view to a `core-v1` player view (fails the test otherwise). */
+export function asCore(view: AnyView): CorePlayerView {
+  expect(view.kind, 'expected a player view').toBe('player');
+  expect((view as CorePlayerView).rulesEngine, 'expected a core-v1 player view').toBe('core-v1');
+  return view as CorePlayerView;
 }
 
 /** Narrows a view to `kind: 'handoff'` (fails the test otherwise). */
@@ -194,7 +215,11 @@ export type Command =
   | { type: 'MOVE_PIECES'; pieceIds: string[]; fromSystemId: string; toSystemId: string }
   | { type: 'ADVANCE_PHASE' }
   | { type: 'END_TURN' }
-  | { type: 'ACCEPT_HANDOFF' };
+  | { type: 'ACCEPT_HANDOFF' }
+  // SWR-005 core-v1
+  | { type: 'ACTIVATE_SYSTEM'; leaderId: string; systemId: string }
+  | { type: 'FINISH_ACTIVATION' }
+  | { type: 'PASS' };
 
 export const newIdempotencyKey = (): string => randomUUID();
 
@@ -214,19 +239,20 @@ export function postSession(
 
 /**
  * `POST /api/sessions { gameId, setup }` → 201 `{ sessionId, gameId, status, settings, view }`.
- * Default: Empire vs AI (as in SWR-003 specs). A freshly created session always has a player view.
+ * Default: Empire vs AI (as in SWR-003 specs). A freshly created session always has a player view and, since
+ * SWR-005, always runs on `core-v1` (old mock sessions only come from seeded rows — `support/seed.ts`).
  */
 export async function createSession(
   request: APIRequestContext,
   setup: SetupInput = EMPIRE_VS_AI,
   options: { gameId?: string; idempotencyKey?: string } = {},
-): Promise<SessionResponse<PlayerView>> {
+): Promise<SessionResponse<CorePlayerView>> {
   const gameId = options.gameId ?? REBELLION;
   const res = await postSession(request, setup, { ...options, gameId });
   expect(res.status(), await res.text()).toBe(201);
   const body = (await res.json()) as SessionResponse;
   expect(body.gameId).toBe(gameId);
-  return { ...body, view: asPlayer(body.view) };
+  return { ...body, view: asCore(body.view) };
 }
 
 /** `GET /api/sessions/:id` → `{ sessionId, gameId, status, settings, view }` (view may be a handoff view). */
@@ -239,9 +265,17 @@ export async function getSession(
   return (await res.json()) as SessionResponse;
 }
 
-/** Shortcut: the player view of a session (fails if the session is in handoff). */
+/** Shortcut: the `mock-v1` player view of a (legacy) session (fails if in handoff or on core-v1). */
 export async function getView(request: APIRequestContext, sessionId: string): Promise<PlayerView> {
   return asPlayer((await getSession(request, sessionId)).view);
+}
+
+/** Shortcut: the `core-v1` player view of a session (fails if in handoff or on mock-v1). */
+export async function getCoreView(
+  request: APIRequestContext,
+  sessionId: string,
+): Promise<CorePlayerView> {
+  return asCore((await getSession(request, sessionId)).view);
 }
 
 /** `GET /api/sessions[?gameId=]` → `SessionSummary[]`, `updatedAt` desc, at most 20. */
@@ -262,7 +296,10 @@ export async function listSessions(
 export function postCommand(
   request: APIRequestContext,
   sessionId: string,
-  view: Pick<PlayerView, 'version' | 'viewer'> | Pick<HandoffView, 'version' | 'activeSide'>,
+  view:
+    | Pick<PlayerView, 'version' | 'viewer'>
+    | Pick<CorePlayerView, 'version' | 'viewer'>
+    | Pick<HandoffView, 'version' | 'activeSide'>,
   command: Command,
   actor?: Faction,
 ): Promise<APIResponse> {
@@ -283,7 +320,7 @@ export interface CommandResponse {
 export async function endTurn(
   request: APIRequestContext,
   sessionId: string,
-  view: PlayerView,
+  view: Pick<PlayerView, 'version' | 'viewer'>,
 ): Promise<HandoffView> {
   const res = await postCommand(request, sessionId, view, { type: 'END_TURN' });
   expect(res.status(), await res.text()).toBe(200);
@@ -299,6 +336,17 @@ export async function acceptHandoff(
   const res = await postCommand(request, sessionId, view, { type: 'ACCEPT_HANDOFF' });
   expect(res.status(), await res.text()).toBe(200);
   return asPlayer(((await res.json()) as CommandResponse).view);
+}
+
+/** Hot-seat (core-v1): `ACCEPT_HANDOFF` by the new active side → its core player view. */
+export async function acceptHandoffCore(
+  request: APIRequestContext,
+  sessionId: string,
+  view: HandoffView,
+): Promise<CorePlayerView> {
+  const res = await postCommand(request, sessionId, view, { type: 'ACCEPT_HANDOFF' });
+  expect(res.status(), await res.text()).toBe(200);
+  return asCore(((await res.json()) as CommandResponse).view);
 }
 
 /** Pathname matchers of the sessions API (used by network filters in specs). */
@@ -416,3 +464,243 @@ export const boardIdsOf = (view: PlayerView): string[] => [
   ...view.systems.map((s) => s.id),
   ...view.pieces.map((p) => p.id),
 ];
+
+// ---------------------------------------------------------------------------------------------------------------
+// SWR-005 core-v1 wire (plan-backend §8, spec Contract; local mirror of `CorePlayerViewSchema`)
+// ---------------------------------------------------------------------------------------------------------------
+
+export type RulesEngine = 'mock-v1' | 'core-v1';
+export type ViewLocation = { kind: 'system'; systemId: string } | { kind: 'rebelBase' };
+export type LeaderLocation = { kind: 'pool' } | ViewLocation;
+
+export interface CoreSystemView {
+  id: string;
+  nameKey: string;
+  regionId: string;
+  adjacentSystemIds: string[];
+  remote: boolean;
+}
+
+export interface CoreUnitType {
+  typeKey: string;
+  owner: Faction;
+  arena: 'space' | 'ground';
+  mobility: 'mobile' | 'immobile';
+  transportCapacity: number;
+  requiresTransport: boolean;
+}
+
+export interface CoreUnitView {
+  id: string;
+  owner: Faction;
+  typeKey: string;
+  location: ViewLocation;
+}
+
+export interface CoreLeaderView {
+  id: string;
+  owner: Faction;
+  canActivate: boolean;
+  location: LeaderLocation;
+}
+
+export interface CoreEventView {
+  seq: number;
+  at: string;
+  type:
+    | 'GAME_CREATED'
+    | 'PIECES_MOVED'
+    | 'HANDOFF_ACCEPTED'
+    | 'PHASE_STARTED'
+    | 'SYSTEM_ACTIVATED'
+    | 'ACTIVATION_FINISHED'
+    | 'PASSED'
+    | 'LEADERS_RETURNED'
+    | 'TIME_ADVANCED'
+    | 'BASE_REVEALED'
+    | 'GAME_OVER';
+  actor: Faction | 'system';
+  payload: Record<string, unknown>;
+}
+
+export type CoreLegalAction =
+  | { type: 'ACTIVATE_SYSTEM'; leaderIds: string[]; systemIds: string[] }
+  | {
+      type: 'MOVE_PIECES';
+      fromSystemId: string;
+      toSystemId: string;
+      pieces: { pieceId: string; transportCapacity: number; requiresTransport: boolean }[];
+    }
+  | { type: 'FINISH_ACTIVATION' }
+  | { type: 'PASS' };
+
+export type OutcomeReason = 'timeReachedReputation' | 'rebelBaseCaptured';
+
+export interface CorePlayerView {
+  kind: 'player';
+  rulesEngine: 'core-v1';
+  viewer: Faction;
+  activeSide: Faction;
+  settings: Settings;
+  id: string;
+  version: number;
+  round: number;
+  phase: Phase;
+  markers: { time: number; reputation: number };
+  map: { regions: { id: string; nameKey: string }[]; systems: CoreSystemView[] };
+  unitTypes: CoreUnitType[];
+  units: CoreUnitView[];
+  leaders: CoreLeaderView[];
+  activation: { side: Faction; leaderId: string; location: ViewLocation } | null;
+  passed: { rebels: boolean; empire: boolean };
+  rebelBase: { systemId: string | null; revealed: boolean };
+  contestedSystemIds: string[];
+  outcome: { winner: Faction; reason: OutcomeReason } | null;
+  log: CoreEventView[];
+  legalActions: CoreLegalAction[];
+}
+
+/** Base-game data facts used by the specs (spec Data clarifications). */
+export const CORE_SYSTEM_COUNT = 32;
+export const CORE_REGION_IDS = ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8'] as const;
+export const START_REPUTATION = 14;
+export const LEADERS = {
+  empire: ['palpatine', 'vader', 'tarkin', 'tagge'],
+  rebels: ['mon-mothma', 'leia', 'dodonna', 'rieekan'],
+} as const;
+/** The only starting leader without tactic values (`canActivate: false`). */
+export const MON_MOTHMA = 'mon-mothma';
+
+/** Success body of a command with the events of that response (core-v1: several events per command). */
+export interface CoreCommandResponse {
+  ok: true;
+  view: AnyView;
+  events: CoreEventView[];
+}
+
+export function actionOf<T extends CoreLegalAction['type']>(
+  view: CorePlayerView,
+  type: T,
+): Extract<CoreLegalAction, { type: T }> | undefined {
+  return view.legalActions.find((a) => a.type === type) as
+    Extract<CoreLegalAction, { type: T }> | undefined;
+}
+
+export function coreMoveActions(view: CorePlayerView) {
+  return view.legalActions.filter(
+    (a): a is Extract<CoreLegalAction, { type: 'MOVE_PIECES' }> => a.type === 'MOVE_PIECES',
+  );
+}
+
+export const unitTypeOf = (view: CorePlayerView, typeKey: string): CoreUnitType => {
+  const t = view.unitTypes.find((u) => u.typeKey === typeKey);
+  if (!t) throw new Error(`unit type ${typeKey} not in view.unitTypes`);
+  return t;
+};
+
+export const coreSystem = (view: CorePlayerView, id: string): CoreSystemView => {
+  const s = view.map.systems.find((x) => x.id === id);
+  if (!s) throw new Error(`system ${id} not in view.map.systems`);
+  return s;
+};
+
+export const unitsIn = (view: CorePlayerView, systemId: string): CoreUnitView[] =>
+  view.units.filter((u) => u.location.kind === 'system' && u.location.systemId === systemId);
+
+export const poolOf = (view: CorePlayerView, side: Faction): CoreLeaderView[] =>
+  view.leaders.filter((l) => l.owner === side && l.location.kind === 'pool');
+
+export interface ActivationPlan {
+  leaderId: string;
+  /** system to activate */
+  systemId: string;
+  /** an adjacent system with an own unit that can move alone (mobile, no transport needed, no own leader there) */
+  fromSystemId: string;
+  /** that unit */
+  pieceId: string;
+}
+
+/**
+ * Picks an activation with at least one simple move (derived from the server view, never hard-coded): an own
+ * mobile unit that needs no transport, in a system without an own leader, and an adjacent target system that is
+ * not the hidden zone. `avoid` excludes target systems (e.g. the Rebels' own base, to keep the scenario plain).
+ */
+export function planActivation(view: CorePlayerView, avoid: string[] = []): ActivationPlan {
+  const activate = actionOf(view, 'ACTIVATE_SYSTEM');
+  if (!activate) throw new Error('ACTIVATE_SYSTEM is not legal in this view');
+  const leaderId = activate.leaderIds[0]!;
+  const ownLeaderAt = new Set(
+    view.leaders
+      .filter((l) => l.owner === view.viewer && l.location.kind === 'system')
+      .map((l) => (l.location as { systemId: string }).systemId),
+  );
+  for (const u of view.units) {
+    if (u.owner !== view.viewer || u.location.kind !== 'system') continue;
+    const t = unitTypeOf(view, u.typeKey);
+    if (t.mobility !== 'mobile' || t.requiresTransport) continue;
+    const from = u.location.systemId;
+    if (ownLeaderAt.has(from)) continue;
+    for (const to of coreSystem(view, from).adjacentSystemIds) {
+      if (avoid.includes(to) || !activate.systemIds.includes(to)) continue;
+      return { leaderId, systemId: to, fromSystemId: from, pieceId: u.id };
+    }
+  }
+  throw new Error('no own unit can move alone into an adjacent system');
+}
+
+/** Sends a command and expects 200; returns the parsed body (view of either kind + events). */
+export async function commandOk(
+  request: APIRequestContext,
+  sessionId: string,
+  view: Pick<CorePlayerView, 'version' | 'viewer'> | Pick<HandoffView, 'version' | 'activeSide'>,
+  command: Command,
+  actor?: Faction,
+): Promise<CoreCommandResponse> {
+  const res = await postCommand(request, sessionId, view, command, actor);
+  expect(res.status(), `${command.type}: ${await res.text()}`).toBe(200);
+  return (await res.json()) as CoreCommandResponse;
+}
+
+/** Sends a command and expects 422 with `errors.<key>`. */
+export async function expectRejected(
+  request: APIRequestContext,
+  sessionId: string,
+  view: Pick<CorePlayerView, 'version' | 'viewer'> | Pick<HandoffView, 'version' | 'activeSide'>,
+  command: Command,
+  key: string,
+  actor?: Faction,
+): Promise<void> {
+  const res = await postCommand(request, sessionId, view, command, actor);
+  expect(res.status(), `${command.type} → 422 ${key}`).toBe(422);
+  expect(((await res.json()) as ErrorBody).error).toMatchObject({
+    code: 'ILLEGAL_COMMAND',
+    messageKey: `errors.${key}`,
+  });
+}
+
+/**
+ * TR-3 scanner: paths in `json` where the hidden base system id (or its i18n key `systems.<id>`) appears.
+ * Allowed only in the static catalogue (`…map.systems[i]…`) and in `ACTIVATE_SYSTEM.systemIds` (all 32 systems).
+ * Not applicable after `BASE_REVEALED` or an outcome.
+ */
+export function scanForBase(json: unknown, baseId: string, root = '$'): string[] {
+  const hits: string[] = [];
+  const allowed = (p: string) =>
+    /\.map\.systems\[\d+\]/.test(p) || /\.legalActions\[\d+\]\.systemIds\[\d+\]$/.test(p);
+  const walk = (v: unknown, p: string) => {
+    if (typeof v === 'string') {
+      if ((v === baseId || v === `systems.${baseId}` || v.includes(`"${baseId}"`)) && !allowed(p))
+        hits.push(p);
+      return;
+    }
+    if (Array.isArray(v)) return v.forEach((x, i) => walk(x, `${p}[${i}]`));
+    if (v && typeof v === 'object') {
+      for (const [k, x] of Object.entries(v)) {
+        if (k === baseId && !allowed(p)) hits.push(`${p}.<key ${k}>`);
+        walk(x, `${p}.${k}`);
+      }
+    }
+  };
+  walk(json, root);
+  return hits;
+}

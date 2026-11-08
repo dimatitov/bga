@@ -11,15 +11,20 @@ import { useViewportStore } from '../model/viewportStore';
 
 const BTN = { width: 44, height: 44 };
 
-/** +/−/fit + zoom level (D-I-7). DOM over the canvas; +/− are disabled at MAX/MIN (A-9). */
+/**
+ * +/−/fit + zoom level (D-I-7). DOM over the canvas; +/− are disabled at MAX / the effective minimum (A-9;
+ * SWR-005 §6: the minimum is `min(MIN_SCALE, fit scale)`, so the whole map is always reachable). Shared by the
+ * `mock-v1` and `core-v1` tables.
+ */
 export function ZoomControls() {
   const { t } = useTranslation();
   const scale = useViewportStore((s) => s.viewport.scale);
+  const minScale = useViewportStore((s) => s.minScale);
   const zoomIn = useViewportStore((s) => s.zoomIn);
   const zoomOut = useViewportStore((s) => s.zoomOut);
   const fit = useViewportStore((s) => s.fit);
   const inEnabled = canZoomIn(scale);
-  const outEnabled = canZoomOut(scale);
+  const outEnabled = canZoomOut(scale, minScale);
   return (
     <Paper
       elevation={3}

@@ -47,6 +47,9 @@ describe('app routes (SWR-003 plan-frontend §2)', () => {
         gameMode: 'digital',
         round: 2,
         phase: 'command',
+        rulesEngine: 'mock-v1',
+        winner: null,
+        reputation: null,
       },
     });
     const { requests } = mockFetch({ 'GET /api/sessions': { status: 200, body: [summary] } });

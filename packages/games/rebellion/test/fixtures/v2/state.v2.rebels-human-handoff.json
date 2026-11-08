@@ -1,0 +1,267 @@
+{
+  "_provenance": "generated from SWR-004 code on ddfa4db, 2026-11-08, rebellionServerModule (parseSetup + createInitialState + applyCommand), mockScenario (SWR-005 W1 step 0, frozen v2 — do not regenerate, do not rename)",
+  "state": {
+    "schemaVersion": 2,
+    "id": "v2-state-rebels-human-handoff",
+    "version": 3,
+    "round": 1,
+    "phase": "assignment",
+    "settings": {
+      "playerFaction": "rebels",
+      "opponentFaction": "empire",
+      "opponentType": "human",
+      "aiDifficulty": null,
+      "ruleset": "base",
+      "gameMode": "digital"
+    },
+    "activeSide": "empire",
+    "handoffPending": true,
+    "systems": [
+      {
+        "id": "sys-aurelis",
+        "nameKey": "systems.sys-aurelis",
+        "regionId": "reg-inner",
+        "adjacentSystemIds": ["sys-brevora", "sys-cindral"]
+      },
+      {
+        "id": "sys-brevora",
+        "nameKey": "systems.sys-brevora",
+        "regionId": "reg-inner",
+        "adjacentSystemIds": ["sys-aurelis", "sys-cindral", "sys-dovmaren", "sys-fennix"]
+      },
+      {
+        "id": "sys-cindral",
+        "nameKey": "systems.sys-cindral",
+        "regionId": "reg-inner",
+        "adjacentSystemIds": ["sys-aurelis", "sys-brevora", "sys-eskara"]
+      },
+      {
+        "id": "sys-dovmaren",
+        "nameKey": "systems.sys-dovmaren",
+        "regionId": "reg-mid",
+        "adjacentSystemIds": ["sys-brevora", "sys-eskara", "sys-fennix", "sys-galdor"]
+      },
+      {
+        "id": "sys-eskara",
+        "nameKey": "systems.sys-eskara",
+        "regionId": "reg-mid",
+        "adjacentSystemIds": ["sys-cindral", "sys-dovmaren", "sys-hollin"]
+      },
+      {
+        "id": "sys-fennix",
+        "nameKey": "systems.sys-fennix",
+        "regionId": "reg-mid",
+        "adjacentSystemIds": ["sys-brevora", "sys-dovmaren", "sys-iskra"]
+      },
+      {
+        "id": "sys-galdor",
+        "nameKey": "systems.sys-galdor",
+        "regionId": "reg-outer",
+        "adjacentSystemIds": ["sys-dovmaren", "sys-iskra", "sys-hollin", "sys-jorvan"]
+      },
+      {
+        "id": "sys-hollin",
+        "nameKey": "systems.sys-hollin",
+        "regionId": "reg-outer",
+        "adjacentSystemIds": ["sys-eskara", "sys-galdor", "sys-jorvan"]
+      },
+      {
+        "id": "sys-iskra",
+        "nameKey": "systems.sys-iskra",
+        "regionId": "reg-outer",
+        "adjacentSystemIds": ["sys-fennix", "sys-galdor", "sys-jorvan"]
+      },
+      {
+        "id": "sys-jorvan",
+        "nameKey": "systems.sys-jorvan",
+        "regionId": "reg-outer",
+        "adjacentSystemIds": ["sys-galdor", "sys-hollin", "sys-iskra"]
+      }
+    ],
+    "pieces": [
+      {
+        "id": "pc-01",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.capital-ship",
+        "systemId": "sys-aurelis"
+      },
+      {
+        "id": "pc-02",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.capital-ship",
+        "systemId": "sys-aurelis"
+      },
+      {
+        "id": "pc-03",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.fighter-wing",
+        "systemId": "sys-aurelis"
+      },
+      {
+        "id": "pc-04",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.fighter-wing",
+        "systemId": "sys-aurelis"
+      },
+      {
+        "id": "pc-05",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.ground-trooper",
+        "systemId": "sys-brevora"
+      },
+      {
+        "id": "pc-06",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.ground-trooper",
+        "systemId": "sys-brevora"
+      },
+      {
+        "id": "pc-07",
+        "kind": "unit",
+        "owner": "empire",
+        "typeKey": "unit.empire.ground-trooper",
+        "systemId": "sys-cindral"
+      },
+      {
+        "id": "pc-08",
+        "kind": "leader",
+        "owner": "empire",
+        "typeKey": "leader.empire.commander",
+        "systemId": "sys-aurelis"
+      },
+      {
+        "id": "pc-09",
+        "kind": "leader",
+        "owner": "empire",
+        "typeKey": "leader.empire.agent",
+        "systemId": "sys-cindral"
+      },
+      {
+        "id": "pc-10",
+        "kind": "token",
+        "owner": "empire",
+        "typeKey": "token.empire.loyalty",
+        "systemId": "sys-brevora"
+      },
+      {
+        "id": "pc-11",
+        "kind": "token",
+        "owner": "empire",
+        "typeKey": "token.empire.probe",
+        "systemId": "sys-dovmaren"
+      },
+      {
+        "id": "pc-12",
+        "kind": "unit",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.cruiser",
+        "systemId": "sys-fennix"
+      },
+      {
+        "id": "pc-13",
+        "kind": "unit",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.fighter-wing",
+        "systemId": "sys-iskra"
+      },
+      {
+        "id": "pc-14",
+        "kind": "unit",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.fighter-wing",
+        "systemId": "sys-iskra"
+      },
+      {
+        "id": "pc-15",
+        "kind": "unit",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.ground-trooper",
+        "systemId": "sys-jorvan"
+      },
+      {
+        "id": "pc-16",
+        "kind": "unit",
+        "owner": "rebels",
+        "typeKey": "unit.rebels.ground-trooper",
+        "systemId": "sys-jorvan"
+      },
+      {
+        "id": "pc-17",
+        "kind": "leader",
+        "owner": "rebels",
+        "typeKey": "leader.rebels.captain",
+        "systemId": "sys-iskra"
+      },
+      {
+        "id": "pc-18",
+        "kind": "leader",
+        "owner": "rebels",
+        "typeKey": "leader.rebels.envoy",
+        "systemId": "sys-hollin"
+      },
+      {
+        "id": "pc-19",
+        "kind": "token",
+        "owner": "rebels",
+        "typeKey": "token.rebels.loyalty",
+        "systemId": "sys-hollin"
+      },
+      {
+        "id": "pc-20",
+        "kind": "token",
+        "owner": "rebels",
+        "typeKey": "token.rebels.sabotage",
+        "systemId": "sys-galdor"
+      },
+      {
+        "id": "pc-21",
+        "kind": "token",
+        "owner": "rebels",
+        "typeKey": "token.rebels.covert-cell",
+        "systemId": "sys-fennix",
+        "hidden": true
+      }
+    ],
+    "rebelBase": {
+      "systemId": "sys-hollin",
+      "revealed": false
+    },
+    "log": [
+      {
+        "seq": 1,
+        "type": "GAME_CREATED",
+        "actor": "system",
+        "payload": {
+          "scenarioId": "mock-scenario-v1"
+        },
+        "at": "2026-11-05T10:00:00.000Z"
+      },
+      {
+        "type": "PIECES_MOVED",
+        "actor": "rebels",
+        "payload": {
+          "pieceIds": ["pc-12"],
+          "fromSystemId": "sys-iskra",
+          "toSystemId": "sys-fennix"
+        },
+        "seq": 2,
+        "at": "2026-11-05T10:01:00.000Z"
+      },
+      {
+        "type": "TURN_ENDED",
+        "actor": "rebels",
+        "payload": {
+          "toSide": "empire"
+        },
+        "seq": 3,
+        "at": "2026-11-05T10:02:00.000Z"
+      }
+    ]
+  }
+}

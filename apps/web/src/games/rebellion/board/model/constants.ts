@@ -12,8 +12,12 @@ export const MIN_SCALE = 0.4;
 export const MAX_SCALE = 2.5;
 export const WHEEL_STEP = 1.1;
 export const BUTTON_STEP = 1.25;
-/** Screen pixels around the fitted map. */
+/** Screen pixels around the fitted map (legacy fixed padding; `fit` now uses `adaptivePadding`, SWR-005 §6). */
 export const FIT_PADDING = 64;
+/** SWR-005 §6 (D-SW5-10): adaptive fit padding `clamp(MIN, RATIO × min(w, h), MAX)` in screen pixels. */
+export const FIT_PADDING_MIN = 12;
+export const FIT_PADDING_MAX = 48;
+export const FIT_PADDING_RATIO = 0.03;
 /** Screen pixels per arrow key press. */
 export const KEY_PAN = 80;
 /** A-10: below this pointer travel (px) a press is a click, at/above it a drag/pan. */

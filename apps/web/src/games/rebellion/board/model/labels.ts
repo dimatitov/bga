@@ -1,7 +1,7 @@
 /** Localized names of game objects (keys from game-data: `systems.<id>`, `regions.<id>`, `pieces.<typeKey>`). */
 import {
   type Piece,
-  type PlayerViewPlayer,
+  type PlayerViewMock,
   type System,
   UNKNOWN_TYPE_KEY,
 } from '@bga/game-rebellion/schema';
@@ -14,7 +14,7 @@ export function systemName(t: TFunction, system: Pick<System, 'nameKey'> | undef
 
 export function systemNameById(
   t: TFunction,
-  view: Pick<PlayerViewPlayer, 'systems'>,
+  view: Pick<PlayerViewMock, 'systems'>,
   id: string,
 ): string {
   return systemName(

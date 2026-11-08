@@ -1,23 +1,24 @@
 import {
-  REBELLION_SCHEMA_VERSION,
+  REBELLION_STATE_SCHEMA_VERSION,
   RebellionSettingsSchema,
   ScenarioSchema,
-  type GameState,
+  type MockGameState,
   type RebellionSettings,
   type Scenario,
 } from '../schema';
 import type { CreateContext } from './context';
 
 /**
- * New game (A-8): version 1, round 1, phase 'assignment', log = [GAME_CREATED seq 1]; `schemaVersion: 2`,
- * the player's side is active, no pending handoff.
+ * New `mock-v1` game (A-8): version 1, round 1, phase 'assignment', log = [GAME_CREATED seq 1];
+ * `schemaVersion: 3`, `rulesEngine: 'mock-v1'`, the player's side is active, no pending handoff.
+ * (SWR-005: new sessions still use it until the switch to `core-v1` in W5.)
  * Invalid setup/scenario is a programming error (the API validates input first) → throws.
  */
 export function createGame(
   setup: RebellionSettings,
   scenario: Scenario,
   ctx: CreateContext,
-): GameState {
+): MockGameState {
   const settings = RebellionSettingsSchema.parse(setup);
   // Zod returns fresh objects: this is also the deep copy of the scenario (input never shared/mutated).
   const data = ScenarioSchema.parse(scenario);
@@ -32,7 +33,8 @@ export function createGame(
   }
 
   return {
-    schemaVersion: REBELLION_SCHEMA_VERSION,
+    schemaVersion: REBELLION_STATE_SCHEMA_VERSION,
+    rulesEngine: 'mock-v1',
     id: ctx.gameId,
     version: 1,
     round: 1,

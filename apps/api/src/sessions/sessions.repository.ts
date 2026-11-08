@@ -53,6 +53,8 @@ export interface SessionUpdate {
   setup: string;
   state: string;
   version: number;
+  /** `module.statusOf(newState)` (SWR-005, AM-BE-1), written in the same `updateMany` as the state. */
+  status: SessionStatus;
   events: readonly SessionEventRecord[];
   now: string;
 }
@@ -165,7 +167,8 @@ export class SessionsRepository {
   /**
    * Atomic commit with optimistic concurrency: `updateMany WHERE id AND version = expected`;
    * `count === 0` → rollback → VERSION_CONFLICT. New event rows go into the same transaction.
-   * `setup` is rewritten together with `state` (review #1: an upcast v1 row becomes v2 on its first write).
+   * `setup` is rewritten together with `state` (review #1: an upcast v1 row becomes v2 on its first write);
+   * so is `status` (SWR-005): a lost race rolls back state, setup, status and events together.
    */
   async commit(update: SessionUpdate): Promise<CommitOutcome> {
     try {
@@ -176,6 +179,7 @@ export class SessionsRepository {
             setup: update.setup,
             state: update.state,
             version: update.version,
+            status: update.status,
             updatedAt: new Date(update.now),
           },
         });

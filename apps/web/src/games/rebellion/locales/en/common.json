@@ -37,6 +37,8 @@
   },
   "prototype": {
     "badge": "Prototype",
-    "full": "Prototype: test setup, not the rules of the original game"
+    "full": "Prototype: test setup, not the rules of the original game",
+    "coreV1": "Real map; rules in part: round and activation. Combat, missions, production — later",
+    "legacy": "Old prototype: test rules"
   }
 }

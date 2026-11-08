@@ -1,0 +1,95 @@
+{
+  "track": {
+    "label": "Time and reputation track",
+    "text": "Time {{time}} · Reputation {{reputation}}",
+    "aria": "Time {{time}} of {{reputation}}: the Rebels win when time reaches reputation",
+    "time": "Time",
+    "reputation": "Reputation"
+  },
+  "phase": {
+    "label": "Phase: {{phase}}"
+  },
+  "turn": {
+    "label": "Turn order",
+    "of": "Turn: {{side}}",
+    "you": "(you)",
+    "vsAi": "vs AI · {{difficulty}}",
+    "vsAiPlain": "vs AI",
+    "vsHuman": "vs second player"
+  },
+  "passed": {
+    "label": "Passed",
+    "side": "{{side}}: passed",
+    "none": "Nobody has passed"
+  },
+  "outcome": {
+    "label": "Game result",
+    "winner": {
+      "rebels": "Rebel victory",
+      "empire": "Imperial victory"
+    },
+    "reason": {
+      "timeReachedReputation": "Time reached reputation",
+      "rebelBaseCaptured": "Rebel base captured: Imperial units in its system and no Rebel units left"
+    },
+    "over": "The game is over — no more moves are accepted. You can still look at the map and the log.",
+    "back": "To the game"
+  },
+  "log": {
+    "title": "Log",
+    "empty": "No events yet",
+    "GAME_CREATED": "Game created",
+    "HANDOFF_ACCEPTED": "Turn taken: {{actor}}",
+    "HANDOFF_ACCEPTED_rebels": "{{actor}} take the turn",
+    "HANDOFF_ACCEPTED_empire": "{{actor}} takes the turn",
+    "PHASE_STARTED": "Round {{round}}: {{phase}} phase",
+    "SYSTEM_ACTIVATED": "{{actor}}: {{leader}} activates {{system}}",
+    "PIECES_MOVED": "{{actor}}: {{pieces}} — {{from}} → {{to}}",
+    "ACTIVATION_FINISHED": "Activation finished: {{actor}}",
+    "ACTIVATION_FINISHED_rebels": "{{actor}} finish the activation",
+    "ACTIVATION_FINISHED_empire": "{{actor}} finishes the activation",
+    "ACTIVATION_FINISHED_auto": "Activation finished: {{actor}} (AI)",
+    "ACTIVATION_FINISHED_auto_rebels": "{{actor}} (AI) finish the activation",
+    "ACTIVATION_FINISHED_auto_empire": "{{actor}} (AI) finishes the activation",
+    "PASSED": "Pass: {{actor}}",
+    "PASSED_rebels": "{{actor}} pass",
+    "PASSED_empire": "{{actor}} passes",
+    "PASSED_auto": "Pass: {{actor}} (AI)",
+    "PASSED_auto_rebels": "{{actor}} (AI) pass",
+    "PASSED_auto_empire": "{{actor}} (AI) passes",
+    "LEADERS_RETURNED": "Leaders returned to the pools: {{leaders}}",
+    "LEADERS_RETURNED_none": "Leaders returned to the pools",
+    "TIME_ADVANCED": "Time marker: {{from}} → {{to}}",
+    "BASE_REVEALED": "Rebel base revealed: {{system}}",
+    "GAME_OVER": "Game over. {{winner}}: {{reason}}",
+    "unknown": "Event: {{type}}",
+    "hiddenZone": "hidden zone",
+    "unknownUnit": "unit",
+    "autoTag": "auto",
+    "autoHint": "AI Commander is not implemented yet: the AI side always passes"
+  },
+  "announce": {
+    "autoPass": "AI pass ({{side}}) — auto: AI Commander is not implemented yet",
+    "autoPass_rebels": "{{side}} (AI) pass — auto: AI Commander is not implemented yet",
+    "autoPass_empire": "{{side}} (AI) passes — auto: AI Commander is not implemented yet",
+    "autoFinish": "AI activation ({{side}}) finished — auto",
+    "autoFinish_rebels": "{{side}} (AI) finish the activation — auto",
+    "autoFinish_empire": "{{side}} (AI) finishes the activation — auto",
+    "opponentPassed": "Pass: {{side}}",
+    "opponentPassed_rebels": "{{side}} pass",
+    "opponentPassed_empire": "{{side}} passes",
+    "leadersReturned_one": "New round: {{count}} leader returned to the pool",
+    "leadersReturned_other": "New round: {{count}} leaders returned to the pools",
+    "newRound": "Round {{round}}: the time marker moved",
+    "baseRevealed": "Rebel base revealed: {{systemId}}",
+    "gameOver": "Game over. {{winner}}: {{reason}}"
+  },
+  "info": {
+    "time": "Time",
+    "reputation": "Reputation",
+    "phase": "Phase",
+    "passed": "Passed",
+    "rules": "Rules",
+    "rulesValue": "core-v1 slice: round and leader activation"
+  }
+}

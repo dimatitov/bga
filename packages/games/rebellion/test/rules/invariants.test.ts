@@ -1,4 +1,4 @@
-import type { CommandEnvelope, GameState } from '../../src/schema';
+import type { CommandEnvelope, MockGameState } from '../../src/schema';
 import { GameStateSchema } from '../../src/schema';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, getLegalActions } from '../../src/rules';
@@ -21,7 +21,7 @@ function pick<T>(rand: () => number, items: readonly T[]): T {
 }
 
 /** A legal command chosen from getLegalActions (MOVE of 1..n stacked own pieces, or ADVANCE_PHASE). */
-function legalCommand(state: GameState, rand: () => number): CommandEnvelope['command'] {
+function legalCommand(state: MockGameState, rand: () => number): CommandEnvelope['command'] {
   const actions = getLegalActions(state, state.settings.playerFaction);
   const action = pick(rand, actions);
   if (action.type === 'ADVANCE_PHASE') return ADVANCE;
@@ -36,7 +36,7 @@ function legalCommand(state: GameState, rand: () => number): CommandEnvelope['co
 }
 
 /** An illegal command (target not adjacent / enemy piece / stale version), or null when none applies. */
-function illegalEnvelope(state: GameState, rand: () => number): unknown {
+function illegalEnvelope(state: MockGameState, rand: () => number): unknown {
   const human = state.settings.playerFaction;
   const own = pick(
     rand,
@@ -59,7 +59,7 @@ function illegalEnvelope(state: GameState, rand: () => number): unknown {
   return pick(rand, options);
 }
 
-function checkInvariants(prev: GameState, next: GameState) {
+function checkInvariants(prev: MockGameState, next: MockGameState) {
   expect(next.version).toBe(prev.version + 1);
   expect(next.log.length).toBe(prev.log.length + 1);
   next.log.forEach((event, i) => expect(event.seq).toBe(i + 1));

@@ -5,8 +5,21 @@ import { type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type SessionEnvelope, sessionKeys } from '@/platform';
 import { createTestQueryClient, mockFetch, type MockReply } from '@/shared/test';
-import type { PlayerView } from '@bga/game-rebellion/schema';
+import type { PlayerView, PlayerViewCore } from '@bga/game-rebellion/schema';
 import { makeHandoffView, makeRebellionSession, makeView, SESSION_ID } from '../../test/fixtures';
+import {
+  CORE_SESSION_ID,
+  CS_CORELLIA,
+  CS_SULLUST,
+  L_LEIA,
+  makeCoreActivationView,
+  makeCoreEmpireView,
+  makeCoreOutcomeView,
+  makeCoreSession,
+  makeCoreView,
+  U_RT_SULLUST,
+  U_TRANSPORT,
+} from '../../test/coreFixtures';
 import { useSendCommand } from './useSendCommand';
 
 const MOVE: Command = {
@@ -170,5 +183,115 @@ describe('useSendCommand — session cache (SWR-003 plan-frontend §3.1)', () =>
       expectedVersion: 4,
       command: { type: 'ACCEPT_HANDOFF' },
     });
+  });
+});
+
+describe('useSendCommand — core-v1 commands (SWR-005 FE-0)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const CORE_PATH = `POST /api/sessions/${CORE_SESSION_ID}/commands`;
+
+  function setupCore(replies: MockReply[], view: PlayerViewCore) {
+    const queue = [...replies];
+    mockFetch({ [CORE_PATH]: () => queue.shift() ?? 'network' });
+    const qc = createTestQueryClient();
+    qc.setQueryData(sessionKeys.detail(CORE_SESSION_ID), makeCoreSession(view));
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={qc}>{children}</QueryClientProvider>
+    );
+    return { ...renderHook(() => useSendCommand(CORE_SESSION_ID), { wrapper }), qc };
+  }
+  const body = (n: number) => JSON.parse(String(vi.mocked(fetch).mock.calls[n]?.[1]?.body));
+
+  it.each<[string, PlayerViewCore, Command]>([
+    [
+      'ACTIVATE_SYSTEM',
+      makeCoreView(),
+      { type: 'ACTIVATE_SYSTEM', leaderId: L_LEIA, systemId: CS_CORELLIA },
+    ],
+    [
+      'MOVE_PIECES',
+      makeCoreActivationView(),
+      {
+        type: 'MOVE_PIECES',
+        pieceIds: [U_TRANSPORT, U_RT_SULLUST],
+        fromSystemId: CS_SULLUST,
+        toSystemId: CS_CORELLIA,
+      },
+    ],
+    ['FINISH_ACTIVATION', makeCoreActivationView(), { type: 'FINISH_ACTIVATION' }],
+    ['PASS', makeCoreEmpireView(), { type: 'PASS' }],
+  ])(
+    '%s: actor = viewer, expectedVersion = cached view.version; view replaced',
+    async (_, view, command) => {
+      const next = { ...view, version: view.version + 2 };
+      const { result, qc } = setupCore(
+        [{ status: 200, body: { ok: true, view: next, events: [] } }],
+        view,
+      );
+      const invalidate = vi.spyOn(qc, 'invalidateQueries');
+      let outcome: Awaited<ReturnType<typeof result.current.send>> | undefined;
+      await act(async () => {
+        outcome = await result.current.send(command);
+      });
+      expect(body(0)).toEqual({ actor: view.viewer, expectedVersion: view.version, command });
+      expect(outcome).toMatchObject({ ok: true, view: { version: view.version + 2 } });
+      const cached = qc.getQueryData<SessionEnvelope>(sessionKeys.detail(CORE_SESSION_ID));
+      expect(cached?.view).toEqual(next);
+      expect(invalidate).toHaveBeenCalledWith({ queryKey: sessionKeys.lists() });
+      // No GAME_OVER: the session detail is not refetched.
+      expect(invalidate).not.toHaveBeenCalledWith({
+        queryKey: sessionKeys.detail(CORE_SESSION_ID),
+      });
+    },
+  );
+
+  it('a response with GAME_OVER updates the view and invalidates detail (status) and lists (AM-FE-10)', async () => {
+    const over = makeCoreOutcomeView('rebels');
+    const gameOver = over.log.at(-1)!;
+    const { result, qc } = setupCore(
+      [{ status: 200, body: { ok: true, view: over, events: [gameOver] } }],
+      makeCoreView(),
+    );
+    const invalidate = vi.spyOn(qc, 'invalidateQueries');
+    let outcome: Awaited<ReturnType<typeof result.current.send>> | undefined;
+    await act(async () => {
+      outcome = await result.current.send({ type: 'PASS' });
+    });
+    expect(outcome).toMatchObject({ ok: true, events: [{ type: 'GAME_OVER' }] });
+    expect(qc.getQueryData<SessionEnvelope>(sessionKeys.detail(CORE_SESSION_ID))?.view).toEqual(
+      over,
+    );
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: sessionKeys.detail(CORE_SESSION_ID) });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: sessionKeys.lists() });
+    expect(result.current.saveStatus).toBe('saved');
+  });
+
+  it('422 gameOver → localized key returned, cache untouched, nothing invalidated', async () => {
+    const view = makeCoreOutcomeView('empire');
+    const { result, qc } = setupCore(
+      [
+        {
+          status: 422,
+          body: { ok: false, error: { code: 'ILLEGAL_COMMAND', messageKey: 'errors.gameOver' } },
+        },
+      ],
+      view,
+    );
+    const invalidate = vi.spyOn(qc, 'invalidateQueries');
+    let outcome: Awaited<ReturnType<typeof result.current.send>> | undefined;
+    await act(async () => {
+      outcome = await result.current.send({ type: 'PASS' });
+    });
+    expect(outcome).toEqual({
+      ok: false,
+      code: 'ILLEGAL_COMMAND',
+      messageKey: 'errors.gameOver',
+      details: undefined,
+    });
+    expect(qc.getQueryData<SessionEnvelope>(sessionKeys.detail(CORE_SESSION_ID))?.view).toEqual(
+      view,
+    );
+    expect(invalidate).not.toHaveBeenCalled();
+    expect(result.current.saveStatus).toBe('idle');
   });
 });

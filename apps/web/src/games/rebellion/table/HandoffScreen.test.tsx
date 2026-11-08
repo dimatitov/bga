@@ -1,4 +1,4 @@
-import type { PlayerView, PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { PlayerView, PlayerViewMock } from '@bga/game-rebellion/schema';
 import { screen, waitFor, within } from '@testing-library/react';
 import { useMemo, useRef } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -45,7 +45,7 @@ const HUMAN_SETTINGS = {
 } as const;
 
 /** Rebels' table of a human game (Rebels vs second player), `END_TURN` legal. */
-function rebelsView(overrides: Partial<PlayerViewPlayer> = {}): PlayerViewPlayer {
+function rebelsView(overrides: Partial<PlayerViewMock> = {}): PlayerViewMock {
   const base = makeView();
   return makeView({
     viewer: 'rebels',
@@ -59,7 +59,7 @@ function rebelsView(overrides: Partial<PlayerViewPlayer> = {}): PlayerViewPlayer
   });
 }
 
-function empireView(): PlayerViewPlayer {
+function empireView(): PlayerViewMock {
   return makeView({
     viewer: 'empire',
     activeSide: 'empire',

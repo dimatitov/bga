@@ -1,0 +1,1128 @@
+{
+  "kind": "player",
+  "rulesEngine": "core-v1",
+  "viewer": "rebels",
+  "activeSide": "rebels",
+  "settings": {
+    "playerFaction": "rebels",
+    "opponentFaction": "empire",
+    "opponentType": "human",
+    "aiDifficulty": null,
+    "ruleset": "base",
+    "gameMode": "digital"
+  },
+  "id": "golden-empire-win-3",
+  "version": 3,
+  "round": 1,
+  "phase": "command",
+  "markers": {
+    "time": 1,
+    "reputation": 14
+  },
+  "map": {
+    "regions": [
+      {
+        "id": "r1",
+        "nameKey": "regions.r1"
+      },
+      {
+        "id": "r2",
+        "nameKey": "regions.r2"
+      },
+      {
+        "id": "r3",
+        "nameKey": "regions.r3"
+      },
+      {
+        "id": "r4",
+        "nameKey": "regions.r4"
+      },
+      {
+        "id": "r5",
+        "nameKey": "regions.r5"
+      },
+      {
+        "id": "r6",
+        "nameKey": "regions.r6"
+      },
+      {
+        "id": "r7",
+        "nameKey": "regions.r7"
+      },
+      {
+        "id": "r8",
+        "nameKey": "regions.r8"
+      }
+    ],
+    "systems": [
+      {
+        "id": "alderaan",
+        "nameKey": "systems.alderaan",
+        "regionId": "r6",
+        "adjacentSystemIds": [
+          "cato-neimoidia",
+          "corellia",
+          "coruscant",
+          "kashyyyk",
+          "mandalore",
+          "ord-mantell"
+        ],
+        "remote": false
+      },
+      {
+        "id": "bespin",
+        "nameKey": "systems.bespin",
+        "regionId": "r5",
+        "adjacentSystemIds": ["endor", "hoth", "mustafar", "sullust"],
+        "remote": false
+      },
+      {
+        "id": "bothawui",
+        "nameKey": "systems.bothawui",
+        "regionId": "r2",
+        "adjacentSystemIds": ["malastare", "nal-hutta", "rodia", "tatooine", "toydaria"],
+        "remote": false
+      },
+      {
+        "id": "cato-neimoidia",
+        "nameKey": "systems.cato-neimoidia",
+        "regionId": "r6",
+        "adjacentSystemIds": ["alderaan", "corellia", "kashyyyk", "malastare", "sullust"],
+        "remote": false
+      },
+      {
+        "id": "corellia",
+        "nameKey": "systems.corellia",
+        "regionId": "r6",
+        "adjacentSystemIds": ["alderaan", "cato-neimoidia", "coruscant", "sullust"],
+        "remote": false
+      },
+      {
+        "id": "coruscant",
+        "nameKey": "systems.coruscant",
+        "regionId": "r6",
+        "adjacentSystemIds": ["alderaan", "corellia", "ord-mantell"],
+        "remote": false
+      },
+      {
+        "id": "dagobah",
+        "nameKey": "systems.dagobah",
+        "regionId": "r4",
+        "adjacentSystemIds": ["mustafar", "naboo", "sullust", "utapau"],
+        "remote": true
+      },
+      {
+        "id": "dantooine",
+        "nameKey": "systems.dantooine",
+        "regionId": "r8",
+        "adjacentSystemIds": ["dathomir", "mygeeto"],
+        "remote": true
+      },
+      {
+        "id": "dathomir",
+        "nameKey": "systems.dathomir",
+        "regionId": "r7",
+        "adjacentSystemIds": ["dantooine", "mandalore", "mygeeto", "yavin"],
+        "remote": true
+      },
+      {
+        "id": "endor",
+        "nameKey": "systems.endor",
+        "regionId": "r5",
+        "adjacentSystemIds": ["bespin", "hoth"],
+        "remote": true
+      },
+      {
+        "id": "felucia",
+        "nameKey": "systems.felucia",
+        "regionId": "r1",
+        "adjacentSystemIds": ["mandalore", "mon-calamari", "saleucami", "yavin"],
+        "remote": false
+      },
+      {
+        "id": "geonosis",
+        "nameKey": "systems.geonosis",
+        "regionId": "r3",
+        "adjacentSystemIds": ["naboo", "rodia", "ryloth", "tatooine", "utapau"],
+        "remote": false
+      },
+      {
+        "id": "hoth",
+        "nameKey": "systems.hoth",
+        "regionId": "r5",
+        "adjacentSystemIds": ["bespin", "endor", "mustafar"],
+        "remote": true
+      },
+      {
+        "id": "ilum",
+        "nameKey": "systems.ilum",
+        "regionId": "r8",
+        "adjacentSystemIds": ["mygeeto", "ord-mantell"],
+        "remote": true
+      },
+      {
+        "id": "kashyyyk",
+        "nameKey": "systems.kashyyyk",
+        "regionId": "r7",
+        "adjacentSystemIds": [
+          "alderaan",
+          "cato-neimoidia",
+          "malastare",
+          "mandalore",
+          "saleucami",
+          "toydaria"
+        ],
+        "remote": false
+      },
+      {
+        "id": "kessel",
+        "nameKey": "systems.kessel",
+        "regionId": "r2",
+        "adjacentSystemIds": ["nal-hutta", "saleucami", "toydaria"],
+        "remote": false
+      },
+      {
+        "id": "malastare",
+        "nameKey": "systems.malastare",
+        "regionId": "r7",
+        "adjacentSystemIds": [
+          "bothawui",
+          "cato-neimoidia",
+          "kashyyyk",
+          "naboo",
+          "rodia",
+          "sullust",
+          "toydaria"
+        ],
+        "remote": false
+      },
+      {
+        "id": "mandalore",
+        "nameKey": "systems.mandalore",
+        "regionId": "r7",
+        "adjacentSystemIds": [
+          "alderaan",
+          "dathomir",
+          "felucia",
+          "kashyyyk",
+          "mygeeto",
+          "ord-mantell",
+          "saleucami",
+          "yavin"
+        ],
+        "remote": false
+      },
+      {
+        "id": "mon-calamari",
+        "nameKey": "systems.mon-calamari",
+        "regionId": "r1",
+        "adjacentSystemIds": ["felucia", "saleucami"],
+        "remote": false
+      },
+      {
+        "id": "mustafar",
+        "nameKey": "systems.mustafar",
+        "regionId": "r5",
+        "adjacentSystemIds": ["bespin", "dagobah", "hoth", "sullust"],
+        "remote": false
+      },
+      {
+        "id": "mygeeto",
+        "nameKey": "systems.mygeeto",
+        "regionId": "r8",
+        "adjacentSystemIds": ["dantooine", "dathomir", "ilum", "mandalore", "ord-mantell"],
+        "remote": false
+      },
+      {
+        "id": "naboo",
+        "nameKey": "systems.naboo",
+        "regionId": "r4",
+        "adjacentSystemIds": ["dagobah", "geonosis", "malastare", "rodia", "sullust", "utapau"],
+        "remote": false
+      },
+      {
+        "id": "nal-hutta",
+        "nameKey": "systems.nal-hutta",
+        "regionId": "r2",
+        "adjacentSystemIds": ["bothawui", "kessel", "toydaria"],
+        "remote": false
+      },
+      {
+        "id": "ord-mantell",
+        "nameKey": "systems.ord-mantell",
+        "regionId": "r8",
+        "adjacentSystemIds": ["alderaan", "coruscant", "ilum", "mandalore", "mygeeto"],
+        "remote": false
+      },
+      {
+        "id": "rodia",
+        "nameKey": "systems.rodia",
+        "regionId": "r3",
+        "adjacentSystemIds": ["bothawui", "geonosis", "malastare", "naboo", "tatooine"],
+        "remote": false
+      },
+      {
+        "id": "ryloth",
+        "nameKey": "systems.ryloth",
+        "regionId": "r3",
+        "adjacentSystemIds": ["geonosis", "tatooine"],
+        "remote": false
+      },
+      {
+        "id": "saleucami",
+        "nameKey": "systems.saleucami",
+        "regionId": "r1",
+        "adjacentSystemIds": [
+          "felucia",
+          "kashyyyk",
+          "kessel",
+          "mandalore",
+          "mon-calamari",
+          "toydaria"
+        ],
+        "remote": false
+      },
+      {
+        "id": "sullust",
+        "nameKey": "systems.sullust",
+        "regionId": "r4",
+        "adjacentSystemIds": [
+          "bespin",
+          "cato-neimoidia",
+          "corellia",
+          "dagobah",
+          "malastare",
+          "mustafar",
+          "naboo"
+        ],
+        "remote": false
+      },
+      {
+        "id": "tatooine",
+        "nameKey": "systems.tatooine",
+        "regionId": "r3",
+        "adjacentSystemIds": ["bothawui", "geonosis", "rodia", "ryloth"],
+        "remote": true
+      },
+      {
+        "id": "toydaria",
+        "nameKey": "systems.toydaria",
+        "regionId": "r2",
+        "adjacentSystemIds": [
+          "bothawui",
+          "kashyyyk",
+          "kessel",
+          "malastare",
+          "nal-hutta",
+          "saleucami"
+        ],
+        "remote": false
+      },
+      {
+        "id": "utapau",
+        "nameKey": "systems.utapau",
+        "regionId": "r4",
+        "adjacentSystemIds": ["dagobah", "geonosis", "naboo"],
+        "remote": false
+      },
+      {
+        "id": "yavin",
+        "nameKey": "systems.yavin",
+        "regionId": "r1",
+        "adjacentSystemIds": ["dathomir", "felucia", "mandalore"],
+        "remote": true
+      }
+    ]
+  },
+  "unitTypes": [
+    {
+      "typeKey": "unit.empire.star-destroyer",
+      "owner": "empire",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 6,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.empire.assault-carrier",
+      "owner": "empire",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 4,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.empire.super-star-destroyer",
+      "owner": "empire",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 8,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.empire.death-star",
+      "owner": "empire",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 8,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.empire.death-star-under-construction",
+      "owner": "empire",
+      "arena": "space",
+      "mobility": "immobile",
+      "transportCapacity": 0,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.empire.tie-fighter",
+      "owner": "empire",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": true
+    },
+    {
+      "typeKey": "unit.empire.stormtrooper",
+      "owner": "empire",
+      "arena": "ground",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": true
+    },
+    {
+      "typeKey": "unit.empire.at-st",
+      "owner": "empire",
+      "arena": "ground",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": true
+    },
+    {
+      "typeKey": "unit.empire.at-at",
+      "owner": "empire",
+      "arena": "ground",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": true
+    },
+    {
+      "typeKey": "unit.rebels.corellian-corvette",
+      "owner": "rebels",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 2,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.rebels.rebel-transport",
+      "owner": "rebels",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 4,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.rebels.mon-calamari-cruiser",
+      "owner": "rebels",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 4,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.rebels.x-wing",
+      "owner": "rebels",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.rebels.y-wing",
+      "owner": "rebels",
+      "arena": "space",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.rebels.rebel-trooper",
+      "owner": "rebels",
+      "arena": "ground",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": true
+    },
+    {
+      "typeKey": "unit.rebels.airspeeder",
+      "owner": "rebels",
+      "arena": "ground",
+      "mobility": "mobile",
+      "transportCapacity": 0,
+      "requiresTransport": true
+    },
+    {
+      "typeKey": "unit.rebels.shield-generator",
+      "owner": "rebels",
+      "arena": "ground",
+      "mobility": "immobile",
+      "transportCapacity": 0,
+      "requiresTransport": false
+    },
+    {
+      "typeKey": "unit.rebels.ion-cannon",
+      "owner": "rebels",
+      "arena": "ground",
+      "mobility": "immobile",
+      "transportCapacity": 0,
+      "requiresTransport": false
+    }
+  ],
+  "units": [
+    {
+      "id": "u-01",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.corellian-corvette",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-02",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-transport",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-03",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.x-wing",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-04",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.y-wing",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-05",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-trooper",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-06",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-trooper",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-07",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-trooper",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-08",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.airspeeder",
+      "location": {
+        "kind": "system",
+        "systemId": "bothawui"
+      }
+    },
+    {
+      "id": "u-09",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.x-wing",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-10",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.y-wing",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-11",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-trooper",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-12",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-trooper",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-13",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.rebel-trooper",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-14",
+      "owner": "rebels",
+      "typeKey": "unit.rebels.airspeeder",
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "u-15",
+      "owner": "empire",
+      "typeKey": "unit.empire.star-destroyer",
+      "location": {
+        "kind": "system",
+        "systemId": "saleucami"
+      }
+    },
+    {
+      "id": "u-16",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "saleucami"
+      }
+    },
+    {
+      "id": "u-17",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "saleucami"
+      }
+    },
+    {
+      "id": "u-18",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "saleucami"
+      }
+    },
+    {
+      "id": "u-19",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "saleucami"
+      }
+    },
+    {
+      "id": "u-20",
+      "owner": "empire",
+      "typeKey": "unit.empire.at-st",
+      "location": {
+        "kind": "system",
+        "systemId": "saleucami"
+      }
+    },
+    {
+      "id": "u-21",
+      "owner": "empire",
+      "typeKey": "unit.empire.death-star",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-22",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-23",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-24",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-25",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-26",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-27",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-28",
+      "owner": "empire",
+      "typeKey": "unit.empire.at-st",
+      "location": {
+        "kind": "system",
+        "systemId": "mandalore"
+      }
+    },
+    {
+      "id": "u-29",
+      "owner": "empire",
+      "typeKey": "unit.empire.star-destroyer",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-30",
+      "owner": "empire",
+      "typeKey": "unit.empire.assault-carrier",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-31",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-32",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-33",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-34",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-35",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-36",
+      "owner": "empire",
+      "typeKey": "unit.empire.at-at",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-37",
+      "owner": "empire",
+      "typeKey": "unit.empire.at-st",
+      "location": {
+        "kind": "system",
+        "systemId": "coruscant"
+      }
+    },
+    {
+      "id": "u-38",
+      "owner": "empire",
+      "typeKey": "unit.empire.assault-carrier",
+      "location": {
+        "kind": "system",
+        "systemId": "corellia"
+      }
+    },
+    {
+      "id": "u-39",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "corellia"
+      }
+    },
+    {
+      "id": "u-40",
+      "owner": "empire",
+      "typeKey": "unit.empire.star-destroyer",
+      "location": {
+        "kind": "system",
+        "systemId": "sullust"
+      }
+    },
+    {
+      "id": "u-41",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "sullust"
+      }
+    },
+    {
+      "id": "u-42",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "sullust"
+      }
+    },
+    {
+      "id": "u-43",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "sullust"
+      }
+    },
+    {
+      "id": "u-44",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "sullust"
+      }
+    },
+    {
+      "id": "u-45",
+      "owner": "empire",
+      "typeKey": "unit.empire.at-st",
+      "location": {
+        "kind": "system",
+        "systemId": "sullust"
+      }
+    },
+    {
+      "id": "u-46",
+      "owner": "empire",
+      "typeKey": "unit.empire.assault-carrier",
+      "location": {
+        "kind": "system",
+        "systemId": "mustafar"
+      }
+    },
+    {
+      "id": "u-47",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "mustafar"
+      }
+    },
+    {
+      "id": "u-48",
+      "owner": "empire",
+      "typeKey": "unit.empire.tie-fighter",
+      "location": {
+        "kind": "system",
+        "systemId": "mustafar"
+      }
+    },
+    {
+      "id": "u-49",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "mustafar"
+      }
+    },
+    {
+      "id": "u-50",
+      "owner": "empire",
+      "typeKey": "unit.empire.stormtrooper",
+      "location": {
+        "kind": "system",
+        "systemId": "mustafar"
+      }
+    },
+    {
+      "id": "u-51",
+      "owner": "empire",
+      "typeKey": "unit.empire.at-st",
+      "location": {
+        "kind": "system",
+        "systemId": "mustafar"
+      }
+    }
+  ],
+  "leaders": [
+    {
+      "id": "palpatine",
+      "owner": "empire",
+      "canActivate": true,
+      "location": {
+        "kind": "pool"
+      }
+    },
+    {
+      "id": "vader",
+      "owner": "empire",
+      "canActivate": true,
+      "location": {
+        "kind": "pool"
+      }
+    },
+    {
+      "id": "tarkin",
+      "owner": "empire",
+      "canActivate": true,
+      "location": {
+        "kind": "pool"
+      }
+    },
+    {
+      "id": "tagge",
+      "owner": "empire",
+      "canActivate": true,
+      "location": {
+        "kind": "pool"
+      }
+    },
+    {
+      "id": "mon-mothma",
+      "owner": "rebels",
+      "canActivate": false,
+      "location": {
+        "kind": "pool"
+      }
+    },
+    {
+      "id": "leia",
+      "owner": "rebels",
+      "canActivate": true,
+      "location": {
+        "kind": "system",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "id": "dodonna",
+      "owner": "rebels",
+      "canActivate": true,
+      "location": {
+        "kind": "pool"
+      }
+    },
+    {
+      "id": "rieekan",
+      "owner": "rebels",
+      "canActivate": true,
+      "location": {
+        "kind": "pool"
+      }
+    }
+  ],
+  "activation": {
+    "side": "rebels",
+    "leaderId": "leia",
+    "location": {
+      "kind": "system",
+      "systemId": "rodia"
+    }
+  },
+  "passed": {
+    "rebels": false,
+    "empire": false
+  },
+  "rebelBase": {
+    "systemId": "rodia",
+    "revealed": false
+  },
+  "contestedSystemIds": [],
+  "outcome": null,
+  "log": [
+    {
+      "seq": 1,
+      "at": "2026-11-08T10:00:00.000Z",
+      "type": "GAME_CREATED",
+      "actor": "system",
+      "payload": {
+        "scenarioId": "rebellion-base-v1"
+      }
+    },
+    {
+      "seq": 2,
+      "at": "2026-11-08T10:00:00.000Z",
+      "type": "PHASE_STARTED",
+      "actor": "system",
+      "payload": {
+        "round": 1,
+        "phase": "assignment"
+      }
+    },
+    {
+      "seq": 3,
+      "at": "2026-11-08T10:00:00.000Z",
+      "type": "PHASE_STARTED",
+      "actor": "system",
+      "payload": {
+        "round": 1,
+        "phase": "command"
+      }
+    },
+    {
+      "seq": 4,
+      "at": "2026-11-08T10:00:00.000Z",
+      "type": "SYSTEM_ACTIVATED",
+      "actor": "rebels",
+      "payload": {
+        "leaderId": "leia",
+        "systemId": "rodia"
+      }
+    },
+    {
+      "seq": 5,
+      "at": "2026-11-08T10:00:00.000Z",
+      "type": "PIECES_MOVED",
+      "actor": "rebels",
+      "payload": {
+        "pieceIds": ["u-02"],
+        "fromSystemId": "bothawui",
+        "toSystemId": "rodia"
+      }
+    }
+  ],
+  "legalActions": [
+    {
+      "type": "MOVE_PIECES",
+      "fromSystemId": "bothawui",
+      "toSystemId": "rodia",
+      "pieces": [
+        {
+          "pieceId": "u-01",
+          "transportCapacity": 2,
+          "requiresTransport": false
+        },
+        {
+          "pieceId": "u-03",
+          "transportCapacity": 0,
+          "requiresTransport": false
+        },
+        {
+          "pieceId": "u-04",
+          "transportCapacity": 0,
+          "requiresTransport": false
+        },
+        {
+          "pieceId": "u-05",
+          "transportCapacity": 0,
+          "requiresTransport": true
+        },
+        {
+          "pieceId": "u-06",
+          "transportCapacity": 0,
+          "requiresTransport": true
+        },
+        {
+          "pieceId": "u-07",
+          "transportCapacity": 0,
+          "requiresTransport": true
+        },
+        {
+          "pieceId": "u-08",
+          "transportCapacity": 0,
+          "requiresTransport": true
+        }
+      ]
+    },
+    {
+      "type": "FINISH_ACTIVATION"
+    }
+  ]
+}

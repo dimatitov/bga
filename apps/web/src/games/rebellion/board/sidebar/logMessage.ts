@@ -1,4 +1,4 @@
-import type { GameEvent, PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { GameEvent, PlayerViewMock } from '@bga/game-rebellion/schema';
 import type { TFunction } from 'i18next';
 import { factionName, phaseName, pieceName, systemNameById } from '../model/labels';
 
@@ -13,7 +13,7 @@ export type LogEvent = Pick<GameEvent, 'seq' | 'at'> & {
 export function logMessage(
   event: LogEvent,
   t: TFunction,
-  view?: Pick<PlayerViewPlayer, 'systems' | 'pieces'>,
+  view?: Pick<PlayerViewMock, 'systems' | 'pieces'>,
 ): string {
   const e = event as GameEvent;
   switch (e.type) {

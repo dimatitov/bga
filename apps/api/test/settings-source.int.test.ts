@@ -13,8 +13,10 @@ import { afterEach, beforeEach, describe, expect, it, vi, type MockInstance } fr
 import {
   EMPIRE_AI,
   R,
+  SEEDED,
   advanceEnv,
   createRebellionSession,
+  createSeededDb,
   dbSnapshot,
   expectError,
   postCommand,
@@ -130,13 +132,39 @@ describe('review #1: Session.setup and state disagree → 500 INTERNAL', () => {
     }
   });
 
-  it('a new session: setup column equals toStoredSetup(state.settings); a command keeps it equal', async () => {
+  it('a new session: setup column equals toStoredSetup(state.settings)', async () => {
     const s = await createRebellionSession(app, EMPIRE_AI);
-    const res = await postCommand(app, s.sessionId, advanceEnv('empire', 1));
-    expect(res.status).toBe(200);
     const row = await prismaOf(app).session.findUniqueOrThrow({ where: { id: s.sessionId } });
     expect(StoredRebellionSetupSchema.parse(JSON.parse(row.setup))).toEqual(
       toStoredSetup(upcastState(JSON.parse(row.state)).settings),
     );
+  });
+});
+
+/**
+ * SWR-005 W5: the command part runs on a seeded mock-v1 row (`SEEDED.empireAi`, Empire active, v2 snapshot),
+ * not on a POST-created session (new sessions are `core-v1`, where ADVANCE_PHASE is 422 commandUnavailable).
+ */
+describe('review #1: a command keeps Session.setup equal to the state settings (seeded mock-v1 row)', () => {
+  let db: TestDb;
+  let app: INestApplication;
+  const ROW = SEEDED.empireAi;
+
+  beforeEach(async () => {
+    db = await createSeededDb();
+    app = await startApp(db.url);
+  });
+
+  afterEach(async () => {
+    await stopApp(app, db);
+  });
+
+  it('ADVANCE_PHASE → 200; setup column (v2) equals toStoredSetup(state.settings)', async () => {
+    const res = await postCommand(app, ROW.id, advanceEnv('empire', ROW.version));
+    expect(res.status).toBe(200);
+    const row = await prismaOf(app).session.findUniqueOrThrow({ where: { id: ROW.id } });
+    const stored = StoredRebellionSetupSchema.parse(JSON.parse(row.setup));
+    expect(stored.schemaVersion).toBe(2);
+    expect(stored).toEqual(toStoredSetup(upcastState(JSON.parse(row.state)).settings));
   });
 });

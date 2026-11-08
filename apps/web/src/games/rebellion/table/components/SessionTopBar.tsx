@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import type { PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { PlayerViewMock } from '@bga/game-rebellion/schema';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
 import { paths } from '@/platform';
@@ -14,7 +14,7 @@ import { AdvancePhaseButton, phaseName } from '../../board';
 import type { SaveStatus as SaveStatusValue } from '../hooks/useSendCommand';
 import { ActiveSide } from './ActiveSide';
 import { EndTurnButton } from './EndTurnButton';
-import { PrototypeBadge } from './PrototypeBadge';
+import { PrototypeBadge, type PrototypeBadgeVariant } from './PrototypeBadge';
 import { SaveStatus } from './SaveStatus';
 
 /**
@@ -35,13 +35,16 @@ export function SessionTopBar({
   status,
   saveStatus,
   backHref,
+  badgeVariant = 'generic',
 }: {
-  view: PlayerViewPlayer;
+  view: PlayerViewMock;
   /** Platform session status (`TableScreenProps.status`) — drives the «Прототип» badge (AC-13). */
   status: TableScreenProps['status'];
   saveStatus: SaveStatusValue;
   /** Game page (`/games/:gameId`) — from `TableScreenProps.backHref`. */
   backHref: string;
+  /** Variant of the prototype badge (SWR-005: `legacy` for the `mock-v1` table, passed by `LegacyTable`). */
+  badgeVariant?: PrototypeBadgeVariant;
 }) {
   const { t } = useTranslation();
   return (
@@ -134,7 +137,7 @@ export function SessionTopBar({
           ml: { sm: 'auto', lg: 0 },
         }}
       >
-        <PrototypeBadge status={status} />
+        <PrototypeBadge status={status} variant={badgeVariant} />
         <SaveStatus status={saveStatus} />
       </Box>
       <Box sx={{ ...GROUP, order: { xs: 3, sm: 4, lg: 5 }, ml: { xs: 'auto', sm: 0 } }}>

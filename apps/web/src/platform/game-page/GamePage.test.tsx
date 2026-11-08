@@ -217,6 +217,9 @@ describe('GamePage (AC-2, AC-4, ux §12.4)', () => {
         gameMode: 'digital',
         round: 1,
         phase: 'assignment',
+        rulesEngine: 'mock-v1',
+        winner: null,
+        reputation: null,
       },
     });
     const ai = makeSessionSummary({
@@ -233,6 +236,9 @@ describe('GamePage (AC-2, AC-4, ux §12.4)', () => {
         gameMode: 'digital',
         round: 2,
         phase: 'command',
+        rulesEngine: 'mock-v1',
+        winner: null,
+        reputation: null,
       },
     });
     mockFetch({ 'GET /api/sessions': { status: 200, body: [human, ai] } });
@@ -285,6 +291,69 @@ describe('GamePage (AC-2, AC-4, ux §12.4)', () => {
     expect(cont).toHaveAttribute('aria-describedby', hint.id);
     await user.click(cont);
     await waitFor(() => expect(router.state.location.pathname).toBe('/sessions/reb-human'));
+  });
+
+  it('SWR-005 TC-C-13 (Q-31): «Продолжить» → newest NOT completed session; a completed one is listed as «Завершена» and opens', async () => {
+    const body = [
+      makeSessionSummary({
+        sessionId: 'done',
+        status: 'completed',
+        updatedAt: minutesAgo(1),
+        details: { side: 'sideD', round: 14 },
+      }),
+      makeSessionSummary({
+        sessionId: 'running',
+        status: 'prototype',
+        updatedAt: minutesAgo(30),
+        details: { side: 'sideR', round: 3 },
+      }),
+      makeSessionSummary({
+        sessionId: 'older',
+        status: 'prototype',
+        updatedAt: minutesAgo(90),
+        details: { side: 'sideO', round: 2 },
+      }),
+    ];
+    mockFetch({ 'GET /api/sessions': { status: 200, body } });
+    const { user, router } = renderWithProviders({ path: '/games/test-game', registry });
+    const recent = await screen.findByTestId('game-recent-sessions');
+    const rows = await within(recent).findAllByRole('link');
+    expect(rows.map((r) => r.getAttribute('data-testid'))).toEqual([
+      'recent-session-done',
+      'recent-session-running',
+      'recent-session-older',
+    ]);
+    const doneStatus = within(rows[0]!).getByTestId('recent-session-status');
+    expect(doneStatus).toHaveAttribute('data-status', 'completed');
+    expect(doneStatus).toHaveTextContent('Завершена');
+
+    const cont = screen.getByTestId('game-continue');
+    expect(cont).toHaveAttribute('data-session-id', 'running');
+    expect(cont).toHaveAttribute('href', '/sessions/running');
+    expect(screen.getByTestId('game-continue-hint')).toHaveTextContent('sideR · R3');
+    expect(screen.getByTestId('game-continue-status')).toHaveAttribute('data-status', 'prototype');
+
+    // The finished session still opens from the list (final screen).
+    await user.click(rows[0]!);
+    await waitFor(() => expect(router.state.location.pathname).toBe('/sessions/done'));
+  });
+
+  it('SWR-005 Q-31: only completed sessions → «Продолжить» disabled, no «no saved sessions» hint; rows still listed', async () => {
+    const body = [
+      makeSessionSummary({
+        sessionId: 'done1',
+        status: 'completed',
+        updatedAt: minutesAgo(5),
+        details: { side: 'a', round: 1 },
+      }),
+    ];
+    mockFetch({ 'GET /api/sessions': { status: 200, body } });
+    renderWithProviders({ path: '/games/test-game', registry });
+    await screen.findByTestId('recent-session-done1');
+    const cont = screen.getByTestId('game-continue');
+    expect(cont).toBeDisabled();
+    expect(cont).not.toHaveAttribute('data-session-id');
+    expect(screen.queryByTestId('game-continue-hint')).not.toBeInTheDocument();
   });
 
   it('TC-C-15 (AC-10, D-GP-6): pending → loading skeleton, Continue disabled + busy, New session enabled', async () => {

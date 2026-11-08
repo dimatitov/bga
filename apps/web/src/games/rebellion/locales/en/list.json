@@ -2,5 +2,11 @@
   "opponentAi": "vs AI ({{difficulty}})",
   "opponentAiPlain": "vs AI",
   "opponentHuman": "vs second player",
-  "progress": "R{{round}} · {{phase}}"
+  "progress": "R{{round}} · {{phase}}",
+  "progressCore": "Time {{time}} · Reputation {{reputation}} · {{phase}}",
+  "progressCoreOver": "Time {{time}} · Reputation {{reputation}}",
+  "progressTime": "Time {{time}} · {{phase}}",
+  "winnerRebels": "Rebel victory",
+  "winnerEmpire": "Imperial victory",
+  "legacy": "Old prototype"
 }

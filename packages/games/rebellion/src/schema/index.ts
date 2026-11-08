@@ -2,6 +2,8 @@ export * from './enums';
 export * from './factions';
 export * from './settings';
 export * from './setup';
+export * from './data';
+export * from './core-ids';
 export * from './state';
 export * from './scenario';
 export * from './commands';

@@ -1,0 +1,32 @@
+# SWR-005 W3 — core-v1 rules: verification log (2026-11-08T13:58:03Z)
+
+$ pnpm --filter @bga/game-rebellion exec vitest run test/rules
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  20 passed (20)
+      Tests  165 passed (165)
+   Start at  16:58:05
+   Duration  8.51s (transform 4.52s, setup 0ms, import 11.02s, tests 17.59s, environment 3ms)
+
+exit=0
+
+$ pnpm --filter @bga/game-rebellion typecheck
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+exit=0
+
+$ pnpm --filter @bga/game-rebellion lint
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+exit=0
+
+$ pnpm exec prettier --check packages/games/rebellion/src/rules packages/games/rebellion/test/rules
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

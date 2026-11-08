@@ -11,14 +11,33 @@ export interface Point {
   y: number;
 }
 
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface BoardDebug {
   getViewport(): { scale: number; x: number; y: number };
   getZoomLimits(): { min: number; max: number };
   getSystemScreenPos(systemId: string): Point | null;
   getPieceScreenPos(pieceId: string): Point | null;
-  getSelection(): { kind: 'system' | 'piece' | null; id: string | null };
+  getSelection(): { kind: 'system' | 'piece' | 'leader' | 'zone' | null; id: string | null };
   getHighlightedSystemIds(): string[];
   isDragging(): boolean;
+  // SWR-005 core-v1 only (plan-frontend §9, coreBoardDebugImpl.ts); absent on the mock table.
+  getMoveSourceIds?(): string[];
+  getLeaderScreenPos?(leaderId: string): Point | null;
+  getSystemLabelRect?(systemId: string): Rect | null;
+  getContentBounds?(): { minX: number; minY: number; maxX: number; maxY: number } | null;
+  getLod?(): string;
+  getActivatedSystemId?(): string | null;
+  getArmedLeaderId?(): string | null;
+  getRulesEngine?(): 'core-v1';
+  getRebelBaseSystemId?(): string | null;
+  getContestedSystemIds?(): string[];
+  hasHiddenZone?(): boolean;
 }
 
 declare global {
@@ -42,18 +61,34 @@ export const urlOf = (urlPath: string) =>
 export const SESSION_URL = /^[a-z]+:\/\/[^/]+\/sessions\/([^/?#]+)(?:[?#].*)?$/;
 
 /** Opens `/sessions/:id` and waits until the table and the debug hook are ready. */
-export async function openSession(page: Page, sessionId: string): Promise<void> {
+export async function openSession(
+  page: Page,
+  sessionId: string,
+  options: { engine?: 'core-v1' | 'mock-v1' } = {},
+): Promise<void> {
   await page.goto(sessionPath(sessionId));
-  await waitForTable(page, sessionId);
+  await waitForTable(page, sessionId, options);
 }
+
+/** Opens a core-v1 session table (`game-table[data-rules-engine=core-v1]`). */
+export const openCore = (page: Page, sessionId: string) =>
+  openSession(page, sessionId, { engine: 'core-v1' });
+/** Opens a legacy (mock-v1, seeded) session table. */
+export const openLegacy = (page: Page, sessionId: string) =>
+  openSession(page, sessionId, { engine: 'mock-v1' });
 
 /**
  * Waits for the Rebellion table. With `sessionId` it also checks `game-table[data-session-id]` (Q-10, TR-1) and
  * that `data-game-id` is the game id (not the session id as in SWR-002).
  */
-export async function waitForTable(page: Page, sessionId?: string): Promise<void> {
+export async function waitForTable(
+  page: Page,
+  sessionId?: string,
+  options: { engine?: 'core-v1' | 'mock-v1' } = {},
+): Promise<void> {
   const table = page.getByTestId(T.gameTable);
   await expect(table).toBeVisible();
+  if (options.engine) await expect(table).toHaveAttribute('data-rules-engine', options.engine);
   if (sessionId) {
     await expect(table).toHaveAttribute('data-session-id', sessionId);
     await expect(table).toHaveAttribute('data-game-id', REBELLION);
@@ -79,6 +114,29 @@ export const dbg = {
   piecePos: async (page: Page, pieceId: string): Promise<Point> => {
     const p = await page.evaluate((id) => window.__boardDebug!.getPieceScreenPos(id), pieceId);
     if (!p) throw new Error(`__boardDebug.getPieceScreenPos(${pieceId}) returned null`);
+    return p;
+  },
+  // core-v1
+  labelRect: async (page: Page, systemId: string): Promise<Rect> => {
+    const r = await page.evaluate((id) => window.__boardDebug!.getSystemLabelRect!(id), systemId);
+    if (!r) throw new Error(`__boardDebug.getSystemLabelRect(${systemId}) returned null`);
+    return r;
+  },
+  lod: (page: Page) => page.evaluate(() => window.__boardDebug!.getLod!()),
+  contentBounds: (page: Page) => page.evaluate(() => window.__boardDebug!.getContentBounds!()),
+  activated: (page: Page) => page.evaluate(() => window.__boardDebug!.getActivatedSystemId!()),
+  armedLeader: (page: Page) => page.evaluate(() => window.__boardDebug!.getArmedLeaderId!()),
+  rulesEngine: (page: Page) =>
+    page.evaluate(() => window.__boardDebug!.getRulesEngine?.() ?? 'mock-v1'),
+  rebelBase: (page: Page) => page.evaluate(() => window.__boardDebug!.getRebelBaseSystemId!()),
+  contested: (page: Page) =>
+    page.evaluate(() => [...window.__boardDebug!.getContestedSystemIds!()].sort()),
+  moveSources: (page: Page) =>
+    page.evaluate(() => [...window.__boardDebug!.getMoveSourceIds!()].sort()),
+  hasHiddenZone: (page: Page) => page.evaluate(() => window.__boardDebug!.hasHiddenZone!()),
+  leaderPos: async (page: Page, leaderId: string): Promise<Point> => {
+    const p = await page.evaluate((id) => window.__boardDebug!.getLeaderScreenPos!(id), leaderId);
+    if (!p) throw new Error(`__boardDebug.getLeaderScreenPos(${leaderId}) returned null`);
     return p;
   },
 };
@@ -150,6 +208,53 @@ export async function emptyCanvasPoint(
     for (let y = box.y + margin; y <= box.y + box.height - margin; y += 20) {
       const pt = { x, y };
       if (inOverlay(pt)) continue;
+      const d = Math.min(...occupied.map((o) => dist(o, pt)));
+      if (!best || d > best.d) best = { pt, d };
+    }
+  }
+  if (!best || best.d < minDistance) {
+    throw new Error(`no empty canvas point at >= ${minDistance}px from board objects`);
+  }
+  return best.pt;
+}
+
+/**
+ * Points of the canvas far from every system centre, unit and leader of a core-v1 view (core counterpart of
+ * {@link emptyCanvasPoint}).
+ */
+export async function emptyCoreCanvasPoint(
+  page: Page,
+  view: { map: { systems: { id: string }[] }; units: { id: string }[] },
+  minDistance = 60,
+): Promise<Point> {
+  const box = await canvasBox(page);
+  const occupied: Point[] = [];
+  for (const s of view.map.systems) occupied.push(await dbg.systemPos(page, s.id));
+  for (const u of view.units) {
+    const pos = await page.evaluate((id) => window.__boardDebug!.getPieceScreenPos(id), u.id);
+    if (pos) occupied.push(pos);
+  }
+  for (const s of view.map.systems) {
+    const r = await page.evaluate(
+      (id) => window.__boardDebug!.getSystemLabelRect?.(id) ?? null,
+      s.id,
+    );
+    if (r) occupied.push({ x: r.x + r.width / 2, y: r.y + r.height / 2 });
+  }
+  const overlays: Rect[] = [];
+  for (const id of [T.zoomIn, T.zoomOut, T.zoomFit, T.zoomLevel, T.gameOverBanner, 'map-caption']) {
+    for (const handle of await page.getByTestId(id).all()) {
+      const b = await handle.boundingBox();
+      if (b)
+        overlays.push({ x: b.x - 12, y: b.y - 12, width: b.width + 24, height: b.height + 24 });
+    }
+  }
+  let best: { pt: Point; d: number } | null = null;
+  for (let x = box.x + 30; x <= box.x + box.width - 30; x += 15) {
+    for (let y = box.y + 30; y <= box.y + box.height - 30; y += 15) {
+      const pt = { x, y };
+      if (overlays.some((o) => x >= o.x && x <= o.x + o.width && y >= o.y && y <= o.y + o.height))
+        continue;
       const d = Math.min(...occupied.map((o) => dist(o, pt)));
       if (!best || d > best.d) best = { pt, d };
     }
@@ -241,7 +346,9 @@ export async function keyboardFocus(page: Page, target: Locator, maxSteps = 250)
         focusVisible: !el || el === document.body ? true : el.matches(':focus-visible'),
       };
     });
-    expect(state.focusVisible, 'focused element must be :focus-visible').toBe(true);
+    // The starting element may have been focused by a mouse click or programmatically (not :focus-visible by
+    // design); every element reached by a key press must show a visible focus.
+    if (i > 0) expect(state.focusVisible, 'focused element must be :focus-visible').toBe(true);
     await page.keyboard.press(state.inListbox && targetInListbox ? 'ArrowDown' : 'Tab');
   }
   throw new Error(`could not reach target by keyboard in ${maxSteps} steps`);
@@ -256,7 +363,7 @@ export async function keyboardFocus(page: Page, target: Locator, maxSteps = 250)
  *   still exercised, but historical evidence of finished tasks — SWR-002, SWR-003 — is never rewritten by a run).
  * Regenerate old evidence deliberately: `SCREENSHOT_TASK=SWR-003 pnpm e2e` (then SWR-004 shots go to test-results).
  */
-export const CURRENT_SCREENSHOT_TASK = 'SWR-004';
+export const CURRENT_SCREENSHOT_TASK = 'SWR-005';
 
 /** Task whose evidence folder receives screenshots in this run. */
 export function evidenceTask(): string {

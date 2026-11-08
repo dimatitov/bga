@@ -1,0 +1,122 @@
+# SWR-005 REVIEW-FIX (backend) — run 2 (after the base-invariance typing fix; run 1 had typecheck EXIT 2 in test/server/base-invariance.test.ts)
+===== pnpm --filter @bga/game-rebellion test (18:48:14)
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  43 passed (43)
+      Tests  411 passed (411)
+   Start at  18:48:15
+   Duration  8.53s (transform 3.77s, setup 0ms, import 15.21s, tests 19.18s, environment 4ms)
+
+EXIT_CODE=0 (pnpm --filter @bga/game-rebellion test)
+===== pnpm --filter @bga/api test (18:48:24)
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 76950  - [39m11/08/2026, 6:48:31 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=77bfa075-44c6-4d86-990b-bbcfd67f9994 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77581  - [39m11/08/2026, 6:48:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=4feb4eef-721d-4206-b6de-4a100f9c03d4 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 77576  - [39m11/08/2026, 6:48:48 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 77576  - [39m11/08/2026, 6:48:48 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 77576  - [39m11/08/2026, 6:48:48 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 77755  - [39m11/08/2026, 6:48:49 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=a4e9f9a3-7073-4607-b5dd-58dee50c9322 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 77755  - [39m11/08/2026, 6:48:49 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=a4e9f9a3-7073-4607-b5dd-58dee50c9322 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 77778  - [39m11/08/2026, 6:48:50 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 77877  - [39m11/08/2026, 6:48:52 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 77877  - [39m11/08/2026, 6:48:52 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  26 passed | 1 skipped (27)
+      Tests  221 passed | 1 skipped (222)
+   Start at  18:48:25
+   Duration  56.57s (transform 4.62s, setup 0ms, import 33.72s, tests 252.26s, environment 3ms)
+
+EXIT_CODE=0 (pnpm --filter @bga/api test)
+===== pnpm lint (18:49:22)
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+All matched files use Prettier code style!
+EXIT_CODE=0 (pnpm lint)
+===== pnpm typecheck (18:49:39)
+
+> board-game-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/web typecheck$ tsc -b
+apps/api typecheck: Done
+apps/web typecheck: Done
+EXIT_CODE=0 (pnpm typecheck)
+===== pnpm build (18:49:58)
+
+> board-game-ai@ build /Users/dimatitov/WebstormProjects/Game automa
+> pnpm -r run build
+
+Scope: 5 of 6 workspace projects
+packages/platform build$ tsc -b
+packages/platform build: Done
+packages/games/rebellion build$ tsc -b
+packages/games/forbidden-stars build$ tsc -b
+packages/games/forbidden-stars build: Done
+packages/games/rebellion build: Done
+apps/api build$ nest build
+apps/web build$ tsc -b && vite build
+apps/api build: Done
+apps/web build: vite v8.3.6 building client environment for production...
+apps/web build: transforming...
+apps/web build: ✓ 1182 modules transformed.
+apps/web build: rendering chunks...
+apps/web build: computing gzip size...
+apps/web build: dist/index.html                             0.68 kB │ gzip:   0.37 kB
+apps/web build: dist/assets/FactionEmblem-6PZBYkXj.js       0.35 kB │ gzip:   0.27 kB
+apps/web build: dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+apps/web build: dist/assets/SetupScreen-DJJjZlFG.js         6.60 kB │ gzip:   2.29 kB
+apps/web build: dist/assets/TableScreen-Ce86Te0C.js       121.75 kB │ gzip:  34.80 kB
+apps/web build: dist/assets/index-6bg6llmA.js             125.21 kB │ gzip:  39.35 kB
+apps/web build: dist/assets/vendor-DIbOl8aa.js            186.48 kB │ gzip:  54.97 kB
+apps/web build: dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+apps/web build: dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+apps/web build: dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+apps/web build: ✓ built in 351ms
+apps/web build: Done
+EXIT_CODE=0 (pnpm build)
+===== pnpm check:bundle (18:50:09)
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 10 files in apps/web/dist, 6 rules (board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-JlsB9z
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 770 sources, 23 game modules, only definition/schema/board/assets
+EXIT_CODE=0 (pnpm check:bundle)

@@ -56,6 +56,29 @@ describe('check-web-bundle: rules', () => {
     assert.ok(found.includes('hidden-piece-mapping'));
   });
 
+  test('core-v1 base choice strings are found (Q-18): names, string literals and keys', () => {
+    for (const content of [
+      'function chooseRebelBase(e,t){return t[0]}',
+      'const n={rebelBaseCandidates:["sys-a","sys-b"]};',
+      '{"rebelBaseCandidates":[]}',
+      'const k="chooseRebelBase";',
+    ]) {
+      assert.ok(scan(content).includes('rebel-base-choice-symbol'), content);
+    }
+  });
+
+  test('core-v1 base choice rule: no false positives on legal core-v1 web content', () => {
+    const content = [
+      'const r=view.rebelBase.systemId??null,v=view.rebelBase.revealed;',
+      'e("div",{"data-testid":"hidden-base-zone"});',
+      '{"announce":{"baseRevealed":"База Повстанцев раскрыта: {{system}}"}}',
+      'const coreMapLayout={"sys-yavin":{x:10,y:20}};',
+      // review #2: the web-reachable schema helper is public data and is renamed by the minifier — not searched.
+      'export{eligibleRebelBaseSystemIds as e};',
+    ].join('\n');
+    assert.ok(!scan(content).includes('rebel-base-choice-symbol'));
+  });
+
   test('__boardDebug hook is found', () => {
     assert.ok(scan('window.__boardDebug={getViewport(){}}').includes('board-debug-hook'));
   });
@@ -174,6 +197,14 @@ describe('check-web-bundle: CLI', () => {
       });
       assert.equal(res.status, 1, res.stdout + res.stderr);
       assert.match(res.stdout, /FORBIDDEN assets\/leak\.js \[board-debug-hook\]/);
+
+      // SWR-005 Q-18: a leaked core-v1 base-choice symbol fails the CLI as well.
+      fs.writeFileSync(path.join(dir, 'assets', 'leak.js'), 'const x={rebelBaseCandidates:[]};');
+      res = spawnSync(process.execPath, [CLI, '--dist', dir, '--skip-modules'], {
+        encoding: 'utf8',
+      });
+      assert.equal(res.status, 1, res.stdout + res.stderr);
+      assert.match(res.stdout, /FORBIDDEN assets\/leak\.js \[rebel-base-choice-symbol\]/);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

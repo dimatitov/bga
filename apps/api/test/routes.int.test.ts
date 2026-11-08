@@ -8,15 +8,17 @@ import { API_ROOT } from './global-setup';
 import {
   EMPIRE_AI,
   HIDDEN_REBEL,
-  createRebellionSession,
+  SEEDED,
+  advanceEnv,
+  createSeededDb,
   dbSnapshot,
   expectError,
-  movable,
+  movableIn,
   moveEnv,
   postCommand,
   prismaOf,
 } from './support/fixtures';
-import { api, createTestDb, startApp, stopApp, type TestDb } from './support/test-app';
+import { api, startApp, stopApp, type TestDb } from './support/test-app';
 
 function joinPath(...parts: string[]): string {
   return (
@@ -57,15 +59,22 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
+/**
+ * SWR-005 W6a (Q-1): the error bodies are provoked with mock-v1 commands, so the session is the seeded
+ * SWR-004 row `empireAi` (the DB holds all three seeded rows).
+ */
+const ROW = SEEDED.empireAi;
+const SEEDED_IDS = Object.values(SEEDED).map((s) => s.id);
+
 describe('routes and error bodies', () => {
   let db: TestDb;
   let app: INestApplication;
-  let sessionId: string;
+  const sessionId = ROW.id;
+  const m = movableIn(ROW, 'empire');
 
   beforeEach(async () => {
-    db = createTestDb();
+    db = await createSeededDb();
     app = await startApp(db.url);
-    sessionId = (await createRebellionSession(app, EMPIRE_AI)).sessionId;
   });
 
   afterEach(async () => {
@@ -110,14 +119,13 @@ describe('routes and error bodies', () => {
 
   it('TC-SES-14: the SWR-002 /api/games* routes are gone → 404 unified body, nothing written', async () => {
     const before = await dbSnapshot(app, sessionId);
-    const m = movable('empire');
     const responses = [
       await api(app).get('/api/games'),
       await api(app).post('/api/games').send(EMPIRE_AI),
       await api(app).get(`/api/games/${sessionId}`),
       await api(app)
         .post(`/api/games/${sessionId}/commands`)
-        .send(moveEnv('empire', 1, [m.pieceId], m.from, m.adjacent)),
+        .send(moveEnv('empire', ROW.version, [m.pieceId], m.from, m.adjacent)),
     ];
     for (const res of responses) {
       expect(res.status).toBe(404);
@@ -127,7 +135,7 @@ describe('routes and error bodies', () => {
       });
     }
     expect(await dbSnapshot(app, sessionId)).toEqual(before);
-    expect(await prismaOf(app).session.count()).toBe(1);
+    expect(await prismaOf(app).session.count()).toBe(SEEDED_IDS.length);
   });
 
   it('TC-API-24: unknown route → 404 unified body', async () => {
@@ -140,12 +148,15 @@ describe('routes and error bodies', () => {
   });
 
   it('TC-API-25: 400/404/409/422 bodies carry only the contract error', async () => {
-    const m = movable('empire');
     const responses = [
       await postCommand(app, sessionId, { bad: true }),
       await postCommand(app, 'missing', {}),
       await postCommand(app, sessionId, moveEnv('empire', 9, [m.pieceId], m.from, m.adjacent)),
-      await postCommand(app, sessionId, moveEnv('empire', 1, [m.pieceId], m.from, m.nonAdjacent)),
+      await postCommand(
+        app,
+        sessionId,
+        moveEnv('empire', ROW.version, [m.pieceId], m.from, m.nonAdjacent),
+      ),
     ];
     expect(responses.map((r) => r.status)).toEqual([400, 404, 409, 422]);
     for (const res of responses) {
@@ -163,14 +174,12 @@ describe('routes and error bodies', () => {
     // GET /api/sessions skips corrupt rows instead of failing (review #1, sessions.int.test.ts).
     const list = await api(app).get('/api/sessions');
     expect(list.status).toBe(200);
-    expect(list.body).toEqual([]);
+    expect(list.body.map((s: { sessionId: string }) => s.sessionId).sort()).toEqual(
+      SEEDED_IDS.filter((id) => id !== sessionId).sort(),
+    );
     for (const res of [
       await api(app).get(`/api/sessions/${sessionId}`),
-      await postCommand(app, sessionId, {
-        actor: 'empire',
-        expectedVersion: 1,
-        command: { type: 'ADVANCE_PHASE' },
-      }),
+      await postCommand(app, sessionId, advanceEnv('empire', ROW.version)),
     ]) {
       expect(res.status).toBe(500);
       expect(res.body).toEqual({

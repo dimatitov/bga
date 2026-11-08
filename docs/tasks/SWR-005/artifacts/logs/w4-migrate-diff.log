@@ -1,0 +1,6 @@
+# W4 2026-11-08T13:44:17Z
+$ git diff --stat -- apps/api/prisma/schema.prisma apps/api/prisma/migrations
+$ pnpm --filter @bga/api exec prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url file:./.tmp/shadow.db --exit-code
+No difference detected.
+
+exit=0

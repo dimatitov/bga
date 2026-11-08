@@ -1,0 +1,49 @@
+### 2026-11-08T13:42:17Z pnpm --filter @bga/game-rebellion exec vitest run test/scenario
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  2 passed (2)
+      Tests  28 passed (28)
+   Start at  16:42:18
+   Duration  904ms (transform 665ms, setup 0ms, import 1.03s, tests 73ms, environment 0ms)
+
+exit=0
+
+### 2026-11-08T13:42:24Z pnpm --filter @bga/game-rebellion typecheck
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+exit=0
+
+### 2026-11-08T13:42:33Z pnpm --filter @bga/game-rebellion lint
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+exit=0
+
+### 2026-11-08T13:43:06Z prettier --check (W2 files, after --write on map.ts + core-data.test.ts)
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+### 2026-11-08T13:43:07Z rerun after formatting: vitest run test/scenario
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  2 passed (2)
+      Tests  28 passed (28)
+   Start at  16:43:09
+   Duration  927ms (transform 607ms, setup 0ms, import 1.02s, tests 84ms, environment 0ms)
+
+exit=0
+
+### 2026-11-08T13:43:10Z rerun: lint
+
+> @bga/game-rebellion@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> eslint . --max-warnings=0
+
+exit=0

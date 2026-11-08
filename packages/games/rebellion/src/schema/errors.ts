@@ -24,6 +24,31 @@ export const REBELLION_ERROR_MESSAGE_KEYS = {
   notInFromSystem: 'errors.notInFromSystem',
   sameSystem: 'errors.sameSystem',
   notAdjacent: 'errors.notAdjacent',
+  // --- SWR-005 (plan-backend §3.6 + Clarifications; no `systemHasOwnLeader`, Q-BE-3) ---
+  /** The game is over (`outcome` set): any command, checked right after the schema (AM-BE-3, Q-13). */
+  gameOver: 'errors.gameOver',
+  /** The command belongs to the other rules engine (core-v1: ADVANCE_PHASE/END_TURN; mock-v1: the core commands). */
+  commandUnavailable: 'errors.commandUnavailable',
+  /** Not the command phase (unreachable in a stored state; Q-6). */
+  wrongPhase: 'errors.wrongPhase',
+  /** ACTIVATE_SYSTEM: no such leader (Q-4). */
+  unknownLeader: 'errors.unknownLeader',
+  /** ACTIVATE_SYSTEM: the leader is the other side's or not in the pool (Q-4). */
+  leaderNotInPool: 'errors.leaderNotInPool',
+  /** ACTIVATE_SYSTEM: the leader has no tactic values and cannot activate (R-4, Q-BE-1(c)). */
+  leaderCannotActivate: 'errors.leaderCannotActivate',
+  /** ACTIVATE_SYSTEM / PASS during the own activation. */
+  activationInProgress: 'errors.activationInProgress',
+  /** MOVE_PIECES / FINISH_ACTIVATION without an activation. */
+  noActivation: 'errors.noActivation',
+  /** MOVE_PIECES: the destination is not the activated system (R-5). */
+  notActivatedSystem: 'errors.notActivatedSystem',
+  /** MOVE_PIECES: an own leader stands in the source system (R-5). */
+  pinnedByLeader: 'errors.pinnedByLeader',
+  /** MOVE_PIECES: a structure / unit that never moves (R-5). */
+  immobileUnit: 'errors.immobileUnit',
+  /** MOVE_PIECES: not enough transport capacity moving with the units that need it (R-5). */
+  insufficientCapacity: 'errors.insufficientCapacity',
 } as const;
 export type RebellionErrorMessageKey =
   (typeof REBELLION_ERROR_MESSAGE_KEYS)[keyof typeof REBELLION_ERROR_MESSAGE_KEYS];

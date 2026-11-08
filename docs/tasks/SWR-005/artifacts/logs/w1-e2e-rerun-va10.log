@@ -1,0 +1,207 @@
+[WebServer] 
+[WebServer] > @bga/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+[WebServer] Environment variables loaded from .env
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 3 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [InstanceLoader] AppModule dependencies initialized +25ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +1ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +19ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +28ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RoutesResolver] HealthController {/api/health}: +5ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +3ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +1ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +4ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +2ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +1ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +1ms
+[WebServer] [Nest] 19683  - 11/08/2026, 4:29:17 PM     LOG [NestApplication] Nest application successfully started +2ms
+
+Running 30 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/visual-a11y.spec.ts:64:3 › SWR-004 visual & accessibility › TC-VA-01: game page with sessions (D, M) — no horizontal scroll on M (1.9s)
+  ✓   2 [chromium] › e2e/visual-a11y.spec.ts:81:3 › SWR-004 visual & accessibility › TC-VA-02..04: form defaults, Empire selected, human selected (D, M) + en copy (5.4s)
+  ✓   3 [chromium] › e2e/visual-a11y.spec.ts:125:3 › SWR-004 visual & accessibility › TC-VA-05 + TC-VA-13: error state is visible next to the button (D, M) and reads as human text (2.5s)
+  ✓   4 [chromium] › e2e/visual-a11y.spec.ts:145:3 › SWR-004 visual & accessibility › TC-VA-06 + TC-VA-07: table with the prototype badge and the handoff screen (D, M) (5.6s)
+  ✓   5 [chromium] › e2e/visual-a11y.spec.ts:168:3 › SWR-004 visual & accessibility › TC-VA-08 (D-1): table top bar at 1024×768 and 768×1024 does not overflow (AI and human games) (7.5s)
+  ✓   6 [chromium] › e2e/visual-a11y.spec.ts:204:3 › SWR-004 visual & accessibility › TC-VA-09 + TC-VA-10: keyboard-only path through the form, visible focus, Enter creates the session (1.7s)
+  ✘   7 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (1.5s)
+  ✓   8 [chromium] › e2e/visual-a11y.spec.ts:303:3 › SWR-004 visual & accessibility › TC-VA-11: text and selection contrast (form, error, badge, handoff) — WCAG helper (TR-9) (3.6s)
+  ✓   9 [chromium] › e2e/visual-a11y.spec.ts:347:3 › SWR-004 visual & accessibility › TC-VA-12: roles and names — radiogroups, radios, alert, busy button, handoff heading (2.7s)
+  ✓  10 [chromium] › e2e/visual-a11y.spec.ts:392:3 › SWR-004 visual & accessibility › TC-VA-15: the form loads only same-origin resources (emblems are local) (1.8s)
+  ✓  11 [chromium] › e2e/visual-a11y.spec.ts:64:3 › SWR-004 visual & accessibility › TC-VA-01: game page with sessions (D, M) — no horizontal scroll on M (2.5s)
+  ✓  12 [chromium] › e2e/visual-a11y.spec.ts:81:3 › SWR-004 visual & accessibility › TC-VA-02..04: form defaults, Empire selected, human selected (D, M) + en copy (5.6s)
+  ✓  13 [chromium] › e2e/visual-a11y.spec.ts:125:3 › SWR-004 visual & accessibility › TC-VA-05 + TC-VA-13: error state is visible next to the button (D, M) and reads as human text (2.4s)
+  ✓  14 [chromium] › e2e/visual-a11y.spec.ts:145:3 › SWR-004 visual & accessibility › TC-VA-06 + TC-VA-07: table with the prototype badge and the handoff screen (D, M) (4.4s)
+  ✓  15 [chromium] › e2e/visual-a11y.spec.ts:168:3 › SWR-004 visual & accessibility › TC-VA-08 (D-1): table top bar at 1024×768 and 768×1024 does not overflow (AI and human games) (7.9s)
+  ✓  16 [chromium] › e2e/visual-a11y.spec.ts:204:3 › SWR-004 visual & accessibility › TC-VA-09 + TC-VA-10: keyboard-only path through the form, visible focus, Enter creates the session (2.3s)
+  ✓  17 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (1.7s)
+  ✓  18 [chromium] › e2e/visual-a11y.spec.ts:303:3 › SWR-004 visual & accessibility › TC-VA-11: text and selection contrast (form, error, badge, handoff) — WCAG helper (TR-9) (4.7s)
+  ✓  19 [chromium] › e2e/visual-a11y.spec.ts:347:3 › SWR-004 visual & accessibility › TC-VA-12: roles and names — radiogroups, radios, alert, busy button, handoff heading (2.1s)
+  ✓  20 [chromium] › e2e/visual-a11y.spec.ts:392:3 › SWR-004 visual & accessibility › TC-VA-15: the form loads only same-origin resources (emblems are local) (1.2s)
+  ✓  21 [chromium] › e2e/visual-a11y.spec.ts:64:3 › SWR-004 visual & accessibility › TC-VA-01: game page with sessions (D, M) — no horizontal scroll on M (1.6s)
+  ✓  22 [chromium] › e2e/visual-a11y.spec.ts:81:3 › SWR-004 visual & accessibility › TC-VA-02..04: form defaults, Empire selected, human selected (D, M) + en copy (7.3s)
+  ✓  23 [chromium] › e2e/visual-a11y.spec.ts:125:3 › SWR-004 visual & accessibility › TC-VA-05 + TC-VA-13: error state is visible next to the button (D, M) and reads as human text (2.9s)
+  ✓  24 [chromium] › e2e/visual-a11y.spec.ts:145:3 › SWR-004 visual & accessibility › TC-VA-06 + TC-VA-07: table with the prototype badge and the handoff screen (D, M) (5.0s)
+  ✓  25 [chromium] › e2e/visual-a11y.spec.ts:168:3 › SWR-004 visual & accessibility › TC-VA-08 (D-1): table top bar at 1024×768 and 768×1024 does not overflow (AI and human games) (12.0s)
+  ✓  26 [chromium] › e2e/visual-a11y.spec.ts:204:3 › SWR-004 visual & accessibility › TC-VA-09 + TC-VA-10: keyboard-only path through the form, visible focus, Enter creates the session (2.0s)
+  ✓  27 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (1.8s)
+  ✓  28 [chromium] › e2e/visual-a11y.spec.ts:303:3 › SWR-004 visual & accessibility › TC-VA-11: text and selection contrast (form, error, badge, handoff) — WCAG helper (TR-9) (4.2s)
+  ✓  29 [chromium] › e2e/visual-a11y.spec.ts:347:3 › SWR-004 visual & accessibility › TC-VA-12: roles and names — radiogroups, radios, alert, busy button, handoff heading (2.1s)
+  ✓  30 [chromium] › e2e/visual-a11y.spec.ts:392:3 › SWR-004 visual & accessibility › TC-VA-15: the form loads only same-origin resources (emblems are local) (1.3s)
+
+
+  1) [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" 
+
+    Error: handoff accept :focus-visible
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+       at support/a11y.ts:170
+
+      168 | export async function expectVisibleFocus(loc: Locator, label: string): Promise<void> {
+      169 |   await expect(loc, `${label} is focused`).toBeFocused();
+    > 170 |   expect(await loc.evaluate((el) => el.matches(':focus-visible')), `${label} :focus-visible`).toBe(
+          |                                                                                               ^
+      171 |     true,
+      172 |   );
+      173 |   const raw = await rawStyles(loc);
+        at expectVisibleFocus (/Users/dimatitov/WebstormProjects/Game automa/e2e/support/a11y.ts:170:95)
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/visual-a11y.spec.ts:300:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" 
+  29 passed (2.1m)
+EXIT=1
+[WebServer] 
+[WebServer] > @bga/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+[WebServer] Environment variables loaded from .env
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 3 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [InstanceLoader] AppModule dependencies initialized +23ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +1ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +21ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +25ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RoutesResolver] HealthController {/api/health}: +4ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +3ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +3ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +2ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +2ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +1ms
+[WebServer] [Nest] 20164  - 11/08/2026, 4:33:43 PM     LOG [NestApplication] Nest application successfully started +3ms
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (2.8s)
+  ✓  2 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (1.9s)
+  ✓  3 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (2.0s)
+  ✘  4 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (2.3s)
+  ✓  5 [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (2.2s)
+
+
+  1) [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" 
+
+    Error: handoff accept :focus-visible
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+       at support/a11y.ts:170
+
+      168 | export async function expectVisibleFocus(loc: Locator, label: string): Promise<void> {
+      169 |   await expect(loc, `${label} is focused`).toBeFocused();
+    > 170 |   expect(await loc.evaluate((el) => el.matches(':focus-visible')), `${label} :focus-visible`).toBe(
+          |                                                                                               ^
+      171 |     true,
+      172 |   );
+      173 |   const raw = await rawStyles(loc);
+        at expectVisibleFocus (/Users/dimatitov/WebstormProjects/Game automa/e2e/support/a11y.ts:170:95)
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/visual-a11y.spec.ts:300:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat3/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat3/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat3/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/visual-a11y-SWR-004-visual-9f7ed-me-page-rows-and-on-I-am-…--chromium-repeat3/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e/visual-a11y.spec.ts:285:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" 
+  4 passed (28.0s)
+EXIT2=1

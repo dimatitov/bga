@@ -6,6 +6,7 @@ import {
   ListSessionsResponseSchema,
   SessionDetailsSchema,
   SessionResponseSchema,
+  SessionStatusSchema,
   type GameDefinition,
   type ServerGameModule,
 } from '@bga/platform';
@@ -153,22 +154,25 @@ describe('server game registry (unit)', () => {
         expect(module.definition.status).toBe('available');
       });
 
-      it('createInitialState → version 1, events seq ≥ 1; summarize is flat; parseState(JSON roundtrip) ≡ state', () => {
+      it('createInitialState → version ≥ 1 (AM-BE-2), events seq ≥ 1; summarize is flat; statusOf is a SessionStatus; parseState(JSON roundtrip) ≡ state', () => {
         const setup = module.parseSetup(setupFor[module.definition.id]);
         expect(setup.ok).toBe(true);
         if (!setup.ok) return;
         const { state, events } = module.createInitialState(setup.value, ctx);
-        expect(module.version(state)).toBe(1);
+        const version = module.version(state);
+        expect(version).toBeGreaterThanOrEqual(1);
         expect(events.length).toBeGreaterThan(0);
         for (const e of events) expect(e.seq).toBeGreaterThanOrEqual(1);
         SessionDetailsSchema.parse(module.summarize(state));
+        // SWR-005 AM-BE-1: required, pure, returns a valid status for any parsed state.
+        SessionStatusSchema.parse(module.statusOf(state));
         const restored = module.parseState(JSON.parse(JSON.stringify(state)), {
           sessionId: ctx.sessionId,
-          version: 1,
+          version,
         });
         expect(restored).toEqual(state);
         expect(() =>
-          module.parseState(JSON.parse(JSON.stringify(state)), { sessionId: 'other', version: 1 }),
+          module.parseState(JSON.parse(JSON.stringify(state)), { sessionId: 'other', version }),
         ).toThrow();
         const rejected = module.applyCommand(state, {}, { now: ctx.now });
         expect(rejected.ok).toBe(false);

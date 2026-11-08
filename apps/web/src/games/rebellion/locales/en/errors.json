@@ -10,5 +10,17 @@
   "handoffPending": "First confirm who is playing now.",
   "handoffNotAvailable": "Passing the turn is only available in a two-player game.",
   "rulesetUnavailable": "The Rise of the Empire ruleset is not available yet. Choose “Base game”.",
-  "modeUnavailable": "The physical components mode is not available yet. Choose “Digital game”."
+  "modeUnavailable": "The physical components mode is not available yet. Choose “Digital game”.",
+  "gameOver": "The game is over — no more moves are accepted.",
+  "commandUnavailable": "This action is not available with this game's rules.",
+  "wrongPhase": "This action is only available in the command phase.",
+  "unknownLeader": "There is no such leader in this game.",
+  "leaderNotInPool": "This leader is not in your pool — pick a leader from the pool.",
+  "leaderCannotActivate": "This leader cannot activate systems — pick another one.",
+  "activationInProgress": "Finish the current activation first.",
+  "noActivation": "Activate a system with a leader first.",
+  "notActivatedSystem": "Units can only move into the activated system.",
+  "pinnedByLeader": "Units in a system with your leader cannot move.",
+  "immobileUnit": "This unit cannot move (it is a structure).",
+  "insufficientCapacity": "Not enough transport: add ships from the same system or leave ground units and fighters behind."
 }

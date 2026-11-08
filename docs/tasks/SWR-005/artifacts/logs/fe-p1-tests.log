@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  8 passed (8)
+      Tests  60 passed (60)
+   Start at  17:14:32
+   Duration  10.04s (transform 7.75s, setup 6.36s, import 14.96s, tests 18.65s, environment 9.23s)
+

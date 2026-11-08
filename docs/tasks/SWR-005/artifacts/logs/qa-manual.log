@@ -1,0 +1,60 @@
+SWR-005 QA manual-style check — qa-lead, 2026-11-08 16:45–16:49 UTC.
+WHO/HOW: run by qa-lead as a SCRIPTED Chromium walkthrough (Playwright library, headless, 1440x900, ru), not by a human
+and not via the built-in browser. All in-app interactions are keyboard only (Tab / arrows / type / Space / Enter / Esc);
+navigation by URL (page.goto). The API responses / scratch DB are read only as the test oracle.
+App: 'PORT=3000 DATABASE_URL=file:<scratchpad>/qa-dev.db pnpm dev' (api :3000, web :5173). Dev log confirms Prisma
+datasource = scratch copy qa-dev.db. The real apps/api/prisma/dev.db was NOT used:
+  real dev.db sha256 before = after = ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7
+  scratch copy sha256 at copy time = ee606695…99a5c7, after the run = fd9f3d9e…aff9206 (sessions written to the copy)
+Script: <scratchpad>/qa-manual.cjs (not in repo). Screenshots (not in repo, outside QA owned files):
+  <scratchpad>/shots/qa-manual-01-keyboard-turn-round2.png, <scratchpad>/shots/qa-manual-02-empire-hidden-zone.png
+  (<scratchpad> = /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad)
+One preliminary API probe session (POST /api/sessions, Rebels vs AI) was created on the copy before the run to read the view shape.
+
+---- script output (verbatim) ----
+2026-11-08T16:48:42.139Z PART 1: keyboard-only full turn (AI game as Rebels)
+2026-11-08T16:48:43.502Z PASS Start button reached by Tab with visible focus
+2026-11-08T16:48:43.543Z session f5f06f9e-90ea-40bd-a4d6-48b97de40077 viewer rebels rulesEngine core-v1
+2026-11-08T16:48:44.359Z PASS table is core-v1
+2026-11-08T16:48:44.363Z PASS time track = 1
+2026-11-08T16:48:44.363Z plan: leader leia activate malastare ; move u-01 from bothawui
+2026-11-08T16:48:44.418Z pool reached after 10 Tab presses
+2026-11-08T16:48:44.420Z PASS leader pool focus visible
+2026-11-08T16:48:44.790Z PASS leader leia armed by arrows
+2026-11-08T16:48:44.793Z PASS turn panel state armed
+2026-11-08T16:48:44.886Z PASS Activate button focus visible
+2026-11-08T16:48:44.965Z PASS ACTIVATE_SYSTEM malastare → 200 SYSTEM_ACTIVATED
+2026-11-08T16:48:45.040Z PASS unit checkbox checked with Space
+2026-11-08T16:48:45.070Z PASS Move button focus visible
+2026-11-08T16:48:45.315Z PASS MOVE_PIECES → 200 PIECES_MOVED
+2026-11-08T16:48:45.392Z PASS Finish activation focus visible
+2026-11-08T16:48:45.497Z finish events: ACTIVATION_FINISHED, PASSED{auto}
+2026-11-08T16:48:45.498Z PASS ACTIVATION_FINISHED then AI auto-pass
+2026-11-08T16:48:45.544Z PASS Pass focus visible
+2026-11-08T16:48:45.991Z PASS focus trapped in pass dialog
+2026-11-08T16:48:45.997Z PASS initial focus on «Отмена»
+2026-11-08T16:48:46.304Z PASS Esc closes dialog, focus back on Pass
+2026-11-08T16:48:46.643Z PASS «Пасовать» reached by Tab
+2026-11-08T16:48:46.924Z pass events: PASSED, PHASE_STARTED, LEADERS_RETURNED, TIME_ADVANCED, PHASE_STARTED, PHASE_STARTED
+2026-11-08T16:48:46.924Z PASS new round: round 2, time 2
+2026-11-08T16:48:47.438Z PASS UI time track = 2
+2026-11-08T16:48:47.438Z PASS Rebel leaders back in the pool
+2026-11-08T16:48:47.533Z PART 2: AI game as the Empire — hidden base zone
+2026-11-08T16:48:48.542Z empire selected via keyboard: true
+2026-11-08T16:48:48.606Z PASS viewer = empire
+2026-11-08T16:48:50.251Z oracle (scratch DB, not shown to the Empire): base = ilum
+2026-11-08T16:48:50.251Z PASS Empire view rebelBase = {systemId:null, revealed:false}
+2026-11-08T16:48:50.252Z PASS Empire view: 6 units in the hidden zone
+2026-11-08T16:48:50.256Z PASS UI hidden-base-zone data-count = 6
+2026-11-08T16:48:50.258Z PASS no data-rebel-base marker in DOM
+2026-11-08T16:48:50.259Z PASS __boardDebug.getRebelBaseSystemId() = null
+2026-11-08T16:48:50.261Z PASS base id absent from 4 API responses after whitelist (map catalogue, ACTIVATE_SYSTEM.systemIds)
+2026-11-08T16:48:50.270Z DOM contains base id string (labels are names, ids may appear in static map nodes): true
+2026-11-08T16:48:50.350Z RESULT: all checks passed
+---- end ----
+
+Visual check of qa-manual-02 by qa-lead: Empire table, «Повстанцы: пас» chip, log «Повстанцы (AI) пасуют» with «авто»,
+zone «База Повстанцев — местоположение неизвестно» with 6 glyphs (2 triangles + 4 squares), no base marker on any system.
+Note: the raw DOM contains the base id string because every one of the 32 systems has id-based testids/nodes
+(static map); the precise DOM/attribute/debug-hook check is e2e TC-E-04 (expectBaseHiddenInDom), green in qa-verify.log.
+EXIT_CODE=0 (script exit code; 0 failed checks)

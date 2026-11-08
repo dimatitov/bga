@@ -17,7 +17,8 @@ describe('describeRebellionSession (D-GP-4/5, Q-13; SWR-004 AM-FE-9, TC-C-14)', 
     expect(describeRebellionSession(makeRebellionSummary({ aiDifficulty: 'hard' }), ru)).toEqual([
       { key: 'faction', text: 'Империя' },
       { key: 'opponent', text: 'против AI (Сложная)' },
-      { key: 'progress', text: 'Р2 · Командование' },
+      { key: 'progress', text: 'Р2 · Приказы' },
+      { key: 'engine', text: 'Старый прототип' },
     ]);
   });
 
@@ -32,12 +33,14 @@ describe('describeRebellionSession (D-GP-4/5, Q-13; SWR-004 AM-FE-9, TC-C-14)', 
       { key: 'faction', text: 'Повстанцы' },
       { key: 'opponent', text: 'против второго игрока' },
       { key: 'progress', text: 'Р1 · Назначение' },
+      { key: 'engine', text: 'Старый прототип' },
     ]);
     expect(describeRebellionSession(summary, en)).toEqual([
       // faction words belong to rebellion.common (Worker B may rename them) — taken from the namespace
       { key: 'faction', text: en('rebellion.common:faction.rebels') },
       { key: 'opponent', text: 'vs second player' },
       { key: 'progress', text: 'R1 · Assignment' },
+      { key: 'engine', text: 'Old prototype' },
     ]);
     const opponent = describeRebellionSession(summary, ru)[1]?.text ?? '';
     for (const word of ['Лёгкая', 'Обычная', 'Сложная', 'null'])
@@ -51,8 +54,56 @@ describe('describeRebellionSession (D-GP-4/5, Q-13; SWR-004 AM-FE-9, TC-C-14)', 
 
   it('ruleset / mode are not shown (OQ-4)', () => {
     const parts = describeRebellionSession(makeRebellionSummary(), en);
-    expect(parts.map((p) => p.key)).toEqual(['faction', 'opponent', 'progress']);
+    expect(parts.map((p) => p.key)).toEqual(['faction', 'opponent', 'progress', 'engine']);
     expect(parts.map((p) => p.text).join(' ')).not.toMatch(/base|digital/i);
+  });
+
+  it('SWR-005 core-v1 (AM-FE-7, TC-VA-09): progress «Время N · Репутация M · Приказы», no «Старый прототип» (ru, en)', () => {
+    const summary = makeRebellionSummary({
+      aiDifficulty: 'normal',
+      playerFaction: 'rebels',
+      opponentFaction: 'empire',
+      round: 3,
+      phase: 'command',
+      rulesEngine: 'core-v1',
+      reputation: 14,
+    });
+    expect(describeRebellionSession(summary, ru)).toEqual([
+      { key: 'faction', text: 'Повстанцы' },
+      { key: 'opponent', text: 'против AI (Обычная)' },
+      { key: 'progress', text: 'Время 3 · Репутация 14 · Приказы' },
+    ]);
+    expect(describeRebellionSession(summary, en)[2]).toEqual({
+      key: 'progress',
+      text: 'Time 3 · Reputation 14 · Command',
+    });
+  });
+
+  it('SWR-005 finished core-v1 game: progress without phase + outcome part with the winner (AM-BE-8)', () => {
+    const rebels = makeRebellionSummary(
+      { rulesEngine: 'core-v1', round: 14, phase: 'refresh', reputation: 14, winner: 'rebels' },
+      { status: 'completed' },
+    );
+    expect(describeRebellionSession(rebels, ru).slice(2)).toEqual([
+      { key: 'progress', text: 'Время 14 · Репутация 14' },
+      { key: 'outcome', text: 'Победа Повстанцев' },
+    ]);
+    const empire = makeRebellionSummary(
+      { rulesEngine: 'core-v1', round: 5, phase: 'command', reputation: 12, winner: 'empire' },
+      { status: 'completed' },
+    );
+    expect(describeRebellionSession(empire, en).slice(2)).toEqual([
+      { key: 'progress', text: 'Time 5 · Reputation 12' },
+      { key: 'outcome', text: 'Imperial victory' },
+    ]);
+  });
+
+  it('core-v1 without reputation (defensive) → «Время N · <phase>»', () => {
+    const summary = makeRebellionSummary({ rulesEngine: 'core-v1', round: 2, reputation: null });
+    expect(describeRebellionSession(summary, ru)[2]).toEqual({
+      key: 'progress',
+      text: 'Время 2 · Приказы',
+    });
   });
 
   it('invalid details → [] (the platform shows its generic text)', () => {

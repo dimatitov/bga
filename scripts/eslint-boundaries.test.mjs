@@ -130,6 +130,17 @@ add('packages/games/rebellion/src/ai/probe.ts', imp('openai'), 'error');
 add('packages/games/rebellion/src/server/probe.ts', imp('../rules'), 'ok');
 add('packages/games/rebellion/src/server/probe.ts', imp('../scenario'), 'ok');
 add('packages/games/rebellion/src/server/probe.ts', imp('../board'), 'error');
+// SWR-005: nested folders keep the layering (`sibling()` also matches `../../<sub>`).
+add('packages/games/rebellion/src/rules/core/probe.ts', imp('../../scenario'), 'error');
+add('packages/games/rebellion/src/rules/core/probe.ts', imp('../../scenario/core'), 'error');
+add('packages/games/rebellion/src/rules/core/probe.ts', imp('../../server'), 'error');
+add('packages/games/rebellion/src/rules/core/probe.ts', imp('../../schema'), 'ok');
+add('packages/games/rebellion/src/rules/core/probe.ts', imp('../context'), 'ok');
+add('packages/games/rebellion/src/rules/core/probe.ts', 'export const r = Math.random();', 'error');
+add('packages/games/rebellion/src/scenario/core/probe.ts', imp('../../rules'), 'error');
+add('packages/games/rebellion/src/scenario/core/probe.ts', imp('../../schema'), 'ok');
+add('packages/games/rebellion/src/ai/probe.ts', imp('../../rules'), 'error');
+add('packages/games/rebellion/src/schema/probe.ts', imp('../../rules'), 'error');
 
 // B-12/B-13/B-14: api.
 add('apps/api/src/game-registry/probe.ts', imp('@bga/game-rebellion/rules'), 'error');

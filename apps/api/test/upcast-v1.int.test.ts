@@ -7,7 +7,7 @@ import { PrismaClient } from '@prisma/client';
 import { ListSessionsResponseSchema, SessionResponseSchema } from '@bga/platform';
 import {
   GameStateSchema,
-  PlayerViewPlayerSchema,
+  MockPlayerViewSchema,
   RebellionSessionDetailsSchema,
 } from '@bga/game-rebellion/schema';
 import { upcastState } from '@bga/game-rebellion/server';
@@ -53,7 +53,7 @@ describe('SWR-003 DB with v1 data → API (lazy upcast v1 → v2)', { timeout: 6
         expect(legacyFactionValues(res.body)).toEqual([]);
         const body = SessionResponseSchema.parse(res.body);
         expect(body.status).toBe('prototype');
-        const view = PlayerViewPlayerSchema.parse(body.view);
+        const view = MockPlayerViewSchema.parse(body.view);
         const v2 = upcastState(JSON.parse(row.state));
         expect(view.viewer).toBe(v2.settings.playerFaction);
         expect(view.settings).toEqual(v2.settings);
@@ -78,7 +78,7 @@ describe('SWR-003 DB with v1 data → API (lazy upcast v1 → v2)', { timeout: 6
     }
   });
 
-  it('a command on a v1 row → 200; the snapshot is written as v2; old mirror rows keep their actor (Q-16)', async () => {
+  it('a command on a v1 row → 200; the snapshot is written as v3 mock-v1 (SWR-005); old mirror rows keep their actor (Q-16)', async () => {
     db = await createSwr003Db({ rows: 3 });
     const played = db.sessions.find((s) => s.version > 1)!;
     const actor = upcastState(JSON.parse(played.state)).settings.playerFaction;
@@ -96,7 +96,7 @@ describe('SWR-003 DB with v1 data → API (lazy upcast v1 → v2)', { timeout: 6
       try {
         const row = await client.session.findUniqueOrThrow({ where: { id: played.id } });
         const state = GameStateSchema.parse(JSON.parse(row.state));
-        expect(state.schemaVersion).toBe(2);
+        expect([state.schemaVersion, state.rulesEngine]).toEqual([3, 'mock-v1']);
         expect(legacyFactionValues(state)).toEqual([]);
         expect(row.version).toBe(played.version + 1);
         const events = await client.sessionEvent.findMany({

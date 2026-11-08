@@ -13,7 +13,7 @@ import {
   UNKNOWN_TYPE_KEY,
   type CommandEnvelope,
   type Faction,
-  type GameState,
+  type MockGameState,
 } from '../../src/schema';
 import {
   ACCEPT,
@@ -33,15 +33,24 @@ import {
   newGame,
 } from './helpers';
 
-const HANDOFF_KEYS = ['activeSide', 'id', 'kind', 'phase', 'round', 'sessionStatus', 'version'];
+const HANDOFF_KEYS = [
+  'activeSide',
+  'id',
+  'kind',
+  'phase',
+  'round',
+  'rulesEngine',
+  'sessionStatus',
+  'version',
+];
 
-function ok(state: GameState, envelope: CommandEnvelope) {
+function ok(state: MockGameState, envelope: CommandEnvelope) {
   const result = applyCommand(state, envelope, APPLY_CTX);
   if (!result.ok) throw new Error(`rejected: ${result.error.messageKey}`);
   return result;
 }
 
-function rejectedWith(state: GameState, envelope: unknown, messageKey: string) {
+function rejectedWith(state: MockGameState, envelope: unknown, messageKey: string) {
   const snapshot = clone(state);
   const result = applyCommand(state, envelope, APPLY_CTX);
   expect(result).toEqual({
@@ -56,13 +65,13 @@ function rejectedWith(state: GameState, envelope: unknown, messageKey: string) {
 }
 
 /** Human game after the rebels passed the turn: empire active, handoff pending. */
-function pendingForEmpire(): GameState {
+function pendingForEmpire(): MockGameState {
   const s0 = newGame(REBELS_VS_HUMAN);
   return deepFreeze(ok(s0, env(s0, END_TURN)).state);
 }
 
 /** Some own piece move that is legal for the active side. */
-function someMove(state: GameState, side: Faction) {
+function someMove(state: MockGameState, side: Faction) {
   const p = state.pieces.find((x) => x.owner === side)!;
   return move([p.id], p.systemId, adjacent(state, p.systemId)[0]!);
 }
@@ -210,13 +219,14 @@ describe('hot-seat: human game (TC-U-17..TC-U-23)', () => {
 });
 
 describe('hot-seat views (TC-U-24, TC-U-25)', () => {
-  it('TC-U-24: handoff pending → only {kind, id, version, activeSide, round, phase, sessionStatus}', () => {
+  it('TC-U-24: handoff pending → only {kind, rulesEngine, id, version, activeSide, round, phase, sessionStatus}', () => {
     const state = pendingForEmpire();
     for (const status of ['setup', 'prototype', 'active', 'completed'] as const) {
       const view = toPlayerView(state, status);
       expect(Object.keys(view).sort()).toEqual(HANDOFF_KEYS);
       expect(HandoffViewSchema.parse(view)).toEqual({
         kind: 'handoff',
+        rulesEngine: 'mock-v1',
         id: state.id,
         version: state.version,
         activeSide: 'empire',
@@ -284,7 +294,8 @@ describe('hot-seat views (TC-U-24, TC-U-25)', () => {
         expect(Object.keys(view).sort()).toEqual(HANDOFF_KEYS);
         expect(view).toMatchObject({ kind: 'handoff', activeSide: state.activeSide });
       } else {
-        if (view.kind !== 'player') throw new Error('expected the board');
+        if (view.kind !== 'player' || view.rulesEngine !== 'mock-v1')
+          throw new Error('expected the board');
         expect(view.viewer).toBe(state.activeSide);
         if (view.viewer === 'empire') {
           empireBoards += 1;

@@ -16,10 +16,13 @@ import {
 import { MAX_SCALE, MIN_SCALE, ORBIT_RADIUS, PIECE_SIZE, SLOTS_PER_SIDE } from './constants';
 import { useDragStore } from './dragStore';
 import {
+  adaptivePadding,
   canZoomIn,
   canZoomOut,
   clampScale,
   computeBounds,
+  fitInsets,
+  fitScale,
   fitViewport,
   nearestSystem,
   screenToWorld,
@@ -191,7 +194,11 @@ describe('stores', () => {
       viewport: { scale: 1, x: 0, y: 0 },
       stageSize: { width: 0, height: 0 },
       bounds: null,
+      contentInsets: { top: 0, right: 0, bottom: 0, left: 0 },
+      minScale: MIN_SCALE,
+      userAdjusted: false,
       byGame: {},
+      byGameSize: {},
     });
   });
 
@@ -235,5 +242,172 @@ describe('stores', () => {
     });
     useDragStore.getState().clear();
     expect(useDragStore.getState().drag).toBeNull();
+  });
+});
+
+describe('fit-to-view (SWR-005 plan-frontend §6, AC-12; fixes SWR-004 O-2)', () => {
+  const WIDE = { minX: 0, minY: 0, maxX: 1900, maxY: 1200 };
+  const NARROW = { width: 448, height: 600 };
+
+  beforeEach(() => {
+    useViewportStore.setState({
+      gameId: null,
+      viewport: { scale: 1, x: 0, y: 0 },
+      stageSize: { width: 0, height: 0 },
+      bounds: null,
+      contentInsets: { top: 0, right: 0, bottom: 0, left: 0 },
+      minScale: MIN_SCALE,
+      userAdjusted: false,
+      byGame: {},
+      byGameSize: {},
+    });
+  });
+
+  it('fitViewport goes below MIN_SCALE when the map needs it and keeps the whole bounds inside', () => {
+    const pad = fitInsets(NARROW);
+    const vp = fitViewport(WIDE, NARROW, pad);
+    expect(vp.scale).toBeLessThan(MIN_SCALE);
+    expect(vp.scale).toBeCloseTo((448 - pad.left - pad.right) / 1900, 6);
+    const tl = worldToScreen(vp, { x: WIDE.minX, y: WIDE.minY });
+    const br = worldToScreen(vp, { x: WIDE.maxX, y: WIDE.maxY });
+    expect(tl.x).toBeGreaterThanOrEqual(pad.left - 1e-6);
+    expect(br.x).toBeLessThanOrEqual(NARROW.width - pad.right + 1e-6);
+    expect(tl.y).toBeGreaterThanOrEqual(pad.top - 1e-6);
+    expect(br.y).toBeLessThanOrEqual(NARROW.height - pad.bottom + 1e-6);
+    // centred in the padded area
+    expect(tl.x - pad.left).toBeCloseTo(NARROW.width - pad.right - br.x, 6);
+  });
+
+  it('per-side insets shift the fitted content (screen-constant labels reserve room)', () => {
+    const stage = { width: 1000, height: 800 };
+    const extra = { top: 0, right: 60, bottom: 36, left: 60 };
+    const ins = fitInsets(stage, extra);
+    expect(ins).toEqual({ top: 24, right: 84, bottom: 60, left: 84 });
+    const vp = fitViewport(WIDE, stage, ins);
+    expect(vp.scale).toBeCloseTo(Math.min((1000 - 168) / 1900, (800 - 84) / 1200), 6);
+    expect(worldToScreen(vp, { x: 0, y: 0 }).x).toBeGreaterThanOrEqual(84 - 1e-6);
+  });
+
+  it('fit never exceeds MAX_SCALE', () => {
+    expect(
+      fitScale({ minX: 0, minY: 0, maxX: 10, maxY: 10 }, { width: 1000, height: 800 }, 0),
+    ).toBe(MAX_SCALE);
+  });
+
+  it('adaptive padding = clamp(12, 3 % of the short side, 48)', () => {
+    expect(adaptivePadding({ width: 300, height: 200 })).toBe(12);
+    expect(adaptivePadding({ width: 1000, height: 800 })).toBe(24);
+    expect(adaptivePadding({ width: 3000, height: 2000 })).toBe(48);
+  });
+
+  it('store: minScale = min(MIN_SCALE, fit); zoom-out and wheel stop there, the button state follows', () => {
+    const v = useViewportStore.getState();
+    v.activateGame('g1');
+    v.setStageSize(NARROW);
+    v.setBounds(WIDE);
+    const fitted = useViewportStore.getState().viewport;
+    expect(fitted.scale).toBeLessThan(MIN_SCALE);
+    expect(useViewportStore.getState().minScale).toBeCloseTo(fitted.scale, 9);
+    for (let i = 0; i < 20; i++) useViewportStore.getState().zoomOut();
+    expect(useViewportStore.getState().viewport.scale).toBeCloseTo(fitted.scale, 9);
+    expect(canZoomOut(useViewportStore.getState().viewport.scale, fitted.scale)).toBe(false);
+    useViewportStore.getState().zoomAtPointer({ x: 10, y: 10 }, 0.5);
+    expect(useViewportStore.getState().viewport.scale).toBeCloseTo(fitted.scale, 9);
+    useViewportStore.getState().zoomIn();
+    expect(canZoomOut(useViewportStore.getState().viewport.scale, fitted.scale)).toBe(true);
+  });
+
+  it('store: a wide stage keeps the old MIN_SCALE floor (mock behaviour unchanged)', () => {
+    const v = useViewportStore.getState();
+    v.activateGame('g1');
+    v.setStageSize({ width: 1400, height: 900 });
+    v.setBounds(computeBounds(mapLayout, Object.keys(mapLayout)));
+    expect(useViewportStore.getState().minScale).toBe(MIN_SCALE);
+    for (let i = 0; i < 30; i++) useViewportStore.getState().zoomOut();
+    expect(useViewportStore.getState().viewport.scale).toBe(MIN_SCALE);
+  });
+
+  it('store: refits on resize and on new bounds until the user adjusts the view, not after', () => {
+    const v = useViewportStore.getState();
+    v.activateGame('g1');
+    v.setStageSize({ width: 1000, height: 800 });
+    v.setBounds(WIDE);
+    const first = useViewportStore.getState().viewport;
+    expect(useViewportStore.getState().userAdjusted).toBe(false);
+
+    useViewportStore.getState().setStageSize({ width: 1000, height: 600 }); // top bar wrapped
+    const refit = useViewportStore.getState().viewport;
+    expect(refit).not.toEqual(first);
+    expect(refit).toEqual(
+      fitViewport(WIDE, { width: 1000, height: 600 }, fitInsets({ width: 1000, height: 600 })),
+    );
+
+    // same bounds (new object) — no change
+    useViewportStore.getState().setBounds({ ...WIDE });
+    expect(useViewportStore.getState().viewport).toBe(refit);
+
+    useViewportStore.getState().pan(30, 0);
+    expect(useViewportStore.getState().userAdjusted).toBe(true);
+    const panned = useViewportStore.getState().viewport;
+    useViewportStore.getState().setStageSize({ width: 900, height: 600 });
+    useViewportStore.getState().setBounds({ ...WIDE, maxY: 1500 });
+    expect(useViewportStore.getState().viewport).toEqual(panned);
+
+    // «Вписать карту» always fits and resumes auto-refit
+    useViewportStore.getState().fit(false);
+    expect(useViewportStore.getState().userAdjusted).toBe(false);
+    useViewportStore.getState().setStageSize({ width: 700, height: 600 });
+    expect(useViewportStore.getState().viewport).toEqual(
+      fitViewport(
+        { ...WIDE, maxY: 1500 },
+        { width: 700, height: 600 },
+        fitInsets({ width: 700, height: 600 }),
+      ),
+    );
+  });
+
+  it('store: content insets are part of the fit', () => {
+    const v = useViewportStore.getState();
+    v.activateGame('g1');
+    v.setStageSize({ width: 1000, height: 800 });
+    const extra = { top: 0, right: 60, bottom: 36, left: 60 };
+    v.setBounds(WIDE, extra);
+    expect(useViewportStore.getState().viewport).toEqual(
+      fitViewport(
+        WIDE,
+        { width: 1000, height: 800 },
+        fitInsets({ width: 1000, height: 800 }, extra),
+      ),
+    );
+  });
+
+  it('store: a remembered view is restored only for the same stage size (D-I-12)', () => {
+    const v = useViewportStore.getState();
+    v.activateGame('g1');
+    v.setStageSize({ width: 1000, height: 800 });
+    v.setBounds(WIDE);
+    useViewportStore.getState().zoomIn();
+    const zoomed = useViewportStore.getState().viewport;
+
+    useViewportStore.getState().activateGame('g2');
+    useViewportStore.getState().setStageSize({ width: 700, height: 800 });
+    useViewportStore.getState().activateGame('g1');
+    expect(useViewportStore.getState().viewport).not.toEqual(zoomed);
+    useViewportStore.getState().setBounds(WIDE);
+    expect(useViewportStore.getState().viewport).toEqual(
+      fitViewport(WIDE, { width: 700, height: 800 }, fitInsets({ width: 700, height: 800 })),
+    );
+  });
+
+  it('store: forget drops the remembered view and its size (hot-seat handoff)', () => {
+    const v = useViewportStore.getState();
+    v.activateGame('g1');
+    v.setStageSize({ width: 1000, height: 800 });
+    v.setBounds(WIDE);
+    useViewportStore.getState().zoomIn();
+    useViewportStore.getState().forget('g1');
+    expect(useViewportStore.getState().byGame.g1).toBeUndefined();
+    expect(useViewportStore.getState().byGameSize.g1).toBeUndefined();
+    expect(useViewportStore.getState().userAdjusted).toBe(false);
   });
 });

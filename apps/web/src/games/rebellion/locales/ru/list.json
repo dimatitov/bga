@@ -2,5 +2,11 @@
   "opponentAi": "против AI ({{difficulty}})",
   "opponentAiPlain": "против AI",
   "opponentHuman": "против второго игрока",
-  "progress": "Р{{round}} · {{phase}}"
+  "progress": "Р{{round}} · {{phase}}",
+  "progressCore": "Время {{time}} · Репутация {{reputation}} · {{phase}}",
+  "progressCoreOver": "Время {{time}} · Репутация {{reputation}}",
+  "progressTime": "Время {{time}} · {{phase}}",
+  "winnerRebels": "Победа Повстанцев",
+  "winnerEmpire": "Победа Империи",
+  "legacy": "Старый прототип"
 }

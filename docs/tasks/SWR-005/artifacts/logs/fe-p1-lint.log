@@ -1,0 +1,13 @@
+
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/games/rebellion/core-v1/geometry/labelLayout.ts
+  11:3  error  'CHIP_GAP_PX' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+
+✖ 1 problem (1 error, 0 warnings)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 lint: `eslint . --max-warnings=0`
+Exit status 1

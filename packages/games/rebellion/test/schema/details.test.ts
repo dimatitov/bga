@@ -11,6 +11,9 @@ const AI = {
   gameMode: 'digital',
   round: 2,
   phase: 'command',
+  rulesEngine: 'mock-v1',
+  winner: null,
+  reputation: null,
 } as const;
 const HUMAN = {
   ...AI,
@@ -35,8 +38,11 @@ describe('RebellionSessionDetailsSchema (SWR-004, Q-20)', () => {
           'opponentType',
           'phase',
           'playerFaction',
+          'reputation',
           'round',
           'ruleset',
+          'rulesEngine',
+          'winner',
         ].sort(),
       );
     }

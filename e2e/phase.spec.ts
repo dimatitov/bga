@@ -1,15 +1,18 @@
 // Scenario 7 — mock phase: TC-E2E-24 (AC-4, AC-7, AC-10).
 // SWR-003: sessions are created via `POST /api/sessions` and opened at `/sessions/:id`; expectations unchanged.
+// SWR-005 (Q-1, TR-4): mock-rules regression on a SEEDED legacy row (frozen v2 «Empire vs AI hard, round 1,
+// assignment»); the phase name of `command` is «Приказы» everywhere (Q-FE-8) — checked via data-phase here.
 import { expect, test, type Page } from '@playwright/test';
-import { createSession, pickMove } from './support/api';
+import { getView, pickMove } from './support/api';
 import {
   dbg,
-  openSession,
+  openLegacy,
   openSidebarTab,
   version,
   waitForCommand,
   waitForTable,
 } from './support/board';
+import { seedLegacyV2 } from './support/seed';
 import { T } from './support/testids';
 
 async function advance(page: Page, expectedPhase: string) {
@@ -25,12 +28,15 @@ test('TC-E2E-24: "End phase (mock)" cycles phases, increments the round and pers
   page,
   request,
 }) => {
-  const { sessionId, view } = await createSession(request);
-  await openSession(page, sessionId);
+  const { sessionId } = await seedLegacyV2('empireAi');
+  const view = await getView(request, sessionId);
+  await openLegacy(page, sessionId);
 
-  // The mock button is explicitly labelled as temporary logic (SWR-004: `prototype-badge` replaces `mock-badge`).
+  // The mock button is explicitly labelled as temporary logic (SWR-004: `prototype-badge` replaces `mock-badge`;
+  // SWR-005: legacy variant «Старый прототип: тестовые правила»).
   await expect(page.getByTestId(T.prototypeBadge)).toBeVisible();
   await expect(page.getByTestId(T.prototypeBadge)).toHaveAttribute('data-status', 'prototype');
+  await expect(page.getByTestId(T.prototypeBadge)).toHaveAttribute('data-variant', 'legacy');
   await expect(page.getByTestId(T.phaseIndicator)).toHaveAttribute('data-phase', 'assignment');
   await expect(page.getByTestId(T.roundIndicator)).toContainText('1');
 
@@ -52,9 +58,9 @@ test('TC-E2E-24 (move in any phase): a move is offered and accepted in the "comm
   page,
   request,
 }) => {
-  const { sessionId, view } = await createSession(request);
-  const move = pickMove(view);
-  await openSession(page, sessionId);
+  const { sessionId } = await seedLegacyV2('empireAi');
+  const move = pickMove(await getView(request, sessionId));
+  await openLegacy(page, sessionId);
   await advance(page, 'command');
 
   const pos = await dbg.piecePos(page, move.pieceId);

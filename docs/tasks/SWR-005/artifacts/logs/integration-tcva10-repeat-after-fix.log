@@ -1,0 +1,82 @@
+[WebServer] 
+[WebServer] > @bga/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+
+[WebServer] Environment variables loaded from .env
+
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+
+[WebServer] 
+[WebServer] 3 migrations found in prisma/migrations
+[WebServer] 
+
+[WebServer] Applying migration `20261107235651_init`
+
+[WebServer] Applying migration `20261108120000_sessions`
+
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+
+[WebServer] 
+
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [NestFactory] Starting Nest application...
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [InstanceLoader] AppModule dependencies initialized +19ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +8ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +15ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RoutesResolver] HealthController {/api/health}: +4ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +2ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +1ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +1ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +1ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +2ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +1ms
+
+[WebServer] [Nest] 87797  - 11/08/2026, 7:13:26 PM     LOG [NestApplication] Nest application successfully started +2ms
+
+
+Running 10 tests using 1 worker
+
+[1/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[2/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[3/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[4/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[5/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[6/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[7/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[8/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[9/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+[10/10] [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …"
+  10 passed (36.6s)

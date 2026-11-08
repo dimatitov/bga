@@ -1,0 +1,13 @@
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  54 passed (54)
+      Tests  461 passed (461)
+   Start at  17:14:49
+   Duration  27.49s (transform 9.66s, setup 25.73s, import 45.39s, tests 73.25s, environment 69.51s)
+

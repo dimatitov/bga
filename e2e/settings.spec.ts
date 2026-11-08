@@ -38,7 +38,9 @@ test('TC-E2E-25: switching ru → en → ru changes the UI language and persists
 
   const { sessionId } = await createSession(request);
   await openSession(page, sessionId);
-  await expect(page.getByTestId(T.contextPanel)).not.toContainText(CYRILLIC);
+  // SWR-005: core-v1 table — the context panel is `core-context-panel`; the turn panel is checked too.
+  await expect(page.getByTestId(T.coreContextPanel)).not.toContainText(CYRILLIC);
+  await expect(page.getByTestId(T.turnPanel)).not.toContainText(CYRILLIC);
 
   await setLanguage(page, 'ru');
   await page.goto('/');

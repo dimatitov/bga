@@ -22,7 +22,10 @@ import {
   FS,
   R,
   REBELS_HUMAN,
+  SEEDED,
+  acceptHandoffEnv,
   advanceEnv,
+  createSeededDb,
   endTurnEnv,
   expectError,
   postCommand,
@@ -108,21 +111,36 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
       ruleset: 'base',
       gameMode: 'digital',
     });
+    // SWR-005 W6a: engine-independent — the board of the player's side (either rules engine).
     const view = PlayerViewPlayerSchema.parse(body.view);
     expect(view).toMatchObject({ kind: 'player', viewer: 'rebels', activeSide: 'rebels' });
 
     const row = await prismaOf(app).session.findUniqueOrThrow({ where: { id: body.sessionId } });
     expect(row).toMatchObject({ status: 'prototype', idempotencyKey: key });
     expect(row.idempotencyHash).toMatch(/^[0-9a-f]{64}$/);
-    expect(GameStateSchema.parse(JSON.parse(row.state)).schemaVersion).toBe(2);
+    // v3 snapshot; which engine a new session gets changes in SWR-005 W5 (mock-v1 rows: upcast-v2.int).
+    expect(GameStateSchema.parse(JSON.parse(row.state)).schemaVersion).toBe(3);
     expect(StoredRebellionSetupSchema.parse(JSON.parse(row.setup))).toEqual({
       schemaVersion: 2,
       ...body.settings,
     });
     const events = await prismaOf(app).sessionEvent.findMany({
       where: { sessionId: body.sessionId },
+      orderBy: { seq: 'asc' },
     });
-    expect(events.map((e) => e.type)).toEqual(['GAME_CREATED']);
+    // SWR-005 W6b (W5 accepted): a new core-v1 game logs creation + the empty assignment phase + the command
+    // phase (D-2) at version 1 — several events per version; rows are consecutive from seq 1.
+    expect(events.map((e) => [e.seq, e.type, e.actor])).toEqual([
+      [1, 'GAME_CREATED', 'system'],
+      [2, 'PHASE_STARTED', 'system'],
+      [3, 'PHASE_STARTED', 'system'],
+    ]);
+    expect(events.map((e) => JSON.parse(e.payload))).toEqual([
+      { scenarioId: 'rebellion-base-v1' },
+      { round: 1, phase: 'assignment' },
+      { round: 1, phase: 'command' },
+    ]);
+    expect(row.version).toBe(1); // Rebels vs AI: the Rebels start, no automatic move at creation
   });
 
   it('TC-I-02 / TC-I-05 / TC-I-06: opponentFaction = opponentOf(playerFaction) in POST, GET and list details', async () => {
@@ -140,7 +158,9 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
       expect(s.status).toBe('prototype');
       const details = RebellionSessionDetailsSchema.parse(s.details);
       expect(details.opponentFaction).toBe(opponentOf(details.playerFaction));
-      expect(Object.keys(s.details).sort()).toEqual([...SETTINGS_KEYS, 'phase', 'round'].sort());
+      expect(Object.keys(s.details).sort()).toEqual(
+        [...SETTINGS_KEYS, 'phase', 'round', 'rulesEngine', 'winner', 'reputation'].sort(),
+      );
     }
     expect(list.text).not.toMatch(/"view"|"state"|"setup"|"idempotency/);
   });
@@ -306,16 +326,18 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
     expect(await count()).toBe(1);
   });
 
-  it('TC-I-38: status is prototype in every response and does not change after commands (Q-9)', async () => {
-    const { sessionId } = (await post(app, EMPIRE_AI)).body as { sessionId: string };
-    expect((await postCommand(app, sessionId, advanceEnv('empire', 1))).status).toBe(200);
+  it('TC-I-38 (creation): status is prototype in the POST / GET / list responses and in the row', async () => {
+    const created = await post(app, EMPIRE_AI);
+    expect(created.status).toBe(201);
+    const { sessionId } = created.body as { sessionId: string };
+    expect(created.body.status).toBe('prototype');
     expect((await api(app).get(`/api/sessions/${sessionId}`)).body.status).toBe('prototype');
     expect((await api(app).get('/api/sessions')).body[0].status).toBe('prototype');
     const row = await prismaOf(app).session.findUniqueOrThrow({ where: { id: sessionId } });
     expect(row.status).toBe('prototype');
   });
 
-  it('TC-I-35: no forbidden field in any response (POST/replay/GET/list/commands incl. errors and handoff)', async () => {
+  it('TC-I-35 (creation): no forbidden field in POST / replay / 409 / GET / list / setup errors', async () => {
     const key = randomUUID();
     const responses = [
       await post(app, DEF, key),
@@ -325,14 +347,58 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
     const human = await post(app, REBELS_HUMAN);
     responses.push(human);
     const id = human.body.sessionId as string;
-    responses.push(await postCommand(app, id, advanceEnv('empire', 1))); // 422 notYourTurn
-    responses.push(await postCommand(app, id, advanceEnv('rebels', 1)));
-    responses.push(await postCommand(app, id, endTurnEnv('rebels', 2))); // → handoff
     responses.push(await api(app).get(`/api/sessions/${id}`));
     responses.push(await api(app).get(`/api/sessions/${id}?viewer=rebels`));
     responses.push(await api(app).get('/api/sessions'));
     responses.push(await post(app, { ...DEF, aiFaction: 'empire' }));
     responses.push(await post(app, { ...DEF, gameMode: 'physical_companion' }));
+    for (const res of responses) {
+      expect(forbiddenKeysIn(res.body), res.text).toEqual([]);
+      expect(res.text).not.toContain(key);
+    }
+  });
+});
+
+/** SWR-005 W6a (Q-1): mock-v1 commands on the seeded SWR-004 rows (frozen v2 snapshot). */
+describe('Session API × Rebellion — commands on seeded mock-v1 rows', () => {
+  let db: TestDb;
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    db = await createSeededDb();
+    app = await startApp(db.url);
+  });
+
+  afterEach(async () => {
+    await stopApp(app, db);
+  });
+
+  it('TC-I-38 / TC-M-14: status is prototype in every response and does not change after commands (Q-9)', async () => {
+    const { id: sessionId, version } = SEEDED.empireAi;
+    const res = await postCommand(app, sessionId, advanceEnv('empire', version));
+    expect(res.status).toBe(200);
+    expect((await api(app).get(`/api/sessions/${sessionId}`)).body.status).toBe('prototype');
+    const list = await api(app).get('/api/sessions');
+    expect(list.body[0]).toMatchObject({ sessionId, status: 'prototype' });
+    for (const s of list.body as { status: string }[]) expect(s.status).toBe('prototype');
+    const row = await prismaOf(app).session.findUniqueOrThrow({ where: { id: sessionId } });
+    expect(row.status).toBe('prototype');
+  });
+
+  it('TC-I-35 (commands): no forbidden field in command responses incl. errors and handoff', async () => {
+    const key = randomUUID();
+    const { id, version: v } = SEEDED.hotseat; // stored in a handoff to the Empire
+    const responses = [await post(app, DEF, key)];
+    responses.push(await postCommand(app, id, advanceEnv('rebels', v))); // 422 notYourTurn
+    responses.push(await postCommand(app, id, advanceEnv('empire', v))); // 422 handoffPending
+    responses.push(await postCommand(app, id, acceptHandoffEnv('empire', v)));
+    responses.push(await postCommand(app, id, advanceEnv('empire', v + 1)));
+    responses.push(await postCommand(app, id, endTurnEnv('empire', v + 2))); // → handoff
+    responses.push(await api(app).get(`/api/sessions/${id}`));
+    responses.push(await api(app).get(`/api/sessions/${id}?viewer=empire`));
+    responses.push(await api(app).get('/api/sessions'));
+    expect(responses.map((r) => r.status)).toEqual([201, 422, 422, 200, 200, 200, 200, 200, 200]);
+    expect(responses[5]?.body.view.kind).toBe('handoff');
     for (const res of responses) {
       expect(forbiddenKeysIn(res.body), res.text).toEqual([]);
       expect(res.text).not.toContain(key);

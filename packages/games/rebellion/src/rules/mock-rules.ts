@@ -5,14 +5,15 @@
  * - MOVE_PIECES is legal when every piece belongs to the actor, stands in `fromSystemId`,
  *   and `toSystemId` is adjacent to `fromSystemId`; all-or-nothing (A-6); allowed in any phase.
  * - ADVANCE_PHASE cycles assignment → command → refresh → (round + 1) assignment.
- * Real rules arrive in stage E.
+ * Real rules arrive in stage E: these rules serve only `mock-v1` sessions (SWR-005: old sessions); the
+ * `core-v1` engine lives in `./core`.
  */
 import {
   REBELLION_ERROR_MESSAGE_KEYS,
   type AdvancePhaseCommand,
   type Faction,
-  type GameState,
-  type LegalAction,
+  type MockGameState,
+  type MockLegalAction,
   type MovePiecesCommand,
   type Phase,
 } from '../schema';
@@ -20,8 +21,8 @@ import type { CoreError } from './result';
 import { commit, pieceById, stampEvents, systemById } from './internal/state';
 
 export interface RuleOutcome {
-  state: GameState;
-  events: GameState['log'];
+  state: MockGameState;
+  events: MockGameState['log'];
 }
 
 function illegal(messageKey: CoreError['messageKey'], details: Record<string, unknown>): CoreError {
@@ -33,7 +34,7 @@ function illegal(messageKey: CoreError['messageKey'], details: Record<string, un
  * `details` only carry ids taken from the request — never data about enemy pieces.
  */
 export function validateMove(
-  state: GameState,
+  state: MockGameState,
   actor: Faction,
   command: MovePiecesCommand,
 ): CoreError | null {
@@ -62,7 +63,7 @@ export function validateMove(
 
 /** Apply an already validated MOVE_PIECES: all listed pieces move at once, one PIECES_MOVED event. */
 export function applyMove(
-  state: GameState,
+  state: MockGameState,
   actor: Faction,
   command: MovePiecesCommand,
   now: string,
@@ -94,7 +95,7 @@ export function nextPhase(round: number, phase: Phase): { round: number; phase: 
 }
 
 export function applyAdvancePhase(
-  state: GameState,
+  state: MockGameState,
   actor: Faction,
   _command: AdvancePhaseCommand,
   now: string,
@@ -123,8 +124,8 @@ export function applyAdvancePhase(
  * Mock legal actions of `faction` (who may act is decided by the caller):
  * every own piece may move to any system adjacent to its current one; ADVANCE_PHASE is always available.
  */
-export function mockLegalActions(state: GameState, faction: Faction): LegalAction[] {
-  const moves: LegalAction[] = state.pieces
+export function mockLegalActions(state: MockGameState, faction: Faction): MockLegalAction[] {
+  const moves: MockLegalAction[] = state.pieces
     .filter((p) => p.owner === faction)
     .map((p) => ({
       type: 'MOVE_PIECES',

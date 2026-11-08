@@ -1,0 +1,17 @@
+
+> board-game-ai@ verify /Users/dimatitov/WebstormProjects/Game automa
+> pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle && pnpm e2e
+
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/games/rebellion/core-v1/panels/useTurnCommands.focus.test.tsx
+  12:46  error  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+
+✖ 1 problem (1 error, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.
+EXIT_CODE=1

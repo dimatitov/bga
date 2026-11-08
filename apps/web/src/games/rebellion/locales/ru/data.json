@@ -1,0 +1,106 @@
+{
+  "systems": {
+    "alderaan": "Альдераан",
+    "bespin": "Беспин",
+    "bothawui": "Ботавуи",
+    "cato-neimoidia": "Като-Неймодия",
+    "corellia": "Кореллия",
+    "coruscant": "Корусант",
+    "dagobah": "Дагоба",
+    "dantooine": "Дантуин",
+    "dathomir": "Датомир",
+    "endor": "Эндор",
+    "felucia": "Фелуция",
+    "geonosis": "Джеонозис",
+    "hoth": "Хот",
+    "ilum": "Илум",
+    "kashyyyk": "Кашиик",
+    "kessel": "Кессель",
+    "malastare": "Маластар",
+    "mandalore": "Мандалор",
+    "mon-calamari": "Мон-Каламари",
+    "mustafar": "Мустафар",
+    "mygeeto": "Мигито",
+    "naboo": "Набу",
+    "nal-hutta": "Нал-Хатта",
+    "ord-mantell": "Орд-Мантелл",
+    "rodia": "Родия",
+    "ryloth": "Рилот",
+    "saleucami": "Салукемай",
+    "sullust": "Салласт",
+    "tatooine": "Татуин",
+    "toydaria": "Тойдария",
+    "utapau": "Утапау",
+    "yavin": "Явин"
+  },
+  "regions": {
+    "r1": "регион Мон-Каламари",
+    "r2": "регион Нал-Хатта",
+    "r3": "регион Родия",
+    "r4": "регион Утапау",
+    "r5": "регион Мустафар",
+    "r6": "регион Корусант",
+    "r7": "регион Кашиик",
+    "r8": "регион Мигито"
+  },
+  "leaders": {
+    "palpatine": {
+      "name": "Император Палпатин",
+      "short": "ПА"
+    },
+    "vader": {
+      "name": "Дарт Вейдер",
+      "short": "ВЕ"
+    },
+    "tarkin": {
+      "name": "Гранд-мофф Таркин",
+      "short": "ТА"
+    },
+    "tagge": {
+      "name": "Генерал Тагге",
+      "short": "ТГ"
+    },
+    "mon-mothma": {
+      "name": "Мон Мотма",
+      "short": "ММ"
+    },
+    "leia": {
+      "name": "Принцесса Лея",
+      "short": "ЛЕ"
+    },
+    "dodonna": {
+      "name": "Ян Додонна",
+      "short": "ДО"
+    },
+    "rieekan": {
+      "name": "Генерал Рикан",
+      "short": "РИ"
+    }
+  },
+  "pieceTypes": {
+    "unit": {
+      "empire": {
+        "star-destroyer": "Звёздный разрушитель",
+        "assault-carrier": "Ударный авианосец",
+        "super-star-destroyer": "Суперзвёздный разрушитель",
+        "death-star": "Звезда Смерти",
+        "death-star-under-construction": "Строящаяся Звезда Смерти",
+        "tie-fighter": "Истребитель TIE",
+        "stormtrooper": "Штурмовик",
+        "at-st": "AT-ST",
+        "at-at": "AT-AT"
+      },
+      "rebels": {
+        "corellian-corvette": "Кореллианский корвет",
+        "rebel-transport": "Транспорт повстанцев",
+        "mon-calamari-cruiser": "Крейсер Мон-Каламари",
+        "x-wing": "Крестокрыл",
+        "y-wing": "Игрекокрыл",
+        "rebel-trooper": "Солдат повстанцев",
+        "airspeeder": "Аэроспидер",
+        "shield-generator": "Щитовой генератор",
+        "ion-cannon": "Ионная пушка"
+      }
+    }
+  }
+}

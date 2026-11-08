@@ -1,0 +1,41 @@
+{
+  "canvas": {
+    "label": "Galaxy map",
+    "instructions": "Arrows pan the map, plus and minus zoom, 0 fits the map, Esc clears the selection. Keyboard turns — the \"Turn\" panel; systems and objects — the \"Objects\" tab."
+  },
+  "caption": {
+    "core": "Map schematic · original graphics"
+  },
+  "marker": {
+    "remote": "remote",
+    "contested": "contested",
+    "activated": "activated",
+    "base": "Rebel base"
+  },
+  "zone": {
+    "title": "Rebel base — location unknown"
+  },
+  "lod": {
+    "compactHint": "Zoom in to drag units, or use the \"Turn\" panel"
+  },
+  "drop": {
+    "activated": "{{leader}} activates {{system}}",
+    "cancelled": "Activation cancelled",
+    "notTarget": "{{system}}: not a valid target"
+  },
+  "legend": {
+    "title": "Map legend",
+    "region": "Region (unofficial names)",
+    "remote": "Remote system (dashed outline)",
+    "contested": "Contested system: units of both sides",
+    "activated": "Activated system",
+    "leader": "Leader on the map",
+    "base": "Rebel base",
+    "target": "Can be activated",
+    "source": "Move source",
+    "space": "Ship (triangle)",
+    "ground": "Ground unit (square)",
+    "structure": "Structure (diamond)",
+    "chips": "Zoomed out — number of units and leaders of a side"
+  }
+}

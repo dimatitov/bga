@@ -5,7 +5,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { mockScenario } from '../../src/scenario';
-import { GameStateSchema, type GameState } from '../../src/schema';
+import { GameStateSchema, type GameState, type MockGameState } from '../../src/schema';
 import {
   rebellionServerModule,
   upcastEvent,
@@ -38,6 +38,12 @@ function legacyFactionValues(value: unknown, path = '$'): string[] {
     return Object.entries(value).flatMap(([k, v]) => legacyFactionValues(v, `${path}.${k}`));
   }
   return [];
+}
+
+/** v1/v2 rows always upcast to the `mock-v1` engine (SWR-005). */
+function asMock(state: GameState): MockGameState {
+  if (state.rulesEngine !== 'mock-v1') throw new Error('expected a mock-v1 state');
+  return state;
 }
 
 function deepFreeze<T>(value: T): T {
@@ -128,10 +134,11 @@ describe('upcastState', () => {
   it('TC-U-28: no legacy faction left; counts, positions, version/round/phase kept; hot-seat fields added', () => {
     const v1 = GameStateV1Schema.parse(rebelHuman);
     const before = JSON.stringify(rebelHuman);
-    const v2 = upcastState(rebelHuman);
+    const v2 = asMock(upcastState(rebelHuman));
     expect(JSON.stringify(rebelHuman)).toBe(before); // input not mutated
     expect(legacyFactionValues(v2)).toEqual([]);
-    expect(v2.schemaVersion).toBe(2);
+    expect(v2.schemaVersion).toBe(3);
+    expect(v2.rulesEngine).toBe('mock-v1');
     expect(v2.settings).toEqual({
       playerFaction: 'rebels',
       opponentFaction: 'empire',
@@ -182,7 +189,7 @@ describe('upcastState', () => {
   });
 
   it('TC-U-31: garbage and unknown versions throw', () => {
-    const v2 = upcastState(rebelHuman);
+    const v2 = asMock(upcastState(rebelHuman));
     expect(() => upcastState({ ...v2, schemaVersion: 99 })).toThrow();
     const bad = structuredClone(rebelHuman) as { setup: { humanFaction: string } };
     bad.setup.humanFaction = 'sith';
@@ -213,13 +220,14 @@ describe('upcastEvent', () => {
 });
 
 describe('rebellionServerModule on v1 rows (lazy upcast, Q-16)', () => {
-  it('parseState reads v1 and keeps the row version; the next command writes v2', () => {
+  it('parseState reads v1 and keeps the row version; the next command writes v3 mock-v1', () => {
     const v1 = GameStateV1Schema.parse(rebelHuman);
     const state = rebellionServerModule.parseState(rebelHuman, {
       sessionId: v1.id,
       version: v1.version,
     }) as GameState;
-    expect(state.schemaVersion).toBe(2);
+    expect(state.schemaVersion).toBe(3);
+    expect(state.rulesEngine).toBe('mock-v1');
     expect(() =>
       rebellionServerModule.parseState(rebelHuman, { sessionId: v1.id, version: v1.version + 1 }),
     ).toThrow();
@@ -239,7 +247,8 @@ describe('rebellionServerModule on v1 rows (lazy upcast, Q-16)', () => {
     expect(res.ok).toBe(true);
     if (res.ok) {
       const written = JSON.parse(JSON.stringify(res.state)) as GameState;
-      expect(written.schemaVersion).toBe(2);
+      expect(written.schemaVersion).toBe(3);
+      expect(written.rulesEngine).toBe('mock-v1');
       expect(legacyFactionValues(written)).toEqual([]);
       expect(res.events.map((e) => e.actor)).toEqual(['rebels']);
     }

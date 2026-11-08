@@ -10,6 +10,13 @@ import { API_ROOT } from './global-setup';
 const PLATFORM_SRC = join(API_ROOT, '..', '..', 'packages', 'platform', 'src');
 const API_SRC = join(API_ROOT, 'src');
 const GAME_TERMS = /rebels|empire|ruleset|gameMode|faction/i;
+/**
+ * SWR-005 W4 (AM-BE-1): the status after a command comes from `module.statusOf`; nothing outside the game
+ * reads a game's result or engine. `outcome` is matched as a game-state field (`.outcome`, `outcome:`), because
+ * the session service uses the plain English word for repository results (`InsertOutcome`, local `outcome`).
+ * Comment lines are not code and are skipped by `offendingCode`.
+ */
+const GAME_RESULT_TERMS = /\b(rebels|empire|winner|rulesEngine)\b|\.outcome\b|\boutcome\??\s*:/i;
 
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -26,6 +33,17 @@ function offending(dir: string, pattern: RegExp): string[] {
   );
 }
 
+function offendingCode(dir: string, pattern: RegExp): string[] {
+  const comment = /^\s*(\/\/|\/\*|\*)/;
+  return sourceFiles(dir).flatMap((file) =>
+    readFileSync(file, 'utf8')
+      .split('\n')
+      .flatMap((line, i) =>
+        !comment.test(line) && pattern.test(line) ? [`${file}:${i + 1}: ${line.trim()}`] : [],
+      ),
+  );
+}
+
 describe('architecture boundaries (SWR-004)', () => {
   it('TC-A-01: packages/platform/src has no faction / ruleset / game-mode knowledge', () => {
     expect(sourceFiles(PLATFORM_SRC).length).toBeGreaterThan(0);
@@ -34,6 +52,23 @@ describe('architecture boundaries (SWR-004)', () => {
 
   it('TC-A-01: apps/api/src (session service, repository, migrationless code) is game-agnostic', () => {
     expect(offending(API_SRC, GAME_TERMS)).toEqual([]);
+  });
+
+  it('SWR-005 W4: packages/platform/src and apps/api/src never read a game result / engine (statusOf only)', () => {
+    expect(offendingCode(PLATFORM_SRC, GAME_RESULT_TERMS)).toEqual([]);
+    expect(offendingCode(API_SRC, GAME_RESULT_TERMS)).toEqual([]);
+    // Self-check of the pattern: the forms a leak would take are caught.
+    for (const leak of [
+      'state.outcome',
+      'outcome: null',
+      'outcome?: x',
+      'winner',
+      'rulesEngine',
+      'Rebels',
+    ]) {
+      expect(GAME_RESULT_TERMS.test(leak)).toBe(true);
+    }
+    expect(GAME_RESULT_TERMS.test('const outcome = await repo.insert(x);')).toBe(false);
   });
 
   it('TC-A-02: no OpenAI / AI client in apps/api/src', () => {

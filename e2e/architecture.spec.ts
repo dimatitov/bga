@@ -1,42 +1,29 @@
 // Network-level architecture checks: TC-E2E-30 (hidden info), TC-E2E-31 (only POST /api/sessions and
 // POST /commands mutate) — SWR-002 AC-12; SWR-003: sessions API, leak check also covers `GET /api/sessions*`
-// (`SessionSummary.details`, TC-SES-13), the game page and the catalog.
+// (`SessionSummary.details`, TC-SES-13), the game page and the catalog. SWR-005 (Q-1): rewritten on core-v1
+// (activation / move / finish / pass as the Empire; base-id scanner TR-3 instead of mock hidden pieces).
 // Hidden information is checked on server responses, not on DOM (skill browser-qa §4).
 import { expect, test } from '@playwright/test';
 import {
   API,
-  createSession,
+  asCore,
   findKeyPaths,
   findRebelBases,
-  getView,
-  pickMove,
+  planActivation,
   REBELLION,
-  REBELS_VS_AI,
+  scanForBase,
   type SessionResponse,
 } from './support/api';
-import {
-  dbg,
-  gamePath,
-  newSessionPath,
-  openSession,
-  recordApi,
-  waitForCommand,
-  type RecordedCall,
-} from './support/board';
+import { gamePath, newSessionPath, openCore, recordApi, type RecordedCall } from './support/board';
+import { armLeader, clickSystem, commandViaUi, finishViaUi, passViaUi } from './support/core';
+import { storedRebelBase } from './support/seed';
 import { T } from './support/testids';
 
-test('TC-E2E-30 + TC-E2E-31: Empire session leaks no secrets; only allowed requests mutate', async ({
-  page,
-  request,
-}) => {
-  // Real type keys of hidden Rebel pieces, learned from a Rebellion game of the same scenario.
-  const rebelView = (await createSession(request, REBELS_VS_AI)).view;
-  const hiddenOnlyTypeKeys = [
-    ...new Set(
-      rebelView.pieces.filter((p) => p.owner === 'rebels' && p.hidden).map((p) => p.typeKey),
-    ),
-  ].filter((k) => !rebelView.pieces.some((p) => !p.hidden && p.typeKey === k));
+test.use({ reducedMotion: 'reduce' });
 
+test('TC-E2E-30 + TC-E2E-31 (core-v1): Empire session leaks no secrets; only allowed requests mutate', async ({
+  page,
+}) => {
   const recorder = recordApi(page);
   const calls: RecordedCall[] = recorder.calls;
   const requests: { method: string; url: string }[] = [];
@@ -45,7 +32,7 @@ test('TC-E2E-30 + TC-E2E-31: Empire session leaks no secrets; only allowed reque
       requests.push({ method: r.method(), url: r.url() });
   });
 
-  // Scenarios 1, 3–7 as the Empire through the UI.
+  // SWR-005 scenarios 2/1 as the Empire through the UI: create, activate (not the base), move, finish, pass.
   await page.goto(newSessionPath(REBELLION));
   await page.getByTestId(T.setupFaction('empire')).click();
   await page.getByTestId(T.setupOpponent('ai')).click();
@@ -53,21 +40,21 @@ test('TC-E2E-30 + TC-E2E-31: Empire session leaks no secrets; only allowed reque
     (r) => API.sessions.test(new URL(r.url()).pathname) && r.request().method() === 'POST',
   );
   await page.getByTestId(T.setupStart).click();
-  const { sessionId } = (await (await created).json()) as SessionResponse;
-  await openSession(page, sessionId);
-  const view = await getView(request, sessionId);
-  const move = pickMove(view);
+  const body = (await (await created).json()) as SessionResponse;
+  const sessionId = body.sessionId;
+  const baseId = await storedRebelBase(sessionId); // TR-3 oracle (DB), not an Empire-facing response
+  await openCore(page, sessionId);
+  const view = asCore(body.view);
+  const plan = planActivation(view, [baseId]);
 
-  const pos = await dbg.piecePos(page, move.pieceId);
-  await page.mouse.click(pos.x, pos.y);
-  let cmd = waitForCommand(page);
-  await page.getByTestId(T.actionMove(move.pieceId, move.toSystemId)).click();
-  expect((await cmd).status()).toBe(200);
-  cmd = waitForCommand(page);
-  await page.getByTestId(T.advancePhase).click();
-  expect((await cmd).status()).toBe(200);
+  await armLeader(page, plan.leaderId);
+  await commandViaUi(page, () => clickSystem(page, plan.systemId));
+  await page.getByTestId(T.movePiece(plan.pieceId)).check();
+  await commandViaUi(page, () => page.getByTestId(T.moveSubmit(plan.fromSystemId)).click());
+  await finishViaUi(page);
+  await passViaUi(page, true);
   await page.reload();
-  await openSession(page, sessionId);
+  await openCore(page, sessionId);
   // The game page lists sessions (`GET /api/sessions?gameId=`) — `details` must not leak hidden info either.
   const listed = page.waitForResponse(
     (r) => API.sessions.test(new URL(r.url()).pathname) && r.request().method() === 'GET',
@@ -93,19 +80,10 @@ test('TC-E2E-30 + TC-E2E-31: Empire session leaks no secrets; only allowed reque
     for (const k of ['idempotencyKey', 'idempotencyHash', 'schemaVersion', 'aiFaction']) {
       expect(findKeyPaths(c.body, k), `"${k}" key in ${c.method} ${c.url}`).toEqual([]);
     }
-    const raw = JSON.stringify(c.body);
-    for (const k of hiddenOnlyTypeKeys) {
-      expect(raw.includes(`"${k}"`), `hidden typeKey "${k}" leaked in ${c.method} ${c.url}`).toBe(
-        false,
-      );
-    }
-  }
-  if (hiddenOnlyTypeKeys.length === 0) {
-    test.info().annotations.push({
-      type: 'note',
-      description:
-        'no typeKey is exclusive to hidden pieces — raw typeKey leak sub-check is vacuous',
-    });
+    // SWR-005 TR-3: the base system id only in the static catalogue / ACTIVATE_SYSTEM.systemIds. (The SWR-002
+    // "hidden typeKey" sub-check does not apply to core-v1: units on the base are shown with their type in the
+    // «location unknown» zone, spec UX.)
+    expect(scanForBase(c.body, baseId), `base id in ${c.method} ${c.url}`).toEqual([]);
   }
 
   // TC-E2E-31

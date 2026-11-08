@@ -1,0 +1,74 @@
+# QA: opt-in dev-DB upgrade test (TR-8, TC-M-10) on scratch COPIES 2026-11-08T16:51:25Z
+de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1  apps/api/prisma/dev.pre-swr005.db
+ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7  apps/api/prisma/dev.db
+de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad/qa-pre005.db
+ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad/qa-cur.db
+## run A: copy of dev.pre-swr005.db (pre-SWR-005 backup, only v1/v2 rows)
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:51:27
+   Duration  6.37s (transform 485ms, setup 0ms, import 1.17s, tests 2.53s, environment 0ms)
+
+EXIT_CODE_A=0
+## run B: copy of the current dev.db (after Analyst BV: + 3 core-v1 rows)
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] source (SWR005_DEV_DB) /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad/qa-cur.db sha256=ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7
+[dev-db-upgrade] copy /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-5c4f0b67-048c-4093-aa37-bf497ed20d0e.db
+Prisma schema loaded from prisma/schema.prisma
+Datasource "db": SQLite database "devcopy-5c4f0b67-048c-4093-aa37-bf497ed20d0e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-5c4f0b67-048c-4093-aa37-bf497ed20d0e.db"
+
+3 migrations found in prisma/migrations
+
+
+No pending migrations to apply.
+
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] 9 session row(s); stored schemaVersions: 3,2,none (v1); status: prototype,completed
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3)
+[dev-db-upgrade] /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad/qa-cur.db sha256 before=ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7 after=ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7
+
+ ❯ test/dev-db-upgrade.int.test.ts (1 test | 1 failed) 2307ms
+     × TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable 2304ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+AssertionError: bf6ad3fd-e4f9-417f-bac3-201fbf1cb71f: expected 'core-v1' to be 'mock-v1' // Object.is equality
+
+Expected: "mock-v1"
+Received: "core-v1"
+
+ ❯ test/dev-db-upgrade.int.test.ts:87:53
+     85|           expect(legacyFactionValues(res.body), row.id).toEqual([]);
+     86|           // Every pre-SWR-005 session is played on the mock rules (bo…
+     87|           expect(res.body.view.rulesEngine, row.id).toBe('mock-v1');
+       |                                                     ^
+     88|           views.set(row.id, res.body.view);
+     89|           log(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  19:51:34
+   Duration  5.79s (transform 464ms, setup 0ms, import 983ms, tests 2.31s, environment 0ms)
+
+undefined
+/Users/dimatitov/WebstormProjects/Game automa/apps/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/dev-db-upgrade.int.test.ts
+EXIT_CODE_B=1
+## sha256 after
+de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1  apps/api/prisma/dev.pre-swr005.db
+ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7  apps/api/prisma/dev.db
+de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad/qa-pre005.db
+ee606695b1b0bcb634f7b8fa113a1baac9fa620f4f41dc294c9947e69699a5c7  /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/2c58eedb-2b4e-4850-a7bb-c607e88f5855/scratchpad/qa-cur.db

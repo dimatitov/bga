@@ -2,7 +2,7 @@ import { ERROR_MESSAGE_KEYS } from '@bga/platform';
 import {
   CommandEnvelopeSchema,
   REBELLION_ERROR_MESSAGE_KEYS,
-  type GameState,
+  type MockGameState,
 } from '../../src/schema';
 import { describe, expect, it } from 'vitest';
 import { applyCommand, type ApplyResult } from '../../src/rules';
@@ -19,7 +19,7 @@ import {
   stackOf,
 } from './helpers';
 
-function stateAtVersion(version: number): GameState {
+function stateAtVersion(version: number): MockGameState {
   let state = newGame();
   while (state.version < version) {
     const r = applyCommand(state, env(state, ADVANCE), APPLY_CTX);

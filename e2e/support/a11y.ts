@@ -317,3 +317,35 @@ export async function expectTextContrastDeep(
   }
   return count;
 }
+
+/**
+ * SWR-005: visible focus of a MUI outlined text field (Autocomplete): the `<input>` itself has no ring — the
+ * indicator is the notched outline of `.MuiOutlinedInput-root.Mui-focused` (≥ 2 px, ≥ 3:1 against the field's
+ * surrounding background, WCAG 1.4.11 / 2.4.7).
+ */
+export async function expectFieldFocus(input: Locator, label: string): Promise<void> {
+  await expect(input, `${label} is focused`).toBeFocused();
+  const m = await input.evaluate((el) => {
+    const root = el.closest('.MuiOutlinedInput-root');
+    const outline = root?.querySelector('.MuiOutlinedInput-notchedOutline');
+    if (!root || !outline) return null;
+    const chain: Element[] = [];
+    for (let n: Element | null = root.parentElement; n; n = n.parentElement) chain.push(n);
+    const cs = getComputedStyle(outline);
+    return {
+      focusedClass: root.classList.contains('Mui-focused'),
+      width: parseFloat(cs.borderTopWidth),
+      color: cs.borderTopColor,
+      bgs: chain.reverse().map((n) => getComputedStyle(n).backgroundColor),
+    };
+  });
+  expect(m, `${label}: is a MUI outlined field`).not.toBeNull();
+  expect(m!.focusedClass, `${label}: Mui-focused`).toBe(true);
+  expect(m!.width, `${label}: focus outline ≥ 2px`).toBeGreaterThanOrEqual(2);
+  const bg = m!.bgs.reduce<RGBA>((acc, css) => composite(parseColor(css), acc), [255, 255, 255, 1]);
+  const ratio = contrastRatio(composite(parseColor(m!.color), bg), bg);
+  expect(
+    ratio,
+    `${label}: focus outline contrast ${ratio.toFixed(2)}:1 ≥ 3:1`,
+  ).toBeGreaterThanOrEqual(3);
+}

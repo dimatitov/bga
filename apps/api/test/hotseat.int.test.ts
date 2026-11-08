@@ -10,34 +10,35 @@ import { upcastState } from '@bga/game-rebellion/server';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   DEF,
-  EMPIRE_AI,
   HIDDEN_REBEL,
   R,
-  REBELS_HUMAN,
   REBEL_BASE_SYSTEM,
+  SEEDED,
   acceptHandoffEnv,
   advanceEnv,
-  createRebellionSession,
+  createSeededDb,
   dbSnapshot,
   endTurnEnv,
   expectError,
-  movable,
+  movableIn,
   moveEnv,
   playerView,
   postCommand,
 } from './support/fixtures';
 import { prisma } from './support/pre-migration-db';
 import { createSwr003Db, type Swr003Db } from './support/swr003-db';
-import {
-  api,
-  createTestDb,
-  removeTestDb,
-  startApp,
-  stopApp,
-  type TestDb,
-} from './support/test-app';
+import { api, removeTestDb, startApp, stopApp, type TestDb } from './support/test-app';
 
-const HANDOFF_KEYS = ['activeSide', 'id', 'kind', 'phase', 'round', 'sessionStatus', 'version'];
+const HANDOFF_KEYS = [
+  'activeSide',
+  'id',
+  'kind',
+  'phase',
+  'round',
+  'rulesEngine',
+  'sessionStatus',
+  'version',
+];
 /** Every system / piece id and typeKey of the scenario — none may appear in a handoff response. */
 const BOARD_TOKENS = [
   ...mockScenario.systems.map((s) => s.id),
@@ -56,15 +57,22 @@ function expectBareHandoff(res: { text: string }, view: unknown, activeSide: str
   return handoff;
 }
 
-describe('hot-seat (human vs human on one device)', () => {
+/**
+ * SWR-005 W6a (Q-1): the mock-v1 hot-seat flow runs on the seeded SWR-004 row `hotseat` (Rebels vs human,
+ * v3, already in a handoff to the Empire after the Rebels' END_TURN) and the AI row `empireAi`; core-v1
+ * hot-seat is covered by W6b (TC-HS-*).
+ */
+const HS = SEEDED.hotseat;
+const HS_V = HS.version;
+
+describe('hot-seat (human vs human on one device, seeded mock-v1 row)', () => {
   let db: TestDb;
   let app: INestApplication;
-  let sessionId: string;
+  const sessionId = HS.id;
 
   beforeEach(async () => {
-    db = createTestDb();
+    db = await createSeededDb();
     app = await startApp(db.url);
-    sessionId = (await createRebellionSession(app, REBELS_HUMAN)).sessionId;
   });
 
   afterEach(async () => {
@@ -72,11 +80,26 @@ describe('hot-seat (human vs human on one device)', () => {
   });
 
   it('TC-I-25 / TC-I-26 / TC-I-27: END_TURN → bare handoff view (POST, GET, ?viewer=, list)', async () => {
-    const res = await postCommand(app, sessionId, endTurnEnv('rebels', 1));
+    // The seeded row is stored in a handoff to the Empire: GET shows only the handoff screen (TC-M-08).
+    const seeded = await api(app).get(`/api/sessions/${sessionId}`);
+    expect(seeded.status).toBe(200);
+    expect(
+      expectBareHandoff(seeded, SessionResponseSchema.parse(seeded.body).view, 'empire'),
+    ).toMatchObject({ version: HS_V, id: sessionId });
+
+    // The Empire takes the seat and ends its turn → the next handoff (to the Rebels).
+    expect((await postCommand(app, sessionId, acceptHandoffEnv('empire', HS_V))).status).toBe(200);
+    const res = await postCommand(app, sessionId, endTurnEnv('empire', HS_V + 1));
     expect(res.status).toBe(200);
     expect(res.body.events).toEqual([]);
-    const handoff = expectBareHandoff(res, res.body.view, 'empire');
-    expect(handoff).toMatchObject({ version: 2, round: 1, phase: 'assignment', id: sessionId });
+    const handoff = expectBareHandoff(res, res.body.view, 'rebels');
+    expect(handoff).toMatchObject({
+      version: HS_V + 2,
+      round: 1,
+      phase: 'assignment',
+      id: sessionId,
+      rulesEngine: 'mock-v1',
+    });
     console.log(
       `[hotseat-leak] checked ${BOARD_TOKENS.length} scenario ids/typeKeys: none in the handoff body`,
     );
@@ -91,11 +114,13 @@ describe('hot-seat (human vs human on one device)', () => {
       const body = SessionResponseSchema.parse(got.body);
       expect(body.status).toBe('prototype');
       expect(body.settings).toMatchObject({ opponentType: 'human', aiDifficulty: null });
-      expectBareHandoff(got, body.view, 'empire');
+      expectBareHandoff(got, body.view, 'rebels');
     }
 
     const list = await api(app).get(`/api/sessions?gameId=${R}`);
-    const [summary] = ListSessionsResponseSchema.parse(list.body);
+    const summary = ListSessionsResponseSchema.parse(list.body).find(
+      (s) => s.sessionId === sessionId,
+    );
     expect(summary?.details).toMatchObject({
       round: 1,
       phase: 'assignment',
@@ -105,16 +130,15 @@ describe('hot-seat (human vs human on one device)', () => {
   });
 
   it('TC-I-28: during a handoff — other side → notYourTurn; active side non-ACCEPT → handoffPending; nothing changes', async () => {
-    expect((await postCommand(app, sessionId, endTurnEnv('rebels', 1))).status).toBe(200);
     const before = await dbSnapshot(app, sessionId);
-    const r = movable('rebels');
-    const e = movable('empire');
+    const r = movableIn(HS, 'rebels');
+    const e = movableIn(HS, 'empire');
     const cases: [unknown, string][] = [
-      [acceptHandoffEnv('rebels', 2), 'errors.notYourTurn'],
-      [moveEnv('rebels', 2, [r.pieceId], r.from, r.adjacent), 'errors.notYourTurn'],
-      [moveEnv('empire', 2, [e.pieceId], e.from, e.adjacent), 'errors.handoffPending'],
-      [advanceEnv('empire', 2), 'errors.handoffPending'],
-      [endTurnEnv('empire', 2), 'errors.handoffPending'],
+      [acceptHandoffEnv('rebels', HS_V), 'errors.notYourTurn'],
+      [moveEnv('rebels', HS_V, [r.pieceId], r.from, r.adjacent), 'errors.notYourTurn'],
+      [moveEnv('empire', HS_V, [e.pieceId], e.from, e.adjacent), 'errors.handoffPending'],
+      [advanceEnv('empire', HS_V), 'errors.handoffPending'],
+      [endTurnEnv('empire', HS_V), 'errors.handoffPending'],
     ];
     for (const [env, key] of cases) {
       const res = await postCommand(app, sessionId, env);
@@ -125,11 +149,10 @@ describe('hot-seat (human vs human on one device)', () => {
   });
 
   it('TC-I-29: ACCEPT_HANDOFF by the Empire → Empire player view; base and hidden rebel types masked', async () => {
-    expect((await postCommand(app, sessionId, endTurnEnv('rebels', 1))).status).toBe(200);
-    const res = await postCommand(app, sessionId, acceptHandoffEnv('empire', 2));
+    const res = await postCommand(app, sessionId, acceptHandoffEnv('empire', HS_V));
     expect(res.status).toBe(200);
     const view = playerView(res.body.view);
-    expect(view).toMatchObject({ viewer: 'empire', activeSide: 'empire', version: 3 });
+    expect(view).toMatchObject({ viewer: 'empire', activeSide: 'empire', version: HS_V + 1 });
     expect(view.rebelBase.systemId).toBeNull();
     expect(view.pieces.find((p) => p.id === HIDDEN_REBEL.id)?.typeKey).toBe(UNKNOWN_TYPE_KEY);
     expect(res.text).not.toContain(HIDDEN_REBEL.typeKey);
@@ -144,18 +167,21 @@ describe('hot-seat (human vs human on one device)', () => {
   });
 
   it('TC-I-30: Empire active, no handoff — a Rebels command → 422 notYourTurn, state unchanged', async () => {
-    await postCommand(app, sessionId, endTurnEnv('rebels', 1));
-    await postCommand(app, sessionId, acceptHandoffEnv('empire', 2));
+    expect((await postCommand(app, sessionId, acceptHandoffEnv('empire', HS_V))).status).toBe(200);
     const before = await dbSnapshot(app, sessionId);
-    const r = movable('rebels');
+    const r = movableIn(HS, 'rebels');
     expectError(
-      await postCommand(app, sessionId, moveEnv('rebels', 3, [r.pieceId], r.from, r.adjacent)),
+      await postCommand(
+        app,
+        sessionId,
+        moveEnv('rebels', HS_V + 1, [r.pieceId], r.from, r.adjacent),
+      ),
       422,
       'ILLEGAL_COMMAND',
       'errors.notYourTurn',
     );
     expectError(
-      await postCommand(app, sessionId, acceptHandoffEnv('empire', 3)),
+      await postCommand(app, sessionId, acceptHandoffEnv('empire', HS_V + 1)),
       422,
       'ILLEGAL_COMMAND',
       'errors.handoffNotAvailable',
@@ -164,39 +190,42 @@ describe('hot-seat (human vs human on one device)', () => {
   });
 
   it('TC-I-32: two parallel ACCEPT_HANDOFF with one expectedVersion → exactly one 200 and one 409', async () => {
-    await postCommand(app, sessionId, endTurnEnv('rebels', 1));
     const results = await Promise.all([
-      postCommand(app, sessionId, acceptHandoffEnv('empire', 2)),
-      postCommand(app, sessionId, acceptHandoffEnv('empire', 2)),
+      postCommand(app, sessionId, acceptHandoffEnv('empire', HS_V)),
+      postCommand(app, sessionId, acceptHandoffEnv('empire', HS_V)),
     ]);
     expect(results.map((r) => r.status).sort()).toEqual([200, 409]);
     const { session, events } = await dbSnapshot(app, sessionId);
-    expect(session?.version).toBe(3);
-    expect(events.map((e) => e.type)).toEqual(['GAME_CREATED', 'TURN_ENDED', 'HANDOFF_ACCEPTED']);
+    expect(session?.version).toBe(HS_V + 1);
+    expect(events.map((e) => e.type)).toEqual([
+      ...HS.events.map((e) => e.type),
+      'HANDOFF_ACCEPTED',
+    ]);
+    expect(events.map((e) => e.type).slice(-2)).toEqual(['TURN_ENDED', 'HANDOFF_ACCEPTED']);
   });
 });
 
-describe('TC-I-31: END_TURN / ACCEPT_HANDOFF in an AI game → 422 handoffNotAvailable', () => {
+describe('TC-I-31: END_TURN / ACCEPT_HANDOFF in an AI game → 422 handoffNotAvailable (seeded mock-v1 row)', () => {
   it('rejected, nothing changes; the AI side → notYourSide', async () => {
-    const db = createTestDb();
+    const db = await createSeededDb();
     const app = await startApp(db.url);
     try {
-      const { sessionId } = await createRebellionSession(app, EMPIRE_AI);
+      const { id: sessionId, version } = SEEDED.empireAi;
       const before = await dbSnapshot(app, sessionId);
       expectError(
-        await postCommand(app, sessionId, endTurnEnv('empire', 1)),
+        await postCommand(app, sessionId, endTurnEnv('empire', version)),
         422,
         'ILLEGAL_COMMAND',
         'errors.handoffNotAvailable',
       );
       expectError(
-        await postCommand(app, sessionId, acceptHandoffEnv('empire', 1)),
+        await postCommand(app, sessionId, acceptHandoffEnv('empire', version)),
         422,
         'ILLEGAL_COMMAND',
         'errors.handoffNotAvailable',
       );
       expectError(
-        await postCommand(app, sessionId, endTurnEnv('rebels', 1)),
+        await postCommand(app, sessionId, endTurnEnv('rebels', version)),
         422,
         'ILLEGAL_COMMAND',
         'errors.notYourSide',
@@ -210,52 +239,58 @@ describe('TC-I-31: END_TURN / ACCEPT_HANDOFF in an AI game → 422 handoffNotAva
 
 describe('TC-I-24: restart on the same DB file (AI game + human game in handoff + idempotent replay)', () => {
   it('app#2 returns identical settings/status/views; the list is the same; the key replays the same session', async () => {
-    const db = createTestDb();
+    // Seeded DB: the mock-v1 moves run on seeded rows; the POST part is engine-independent.
+    const db = await createSeededDb();
     try {
       const key = '7d0f6c2e-5f7a-4d55-9a53-0c8f3c6f9e11';
       const app1 = await startApp(db.url);
-      const ai = await api(app1)
+      const created = await api(app1)
         .post('/api/sessions')
         .set('Idempotency-Key', key)
         .send({ gameId: R, setup: DEF });
-      expect(ai.status).toBe(201);
-      const m = movable('rebels');
+      expect(created.status).toBe(201);
+      const ai = SEEDED.rebelsAi;
+      const m = movableIn(ai, 'rebels');
       expect(
         (
           await postCommand(
             app1,
-            ai.body.sessionId,
-            moveEnv('rebels', 1, [m.pieceId], m.from, m.adjacent),
+            ai.id,
+            moveEnv('rebels', ai.version, [m.pieceId], m.from, m.adjacent),
           )
         ).status,
       ).toBe(200);
-      const human = await createRebellionSession(app1, REBELS_HUMAN);
-      expect((await postCommand(app1, human.sessionId, endTurnEnv('rebels', 1))).status).toBe(200);
+      const human = HS.id;
+      expect((await postCommand(app1, human, acceptHandoffEnv('empire', HS_V))).status).toBe(200);
+      expect((await postCommand(app1, human, endTurnEnv('empire', HS_V + 1))).status).toBe(200);
       const before = {
-        ai: (await api(app1).get(`/api/sessions/${ai.body.sessionId}`)).body,
-        human: (await api(app1).get(`/api/sessions/${human.sessionId}`)).body,
+        created: (await api(app1).get(`/api/sessions/${created.body.sessionId}`)).body,
+        ai: (await api(app1).get(`/api/sessions/${ai.id}`)).body,
+        human: (await api(app1).get(`/api/sessions/${human}`)).body,
         list: (await api(app1).get('/api/sessions')).body,
       };
+      expect(before.created).toEqual(created.body);
       expect(before.human.view.kind).toBe('handoff');
       await stopApp(app1);
 
       const app2 = await startApp(db.url);
       try {
-        expect((await api(app2).get(`/api/sessions/${ai.body.sessionId}`)).body).toEqual(before.ai);
-        expect((await api(app2).get(`/api/sessions/${human.sessionId}`)).body).toEqual(
-          before.human,
+        expect((await api(app2).get(`/api/sessions/${created.body.sessionId}`)).body).toEqual(
+          before.created,
         );
+        expect((await api(app2).get(`/api/sessions/${ai.id}`)).body).toEqual(before.ai);
+        expect((await api(app2).get(`/api/sessions/${human}`)).body).toEqual(before.human);
         expect((await api(app2).get('/api/sessions')).body).toEqual(before.list);
         const replay = await api(app2)
           .post('/api/sessions')
           .set('Idempotency-Key', key)
           .send({ gameId: R, setup: DEF });
         expect(replay.status).toBe(200);
-        expect(replay.body).toEqual(before.ai);
+        expect(replay.body).toEqual(before.created);
         // hot-seat continues after the restart
-        expect(
-          (await postCommand(app2, human.sessionId, acceptHandoffEnv('empire', 2))).status,
-        ).toBe(200);
+        expect((await postCommand(app2, human, acceptHandoffEnv('rebels', HS_V + 2))).status).toBe(
+          200,
+        );
       } finally {
         await stopApp(app2);
       }

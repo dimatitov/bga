@@ -14,19 +14,20 @@ import {
   HandoffViewSchema,
   RebellionSettingsSchema,
   GameStateSchema,
-  LegalActionSchema,
+  MockLegalActionSchema,
   PlayerViewSchema,
   REBELLION_ERROR_MESSAGE_KEYS,
   RebellionErrorMessageKeySchema,
   ScenarioSchema,
-  type GameState,
+  type MockGameState,
 } from '../../src/schema';
 
 const AT = '2026-11-08T10:00:00.000Z';
 
-function sampleState(): GameState {
+function sampleState(): MockGameState {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
+    rulesEngine: 'mock-v1',
     id: 'g-1',
     version: 1,
     round: 1,
@@ -70,6 +71,7 @@ function sampleViewBase() {
 function sampleHandoff() {
   return {
     kind: 'handoff' as const,
+    rulesEngine: 'mock-v1' as const,
     id: 'g-1',
     version: 2,
     activeSide: 'rebels' as const,
@@ -185,11 +187,20 @@ describe('GameStateSchema / PlayerViewSchema', () => {
     ).toBe(false);
   });
 
-  it('PlayerView (handoff) is strict: exactly kind, id, version, activeSide, round, phase, sessionStatus', () => {
+  it('PlayerView (handoff) is strict: exactly kind, rulesEngine, id, version, activeSide, round, phase, sessionStatus', () => {
     const handoff = sampleHandoff();
     expect(PlayerViewSchema.parse(handoff)).toEqual(handoff);
     expect(Object.keys(HandoffViewSchema.shape).sort()).toEqual(
-      ['activeSide', 'id', 'kind', 'phase', 'round', 'sessionStatus', 'version'].sort(),
+      [
+        'activeSide',
+        'id',
+        'kind',
+        'phase',
+        'round',
+        'rulesEngine',
+        'sessionStatus',
+        'version',
+      ].sort(),
     );
     const board = sampleViewBase();
     for (const [key, value] of Object.entries({
@@ -264,11 +275,13 @@ describe('GameStateSchema / PlayerViewSchema', () => {
     expect(GameEventSchema.safeParse({ ...accepted, payload: { x: 1 } }).success).toBe(false);
   });
 
-  it('LegalActionSchema is a discriminated union', () => {
-    expect(LegalActionSchema.safeParse({ type: 'ADVANCE_PHASE' }).success).toBe(true);
-    expect(LegalActionSchema.safeParse({ type: 'END_TURN' }).success).toBe(true);
-    expect(LegalActionSchema.safeParse({ type: 'ACCEPT_HANDOFF' }).success).toBe(false);
-    expect(LegalActionSchema.safeParse({ type: 'MOVE_PIECES', pieceId: 'p' }).success).toBe(false);
+  it('MockLegalActionSchema is a discriminated union', () => {
+    expect(MockLegalActionSchema.safeParse({ type: 'ADVANCE_PHASE' }).success).toBe(true);
+    expect(MockLegalActionSchema.safeParse({ type: 'END_TURN' }).success).toBe(true);
+    expect(MockLegalActionSchema.safeParse({ type: 'ACCEPT_HANDOFF' }).success).toBe(false);
+    expect(MockLegalActionSchema.safeParse({ type: 'MOVE_PIECES', pieceId: 'p' }).success).toBe(
+      false,
+    );
   });
 });
 

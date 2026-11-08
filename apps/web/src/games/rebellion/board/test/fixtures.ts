@@ -1,8 +1,8 @@
 /**
- * Test fixture PlayerViewPlayer (test-cases notation: S_A/S_B/S_C, P_E1/P_E2/P_E3, P_R1, P_RH).
+ * Test fixture PlayerViewMock (test-cases notation: S_A/S_B/S_C, P_E1/P_E2/P_E3, P_R1, P_RH).
  * Ids mirror the mock scenario so gameData translations and mapLayout entries exist. Test-only.
  */
-import type { HandoffView, PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { HandoffView, PlayerViewMock } from '@bga/game-rebellion/schema';
 
 export const S_A = 'sys-aurelis';
 export const S_B = 'sys-brevora';
@@ -16,9 +16,10 @@ export const P_R1 = 'pc-12';
 export const P_RH = 'pc-21';
 export const GAME_ID = 'game-fixture-1';
 
-export function makeView(overrides: Partial<PlayerViewPlayer> = {}): PlayerViewPlayer {
+export function makeView(overrides: Partial<PlayerViewMock> = {}): PlayerViewMock {
   return {
     kind: 'player',
+    rulesEngine: 'mock-v1',
     viewer: 'empire',
     activeSide: 'empire',
     settings: {
@@ -111,7 +112,7 @@ export function makeView(overrides: Partial<PlayerViewPlayer> = {}): PlayerViewP
 }
 
 /** View after P_E1 moved S_A → S_B (version + 1). */
-export function makeMovedView(base: PlayerViewPlayer = makeView()): PlayerViewPlayer {
+export function makeMovedView(base: PlayerViewMock = makeView()): PlayerViewMock {
   return {
     ...base,
     version: base.version + 1,
@@ -133,6 +134,7 @@ export function makeMovedView(base: PlayerViewPlayer = makeView()): PlayerViewPl
 export function makeHandoffView(overrides: Partial<HandoffView> = {}): HandoffView {
   return {
     kind: 'handoff',
+    rulesEngine: 'mock-v1',
     id: GAME_ID,
     version: 4,
     activeSide: 'rebels',

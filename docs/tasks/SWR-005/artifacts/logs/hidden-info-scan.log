@@ -1,0 +1,151 @@
+# SWR-005 W6b hidden-info scan (TC-H-13/15/16) — base id read from the DB row of each game.
+# 147 responses recorded; 129 Empire-addressed (incl. lists and handoff screens); 108 path-scanned (Empire-addressed while the base was hidden); 18 not Empire-addressed (Rebels' own board in hot-seat); leaks found: 0
+# columns: n | game | request | HTTP status | addressed to | path-scanned | base at that moment | leaks
+  1 | AI_EMP | POST /api/sessions (Empire vs AI) | 201 | empire | scanned | hidden | none
+  2 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+  3 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+  4 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+  5 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM leia→rodia (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+  6 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM yoda→rodia (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+  7 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM vader→nowhere (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+  8 | AI_EMP | POST /commands empire MOVE_PIECES [u-11] rodia→malastare (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+  9 | AI_EMP | POST /commands empire FINISH_ACTIVATION (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+ 10 | AI_EMP | POST /commands rebels PASS (probe, v=2) | 422 | rebels (error) | skipped (Rebels board) | hidden | none
+ 11 | AI_EMP | POST /commands empire ACCEPT_HANDOFF (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+ 12 | AI_EMP | POST /commands empire END_TURN (probe, v=2) | 422 | empire (error) | scanned | hidden | none
+ 13 | AI_EMP | POST /commands empire PASS (probe, v=3) | 409 | empire (error) | scanned | hidden | none
+ 14 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM + extra key (probe, 400) | 400 | empire (error) | scanned | hidden | none
+ 15 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM vader→malastare | 200 | empire | scanned | hidden | none
+ 16 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 17 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 18 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 19 | AI_EMP | POST /commands empire MOVE_PIECES [u-11] rodia→malastare (probe, v=3) | 422 | empire (error) | scanned | hidden | none
+ 20 | AI_EMP | POST /commands empire MOVE_PIECES [u-11] bothawui→malastare (probe, v=3) | 422 | empire (error) | scanned | hidden | none
+ 21 | AI_EMP | POST /commands empire MOVE_PIECES [u-42] rodia→malastare (probe, v=3) | 422 | empire (error) | scanned | hidden | none
+ 22 | AI_EMP | POST /commands empire MOVE_PIECES [u-40] sullust→rodia (probe, v=3) | 422 | empire (error) | scanned | hidden | none
+ 23 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM tarkin→rodia (probe, v=3) | 422 | empire (error) | scanned | hidden | none
+ 24 | AI_EMP | POST /commands empire PASS (probe, v=3) | 422 | empire (error) | scanned | hidden | none
+ 25 | AI_EMP | POST /commands empire MOVE_PIECES [u-40,u-41,u-43,u-45] sullust→malastare | 200 | empire | scanned | hidden | none
+ 26 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 27 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 28 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 29 | AI_EMP | POST /commands empire FINISH_ACTIVATION | 200 | empire | scanned | hidden | none
+ 30 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 31 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 32 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 33 | AI_EMP | POST /commands empire PASS | 200 | empire | scanned | hidden | none
+ 34 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 35 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 36 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 37 | AI_EMP | POST /commands empire ACTIVATE_SYSTEM vader→rodia | 200 | empire | scanned | hidden | none
+ 38 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 39 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 40 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 41 | AI_EMP | POST /commands empire MOVE_PIECES [u-40,u-43,u-45] malastare→rodia | 200 | empire | scanned | hidden | none
+ 42 | AI_EMP | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 43 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 44 | AI_EMP | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 45 | AI_EMP | POST /commands empire FINISH_ACTIVATION | 200 | empire | after reveal (not hidden) | revealed | none
+ 46 | AI_EMP | GET /api/sessions/:id | 200 | empire | after reveal (not hidden) | revealed | none
+ 47 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+ 48 | AI_EMP | GET /api/sessions | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+ 49 | AI_EMP | GET /api/sessions/:id | 200 | empire | after reveal (not hidden) | revealed | none
+ 50 | AI_EMP | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+ 51 | AI_EMP | GET /api/sessions | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+ 52 | HOT_SEAT | POST /api/sessions (hot-seat, Rebels board) | 201 | rebels | skipped (Rebels board) | hidden | none
+ 53 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+ 54 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 55 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 56 | HOT_SEAT | POST /commands rebels ACTIVATE_SYSTEM leia→rodia | 200 | rebels | skipped (Rebels board) | hidden | none
+ 57 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+ 58 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 59 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 60 | HOT_SEAT | POST /commands rebels MOVE_PIECES [u-02] bothawui→rodia | 200 | rebels | skipped (Rebels board) | hidden | none
+ 61 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+ 62 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 63 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 64 | HOT_SEAT | POST /commands rebels FINISH_ACTIVATION | 200 | handoff (public) | scanned | hidden | none
+ 65 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | scanned | hidden | none
+ 66 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 67 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 68 | HOT_SEAT | POST /commands empire ACCEPT_HANDOFF | 200 | empire | scanned | hidden | none
+ 69 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 70 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 71 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 72 | HOT_SEAT | POST /commands empire ACTIVATE_SYSTEM leia→rodia (probe, v=5) | 422 | empire (error) | scanned | hidden | none
+ 73 | HOT_SEAT | POST /commands rebels PASS (probe, v=5) | 422 | rebels (error) | skipped (Rebels board) | hidden | none
+ 74 | HOT_SEAT | POST /commands empire ACTIVATE_SYSTEM vader→malastare | 200 | empire | scanned | hidden | none
+ 75 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 76 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 77 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 78 | HOT_SEAT | POST /commands empire MOVE_PIECES [u-02] rodia→malastare (probe, v=6) | 422 | empire (error) | scanned | hidden | none
+ 79 | HOT_SEAT | POST /commands empire MOVE_PIECES [u-02] bothawui→malastare (probe, v=6) | 422 | empire (error) | scanned | hidden | none
+ 80 | HOT_SEAT | POST /commands empire MOVE_PIECES [u-40,u-41,u-43,u-45] sullust→malastare | 200 | empire | scanned | hidden | none
+ 81 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 82 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 83 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 84 | HOT_SEAT | POST /commands empire FINISH_ACTIVATION | 200 | handoff (public) | scanned | hidden | none
+ 85 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | scanned | hidden | none
+ 86 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 87 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 88 | HOT_SEAT | POST /commands rebels ACCEPT_HANDOFF | 200 | rebels | skipped (Rebels board) | hidden | none
+ 89 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+ 90 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 91 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 92 | HOT_SEAT | POST /commands rebels PASS | 200 | handoff (public) | scanned | hidden | none
+ 93 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | scanned | hidden | none
+ 94 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 95 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+ 96 | HOT_SEAT | POST /commands empire ACCEPT_HANDOFF | 200 | empire | scanned | hidden | none
+ 97 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+ 98 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+ 99 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+100 | HOT_SEAT | POST /commands empire PASS | 200 | handoff (public) | scanned | hidden | none
+101 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | scanned | hidden | none
+102 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+103 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+104 | HOT_SEAT | POST /commands rebels ACCEPT_HANDOFF | 200 | rebels | skipped (Rebels board) | hidden | none
+105 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+106 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+107 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+108 | HOT_SEAT | POST /commands rebels ACTIVATE_SYSTEM dodonna→bothawui | 200 | rebels | skipped (Rebels board) | hidden | none
+109 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+110 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+111 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+112 | HOT_SEAT | POST /commands rebels MOVE_PIECES [u-09] rodia→bothawui | 200 | rebels | skipped (Rebels board) | hidden | none
+113 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | hidden | none
+114 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+115 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+116 | HOT_SEAT | POST /commands rebels FINISH_ACTIVATION | 200 | handoff (public) | scanned | hidden | none
+117 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | scanned | hidden | none
+118 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+119 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+120 | HOT_SEAT | POST /commands empire ACCEPT_HANDOFF | 200 | empire | scanned | hidden | none
+121 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+122 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+123 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+124 | HOT_SEAT | POST /commands empire ACTIVATE_SYSTEM vader→rodia | 200 | empire | scanned | hidden | none
+125 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+126 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+127 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+128 | HOT_SEAT | POST /commands empire MOVE_PIECES [u-40,u-43,u-45] malastare→rodia | 200 | empire | scanned | hidden | none
+129 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | scanned | hidden | none
+130 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | scanned | hidden | none
+131 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | scanned | hidden | none
+132 | HOT_SEAT | POST /commands empire FINISH_ACTIVATION | 200 | handoff (public) | after reveal (not hidden) | revealed | none
+133 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | after reveal (not hidden) | revealed | none
+134 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+135 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+136 | HOT_SEAT | POST /commands rebels ACCEPT_HANDOFF | 200 | rebels | skipped (Rebels board) | revealed | none
+137 | HOT_SEAT | GET /api/sessions/:id | 200 | rebels | skipped (Rebels board) | revealed | none
+138 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+139 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+140 | HOT_SEAT | POST /commands rebels PASS | 200 | handoff (public) | after reveal (not hidden) | revealed | none
+141 | HOT_SEAT | GET /api/sessions/:id | 200 | handoff (public) | after reveal (not hidden) | revealed | none
+142 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+143 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+144 | HOT_SEAT | POST /commands empire ACCEPT_HANDOFF | 200 | empire | after reveal (not hidden) | revealed | none
+145 | HOT_SEAT | GET /api/sessions/:id | 200 | empire | after reveal (not hidden) | revealed | none
+146 | HOT_SEAT | GET /api/sessions?gameId=rebellion | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+147 | HOT_SEAT | GET /api/sessions | 200 | list (everyone) | after reveal (not hidden) | revealed | none
+# Nest log capture: 42 chunks written to stdout/stderr by the app during the run; base id occurrences: 0

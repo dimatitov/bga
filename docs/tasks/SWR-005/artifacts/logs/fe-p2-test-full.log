@@ -1,0 +1,41 @@
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/games/rebellion/table/TableScreen.test.tsx (27 tests | 1 failed) 20330ms
+     × core-v1 view → CoreTable stub: game-table[data-rules-engine=core-v1] with a heading, no legacy board 151ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/games/rebellion/table/TableScreen.test.tsx > Rebellion TableScreen — dispatch by rules engine (SWR-005 FE-0, plan-frontend §3.1) > core-v1 view → CoreTable stub: game-table[data-rules-engine=core-v1] with a heading, no legacy board
+Error: [2mexpect([22m[31melement[39m[2m).not.toBeInTheDocument()[22m
+
+[31mexpected document not to contain element, found <div
+  aria-label="Карта галактики"
+  class="MuiBox-root css-jfyl41"
+  data-testid="board-canvas"
+  role="region"
+  tabindex="0"
+/> instead[39m
+ ❯ src/games/rebellion/table/TableScreen.test.tsx:526:54
+    524|     );
+    525|     // Nothing of the mock board is mounted for a core session.
+    526|     expect(screen.queryByTestId('board-canvas')).not.toBeInTheDocument…
+       |                                                      ^
+    527|     expect(screen.queryByTestId('board-list')).not.toBeInTheDocument();
+    528|     expect(screen.queryByTestId('advance-phase')).not.toBeInTheDocumen…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 51 passed (52)
+      Tests  1 failed | 432 passed (433)
+   Start at  17:10:26
+   Duration  40.58s (transform 12.19s, setup 39.78s, import 65.54s, tests 100.41s, environment 109.14s)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 test: `vitest run --passWithNoTests`
+Exit status 1

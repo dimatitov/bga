@@ -5,11 +5,10 @@
 // Kept as separate cases next to PO TC-001..TC-003 (game-setup.spec.ts).
 import { expect, test } from '@playwright/test';
 import {
-  asPlayer,
+  actionOf,
+  asCore,
   DETAILS_KEYS,
   listSessions,
-  moveActions,
-  piece,
   REBELLION,
   type SessionResponse,
 } from './support/api';
@@ -65,14 +64,15 @@ test('TC-NEW-05 (was TC-E2E-03): catalog → game page → new session (Empire, 
     ruleset: 'base',
     gameMode: 'digital',
   });
-  const view = asPlayer(body.view);
+  const view = asCore(body.view); // SWR-005: every new session is core-v1
   expect(view.viewer).toBe('empire');
   expect(view.settings).toEqual(body.settings);
   expect(view).not.toHaveProperty('setup');
 
   await expect(page).toHaveURL(urlOf(sessionPath(body.sessionId)));
   await waitForTable(page, body.sessionId);
-  expect(await version(page)).toBe(1);
+  // SWR-005: the AI Rebels' first auto-pass is applied at creation (AC-08) — the table shows the response version.
+  expect(await version(page)).toBe(view.version);
 
   const summary = (await listSessions(request, REBELLION)).find(
     (s) => s.sessionId === body.sessionId,
@@ -130,14 +130,14 @@ test('TC-NEW-07 (was TC-E2E-05): new session as the Rebels — view is for the R
   const res = await created;
   expect(res.status()).toBe(201);
   const body = (await res.json()) as SessionResponse;
-  const view = asPlayer(body.view);
+  const view = asCore(body.view);
 
   expect(view.viewer).toBe('rebels');
   expect(body.settings.playerFaction).toBe('rebels');
   expect(view.rebelBase.systemId).not.toBeNull();
-  const moves = moveActions(view);
-  expect(moves.length).toBeGreaterThan(0);
-  for (const a of moves) expect(piece(view, a.pieceId).owner).toBe('rebels');
+  const leaders = actionOf(view, 'ACTIVATE_SYSTEM')?.leaderIds ?? [];
+  expect(leaders.length).toBeGreaterThan(0);
+  for (const id of leaders) expect(view.leaders.find((l) => l.id === id)?.owner).toBe('rebels');
   await waitForTable(page, body.sessionId);
 });
 

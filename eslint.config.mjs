@@ -23,8 +23,12 @@ const GAME_RULES_SERVER_AI = '^@bga/game-[^/]+/(rules|server|ai)(/.*)?$';
 /** Relative imports from web into the api sources (only the registry consistency test may read definitions). */
 const WEB_TO_API_SRC = '(^|/)api/src/';
 
-/** Sibling subpaths of a game package (`../<sub>`), for the per-subpath layering rules. */
-const sibling = (...names) => names.flatMap((n) => [`../${n}`, `../${n}/*`]);
+/**
+ * Sibling subpaths of a game package (`../<sub>`), for the per-subpath layering rules. SWR-005: also
+ * `../../<sub>` so that nested folders (`rules/core/**`, `scenario/core/**`) cannot bypass them.
+ */
+const sibling = (...names) =>
+  names.flatMap((n) => [`../${n}`, `../${n}/*`, `../../${n}`, `../../${n}/*`]);
 
 /**
  * Build a `no-restricted-imports` rule.

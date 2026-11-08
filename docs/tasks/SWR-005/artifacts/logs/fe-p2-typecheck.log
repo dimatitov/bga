@@ -1,0 +1,10 @@
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+src/games/rebellion/core-v1/geometry/labelLayout.ts(11,3): error TS6133: 'CHIP_GAP_PX' is declared but its value is never read.
+src/games/rebellion/core-v1/geometry/zz-probe.test.ts(4,26): error TS6133: 'writeFileSync' is declared but its value is never read.
+src/games/rebellion/core-v1/geometry/zz-probe.test.ts(4,47): error TS2307: Cannot find module 'node:fs' or its corresponding type declarations.
+/Users/dimatitov/WebstormProjects/Game automa/apps/web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/web@0.0.0 typecheck: `tsc -b`
+Exit status 2

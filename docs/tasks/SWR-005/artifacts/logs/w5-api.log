@@ -1,0 +1,99 @@
+### pnpm --filter @bga/api test  (after the switch of new sessions to core-v1; load: 17:13  up 1 day, 23:02, 1 user, load averages: 13.71 15.06 16.14)
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 33210  - [39m11/08/2026, 5:13:10 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+ ❯ test/sessions.int.test.ts (33 tests | 1 failed) 6716ms
+     × TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted 641ms
+ ❯ test/rebellion-contract.int.test.ts (27 tests | 1 failed) 6719ms
+     × TC-I-01: defaults → 201 {sessionId, gameId, status, settings, view}; row status/key/v2 state; GAME_CREATED 657ms
+[31m[Nest] 33555  - [39m11/08/2026, 5:13:21 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 33555  - [39m11/08/2026, 5:13:21 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 33555  - [39m11/08/2026, 5:13:21 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=d8199467-7c7e-4822-b91c-9197139ed499 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33881  - [39m11/08/2026, 5:13:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=63ac6a3e-704f-4c01-b002-6c88b2642ded code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 33896  - [39m11/08/2026, 5:13:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=6f77f1ef-8ea6-48c4-9814-41ee47f281a8 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 33896  - [39m11/08/2026, 5:13:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=6f77f1ef-8ea6-48c4-9814-41ee47f281a8 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 34063  - [39m11/08/2026, 5:13:28 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 34063  - [39m11/08/2026, 5:13:28 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-01: defaults → 201 {sessionId, gameId, status, settings, view}; row status/key/v2 state; GAME_CREATED
+AssertionError: expected [ 'GAME_CREATED', …(2) ] to deeply equal [ 'GAME_CREATED' ]
+
+- Expected
++ Received
+
+  [
+    "GAME_CREATED",
++   "PHASE_STARTED",
++   "PHASE_STARTED",
+  ]
+
+ ❯ test/rebellion-contract.int.test.ts:130:39
+    128|       where: { sessionId: body.sessionId },
+    129|     });
+    130|     expect(events.map((e) => e.type)).toEqual(['GAME_CREATED']);
+       |                                       ^
+    131|   });
+    132|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted
+AssertionError: expected [ 1, 2, 3, 4 ] to deeply equal [ 1, 2 ]
+
+- Expected
++ Received
+
+  [
+    1,
+    2,
++   3,
++   4,
+  ]
+
+ ❯ test/sessions.int.test.ts:80:38
+     78|     });
+     79|     // One event row per version (A-15), the first one is GAME_CREATED…
+     80|     expect(events.map((e) => e.seq)).toEqual(Array.from({ length: view…
+       |                                      ^
+     81|     expect(events[0]).toMatchObject({ seq: 1, type: 'GAME_CREATED', ac…
+     82|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 19 passed | 1 skipped (22)
+      Tests  2 failed | 201 passed | 1 skipped (204)
+   Start at  17:13:02
+   Duration  61.83s (transform 5.32s, setup 0ms, import 30.49s, tests 255.15s, environment 2ms)
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/api@0.0.0 test: `vitest run`
+Exit status 1
+exit=1
+
+### pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+### pnpm --filter @bga/api lint
+
+> @bga/api@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> eslint . --max-warnings=0
+

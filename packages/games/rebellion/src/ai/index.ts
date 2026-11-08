@@ -1,12 +1,15 @@
 /**
- * AI Strategy Configuration of Rebellion — DATA only: no logic, no OpenAI, never imported by web.
- * Nothing executes it in SWR-003 (the AI opponent arrives in stage F).
+ * AI of Rebellion — server only, no OpenAI, never imported by web.
+ * - Strategy Configuration (below) — DATA only; nothing executes it yet (the AI Commander arrives in stage F).
+ * - `./auto-pass` — the deterministic automatic move of the `core-v1` slice (SWR-005 PO-3): pass.
  *
  * Invariant: difficulty never grants access to hidden information — the AI only ever receives its
  * own PlayerView (filtered on the server) and chooses among legal actions computed by the rules.
  */
 import { z } from 'zod';
 import { DifficultySchema } from '../schema';
+
+export { AUTO_POLICY_ID, chooseAutoCommand, type AutoCommand, type AutoPolicy } from './auto-pass';
 
 export const RebellionAiGoalSchema = z.enum([
   'locateRebelBase',

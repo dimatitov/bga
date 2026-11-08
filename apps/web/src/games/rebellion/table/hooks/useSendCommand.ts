@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import { postSessionCommand, type SessionEnvelope, sessionKeys } from '@/platform';
 import { isApiError, NETWORK_MESSAGE_KEY, UNKNOWN_MESSAGE_KEY } from '@/shared/api/errors';
 import type { CommandOutcome } from '../../board/model/boardContext';
+import { endsGame } from '../../core-v1/model/announcements';
 import { parseRebellionView } from './useRebellionView';
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -16,6 +17,10 @@ const INVALID_RESPONSE = 'INVALID_RESPONSE';
  * 200 → `setQueryData(detail, { ...envelope, view })` + invalidate `lists()`; 409/404 → invalidate `detail`
  * (SessionHost refetches; 404 → `session-not-found`); 422/400 → cache untouched.
  * A second send while one is in flight is ignored (D-P-7).
+ * SWR-005: the same sender serves both engines (`Command` is the union of mock-v1 and core-v1 commands; the actor
+ * is always the viewer of the cached view). A response whose events contain `GAME_OVER` also invalidates the
+ * session detail, so the platform status (`completed`) is refetched — the command response carries no status
+ * (AM-FE-10 rejected; the table shows the result from `view.outcome` meanwhile).
  */
 export function useSendCommand(sessionId: string): {
   send(command: Command): Promise<CommandOutcome>;
@@ -62,6 +67,7 @@ export function useSendCommand(sessionId: string): {
             prev ? { ...prev, view: ok.data.view } : prev,
           );
           void qc.invalidateQueries({ queryKey: sessionKeys.lists() });
+          if (endsGame(ok.data.events)) void qc.invalidateQueries({ queryKey: detailKey });
           setSaveStatus('saved');
           return { ok: true, view: ok.data.view, events: ok.data.events };
         }

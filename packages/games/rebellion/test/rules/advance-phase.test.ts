@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { applyCommand } from '../../src/rules';
 import { ADVANCE, APPLY_CTX, deepFreeze, env, newGame } from './helpers';
-import type { GameState } from '../../src/schema';
+import type { MockGameState } from '../../src/schema';
 
-function advance(state: GameState, times: number): GameState[] {
-  const states: GameState[] = [];
+function advance(state: MockGameState, times: number): MockGameState[] {
+  const states: MockGameState[] = [];
   let current = state;
   for (let i = 0; i < times; i += 1) {
     const result = applyCommand(current, env(current, ADVANCE), APPLY_CTX);

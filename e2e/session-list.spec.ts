@@ -48,12 +48,23 @@ test.describe('SWR-004 prototype labelling', () => {
     await page.goto(gamePath(REBELLION));
     const rows = page.getByTestId(T.gameRecentSessions).locator(RECENT_SESSION_ITEM);
     await expect(rows).not.toHaveCount(0);
+    // SWR-005: a row is «Prototype» unless its session is completed (AC-13, core-v1 victories of earlier specs);
+    // each row shows exactly the server status, and the session created here is a prototype.
+    const statusOf = new Map(
+      (await listSessions(request, REBELLION)).map((x) => [x.sessionId, x.status]),
+    );
     for (const row of await rows.all()) {
+      const id = (await row.getAttribute('data-testid'))!.slice('recent-session-'.length);
+      const expected = statusOf.get(id);
+      expect(['prototype', 'completed']).toContain(expected);
       await expect(row.getByTestId(T.recentSessionStatus)).toHaveAttribute(
         'data-status',
-        'prototype',
+        expected!,
       );
     }
+    await expect(
+      page.getByTestId(T.recentSession(sessionId)).getByTestId(T.recentSessionStatus),
+    ).toHaveAttribute('data-status', 'prototype');
     await expect(page.getByTestId(T.gameContinueStatus)).toHaveAttribute(
       'data-status',
       'prototype',
@@ -118,7 +129,7 @@ test.describe('SWR-004 continue from the game page', () => {
     await page.getByTestId(T.gameContinue).click();
     await expect(page).toHaveURL(urlOf(sessionPath(newer.sessionId)));
     await waitForTable(page, newer.sessionId);
-    await expect(page.getByTestId(T.activeSide)).toHaveAttribute('data-side', 'rebels');
+    await expect(page.getByTestId(T.turnIndicator)).toHaveAttribute('data-side', 'rebels');
 
     // Back → the older row → the Empire table.
     await page.goBack();
@@ -126,6 +137,6 @@ test.describe('SWR-004 continue from the game page', () => {
     await page.getByTestId(T.recentSession(older.sessionId)).click();
     await expect(page).toHaveURL(urlOf(sessionPath(older.sessionId)));
     await waitForTable(page, older.sessionId);
-    await expect(page.getByTestId(T.activeSide)).toHaveAttribute('data-side', 'empire');
+    await expect(page.getByTestId(T.turnIndicator)).toHaveAttribute('data-side', 'empire');
   });
 });

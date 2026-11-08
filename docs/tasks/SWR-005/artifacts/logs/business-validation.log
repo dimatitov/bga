@@ -1,0 +1,55 @@
+SWR-005 BUSINESS_VALIDATION — Analyst, 2026-11-08 19:25–19:30, live app `PORT=3000 pnpm dev` (api :3000, web :5173),
+built-in browser, on the user's REAL dev DB apps/api/prisma/dev.db (backup apps/api/prisma/dev.pre-swr005.db,
+sha256 de7e1f86…efbefd1 = dev.db before BV, see dev-db-backup.log). Code = working tree after INTEGRATION
+(integration-verify.log EXIT_CODE=0) and review round 3 approved.
+
+Note (environment, not an app defect): the preview launcher exports PORT=5173 to the whole `pnpm dev` tree, so the
+API first bound :5173 (Vite proxy → :3000 refused, 502). Restarted with PORT=3000 for the API (.claude/launch.json).
+
+BV-0 Old sessions (AC-11): GET /api/sessions?gameId=star-wars-rebellion → 6 old rows, all
+     status=prototype, details.rulesEngine=mock-v1, reputation=null, winner=null.
+     UI: session ff6adda5 renders the legacy fictional map with badge «Старый прототип: тестовые правила»
+     (screenshots/bv-00-legacy-session-1440.jpg). One mock command ADVANCE_PHASE → 200, version 7→8,
+     phase assignment→command, view.rulesEngine stays mock-v1 (row now v3 on disk; backup kept).
+BV-1 New AI game as Rebels via the form defaults (AC-01, AC-03, AC-12, AC-13): /sessions/740c0f00… —
+     real map 32 systems / 8 regions with names, time 1 / reputation 14, phase «Приказы», Rebels to move,
+     pool: Мон Мотма «не может активировать», Лея, Додонна, Рикан; slice badge shown
+     (screenshots/bv-01-new-ai-game-rebels-1440.jpg).
+BV-2 Activation + move (AC-04, AC-05): Leia armed → all systems highlighted → click Toydaria →
+     SYSTEM_ACTIVATED. Move panel from Bothawui (capacity shown per ship). Trooper alone → server 422,
+     inline «Не хватает транспорта…», capacity 1/0, state unchanged. Corvette + trooper (1/2) → 200,
+     both in Toydaria, version 3, PIECES_MOVED.
+BV-3 Finish + AI auto-pass (AC-06, AC-08): «Завершить активацию» → ACTIVATION_FINISHED{auto:false},
+     PASSED empire {auto:true}; version 5; passed={rebels:false, empire:true}; Rebels keep the turn
+     («Империя спасовала до конца фазы: вы ходите подряд…»); log entry «Империя (AI) пасует» with «авто» chip
+     and «AI Commander ещё не реализован» (screenshots/bv-02-ai-autopass-1440.jpg).
+BV-4 Pass + refresh (AC-06): «Пас» → confirmation dialog, focus on «Отмена» (D-1 fixed) → «Пасовать» →
+     PASSED, PHASE_STARTED refresh, LEADERS_RETURNED, TIME_ADVANCED, new round: round 2, time 2,
+     reputation 14, phase command, Rebels active, passed reset, 0 leaders on the map, status prototype.
+BV-5 New AI game as Empire via API (AC-08, AC-10, review #1): 201, version 2, last event PASSED rebels
+     {auto:true}; view.rebelBase = {systemId:null, revealed:false}; 6 units in the hidden zone;
+     Bothawui shows its 8 starting Rebel units (leak fix holds). UI: zone «База Повстанцев —
+     местоположение неизвестно» with 6 glyphs, data-rebel-base markers on the map = 0,
+     __boardDebug.getRebelBaseSystemId() = null (screenshots/bv-03-empire-hidden-zone-1440.jpg).
+BV-6 Rebels win by time (AC-07, AC-13): 12 Empire passes via API (each 200, time 2..13, outcome null,
+     status prototype), 13th via UI «Пас» + confirm → banner «Победа Повстанцев» (winner=rebels,
+     reason=timeReachedReputation), focus on game-over-title (D-2 fixed), «Завершена» chip, time 14
+     (screenshots/bv-04-rebels-win-time-1440.jpg). GET: status completed, legalActions 0, base shown to the
+     Empire after the end (Q-14). Next command → 422 errors.gameOver. List row: status completed, winner rebels.
+BV-7 Hot-seat (AC-09): new human game; Rebels PASS → handoff view with exactly 8 keys
+     (activeSide,id,kind,phase,round,rulesEngine,sessionStatus,version), events [] ; Rebels again → 422
+     errors.notYourTurn; Empire ACCEPT_HANDOFF → kind player, viewer empire, rebelBase.systemId null.
+BV-8 Layout (AC-12): core table at 1024×768 (fit 34 %) and 768×1024 (fit 37 %, panels below the map):
+     all 32 systems with labels visible, no horizontal scroll
+     (screenshots/bv-05-core-1024.jpg, screenshots/bv-06-core-768x1024.jpg).
+BV-9 Game page: «Продолжить» → newest non-completed session (bf6ad3fd, hot-seat); list shows statuses
+     prototype/completed. (Skipping a newer completed game is covered by GamePage.test Q-31 cases, not
+     re-created live.)
+
+Not checked live: Empire victory (only reachable in hot-seat; covered by e2e TC-E-08 seed and api
+core-victory), base reveal (covered by e2e TC-E-06 and api hidden-info-core), keyboard-only full turn
+(covered by e2e TC-E-10).
+Defects found in BV: none in the app.
+Data left in the dev DB by BV: 3 new core-v1 sessions (740c0f00, 19a8a997 completed, bf6ad3fd hot-seat),
+plus the old ff6adda5 advanced one phase. Backup dev.pre-swr005.db unchanged (sha below).
+de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1  apps/api/prisma/dev.pre-swr005.db

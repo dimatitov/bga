@@ -10,6 +10,6 @@ export interface CoreError {
   details?: unknown;
 }
 
-/** AM-4: rejections are returned, never thrown. */
-export type ApplyResult =
-  { ok: true; state: GameState; events: GameEvent[] } | { ok: false; error: CoreError };
+/** AM-4: rejections are returned, never thrown. `state.rulesEngine` never changes. */
+export type ApplyResult<S extends GameState = GameState> =
+  { ok: true; state: S; events: GameEvent[] } | { ok: false; error: CoreError };

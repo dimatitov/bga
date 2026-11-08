@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import { CommandErrSchema } from '@bga/platform';
-import { GameEventSchema } from './state';
+import { PlayerEventSchema } from './state';
 import { PlayerViewSchema } from './view';
 
 export const CommandOkSchema = z.strictObject({
   ok: z.literal(true),
   view: PlayerViewSchema,
-  events: z.array(GameEventSchema),
+  /** Events of the command as the viewer may see them (redacted for core-v1; `[]` during a handoff). */
+  events: z.array(PlayerEventSchema),
 });
 export type CommandOk = z.infer<typeof CommandOkSchema>;
 

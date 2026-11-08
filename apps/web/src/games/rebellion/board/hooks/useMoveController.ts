@@ -3,7 +3,7 @@
  * and drag-and-drop (plan-frontend §4.6). Targets are always checked against `view.legalActions` (set membership);
  * the server stays the judge, and the cache is changed only by server data (no optimistic writes).
  */
-import type { PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { PlayerViewMock } from '@bga/game-rebellion/schema';
 import type Konva from 'konva';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -35,7 +35,7 @@ export function useMoveController(): MoveController {
   const { view, send, isPending } = useBoard();
   const { t } = useTranslation();
   const reduceMotion = useReduceMotion();
-  const viewRef = useRef<PlayerViewPlayer>(view);
+  const viewRef = useRef<PlayerViewMock>(view);
   useEffect(() => {
     viewRef.current = view;
   }, [view]);
@@ -48,7 +48,10 @@ export function useMoveController(): MoveController {
       try {
         const outcome = await send({ type: 'MOVE_PIECES', pieceIds, fromSystemId, toSystemId });
         if (outcome.ok) {
-          const next = outcome.view.kind === 'player' ? outcome.view : viewRef.current;
+          const next =
+            outcome.view.kind === 'player' && outcome.view.rulesEngine === 'mock-v1'
+              ? outcome.view
+              : viewRef.current;
           const system = systemNameById(t, next, toSystemId);
           const message =
             pieceIds.length === 1
@@ -82,7 +85,7 @@ export function useMoveController(): MoveController {
       const current = viewRef.current;
       const piece = current.pieces.find((p) => p.id === pieceId);
 
-      const resetNode = (v: PlayerViewPlayer) => {
+      const resetNode = (v: PlayerViewMock) => {
         const slot = computeBoardLayout(v).slots.get(pieceId);
         if (!slot) return;
         if (reduceMotion) node.position(slot);
@@ -121,7 +124,11 @@ export function useMoveController(): MoveController {
         outcome = await move([pieceId], piece.systemId, toSystemId);
       } finally {
         // react-konva will not reset x/y if props did not change: always put the node where the latest view says.
-        resetNode(outcome?.ok && outcome.view.kind === 'player' ? outcome.view : viewRef.current);
+        resetNode(
+          outcome?.ok && outcome.view.kind === 'player' && outcome.view.rulesEngine === 'mock-v1'
+            ? outcome.view
+            : viewRef.current,
+        );
       }
     },
     [move, reduceMotion, t],

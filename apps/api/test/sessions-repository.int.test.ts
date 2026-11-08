@@ -98,7 +98,7 @@ describe('SessionsRepository (SWR-004)', () => {
     expect(await prismaOf(app).session.count()).toBe(1);
   });
 
-  it('commit keeps status and idempotency columns untouched; rewrites setup with state (review #1)', async () => {
+  it('commit writes status with state and setup (SWR-005); idempotency columns untouched (review #1)', async () => {
     const key = randomUUID();
     const s = newSession({ status: 'active', idempotency: { key, hash: 'h' } });
     await repo.insert(s);
@@ -109,6 +109,7 @@ describe('SessionsRepository (SWR-004)', () => {
         setup: '{"start":0,"mode":"normal","v":2}',
         state: JSON.stringify({ id: s.id, count: 1, version: 2 }),
         version: 2,
+        status: 'completed',
         events: [{ seq: 2, type: 'INCREMENTED', actor: 'player', at: NOW, payload: {} }],
         now: NOW,
       }),
@@ -117,9 +118,42 @@ describe('SessionsRepository (SWR-004)', () => {
     expect(row).toMatchObject({
       version: 2,
       setup: '{"start":0,"mode":"normal","v":2}',
-      status: 'active',
+      status: 'completed',
       idempotencyKey: key,
       idempotencyHash: 'h',
     });
+  });
+
+  it('SWR-005: a version conflict rolls back status together with state, setup and events', async () => {
+    const s = newSession({ status: 'active' });
+    await repo.insert(s);
+    const prisma = prismaOf(app);
+    const before = await prisma.session.findUniqueOrThrow({ where: { id: s.id } });
+    const update = {
+      id: s.id,
+      setup: '{"changed":true}',
+      state: JSON.stringify({ id: s.id, count: 9, version: 2 }),
+      version: 2,
+      status: 'completed' as const,
+      events: [{ seq: 2, type: 'INCREMENTED', actor: 'player', at: NOW, payload: {} }],
+      now: '2026-02-01T00:00:00.000Z',
+    };
+    // Stale expected version → updateMany count 0 → rollback.
+    expect(await repo.commit({ ...update, expectedVersion: 5 })).toEqual({
+      ok: false,
+      reason: 'VERSION_CONFLICT',
+    });
+    expect(await prisma.session.findUniqueOrThrow({ where: { id: s.id } })).toEqual(before);
+    expect(await prisma.sessionEvent.count({ where: { sessionId: s.id } })).toBe(1);
+
+    // Duplicate event seq (second guard, P2002 inside the transaction) → the session update is rolled back too.
+    expect(
+      await repo.commit({
+        ...update,
+        expectedVersion: 1,
+        events: [{ seq: 1, type: 'INCREMENTED', actor: 'player', at: NOW, payload: {} }],
+      }),
+    ).toEqual({ ok: false, reason: 'VERSION_CONFLICT' });
+    expect(await prisma.session.findUniqueOrThrow({ where: { id: s.id } })).toEqual(before);
   });
 });

@@ -1,4 +1,4 @@
-// data-testid catalogue: SWR-002 plan-frontend §6.1 (R-10) + SWR-003 TR-1 / plan-frontend §7 (owner: QA, R-3)
+// data-testid catalogue (SWR-005: + core-v1 table, plan-frontend §9): SWR-002 plan-frontend §6.1 (R-10) + SWR-003 TR-1 / plan-frontend §7 (owner: QA, R-3)
 // + SWR-004 TR-1 / plan-frontend §7 (`mock-badge` on the table → `prototype-badge`, `setup-mock-badge` →
 // `setup-prototype-note`, `setup-faction` group → `setup-faction-group`; OQ-2: `game-recent-loading|empty` stay).
 // Language-independent selectors only. SWR-002 main-menu ids (`menu-*`, `recent-games`, `recent-game-*`) are gone.
@@ -44,6 +44,10 @@ export const T = {
   recentSessionStatus: 'recent-session-status',
   /** `<time dateTime>` */
   recentSessionDate: 'recent-session-date',
+  /** SWR-005: «Старый прототип» part of a legacy (mock-v1) row */
+  recentSessionEngine: 'recent-session-engine',
+  /** SWR-005: winner part of a completed core-v1 row */
+  recentSessionOutcome: 'recent-session-outcome',
   gameSessionsError: 'game-sessions-error',
   gameBackToCatalog: 'game-back-to-catalog',
   /** unknown `gameId` on `/games/:gameId` and `/games/:gameId/new` */
@@ -86,7 +90,7 @@ export const T = {
   roundIndicator: 'round-indicator',
   phaseIndicator: 'phase-indicator',
   advancePhase: 'advance-phase',
-  /** replaces the table `mock-badge` (SWR-004); `data-status` */
+  /** replaces the table `mock-badge` (SWR-004); `data-status`, SWR-005: `data-variant` (core-v1 | legacy | generic) */
   prototypeBadge: 'prototype-badge',
   /** "Turn: <side>" / player side in the header; `data-side` */
   activeSide: 'active-side',
@@ -125,6 +129,81 @@ export const T = {
   systemItem: (id: string) => `system-item-${id}`,
   systemItemMove: (id: string) => `system-item-${id}-move`,
   pieceItem: (id: string) => `piece-item-${id}`,
+  // SWR-005 core-v1 table (plan-frontend §9 + Worker P1/P2/M additions; verified against core-v1/** components)
+  skipToTurn: 'skip-to-turn',
+  skipToList: 'skip-to-list',
+  /** `data-side`, `data-mine` */
+  turnIndicator: 'turn-indicator',
+  /** `data-time`, `data-reputation` */
+  timeTrack: 'time-track',
+  /** `data-rebels`, `data-empire` */
+  passedIndicator: 'passed-indicator',
+  topBarControls: 'top-bar-controls',
+  turnControls: 'turn-controls',
+  finishActivation: 'finish-activation',
+  passTurn: 'pass-turn',
+  passConfirm: 'pass-confirm',
+  passConfirmOk: 'pass-confirm-ok',
+  passConfirmCancel: 'pass-confirm-cancel',
+  /** `data-state` ∈ idle | armed | activation | waiting | over */
+  turnPanel: 'turn-panel',
+  turnStatus: 'turn-status',
+  /** `role=radiogroup` */
+  leaderPool: 'leader-pool',
+  leaderPoolEmpty: 'leader-pool-empty',
+  leaderPoolNoLeaders: 'leader-pool-no-leaders',
+  /** `role=radio`, `aria-checked`, `data-owner`, `data-available` */
+  leader: (id: string) => `leader-${id}`,
+  activationSystemSelect: 'activation-system-select',
+  activationConfirm: 'activation-confirm',
+  activationError: 'activation-error',
+  /** `data-to` */
+  movePanel: 'move-panel',
+  moveNone: 'move-none',
+  moveSource: (from: string) => `move-source-${from}`,
+  /** the checkbox `<input>` */
+  movePiece: (id: string) => `move-piece-${id}`,
+  moveSelectAll: (from: string) => `move-select-all-${from}`,
+  moveSubmit: (from: string) => `move-submit-${from}`,
+  moveError: (from: string) => `move-error-${from}`,
+  /** `data-required`, `data-capacity`, `data-fits` */
+  moveCapacity: (from: string) => `move-capacity-${from}`,
+  systemItemActivate: (id: string) => `system-item-${id}-activate`,
+  /** `data-owner`, `data-location` */
+  leaderItem: (id: string) => `leader-item-${id}`,
+  regionGroup: (id: string) => `region-group-${id}`,
+  poolGroup: (side: 'rebels' | 'empire') => `pool-group-${side}`,
+  /** `data-count` */
+  hiddenBaseZone: 'hidden-base-zone',
+  hiddenZonePanel: 'hidden-zone-panel',
+  coreSidebar: 'core-sidebar',
+  coreContextPanel: 'core-context-panel',
+  /** `data-system-id` */
+  coreSystemPanel: 'system-panel',
+  systemPanelActivate: 'system-panel-activate',
+  systemPanelContested: 'system-panel-contested',
+  systemPanelNotTarget: 'system-panel-not-target',
+  /** `data-leader-id` */
+  leaderPanel: 'leader-panel',
+  /** `data-unit-id` */
+  unitPanel: 'unit-panel',
+  /** `data-winner`, `data-reason` */
+  gameOverBanner: 'game-over-banner',
+  gameOverTitle: 'game-over-title',
+  gameOverReason: 'game-over-reason',
+  gameOverBack: 'game-over-back',
+  sessionStatusCompleted: 'session-status-completed',
+  /** `data-seq`, `data-type`, `data-actor`, `data-auto` */
+  logEntry: (seq: number) => `log-entry-${seq}`,
+  logEntryAuto: (seq: number) => `log-entry-${seq}-auto`,
+  logEntryAutoHint: (seq: number) => `log-entry-${seq}-auto-hint`,
+  mapLegend: 'map-legend',
+  gameInfo: 'game-info',
+  /** hidden machine-readable mirror of the map (Worker M, accepted test hook, Q-37) */
+  coreMapState: 'core-map-state',
+  /** `data-region|data-remote|data-contested|data-target|data-source|data-activated|data-rebel-base` */
+  mapSystem: (id: string) => `map-system-${id}`,
+  mapHiddenZone: 'map-hidden-zone',
   // shared
   notFound: 'not-found',
   feedback: 'feedback',
@@ -144,7 +223,16 @@ export const CONTEXT_STATE = { empty: 'empty', system: 'system', piece: 'piece' 
 export const RECENT_SESSION_PREFIX = 'recent-session-';
 
 /** SWR-004 row parts share the prefix (`recent-session-faction` …) and must not be counted as items. */
-export const RECENT_SESSION_PARTS = ['faction', 'opponent', 'progress', 'status', 'date'] as const;
+export const RECENT_SESSION_PARTS = [
+  'faction',
+  'opponent',
+  'progress',
+  'status',
+  'date',
+  // SWR-005 describeSession parts: `engine` «Старый прототип» (mock-v1), `outcome` «Победа …» (completed core-v1)
+  'engine',
+  'outcome',
+] as const;
 
 /** CSS selector of recent-session items only (`recent-session-<sessionId>`, without the SWR-004 row parts). */
 export const RECENT_SESSION_ITEM =

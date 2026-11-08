@@ -1,0 +1,106 @@
+{
+  "systems": {
+    "alderaan": "Alderaan",
+    "bespin": "Bespin",
+    "bothawui": "Bothawui",
+    "cato-neimoidia": "Cato Neimoidia",
+    "corellia": "Corellia",
+    "coruscant": "Coruscant",
+    "dagobah": "Dagobah",
+    "dantooine": "Dantooine",
+    "dathomir": "Dathomir",
+    "endor": "Endor",
+    "felucia": "Felucia",
+    "geonosis": "Geonosis",
+    "hoth": "Hoth",
+    "ilum": "Ilum",
+    "kashyyyk": "Kashyyyk",
+    "kessel": "Kessel",
+    "malastare": "Malastare",
+    "mandalore": "Mandalore",
+    "mon-calamari": "Mon Calamari",
+    "mustafar": "Mustafar",
+    "mygeeto": "Mygeeto",
+    "naboo": "Naboo",
+    "nal-hutta": "Nal Hutta",
+    "ord-mantell": "Ord Mantell",
+    "rodia": "Rodia",
+    "ryloth": "Ryloth",
+    "saleucami": "Saleucami",
+    "sullust": "Sullust",
+    "tatooine": "Tatooine",
+    "toydaria": "Toydaria",
+    "utapau": "Utapau",
+    "yavin": "Yavin"
+  },
+  "regions": {
+    "r1": "Mon Calamari region",
+    "r2": "Nal Hutta region",
+    "r3": "Rodia region",
+    "r4": "Utapau region",
+    "r5": "Mustafar region",
+    "r6": "Coruscant region",
+    "r7": "Kashyyyk region",
+    "r8": "Mygeeto region"
+  },
+  "leaders": {
+    "palpatine": {
+      "name": "Emperor Palpatine",
+      "short": "PA"
+    },
+    "vader": {
+      "name": "Darth Vader",
+      "short": "VA"
+    },
+    "tarkin": {
+      "name": "Grand Moff Tarkin",
+      "short": "TA"
+    },
+    "tagge": {
+      "name": "General Tagge",
+      "short": "TG"
+    },
+    "mon-mothma": {
+      "name": "Mon Mothma",
+      "short": "MM"
+    },
+    "leia": {
+      "name": "Princess Leia",
+      "short": "LE"
+    },
+    "dodonna": {
+      "name": "Jan Dodonna",
+      "short": "DO"
+    },
+    "rieekan": {
+      "name": "General Rieekan",
+      "short": "RI"
+    }
+  },
+  "pieceTypes": {
+    "unit": {
+      "empire": {
+        "star-destroyer": "Star Destroyer",
+        "assault-carrier": "Assault Carrier",
+        "super-star-destroyer": "Super Star Destroyer",
+        "death-star": "Death Star",
+        "death-star-under-construction": "Death Star Under Construction",
+        "tie-fighter": "TIE Fighter",
+        "stormtrooper": "Stormtrooper",
+        "at-st": "AT-ST",
+        "at-at": "AT-AT"
+      },
+      "rebels": {
+        "corellian-corvette": "Corellian Corvette",
+        "rebel-transport": "Rebel Transport",
+        "mon-calamari-cruiser": "Mon Calamari Cruiser",
+        "x-wing": "X-wing",
+        "y-wing": "Y-wing",
+        "rebel-trooper": "Rebel Trooper",
+        "airspeeder": "Airspeeder",
+        "shield-generator": "Shield Generator",
+        "ion-cannon": "Ion Cannon"
+      }
+    }
+  }
+}

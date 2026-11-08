@@ -2,14 +2,12 @@
 // Screenshots: docs/tasks/SWR-004/artifacts/screenshots/va-NN-<name>-{d,m}.png (support/board.ts saveScreenshot routing),
 // D = 1440×900, M = 375×812, table also 1024×768 and 768×1024 (D-1, Q-22). Reduced motion, ru (default, Q-18) plus one
 // en copy of the form. TC-VA-14 (reduced motion) is manual (test-cases.md §6).
+// SWR-005: kept as SWR-004 regression on core-v1 tables (handoff via FINISH_ACTIVATION, top bar = core controls); its
+// PNGs are routed to test-results/screenshots/SWR-004/ (task passed explicitly) — SWR-004 evidence is not rewritten.
+// The SWR-005 visual/a11y cases (TC-VA-01..14 of SWR-005) live in core-visual-a11y.spec.ts.
 import { expect, test, type Page } from '@playwright/test';
-import {
-  createSession,
-  endTurn,
-  REBELLION,
-  REBELS_VS_HUMAN,
-  type SessionResponse,
-} from './support/api';
+import { createSession, REBELLION, REBELS_VS_HUMAN, type SessionResponse } from './support/api';
+import { toHandoff } from './support/core';
 import {
   commonAncestor,
   expectBorderContrast,
@@ -39,6 +37,7 @@ import {
 } from './support/setup';
 import { RECENT_SESSION_ITEM, T } from './support/testids';
 
+const SWR004 = 'SWR-004';
 const D = { width: 1440, height: 900 };
 const M = { width: 375, height: 812 };
 const VIEWPORTS = [
@@ -74,7 +73,7 @@ test.describe('SWR-004 visual & accessibility', () => {
         page.getByTestId(T.gameRecentSessions).locator(RECENT_SESSION_ITEM),
       ).not.toHaveCount(0);
       await expectNoHorizontalScroll(page, `game page ${suffix}`);
-      await saveScreenshot(page, `va-01-game-page-${suffix}`);
+      await saveScreenshot(page, `va-01-game-page-${suffix}`, SWR004);
     }
   });
 
@@ -97,19 +96,19 @@ test.describe('SWR-004 visual & accessibility', () => {
         // stacked (plan-frontend §6)
         expect(emp.y).toBeGreaterThanOrEqual(reb.y + reb.height - 1);
       }
-      await saveScreenshot(page, `va-02-new-session-defaults-${suffix}`);
+      await saveScreenshot(page, `va-02-new-session-defaults-${suffix}`, SWR004);
 
       await page.getByTestId(T.setupFaction('empire')).click();
       await expectFaction(page, 'empire');
       await expectCaption(page, 'rebels');
-      await saveScreenshot(page, `va-03-empire-selected-${suffix}`);
+      await saveScreenshot(page, `va-03-empire-selected-${suffix}`, SWR004);
 
       await page.getByTestId(T.setupOpponent('human')).click();
       await expect(page.getByTestId(T.setupDifficulty)).toBeHidden();
       await expectNoHorizontalScroll(page, `form human ${suffix}`);
       // nothing overlaps after the difficulty block collapsed
       await expectNoOverflowNorOverlap(page.getByTestId(T.setupForm), `form human ${suffix}`);
-      await saveScreenshot(page, `va-04-human-selected-${suffix}`);
+      await saveScreenshot(page, `va-04-human-selected-${suffix}`, SWR004);
     }
 
     // Q-18: one English copy of the form.
@@ -119,7 +118,7 @@ test.describe('SWR-004 visual & accessibility', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await openForm(page);
     await expectFormDefaults(page);
-    await saveScreenshot(page, 'va-02-new-session-defaults-en-d');
+    await saveScreenshot(page, 'va-02-new-session-defaults-en-d', SWR004);
   });
 
   test('TC-VA-05 + TC-VA-13: error state is visible next to the button (D, M) and reads as human text', async ({
@@ -137,7 +136,7 @@ test.describe('SWR-004 visual & accessibility', () => {
       await expectErrorState(page);
       await expect(page.getByTestId(T.setupError)).toBeInViewport();
       await expect(page.getByTestId(T.setupStart)).toBeInViewport();
-      await saveScreenshot(page, `va-05-error-state-${suffix}`);
+      await saveScreenshot(page, `va-05-error-state-${suffix}`, SWR004);
       await page.unroute(matcher);
     }
   });
@@ -148,20 +147,20 @@ test.describe('SWR-004 visual & accessibility', () => {
   }) => {
     const ai = await createSession(request);
     const human = await createSession(request, REBELS_VS_HUMAN);
-    await endTurn(request, human.sessionId, human.view);
+    await toHandoff(request, human.sessionId, human.view);
     for (const [suffix, vp] of VIEWPORTS) {
       await page.setViewportSize(vp);
       await openSession(page, ai.sessionId);
       await expectNotClipped(page.getByTestId(T.prototypeBadge), `prototype-badge ${suffix}`);
       await expectNoHorizontalScroll(page, `table ${suffix}`);
-      await saveScreenshot(page, `va-06-table-prototype-badge-${suffix}`);
+      await saveScreenshot(page, `va-06-table-prototype-badge-${suffix}`, SWR004);
 
       await page.goto(sessionPath(human.sessionId));
       await expect(page.getByTestId(T.handoffScreen)).toBeVisible();
       await expect(page.getByTestId(T.boardCanvas)).toHaveCount(0);
       await expect(page.getByTestId(T.eventLog)).toHaveCount(0);
       await expectNoHorizontalScroll(page, `handoff ${suffix}`);
-      await saveScreenshot(page, `va-07-handoff-${suffix}`);
+      await saveScreenshot(page, `va-07-handoff-${suffix}`, SWR004);
     }
   });
 
@@ -181,22 +180,28 @@ test.describe('SWR-004 visual & accessibility', () => {
         const bar =
           (await page.getByTestId(T.tableTopBar).count()) > 0
             ? page.getByTestId(T.tableTopBar)
-            : await commonAncestor(page, [T.roundIndicator, T.advancePhase, T.prototypeBadge]);
+            : await commonAncestor(page, [T.timeTrack, T.passTurn, T.prototypeBadge]);
         await expectNoOverflowNorOverlap(bar, label);
+        // SWR-005 core-v1 top bar (TC-VA-10 of SWR-005: finish/pass not clipped).
         const controls: string[] = [
-          T.advancePhase,
           T.prototypeBadge,
-          T.roundIndicator,
+          T.timeTrack,
           T.phaseIndicator,
+          T.turnIndicator,
+          T.finishActivation,
+          T.passTurn,
         ];
-        if (kind === 'human') controls.push(T.endTurn);
         for (const id of controls) await expectNotClipped(page.getByTestId(id), `${label} › ${id}`);
         for (const id of [T.zoomIn, T.zoomOut, T.zoomFit]) {
           await expectNotClipped(page.getByTestId(id), `${label} › ${id}`);
         }
         await expectNoHorizontalScroll(page, label);
         if (vp !== D)
-          await saveScreenshot(page, `va-08-table-${vp.width}${kind === 'human' ? '-human' : ''}`);
+          await saveScreenshot(
+            page,
+            `va-08-table-${vp.width}${kind === 'human' ? '-human' : ''}`,
+            SWR004,
+          );
       }
     }
   });
@@ -259,7 +264,7 @@ test.describe('SWR-004 visual & accessibility', () => {
     await page.keyboard.press('Tab');
     const start = page.getByTestId(T.setupStart);
     await expectVisibleFocus(start, 'start');
-    await saveScreenshot(page, 'va-09-keyboard-focus');
+    await saveScreenshot(page, 'va-09-keyboard-focus', SWR004);
     await page.keyboard.press('Tab');
     await expectVisibleFocus(page.getByTestId(T.setupCancel), 'cancel');
     await page.keyboard.press('Shift+Tab');
@@ -293,7 +298,7 @@ test.describe('SWR-004 visual & accessibility', () => {
     await keyboardFocus(page, page.getByTestId(T.recentSession(human.sessionId)));
     await expectVisibleFocus(page.getByTestId(T.recentSession(human.sessionId)), 'recent row');
 
-    await endTurn(request, human.sessionId, human.view);
+    await toHandoff(request, human.sessionId, human.view);
     await page.goto(sessionPath(human.sessionId));
     await expect(page.getByTestId(T.handoffTitle)).toBeFocused(); // OQ-1
     await page.keyboard.press('Tab');
@@ -338,8 +343,8 @@ test.describe('SWR-004 visual & accessibility', () => {
     const human = await createSession(request, REBELS_VS_HUMAN);
     await openSession(page, human.sessionId);
     await expectTextContrastDeep(page.getByTestId(T.prototypeBadge), 'prototype badge');
-    await expectTextContrastDeep(page.getByTestId(T.endTurn), 'pass the turn');
-    await endTurn(request, human.sessionId, human.view);
+    await expectTextContrastDeep(page.getByTestId(T.passTurn), 'pass (core-v1)');
+    await toHandoff(request, human.sessionId, human.view);
     await page.goto(sessionPath(human.sessionId));
     await expectTextContrastDeep(page.getByTestId(T.handoffScreen), 'handoff screen');
   });
@@ -381,7 +386,7 @@ test.describe('SWR-004 visual & accessibility', () => {
     await page.unroute(matcher);
 
     const human = await createSession(request, REBELS_VS_HUMAN);
-    await endTurn(request, human.sessionId, human.view);
+    await toHandoff(request, human.sessionId, human.view);
     await page.goto(sessionPath(human.sessionId));
     await expect(page.getByTestId(T.handoffTitle)).toHaveRole('heading');
     await expect(page.getByTestId(T.handoffTitle)).toBeFocused();

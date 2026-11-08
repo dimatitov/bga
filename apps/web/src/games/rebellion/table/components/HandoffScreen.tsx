@@ -128,7 +128,10 @@ export function HandoffScreen({
               phase: phaseName(t, view.phase),
             })}
           </Typography>
-          <PrototypeBadge status={view.sessionStatus} />
+          <PrototypeBadge
+            status={view.sessionStatus}
+            variant={view.rulesEngine === 'core-v1' ? 'core-v1' : 'legacy'}
+          />
           {error && (
             <Alert severity="error" role="alert" data-testid="handoff-error" sx={{ width: '100%' }}>
               {error}

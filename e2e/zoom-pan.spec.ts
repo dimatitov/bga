@@ -1,26 +1,40 @@
 // Scenario 3 — zoom & pan: TC-E2E-07..12, TC-E2E-29 (AC-5, AC-10).
 // SWR-003: sessions are created via `POST /api/sessions` and opened at `/sessions/:id`; expectations unchanged.
+// SWR-005 (Q-1): rewritten on core-v1 (the shared viewport store/controls are the same for both engines); fit of all 32
+// systems with labels at three sizes is TC-E-12 (core-fit.spec).
 // Canvas state is read via window.__boardDebug (plan-frontend §6.3) and the DOM mirrors board-canvas[data-scale].
 import { expect, test, type Page } from '@playwright/test';
-import { createSession, pickMove, type PlayerView } from './support/api';
+import {
+  asCore,
+  commandOk,
+  createSession,
+  planActivation,
+  REBELS_VS_AI,
+  type CorePlayerView,
+} from './support/api';
 import {
   canvasBox,
   dbg,
-  emptyCanvasPoint,
+  emptyCoreCanvasPoint,
   expectNoCommandSent,
   mouseDrag,
-  openSession,
+  openCore,
   waitViewportStable,
 } from './support/board';
-import { CONTEXT_STATE, T } from './support/testids';
+import { midpoint, zoomToDetailAround } from './support/core';
+import { T } from './support/testids';
 
-let view: PlayerView;
+let view: CorePlayerView;
+let sessionId: string;
 
 test.beforeEach(async ({ page, request }) => {
-  const created = await createSession(request);
+  const created = await createSession(request, REBELS_VS_AI);
   view = created.view;
-  await openSession(page, created.sessionId);
+  sessionId = created.sessionId;
+  await openCore(page, sessionId);
 });
+
+const someSystem = (v: CorePlayerView) => v.map.systems[0]!.id;
 
 async function scale(page: Page) {
   await waitViewportStable(page);
@@ -96,14 +110,14 @@ test.describe('limits', () => {
 test('TC-E2E-10: fit shows every system inside the canvas', async ({ page }) => {
   await page.getByTestId(T.zoomIn).click();
   await page.getByTestId(T.zoomIn).click();
-  const from = await emptyCanvasPoint(page, view);
+  const from = await emptyCoreCanvasPoint(page, view, 30);
   await mouseDrag(page, from, { x: from.x + 250, y: from.y + 150 });
   await waitViewportStable(page);
 
   await page.getByTestId(T.zoomFit).click();
   await waitViewportStable(page);
   const box = await canvasBox(page);
-  for (const s of view.systems) {
+  for (const s of view.map.systems) {
     const p = await dbg.systemPos(page, s.id);
     expect(p.x, `${s.id}.x inside canvas`).toBeGreaterThan(box.x);
     expect(p.x).toBeLessThan(box.x + box.width);
@@ -113,12 +127,12 @@ test('TC-E2E-10: fit shows every system inside the canvas', async ({ page }) => 
 });
 
 test('TC-E2E-11: dragging the background pans and keeps the selection', async ({ page }) => {
-  const { fromSystemId } = pickMove(view);
+  const fromSystemId = someSystem(view);
   const sys = await dbg.systemPos(page, fromSystemId);
   await page.mouse.click(sys.x, sys.y);
   await expect.poll(() => dbg.selection(page)).toEqual({ kind: 'system', id: fromSystemId });
 
-  const start = await emptyCanvasPoint(page, view);
+  const start = await emptyCoreCanvasPoint(page, view);
   const v0 = await dbg.viewport(page);
   await expectNoCommandSent(page, () =>
     mouseDrag(page, start, { x: start.x + 200, y: start.y + 100 }),
@@ -129,18 +143,28 @@ test('TC-E2E-11: dragging the background pans and keeps the selection', async ({
   expect(Math.abs(v1.x - v0.x - 200)).toBeLessThan(8);
   expect(Math.abs(v1.y - v0.y - 100)).toBeLessThan(8);
   expect(await dbg.selection(page)).toEqual({ kind: 'system', id: fromSystemId });
-  await expect(page.getByTestId(T.contextPanel)).toHaveAttribute(
-    'data-state',
-    CONTEXT_STATE.system,
-  );
+  await expect(page.getByTestId(T.coreSystemPanel)).toHaveAttribute('data-system-id', fromSystemId);
 });
 
-test('TC-E2E-12: drag started on a piece does not pan; drop on empty space cancels', async ({
+test('TC-E2E-12: drag started on a movable unit does not pan; drop on empty space cancels', async ({
   page,
+  request,
 }) => {
-  const { pieceId } = pickMove(view);
-  const origin = await dbg.piecePos(page, pieceId);
-  const empty = await emptyCanvasPoint(page, view);
+  // A unit is draggable only during the viewer's activation (it is listed in MOVE_PIECES) and in the detail LOD.
+  const plan = planActivation(view, [view.rebelBase.systemId!]);
+  const act = asCore(
+    (
+      await commandOk(request, sessionId, view, {
+        type: 'ACTIVATE_SYSTEM',
+        leaderId: plan.leaderId,
+        systemId: plan.systemId,
+      })
+    ).view,
+  );
+  await openCore(page, sessionId);
+  await zoomToDetailAround(page, await midpoint(page, plan.fromSystemId, plan.systemId));
+  const origin = await dbg.piecePos(page, plan.pieceId);
+  const empty = await emptyCoreCanvasPoint(page, act, 40);
   const v0 = await dbg.viewport(page);
 
   await expectNoCommandSent(page, () => mouseDrag(page, origin, empty));
@@ -148,7 +172,7 @@ test('TC-E2E-12: drag started on a piece does not pan; drop on empty space cance
   await waitViewportStable(page);
 
   expect(await dbg.viewport(page)).toEqual(v0);
-  const back = await dbg.piecePos(page, pieceId);
+  const back = await dbg.piecePos(page, plan.pieceId);
   expect(Math.abs(back.x - origin.x)).toBeLessThan(3);
   expect(Math.abs(back.y - origin.y)).toBeLessThan(3);
   await expect(page.getByTestId(T.liveRegion)).not.toBeEmpty();

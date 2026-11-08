@@ -1,0 +1,18 @@
+
+> board-game-ai@ verify /Users/dimatitov/WebstormProjects/Game automa
+> pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle && pnpm e2e
+
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+
+/Users/dimatitov/WebstormProjects/Game automa/e2e/support/core.ts
+  125:12  error  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+  128:12  error  `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
+
+✖ 2 problems (2 errors, 0 warnings)
+
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.
+EXIT_CODE=1

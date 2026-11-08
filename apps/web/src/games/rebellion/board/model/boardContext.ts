@@ -1,4 +1,4 @@
-import type { Command, GameEvent, PlayerView, PlayerViewPlayer } from '@bga/game-rebellion/schema';
+import type { Command, PlayerEvent, PlayerView, PlayerViewMock } from '@bga/game-rebellion/schema';
 import { createContext, useContext } from 'react';
 
 /**
@@ -8,7 +8,7 @@ import { createContext, useContext } from 'react';
  * board consumers narrow on `view.kind === 'player'`.
  */
 export type CommandOutcome =
-  | { ok: true; view: PlayerView; events: GameEvent[] }
+  | { ok: true; view: PlayerView; events: PlayerEvent[] }
   | { ok: false; code: string; messageKey: string; details?: unknown };
 
 export interface CommandSender {
@@ -18,7 +18,7 @@ export interface CommandSender {
 
 export interface BoardContextValue extends CommandSender {
   gameId: string;
-  view: PlayerViewPlayer;
+  view: PlayerViewMock;
 }
 
 /** Provided by the game session page (`<BoardContext.Provider>`): the current server view + the command sender. */

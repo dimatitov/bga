@@ -6,8 +6,10 @@
  * setup `{ start: number, mode?: 'normal' | 'unsupported' }` (`mode: 'unsupported'` → 422 SETUP_UNSUPPORTED
  * `errors.fakeModeUnavailable`, details `{ unsupported: ['mode'] }`); stored setup `{ start, mode }`;
  * initial status `'active'` (TC-I-36: the status comes from the module, not the platform);
- * state `{ count, version, secret: 'FAKE-SECRET', setup }` (`setupOf` → `setup`, review #1); command `{ type: 'INC' }`;
- * `count >= 3` → 422 `errors.fakeLimit`; view `{ count, version, status }` (no secret); summarize → `{ count }`.
+ * state `{ count, version, secret: 'FAKE-SECRET', setup, finished? }` (`setupOf` → `setup`, review #1);
+ * commands `{ type: 'INC' }` (`count >= 3` → 422 `errors.fakeLimit`) and `{ type: 'FINISH' }` (SWR-005: sets
+ * `finished: true`; `statusOf` → `'completed'`, otherwise `'active'`, so the status write is checked generically);
+ * view `{ count, version, status }` (no secret); summarize → `{ count }`.
  */
 import {
   CommandEnvelopeFrameSchema,
@@ -44,6 +46,8 @@ export const fakeSoonDefinition: GameDefinition = {
 };
 
 export const FAKE_STATUS = 'active';
+/** `statusOf` after a `FINISH` command (SWR-005). */
+export const FAKE_FINISHED_STATUS = 'completed';
 export const FAKE_UNSUPPORTED_KEY = 'errors.fakeModeUnavailable';
 
 const FakeSetupSchema = z.strictObject({
@@ -58,12 +62,14 @@ const FakeStateSchema = z.strictObject({
   version: z.int().positive(),
   secret: z.literal(FAKE_SECRET),
   setup: FakeSetupSchema,
+  /** Absent until `FINISH` (keeps SWR-004 fake snapshots byte-identical). */
+  finished: z.literal(true).optional(),
 });
 type FakeState = z.infer<typeof FakeStateSchema>;
 
 interface FakeEvent {
   seq: number;
-  type: 'STARTED' | 'INCREMENTED';
+  type: 'STARTED' | 'INCREMENTED' | 'FINISHED';
   actor: 'player';
   at: string;
   payload: { count: number };
@@ -71,7 +77,10 @@ interface FakeEvent {
 
 const FakeEnvelopeSchema = CommandEnvelopeFrameSchema.extend({
   actor: z.literal('player'),
-  command: z.strictObject({ type: z.literal('INC') }),
+  command: z.discriminatedUnion('type', [
+    z.strictObject({ type: z.literal('INC') }),
+    z.strictObject({ type: z.literal('FINISH') }),
+  ]),
 }).strict();
 
 const typedFakeGameModule: ServerGameModule<FakeState, FakeSetup, FakeEvent> = {
@@ -93,6 +102,7 @@ const typedFakeGameModule: ServerGameModule<FakeState, FakeSetup, FakeEvent> = {
   },
   parseStoredSetup: (raw) => FakeSetupSchema.parse(raw),
   initialStatus: () => FAKE_STATUS,
+  statusOf: (state) => (state.finished === true ? FAKE_FINISHED_STATUS : FAKE_STATUS),
   publicSettings: (setup) => ({ start: setup.start, mode: setup.mode }),
   createInitialState(setup, ctx) {
     const state: FakeState = {
@@ -138,6 +148,22 @@ const typedFakeGameModule: ServerGameModule<FakeState, FakeSetup, FakeEvent> = {
           messageKey: ERROR_MESSAGE_KEYS.versionConflict,
           details: { currentVersion: state.version },
         },
+      };
+    }
+    if (parsed.data.command.type === 'FINISH') {
+      const finished: FakeState = { ...state, version: state.version + 1, finished: true };
+      return {
+        ok: true,
+        state: finished,
+        events: [
+          {
+            seq: finished.version,
+            type: 'FINISHED',
+            actor: 'player',
+            at: ctx.now,
+            payload: { count: finished.count },
+          },
+        ],
       };
     }
     if (state.count >= FAKE_LIMIT) {

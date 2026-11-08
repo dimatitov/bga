@@ -10,6 +10,11 @@
 //   `rebelBase: { systemId: "<base>"`) — the bare key name may legitimately appear in Zod schemas;
 // - typeKeys are NOT searched: i18n catalogues legitimately contain names like `covert-cell`.
 //
+// SWR-005 Q-18: also the core-v1 base-choice strings `chooseRebelBase` / `rebelBaseCandidates` (as a name, string or
+// key). The search for a base system id is NOT applied to core-v1: system ids are legal in the web. Function names of
+// web-reachable `./schema` code (e.g. `eligibleRebelBaseSystemIds`, public data) are NOT searched: the minifier
+// renames them, so such a pattern would prove nothing (review #2); code absence is the module-composition check's job.
+//
 // SWR-003 Q-23 / TR-8 / TC-ARCH-08 — module composition: a separate web build with hidden sourcemaps
 // (into a temp dir; apps/web/dist is untouched) lists the source modules of the bundle; it fails if any
 // game-package module outside ./definition ./schema ./board ./assets (e.g. rules, scenario, server, ai)
@@ -47,6 +52,15 @@ export function forbiddenFromScenario(scenario) {
       id: 'board-debug-hook',
       description: '`__boardDebug` dev/test hook in a production bundle (R-11, TC-ARCH-08)',
       regex: /__boardDebug/,
+    },
+    {
+      // SWR-005 Q-18: the core-v1 base choice lives only in rules/scenario on the server. `chooseRebelBase` /
+      // `rebelBaseCandidates` survive minification only as string literals or object keys — exactly what would
+      // leak (a candidate list in a payload/i18n/config); the absence of the code is checked by module composition.
+      id: 'rebel-base-choice-symbol',
+      description:
+        'core-v1 rebel base choice string (`chooseRebelBase` / `rebelBaseCandidates`) in the web bundle (Q-18)',
+      regex: /chooseRebelBase|rebelBaseCandidates/,
     },
     {
       id: 'rebel-base-assignment',

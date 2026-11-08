@@ -61,7 +61,8 @@ describe('createGame', () => {
       ruleset: 'base',
       gameMode: 'digital',
     });
-    expect(state.schemaVersion).toBe(2);
+    expect(state.schemaVersion).toBe(3);
+    expect(state.rulesEngine).toBe('mock-v1');
     expect(state.activeSide).toBe('empire');
     expect(state.handoffPending).toBe(false);
   });
