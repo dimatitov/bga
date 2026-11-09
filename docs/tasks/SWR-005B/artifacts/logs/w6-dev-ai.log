@@ -1,0 +1,122 @@
+# SWR-005B W6 — orchestration, Nest modules, dev endpoints + defect D-1 — 2026-11-08T19:21:56Z (backend-worker)
+# Tests never call OpenAI: real SDK + fake fetch, sentinel key. apps/api/.env values never read/printed; prisma/*.db not touched.
+
+$ pnpm exec prettier --write apps/api/test/migration-swr005b.int.test.ts  (formatting only, W3 file; done earlier this session, covered by prettier --check below)
+
+## D-1 reproduction WITHOUT the fix (names of non-blank OPENAI_* only, values never printed):
+$ env -u OPENAI_API_KEY NODE_ENV=test node -e "require(@prisma/client); new PrismaClient(); print names of non-blank OPENAI_*"  (cwd apps/api)
+{"nonBlankOpenAIVarNames":["OPENAI_API_KEY","OPENAI_ENABLED","OPENAI_STRATEGY_MODEL","OPENAI_TACTICAL_MODEL","OPENAI_MAX_COST_PER_SESSION_USD"]}
+## D-1 WITH the fix: real e2e server (PORT=3197 node apps/api/scripts/e2e-serve.mjs), GET /api/dev/ai/status (selected fields):
+{"openaiEnabled":false,"provider":"mock","keyConfigured":false,"models":{"strategy":{"id":null,"available":null},"tactical":{"id":null,"available":null}}}  (run 2026-11-08 ~19:18Z, server killed afterwards)
+
+$ pnpm --filter @bga/api test
+ Test Files  51 passed | 1 skipped (52)
+      Tests  483 passed | 1 skipped (484)
+exit=0
+
+$ (apps/api) pnpm exec vitest run test/dev-ai-*.int.test.ts test/env-isolation.int.test.ts --reporter=verbose
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > invalid-action → 502 AI_INVALID_DECISION not_in_actions (rejected by the service), row invalid_decision 224ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > OpenAI disabled: mock provider, no key, models unchecked, no limit (strict wire schema) 199ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > OpenAI disabled but a key is configured: keyConfigured=true, still mock 43ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > after importing AND constructing the Prisma client, no OPENAI_* is non-blank and OPENAI_ENABLED is false 29ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > the e2e environment blanks every config OPENAI_* variable and forces NODE_ENV=test / OPENAI_ENABLED=false 4ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > OpenAI enabled (fake fetch): availability via GET /v1/models, cached per process; budget limit 73ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > models check network failure → available:null (status still 200, not cached) 25ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > exhausted key → 429 AI_BUDGET_EXCEEDED with safe details; /responses never called; budget_exceeded row 252ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > spent + reserve exactly equal to the limit is refused 58ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > the mock answers with an exhausted budget and spends nothing 31ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > happy path: tokens, cost by the configured tariff, model from the response, row + budget spent 253ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > role strategy → the strategy model 54ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > unknown tariff → 503 aiPricingUnknown and ZERO fetch calls; row not_configured 28ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > malformed → 502 AI_INVALID_DECISION malformed, not retried 50ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > timeout ×3 → 504 AI_TIMEOUT attempts:3 (maxRetries 2), backoff sleeps between attempts 26ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > rate-limit → 429 AI_RATE_LIMITED (upstream key, not the dev limit), no Retry-After when unknown 21ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > network → 502 AI_PROVIDER_ERROR reason network after 3 attempts 24ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > server-error → 502 AI_PROVIDER_ERROR reason upstream after 3 attempts 23ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > 3 concurrent strategy requests with room for 2 reserves → 2×200 + 1×429; spent never above the limit 49ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > 200: strict wire schema, first action, cost 0, one AiUsage row; game tables unchanged 305ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > is deterministic: the same scenario gives the same choice; the order of actions decides 58ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > role / faction / explicit budgetKey are accepted; role is recorded 22ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > timeout, ok → 200 attempts:2 (one retry), row ok attempts 2 27ms
+ ✓ test/dev-ai-errors.int.test.ts > POST /api/dev/ai/test-decision — failures on the mock script (SWR-005B W6) > error bodies never carry the objective or the reason text 17ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > a child process with the e2e environment: Prisma loads .env, yet no OPENAI_* becomes non-blank 268ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > OpenAI enabled + provider:"mock" → mock answers, no fetch at all, budget untouched 21ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > logs only allow-listed lines (no objective, no reason text) 20ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > production > routes are 404 (not 403), the module is not registered; health and sessions still work 258ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > production > createApp refuses AI test overrides in production 2ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > production > an enabled OpenAI config under NODE_ENV=test without a fake fetch is refused at wiring time 1ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Host: evil.example → 403 AI_DEV_FORBIDDEN on both routes 47ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Host: evil.example:3000 → 403 AI_DEV_FORBIDDEN on both routes 28ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Host: 127.0.0.1.evil.example → 403 AI_DEV_FORBIDDEN on both routes 18ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > models.retrieve 404 → 503 aiModelUnavailable and no /responses call 24ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > models.retrieve 401 → 503 aiKeyRejected, no paid call; the upstream message never leaks 21ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > responses 401 → 503 aiKeyRejected, not retried 24ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > models check network failure → 502 AI_PROVIDER_ERROR network, no paid call 18ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > incomplete → 502 AI_INVALID_DECISION with the cost; the cost is accounted 22ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > GET /api/dev/ai/status of the test app reports keyConfigured:false (plain app and AI test app) 210ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > a model id outside the list → 502 not_in_actions with summed usage/cost (validated by the service) 21ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > upstream 429 with retry-after > 10 s → 429 at once, Retry-After header + details.retryAfterSeconds 40ms
+ ✓ test/dev-ai-openai.int.test.ts > POST /api/dev/ai/test-decision — OpenAI via fake fetch (SWR-005B W6) > 5xx, 5xx, ok → 200 attempts 3, usage of the successful attempt 26ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Origin: https://evil.example → 403 AI_DEV_FORBIDDEN on both routes 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Origin: null → 403 AI_DEV_FORBIDDEN on both routes 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > X-Forwarded-For: 203.0.113.7 → 403 AI_DEV_FORBIDDEN on both routes 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > X-Forwarded-For: 127.0.0.1, 203.0.113.7 → 403 AI_DEV_FORBIDDEN on both routes 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Sec-Fetch-Site: cross-site → 403 AI_DEV_FORBIDDEN on both routes 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > local browser headers pass (Vite proxy origin, same-origin, loopback X-Forwarded-For) 44ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > 403 comes before body validation (invalid / malformed / oversized body from a non-local Host) 18ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > unit: the TCP peer decides, not client headers (192.168.1.5, 10.0.0.5 + X-Forwarded-For 127.0.0.1) 1ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > extra top-level field → 400 VALIDATION 18ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > extra scenario field → 400 VALIDATION 13ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > extra action field → 400 VALIDATION 14ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > 1 action → 400 VALIDATION 12ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > 11 actions → 400 VALIDATION 9ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > duplicate ids → 400 VALIDATION 8ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > bad action id → 400 VALIDATION 9ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > objective 501 chars → 400 VALIDATION 8ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > objective with a control char → 400 VALIDATION 8ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > empty phase → 400 VALIDATION 8ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unknown faction → 400 VALIDATION 11ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unknown role → 400 VALIDATION 7ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unknown provider → 400 VALIDATION 7ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > other budgetKey → 400 VALIDATION 9ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > missing scenario → 400 VALIDATION 8ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > objective of exactly 500 chars and 10 actions are accepted 13ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > malformed JSON, text/plain and an empty body → 400 12ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > Content-Length > 8192 → 413 (unified envelope), nothing is called or recorded 14ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unit: a chunked body without Content-Length is cut at 8192 bytes → 413 1ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > rate limits > 11th paid decision in a minute → 429 aiDevRateLimited + Retry-After; mock still allowed 104ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > rate limits > total limit covers status and mock; invalid bodies do not consume the quota 19ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > rate limits > unit: sliding window frees slots after 60 s 0ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > no secrets in logs and responses (AC-10) > Nest logger output, test sink and every body: no key, no objective, no reason 42ms
+ Test Files  7 passed (7)
+      Tests  73 passed (73)
+exit=0
+
+$ pnpm --filter @bga/api typecheck
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm lint
+
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ node --test scripts/
+# tests 408
+# pass 408
+# fail 0
+exit=0
+
+$ grep -rn "from .openai." apps/api/src apps/api/test packages --include=*.ts
+apps/api/src/ai/providers/openai-client.ts:7:import OpenAI from 'openai';
+apps/api/src/ai/providers/openai-errors.ts:20:} from 'openai';
+apps/api/test/architecture.int.test.ts:97:      "import OpenAI from 'openai';",
+apps/api/test/architecture.int.test.ts:98:      "import { APIError } from 'openai/error';",
+
+$ grep -rn "process.env" apps/api/src (expected: only config/env.ts)
+apps/api/src/config/env.ts
+
+$ grep -rln "faction\|rebels\|empire" apps/api/src  (expected: only apps/api/src/dev/ai, AM-BE-1)
+apps/api/src/dev/ai/dev-ai.schemas.ts

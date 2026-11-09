@@ -1,0 +1,153 @@
+# SWR-005B INTEGRATION (backend-lead). 2026-11-08T19:28:57Z
+# node v20.19.5, pnpm 10.34.9
+# Note: frontend-lead edits apps/web/src/dev/ai/** concurrently; e2e / pnpm verify are run by frontend-lead (final gate).
+$ pnpm lint
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/web/src/dev/ai/components/Mono.tsx
+   2:15  error    'ReactNode' is defined but never used. Allowed unused vars must match /^_/u                                                     @typescript-eslint/no-unused-vars
+  11:14  warning  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+✖ 2 problems (1 error, 1 warning)
+
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1
+$ pnpm typecheck
+
+> board-game-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/web typecheck$ tsc -b
+apps/web typecheck: Done
+apps/api typecheck: Done
+exit=0
+$ pnpm --filter @bga/platform test
+
+> @bga/platform@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+
+ Test Files  5 passed (5)
+      Tests  76 passed (76)
+   Start at  22:29:30
+   Duration  723ms (transform 958ms, setup 0ms, import 1.62s, tests 118ms, environment 0ms)
+exit=0
+$ pnpm --filter @bga/api test
+
+[31m[Nest] 45812  - [39m11/08/2026, 10:29:44 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=ef564825-398f-4f41-a87d-bcf77a6c8c50 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:09 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:09 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:09 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:09 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46556  - [39m11/08/2026, 10:30:09 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=43f347c6-7241-4e15-a53b-99013d91e49c code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 46567  - [39m11/08/2026, 10:30:16 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 46567  - [39m11/08/2026, 10:30:16 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 46567  - [39m11/08/2026, 10:30:16 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 46916  - [39m11/08/2026, 10:30:21 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=0636005e-bfcc-41ed-927a-5628407aa2c1 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 46916  - [39m11/08/2026, 10:30:21 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=0636005e-bfcc-41ed-927a-5628407aa2c1 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 47001  - [39m11/08/2026, 10:30:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 47038  - [39m11/08/2026, 10:30:23 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 47038  - [39m11/08/2026, 10:30:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  52 passed | 1 skipped (53)
+      Tests  486 passed | 1 skipped (487)
+   Start at  22:29:33
+   Duration  76.91s (transform 11.92s, setup 2.43s, import 70.20s, tests 411.62s, environment 6ms)
+exit=0
+$ node --test scripts/
+    # Subtest: rejects packages/games/rebellion/src/rules/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+    ok 166 - rejects packages/games/rebellion/src/rules/probe.ts: export const load = (id: string) => import(`@bga/game-${id}/definition`);
+      ---
+      duration_ms: 2.314375
+      ...
+    # Subtest: allows  apps/web/src/app/probe.tsx: export const load = () => import('./pages/SettingsPage');
+    ok 167 - allows  apps/web/src/app/probe.tsx: export const load = () => import('./pages/SettingsPage');
+      ---
+      duration_ms: 2.954458
+      ...
+    1..167
+ok 29 - ESLint architecture boundaries (TR-7)
+  ---
+  duration_ms: 1751.745042
+  type: 'suite'
+  ...
+1..29
+# tests 408
+# suites 29
+# pass 408
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4770.317
+exit=0
+$ pnpm build
+packages/platform build: Done
+packages/games/rebellion build$ tsc -b
+packages/games/forbidden-stars build$ tsc -b
+packages/games/rebellion build: Done
+packages/games/forbidden-stars build: Done
+apps/api build$ nest build
+apps/web build$ tsc -b && vite build
+apps/api build: Done
+apps/web build: vite v8.3.6 building client environment for production...
+apps/web build: transforming...
+apps/web build: ✓ 1183 modules transformed.
+apps/web build: rendering chunks...
+apps/web build: computing gzip size...
+apps/web build: dist/index.html                             0.68 kB │ gzip:   0.37 kB
+apps/web build: dist/assets/FactionEmblem-1w1KEp6D.js       0.35 kB │ gzip:   0.27 kB
+apps/web build: dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+apps/web build: dist/assets/SetupScreen-Ch97Zlvy.js         6.60 kB │ gzip:   2.29 kB
+apps/web build: dist/assets/TableScreen-CBzsd2Ym.js       121.76 kB │ gzip:  34.80 kB
+apps/web build: dist/assets/index-H9k6toi5.js             131.25 kB │ gzip:  41.53 kB
+apps/web build: dist/assets/vendor-DIbOl8aa.js            186.48 kB │ gzip:  54.97 kB
+apps/web build: dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+apps/web build: dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+apps/web build: dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+apps/web build: ✓ built in 321ms
+apps/web build: Done
+exit=0
+$ pnpm check:bundle
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 10 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-bC2xqT
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 771 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit=0
+
+# pnpm lint exit=1 comes ONLY from apps/web/src/dev/ai/components/Mono.tsx (frontend-lead's concurrent in-progress file, not backend). Backend-scoped lint:
+# (root scripts/ is in the ESLint ignore list, so it is not passed)
+$ pnpm exec eslint apps/api packages e2e --max-warnings=0
+
+exit=0
+$ pnpm exec prettier --check apps/api packages scripts docs e2e eslint.config.mjs
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

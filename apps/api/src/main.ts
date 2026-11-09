@@ -1,15 +1,15 @@
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { createApp } from './app.factory';
+import { runBootstrap } from './bootstrap';
+import { loadAppConfig } from './config/env';
 
-async function bootstrap(): Promise<void> {
-  // apps/api/.env (created by scripts/ensure-env.mjs). Existing env vars win (e2e sets its own).
-  const envFile = join(__dirname, '..', '.env');
-  if (existsSync(envFile)) process.loadEnvFile(envFile);
-
-  const app = await createApp();
-  const port = Number(process.env.PORT ?? 3000);
-  await app.listen(port);
-}
-
-void bootstrap();
+// apps/api/.env (created by scripts/ensure-env.mjs) is read by loadAppConfig unless NODE_ENV=test;
+// variables already set in the environment win (e2e sets its own).
+// SWR-005B defect D-1: the app factory (and with it @prisma/client, whose own dotenv loader copies apps/api/.env
+// into the process environment at import) is loaded only AFTER the configuration was validated, so AppConfig never sees values
+// that Prisma injected. NODE_ENV=test children additionally get every OPENAI_* blanked (scripts/e2e-env.mjs).
+void runBootstrap({
+  loadConfig: () => loadAppConfig({ dotenvPath: join(__dirname, '..', '.env') }),
+  createApp: async (options) => (await import('./app.factory.js')).createApp(options),
+  stderr: (line) => console.error(line),
+  exit: (code) => process.exit(code),
+});

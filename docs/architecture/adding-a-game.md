@@ -205,6 +205,13 @@ export const myGameEntry: WebGameEntry = {
 | `apps/web/src/{app,shared,platform}/**` | `@/games/registry` | игровые пакеты, папки игр |
 | `apps/api/src/{sessions,common,persistence,health}/**` | `../game-registry/**` | любые `@bga/game-*` |
 | `apps/api/src/game-registry/**` | `@bga/game-*/{definition,server}` | остальные subpath |
+| `apps/api/src/ai/**`, `apps/api/src/dev/**` (SWR-005B) | `@bga/platform`, свои модули (`openai` — только `ai/**`) | любые `@bga/game-*`, `sessions/`, `game-registry/` |
+
+Серверный AI-слой `apps/api/src/ai` (OpenAI/mock, бюджет, учёт; [`application.md` §7.1](application.md)) **game-agnostic**:
+он получает только непрозрачную сторону, фазу, цель и список legal actions, вычисленный правилами, и возвращает id одного
+из них. Новой игре ничего в нём регистрировать не нужно; игровой пакет (в т.ч. `./ai`) не импортирует `openai` и не
+знает о провайдерах (проверяют ESLint и `apps/api/test/architecture.int.test.ts`). Подключение AI-слоя к ходу партии —
+отдельная задача (будущий AI Commander через `AutoPolicy`).
 
 ## 9. Скрытая информация и `check:bundle`
 

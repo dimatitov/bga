@@ -81,12 +81,16 @@ describe('routes and error bodies', () => {
     await stopApp(app, db);
   });
 
-  it('TC-SES-15 / TC-ARCH-03: routes are exactly the spec table; mutating only POST /api/sessions(/:id/commands)', () => {
+  it('TC-SES-15 / TC-ARCH-03: routes are exactly the spec table; mutating only POST /api/sessions(/:id/commands) (+ dev-only POST /api/dev/ai/test-decision, AiUsage only)', () => {
     const routes = listRoutes(app);
+    // SWR-005B W6: dev-only AI diagnostics exist outside production (nodeEnv 'test' here); in production they are
+    // absent (dev-ai-security.int.test.ts). They write only AiUsage, never Session / SessionEvent.
     expect(routes).toEqual([
+      'GET /api/dev/ai/status',
       'GET /api/health',
       'GET /api/sessions',
       'GET /api/sessions/:sessionId',
+      'POST /api/dev/ai/test-decision',
       'POST /api/sessions',
       'POST /api/sessions/:sessionId/commands',
     ]);

@@ -70,6 +70,35 @@ const WEB = { groups: WEB_GROUPS, regexes: [GAME_NOT_WEB, WEB_TO_API_SRC] };
 
 // ---- api restriction sets ----
 const API_GROUPS = ['react', 'react-*', 'react/*', '@mui/*', 'openai', 'openai/*'];
+/** SWR-005B §8: the AI layer may import the openai SDK, but never games, sessions, the registry or dev code. */
+const API_AI_GROUPS = [
+  'react',
+  'react-*',
+  'react/*',
+  '@mui/*',
+  '**/packages/**',
+  '../sessions/*',
+  '../game-registry/*',
+  '../dev/*',
+  '../../sessions/*',
+  '../../game-registry/*',
+  '../../dev/*',
+];
+/** SWR-005B §2.4: apps/api/src reads the environment only in config/env.ts. */
+const NO_PROCESS_ENV = [
+  'error',
+  {
+    object: 'process',
+    property: 'env',
+    message:
+      'Read configuration through AppConfig (apps/api/src/config/env.ts is the only reader).',
+  },
+  {
+    object: 'process',
+    property: 'loadEnvFile',
+    message: '.env is loaded only by apps/api/src/config/env.ts.',
+  },
+];
 
 // ---- game package restriction sets (B-2) ----
 const GAME_SRC_MESSAGE =
@@ -360,6 +389,32 @@ export default tseslint.config(
       ),
     },
   },
+  // SWR-005B §8: the AI layer (only place where `openai` may be imported) sees no games, sessions or dev code.
+  {
+    files: ['apps/api/src/ai/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'apps/api/src/ai is game-agnostic: no game packages, sessions, game-registry or dev code.',
+        { groups: API_AI_GROUPS, regexes: [ANY_GAME_PKG] },
+      ),
+    },
+  },
+  // SWR-005B §8: dev-only diagnostics talk to the AI layer, never to openai or games directly.
+  {
+    files: ['apps/api/src/dev/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'dev code must not import openai or game packages (use the AI layer).',
+        { groups: [...API_GROUPS, '**/packages/**'], regexes: [ANY_GAME_PKG] },
+      ),
+    },
+  },
+  // SWR-005B §2.4: process.env / process.loadEnvFile only in config/env.ts.
+  {
+    files: ['apps/api/src/**/*.ts'],
+    ignores: ['apps/api/src/config/env.ts'],
+    rules: { 'no-restricted-properties': NO_PROCESS_ENV },
+  },
   // B-13: the server registry sees only ./definition and ./server of a game.
   {
     files: ['apps/api/src/game-registry/**/*.ts'],
@@ -370,14 +425,27 @@ export default tseslint.config(
       ),
     },
   },
+  // SWR-005B §8: api tests never import the openai SDK (they go through ai/providers/openai-client.ts + fake fetch).
+  {
+    files: ['apps/api/test/**/*.ts'],
+    rules: {
+      'no-restricted-imports': restrict(
+        'api tests must not import openai directly (use openai-client.ts with a fake fetch).',
+        { groups: ['openai', 'openai/*'] },
+      ),
+    },
+  },
   // B-14: the fake game of the session-service tests must not lean on a real game (AC-5(a)).
   {
     files: ['apps/api/test/support/fake-game.ts'],
     rules: {
-      'no-restricted-imports': restrict('fake-game must not import a real game package.', {
-        groups: ['**/packages/**'],
-        regexes: [ANY_GAME_PKG],
-      }),
+      'no-restricted-imports': restrict(
+        'fake-game must not import a real game package or openai.',
+        {
+          groups: ['**/packages/**', 'openai', 'openai/*'],
+          regexes: [ANY_GAME_PKG],
+        },
+      ),
     },
   },
   // B-15: Q-21 — no computed import() in api/packages sources (web: WEB_DYNAMIC_IMPORTS; rules: B-5 block).

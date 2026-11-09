@@ -1,0 +1,38 @@
+SWR-005B BUSINESS_VALIDATION — Analyst, 2026-11-08 23:07–23:09 local (20:07–20:09 UTC), live app `PORT=3000 pnpm dev`
+(api :3000, web :5173), built-in browser at 1440×900. Code = working tree after INTEGRATION run 2 (integration-verify.log exit 0,
+e2e 118/118) and CODE_REVIEW round 2 approved. Real PO key from apps/api/.env (value never read/printed by agents).
+Dev DB backup before the first migration: apps/api/prisma/dev.pre-swr005b.db (sha in dev-db-backup.log); `pnpm dev` applied
+`20261108230000_ai_usage` to dev.db ("All migrations have been successfully applied").
+
+BV-1 Status (AC-02, AC-08, AC-10): GET /api/dev/ai/status → {"openaiEnabled":true,"provider":"openai","keyConfigured":true,
+     "models":{"strategy":{"id":"gpt-6.1-sol","available":true},"tactical":{"id":"gpt-6-luna","available":true}},
+     "budget":{"budgetKey":"dev-diagnostics","spentUsd":0,"spentMicroUsd":0,"limitUsd":0.25,"limitMicroUsd":250000,
+     "remainingUsd":0.25,"remainingMicroUsd":250000}} — no key in the body (/sk-/ false). Page shows the same
+     (screenshots/bv-01-status-openai-enabled-1440.jpg).
+BV-2 Mock (AC-03, AC-07): provider «Mock — бесплатно», role tactical → action-1 MOVE_FLEET corellia, provider mock,
+     model mock-deterministic-v1, 0 ms, tokens 0, cost 0,00 $, budget remains 0,25 $.
+BV-3 FIRST REAL OPENAI REQUEST (AC-12; also AC-03, AC-04, AC-06, AC-09): provider «Авто» (UI shows the paid-request
+     warning), role tactical, PO test scenario (empire / command / «Strengthen imperial control» / action-1 MOVE_FLEET corellia,
+     action-2 RECRUIT coruscant, action-3 PASS).
+       time (server log): 2026-11-08 23:08:44 local (Nest log line), request sent ~23:08:40
+       model: gpt-6-luna (Responses API, strict json_schema, reasoning.effort none, max_output_tokens 400)
+       selectedActionId: action-2 (RECRUIT coruscant) — in availableActions, accepted by the server validator
+       reason: «Recruiting on Coruscant strengthens imperial forces and supports control of the core world.»
+       durationMs: 4177, attempts: 1
+       usage: input 235, cached 0, output 38, reasoning 0, total 273
+       estimated cost: 0.000043 USD (43 micro-USD; check: 235×0.10/1e6 + 38×0.50/1e6 = 0.0000425 → rounded up), pricing openai-2026-11-08
+       budget after: spent 0.000043 USD, remaining 0.249957 USD
+     (screenshots/bv-02-live-openai-decision-1440.jpg, bv-03-live-openai-scenario-selected-1440.jpg — «action-2 ✓ выбрано»)
+BV-4 Usage persisted (AC-06): sqlite3 -readonly apps/api/prisma/dev.db "select … from AiUsage" →
+       mock|mock-deterministic-v1|tactical|ok|1|0|0|0||0|0|openai-2026-11-08|…
+       openai|gpt-6-luna|tactical|ok|1|235|0|38|0|43|4177|openai-2026-11-08|…
+     Columns have no prompt/response text (id budgetKey provider model role status attempts inputTokens cachedInputTokens
+     outputTokens reasoningTokens estimatedCostMicroUsd pricingVersion durationMs errorCode createdAt).
+BV-5 Logs (AC-10): Nest [AI] lines contain only allow-listed fields (provider, model, role, attempt, outcome, durations, tokens,
+     costUsd, budgetKey); preview log search for "sk-" → no matches; no objective/reason text in logs.
+BV-6 Guards (AC-08): POST with budgetKey "other" → 400 VALIDATION; scenario with 1 action → 400 VALIDATION (both mock, free).
+
+Not checked live (covered by tests/e2e): production 404, non-loopback 403, rate limits, budget exhaustion 429, retries/timeouts,
+invalid model output (all via fake fetch / page.route in api tests and e2e).
+Total real OpenAI spend during SWR-005B: 1 request, ~0.000043 USD (estimate; plus free GET /v1/models metadata calls).
+Defects found in BV: none.

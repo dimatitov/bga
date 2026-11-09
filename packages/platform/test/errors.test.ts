@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  AiErrorCodeSchema,
   ApiErrorSchema,
   CommandErrSchema,
   ERROR_HTTP_STATUS,
@@ -22,7 +23,21 @@ describe('platform errors', () => {
       'GAME_UNAVAILABLE',
       'SETUP_UNSUPPORTED',
       'IDEMPOTENCY_KEY_REUSED',
+      'AI_NOT_CONFIGURED',
+      'AI_BUDGET_EXCEEDED',
+      'AI_RATE_LIMITED',
+      'AI_TIMEOUT',
+      'AI_PROVIDER_ERROR',
+      'AI_INVALID_DECISION',
+      'AI_DEV_FORBIDDEN',
     ]);
+  });
+
+  it('AI error codes subset (SWR-005B, plan-backend §6.3)', () => {
+    expect(AiErrorCodeSchema.options).toEqual(
+      ErrorCodeSchema.options.filter((code) => code.startsWith('AI_')),
+    );
+    expect(AiErrorCodeSchema.options).toHaveLength(7);
   });
 
   it('HTTP status of every code (SETUP_UNSUPPORTED 422, IDEMPOTENCY_KEY_REUSED 409)', () => {
@@ -36,6 +51,13 @@ describe('platform errors', () => {
       GAME_UNAVAILABLE: 422,
       SETUP_UNSUPPORTED: 422,
       INTERNAL: 500,
+      AI_NOT_CONFIGURED: 503,
+      AI_BUDGET_EXCEEDED: 429,
+      AI_RATE_LIMITED: 429,
+      AI_TIMEOUT: 504,
+      AI_PROVIDER_ERROR: 502,
+      AI_INVALID_DECISION: 502,
+      AI_DEV_FORBIDDEN: 403,
     });
   });
 
@@ -55,6 +77,41 @@ describe('platform errors', () => {
     expect(new Set(keys).size).toBe(keys.length);
     for (const key of keys) expect(key).toMatch(/^errors\.[a-zA-Z]+$/);
     expect(PLATFORM_ERROR_MESSAGE_KEYS).toBe(ERROR_MESSAGE_KEYS);
+  });
+
+  it('AI message keys are flat errors.ai* (AM-BE-2, Q-FE-6, plan-backend §6.1)', () => {
+    const aiKeys = Object.entries(ERROR_MESSAGE_KEYS)
+      .filter(([name]) => name.startsWith('ai'))
+      .map(([name, key]) => {
+        expect(key).toBe(`errors.${name}`);
+        return name;
+      });
+    expect(aiKeys.sort()).toEqual(
+      [
+        'aiNotConfigured',
+        'aiModelUnavailable',
+        'aiPricingUnknown',
+        'aiKeyRejected',
+        'aiBudgetExceeded',
+        'aiRateLimited',
+        'aiDevRateLimited',
+        'aiTimeout',
+        'aiProviderError',
+        'aiQuota',
+        'aiInvalidDecision',
+        'aiDevForbidden',
+      ].sort(),
+    );
+  });
+
+  it('AI error bodies parse with the shared envelope', () => {
+    for (const code of AiErrorCodeSchema.options) {
+      const body = {
+        ok: false,
+        error: { code, messageKey: 'errors.aiProviderError', details: { attempts: 3 } },
+      };
+      expect(ErrorResponseSchema.safeParse(body).success).toBe(true);
+    }
   });
 
   it('error response format is unchanged (strict) and CommandErrSchema is the same schema', () => {

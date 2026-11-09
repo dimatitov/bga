@@ -2,13 +2,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { Link as RouterLink, useNavigate } from 'react-router';
 import { paths } from '@/platform/paths';
 import { announce } from '@/shared/feedback';
 import { i18n } from '@/shared/i18n';
@@ -113,6 +114,20 @@ export function SettingsPage() {
           <Typography variant="body2" color="text.secondary">
             {t('settings:storageNote')}
           </Typography>
+
+          {/* SWR-005B D-FE-2: dev-only entry to the AI diagnostics; the literal guard folds away in `vite build`. */}
+          {import.meta.env.DEV ? (
+            <section data-testid="settings-dev">
+              <Typography variant="overline" component="h2" color="text.secondary">
+                {t('settings:dev.title')}
+              </Typography>
+              <Box>
+                <Link component={RouterLink} to="/dev/ai" data-testid="settings-dev-ai-link">
+                  {t('settings:dev.aiLink')}
+                </Link>
+              </Box>
+            </section>
+          ) : null}
         </Stack>
       </Paper>
     </Box>

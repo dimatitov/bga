@@ -153,6 +153,48 @@ add('apps/api/src/common/probe.ts', imp('react'), 'error');
 add('apps/api/test/support/fake-game.ts', imp('@bga/game-rebellion/schema'), 'error');
 add('apps/api/test/support/fake-game.ts', imp('@bga/platform'), 'ok');
 
+// SWR-005B §8: `openai` only in apps/api/src/ai/**; the AI layer and dev code see no games; tests never import openai.
+for (const file of [
+  'apps/api/src/sessions/probe.ts',
+  'apps/api/src/common/probe.ts',
+  'apps/api/src/config/probe.ts',
+  'apps/api/src/dev/ai/probe.ts',
+  'apps/api/src/main.ts',
+  'apps/api/test/probe.ts',
+  'apps/api/test/support/fake-game.ts',
+  'packages/platform/src/probe.ts',
+  'packages/games/rebellion/src/rules/probe.ts',
+  'packages/games/rebellion/src/ai/probe.ts',
+  'packages/games/rebellion/src/server/probe.ts',
+  'apps/web/src/probe.ts',
+]) {
+  add(file, imp('openai'), 'error');
+}
+add('apps/api/src/dev/ai/probe.ts', imp('openai/resources'), 'error');
+add('apps/api/test/probe.ts', imp('openai/error'), 'error');
+add('apps/api/src/ai/probe.ts', imp('openai'), 'ok');
+add('apps/api/src/ai/providers/probe.ts', imp('openai'), 'ok');
+add('apps/api/src/ai/providers/probe.ts', imp('openai/error'), 'ok');
+add('apps/api/src/ai/probe.ts', imp('@bga/game-rebellion'), 'error');
+add('apps/api/src/ai/probe.ts', imp('@bga/game-rebellion/server'), 'error');
+add('apps/api/src/ai/probe.ts', imp('../sessions/sessions.service'), 'error');
+add('apps/api/src/ai/probe.ts', imp('../game-registry/registry'), 'error');
+add('apps/api/src/ai/probe.ts', imp('../dev/ai/dev-ai.module'), 'error');
+add('apps/api/src/ai/providers/probe.ts', imp('../../sessions/sessions.service'), 'error');
+add('apps/api/src/ai/probe.ts', imp('react'), 'error');
+add('apps/api/src/ai/probe.ts', imp('../config/env'), 'ok');
+add('apps/api/src/ai/probe.ts', imp('@bga/platform'), 'ok');
+add('apps/api/src/dev/ai/probe.ts', imp('@bga/game-rebellion'), 'error');
+add('apps/api/src/dev/ai/probe.ts', imp('@bga/game-rebellion/definition'), 'error');
+add('apps/api/src/dev/ai/probe.ts', imp('../../ai/ai.tokens'), 'ok');
+
+// SWR-005B §2.4: process.env / process.loadEnvFile only in apps/api/src/config/env.ts.
+add('apps/api/src/sessions/probe.ts', 'export const x = process.env.X;', 'error');
+add('apps/api/src/main.ts', "process.loadEnvFile('.env');", 'error');
+add('apps/api/src/ai/probe.ts', 'export const k = process.env.OPENAI_API_KEY;', 'error');
+add('apps/api/src/config/other.ts', 'export const x = process.env.X;', 'error');
+add('apps/api/src/config/env.ts', 'export const x = process.env.X;', 'ok');
+
 // TC-ARCH-02 / Q-21: no import() with a computed specifier in web, api or packages sources.
 for (const file of [
   'apps/web/src/platform/probe.ts',

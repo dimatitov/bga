@@ -15,6 +15,8 @@
 //
 // The oracle `readStoredState` reads `Session.state` straight from the DB: e2e learns the hidden rebel-base system of a
 // fresh AI game without any Empire-facing API (test-cases.md TR-3, Q-35).
+// SWR-005B review F-1: first import — blanks OPENAI_* before the Prisma client below can load apps/api/.env.
+import { blankOpenAiEnv } from './blank-openai-env';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -62,11 +64,21 @@ interface PrismaLike {
 }
 
 function prismaClient(): PrismaLike {
+  // F-1: guard again right before the `require` (Prisma loads apps/api/.env at require AND on `new PrismaClient`).
+  blankOpenAiEnv();
   const requireFromApi = createRequire(path.join(API_ROOT, 'package.json'));
   const { PrismaClient } = requireFromApi('@prisma/client') as {
     PrismaClient: new (options: { datasourceUrl: string }) => PrismaLike;
   };
   return new PrismaClient({ datasourceUrl: `file:${E2E_DB_FILE}` });
+}
+
+/**
+ * F-1 regression hook: loads and constructs the API's Prisma client exactly like the seeding helpers (never connects —
+ * Prisma connects lazily on the first query) and disconnects it.
+ */
+export async function loadPrismaClientLikeSeed(): Promise<void> {
+  await prismaClient().$disconnect();
 }
 
 async function withDb<T>(fn: (db: PrismaLike) => Promise<T>): Promise<T> {

@@ -1,0 +1,27 @@
+## 2026-11-08T18:36:24Z pnpm --filter @bga/web typecheck
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+exit=0
+## pnpm --filter @bga/web lint
+
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+
+exit=0
+## pnpm --filter @bga/web test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  62 passed (62)
+      Tests  513 passed (513)
+   Start at  21:36:42
+   Duration  26.12s (transform 9.67s, setup 25.84s, import 44.32s, tests 65.51s, environment 65.16s)
+
+exit=0

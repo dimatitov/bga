@@ -43,6 +43,7 @@ import {
   fakeSoonDefinition,
 } from './support/fake-game';
 import { api, createTestDb, startApp, stopApp, type TestDb } from './support/test-app';
+import { testConfig } from './support/test-config';
 
 const ALL_DEFINITIONS = [
   rebellionDefinition,
@@ -122,7 +123,7 @@ describe('server game registry (unit)', () => {
   it('an inconsistent registry fails the app start (createApp throws)', async () => {
     await expect(
       createApp({
-        databaseUrl: 'file:./never-opened.db',
+        config: testConfig({ databaseUrl: 'file:./never-opened.db' }),
         logger: false,
         gameModules: [rebellionServerModule],
         gameDefinitions: [rebellionDefinition, fakeGameDefinition],

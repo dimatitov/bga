@@ -1,10 +1,76 @@
 # Review — SWR-005B
 
-Reviewer: <role / executor>  ·  Author(s) of reviewed code: <...>
+Reviewer: reviewer (Claude Code subagent, independent; wrote none of the reviewed code)  ·  Author(s) of reviewed code:
+backend-workers W1–W6, backend-lead (INTEGRATION seam fix), frontend-worker FE-AI, frontend-lead (D-2/D-3), QA (e2e).
+
+Scope: the uncommitted working tree vs `d974f1a` (`git status`, `git diff d974f1a --stat`: 41 tracked files changed plus the
+new `apps/api/src/{ai,config,dev}/**`, `apps/api/scripts/{e2e-env,reset-ai-budget}.mjs`, tests, `apps/web/src/dev/**`,
+`packages/platform/src/ai-dev.ts`, migration `20261108230000_ai_usage`). Checked against `specification.md` (Contract,
+AC-01..AC-13, Clarifications, Decisions during IMPLEMENTATION) and `implementation-plan.md`.
+
+## Checks run by the reviewer (read-only, no network, `apps/api/.env` never read)
+| Command | Result |
+|---|---|
+| `pnpm exec vitest run test/ai test/dev-ai-*.int.test.ts test/env-isolation.int.test.ts test/env.unit.test.ts test/env-example.unit.test.ts test/architecture.int.test.ts test/no-network.unit.test.ts test/bootstrap.unit.test.ts` (in `apps/api`) | 26 files / 267 tests passed |
+| `node --test scripts/eslint-boundaries.test.mjs scripts/check-web-bundle.test.mjs` | 183 passed, 0 failed |
+| `grep -rEln "sk-(proj-)?[A-Za-z0-9_-]{20,}"` over the repo (excluding `node_modules`, `.git`, `.env`, `*.db`) | only test sentinels (`sk-test-SENTINEL-…`, `sk-lamp-…`, `sk-list-item-…`, `sk-test-parent-sentinel`) in tests / `test-cases.md`; nothing in `artifacts/` |
+| `git check-ignore -v apps/api/.env apps/api/.env.local apps/api/prisma/dev.pre-swr005b.db`; `git ls-files \| grep .env` | all three ignored; only `apps/api/.env.example` is tracked |
+| `grep` of `from 'openai'`, `.reveal()`, `process.env` in `apps/**`, `packages/**` | `openai` only in `apps/api/src/ai/providers/{openai-client,openai-errors}.ts`; `.reveal()` only in `openai-client.ts:38` (+ env unit tests); `process.env` only in `apps/api/src/config/env.ts:297`; no `openai` in `packages/platform/src` or `packages/games/*/src` (the word appears only as the provider id string in `ai-dev.ts`) |
+| Child `node -e` from the repo root that `require`s `@prisma/client` via `createRequire(apps/api/package.json)` (exactly like `e2e/support/seed.ts`) and prints only the NAMES of non-blank `OPENAI_*` | `["OPENAI_API_KEY","OPENAI_ENABLED","OPENAI_STRATEGY_MODEL","OPENAI_TACTICAL_MODEL","OPENAI_MAX_COST_PER_SESSION_USD"]` — see F-1 |
+| Final gate log `artifacts/logs/integration-verify.log` (read, not re-run) | `pnpm verify` → `exit=0`; api 486 + 1 skipped, web 518; `check:bundle` 12 rules / 0 findings, 0 `apps/web/src/dev` modules; e2e `116 passed` |
+
+Not run by the reviewer: `pnpm verify`, e2e, lint/typecheck, build, any real OpenAI request (AC-12 is BUSINESS_VALIDATION).
 
 ## Findings
 | # | Severity | File:line | Finding | Recommendation |
 |---|---|---|---|---|
+| F-1 | major | `e2e/support/seed.ts:64-70` (loaded by the Playwright workers); `playwright.config.ts:29-48` | D-1 is fixed for the Vitest workers (`test/setup/blank-openai-env.ts`), the e2e API child (`scripts/e2e-env.mjs` → `e2e-serve.mjs`) and the `prisma migrate deploy` child of `global-setup.ts`, but NOT for the Playwright test process: `seed.ts` `require`s `@prisma/client` from `apps/api`, and Prisma's dotenv loader copies the PO's real `OPENAI_API_KEY` (and 4 other `OPENAI_*`) into that process's `process.env` (reproduced above, names only). Nothing in the current e2e code sends or prints it (the browser guard and `OPENAI_ENABLED=false` on the API hold), so there is no actual leak today, but the PO requirement "test processes are free of the key" and the D-1 "fixed" claim in `specification.md` / `implementation-plan.md` are not true for the e2e runner. Any future `console.log(process.env)`, a dumped error env, or a child process spawned from a spec would carry the real key. | Blank every `OPENAI_*` (reuse `BLANKED_OPENAI_VARS` from `apps/api/scripts/e2e-env.mjs`, `OPENAI_ENABLED=false`) at the top of `playwright.config.ts` (runs in the runner and is re-evaluated in workers) or at the top of `seed.ts` before the `require`; add a check like `env-isolation.int.test.ts` (names only) for the Playwright side; update the D-1 wording. |
+| F-2 | minor | `apps/api/src/ai/providers/openai.provider.ts:188-193` | Only `AI_TIMEOUT` attempts are charged the per-attempt worst case (AM-BE-8). An `APIConnectionError` (`network`, retryable) can also happen after the request reached OpenAI (connection reset while the response is in flight), yet it is recorded with cost 0. The reservation covers it during the call, but after release Σ AiUsage can undercount; across many requests the limit is no longer a hard bound. Spec only requires timeouts, so not a contract break. | Charge `perAttempt` for `network` failures as well (same "cannot tell sent from not sent" reasoning), or document the gap next to AM-BE-8. |
+| F-3 | minor | `apps/api/src/ai/prompt.ts:42-55` | `upperBoundInputTokens = ceil(bytes/2) + 256` is not a strict upper bound for arbitrary Unicode: byte-level BPE can produce close to 1 token per byte for rare scripts / emoji (the objective allows 500 chars of anything except control chars). The success-path cost is computed from real usage (`openai.provider.ts:210-214`), so a pathological prompt can make the real cost exceed the reservation and push `spent` slightly over the limit (bounded: cents at most with the 8 KiB body cap). | Either count non-ASCII bytes 1:1 (ASCII /2), or document "reserve may be exceeded by at most N micro-USD" in `application.md` §AI budget. |
+| F-4 | minor | `apps/api/src/config/env.ts:41`; `apps/api/package.json:9` (`"start": "node dist/main.js"`) | `NODE_ENV` defaults to `development` (per the frozen contract), and `start` does not set it, so running the built API without `NODE_ENV=production` registers the dev AI routes (fail-open). The loopback/Host/Origin guard still blocks remote callers, and production deployment is out of scope, so low risk now. | Set `NODE_ENV=production` in the `start` script (or require `NODE_ENV` when running `dist/`), or note it in `application.md` §8.1 as a deployment prerequisite. |
+| F-5 | nit | `apps/api/src/ai/ai-decision.service.ts:14-15,336-350`; `apps/api/src/ai/ai.errors.ts:7,261-263` | The framework-free AI layer constructs HTTP-level `ApiError` (validation envelope, `toApiError`). Works, but couples the AI layer to the HTTP envelope that the dev controller already owns. | Later (Stage F): let the service throw a domain error and map it in the controller. |
+| F-6 | nit | `apps/api/src/ai/ai-decision.service.ts:74-75` | `AI_DEV_FORBIDDEN → 'not_configured'` usage status is unreachable filler; a wrong status would be silently written if it ever became reachable. | Use `Exclude<AiErrorCode, 'AI_DEV_FORBIDDEN'>` for the map key and narrow before lookup. |
+| F-7 | nit | `apps/api/scripts/reset-ai-budget.mjs:9,62` | Comment says "apps/api/.env is NOT read", but `await import('@prisma/client')` makes Prisma load `apps/api/.env` into the script's `process.env`. Harmless (DATABASE_URL is resolved before the import and passed explicitly; nothing prints env), but the comment is inaccurate. | Reword ("our code does not read it; Prisma may load it, the URL is passed explicitly"). |
+
+### Verified without findings (per PO focus list)
+1. **API-key security.** `Secret` (`config/env.ts:90-114`) redacts in `toString`/`toJSON`/`inspect`; single `.reveal()` site `openai-client.ts:38` (TC-A-02 enforces it); client gets explicit `baseURL`/`organization:null`/`project:null`/`logLevel:'off'`/`maxRetries:0`, so `OPENAI_BASE_URL`/`OPENAI_LOG` cannot redirect or log; with OpenAI off the key is not kept (`apiKeyConfigured` boolean only). `EnvValidationError` lists names + fixed reasons only; `bootstrap.ts` prints a fixed text for non-validation errors. SDK errors → `classifySdkError` keeps class name, status, safe request id and parsed Retry-After only (`openai-errors.ts:45-54`); `AiFailure.message` = code; `safeDetails` allow-list; `ApiExceptionFilter` logs class name only. Logs are allow-listed and sanitised (`ai-log.ts`), no prompt/objective/reason. `AiUsage` has no text columns and the repository schema is strict. `main.ts` imports `app.factory` (and thus Prisma) only after `loadAppConfig` (`main.ts:10-15`; `bootstrap.ts` imports it type-only). Web: `check:bundle` rules for `OPENAI_*`, `sk-…`, `api.openai.com`, `/dev/ai`, `dev-ai-*` testids and module check `apps/web/src/dev/**` (final gate: 0 findings). `.gitignore` covers `.env`, `.env.*`, `*.db`.
+2. **Uncontrolled spend.** Order in `ai-decision.service.ts:121-166`: pricing (no network) → free model check → worst-case reservation (`perAttempt × (maxRetries+1)`, same `ROLE_DEFAULTS.maxOutputTokens` and clamped retries as the provider) → paid call. Per-key promise-chain mutex around SUM+hold (`budget.service.ts:67-81,124-139`), `≥` refuses at equality; hold released only after the row is stored, kept on write failure (`ai-decision.service.ts:201-232`). `budgetKey` is `z.literal('dev-diagnostics')` (`ai-dev.ts:101`) and the web never sends it. Dev limiter 10 paid / 120 total per minute. SDK `maxRetries:0` + own loop clamped 0..5, Retry-After > 10 s → no retry. Unknown pricing → 503 with zero fetches (test `dev-ai-openai` "unknown tariff"). Mock rows cost 0 (enforced again in the repository). Timeouts (incl. 408/abort) charged worst case. Single-process limitation documented (`application.md:264,349`). Cost math: integer micro-USD, `ceilDiv` rounding up, cached clamped to input, long context `> 272000` → ×2/×1.5 on the whole request (tested 272000 vs 272001).
+3. **Error handling.** Mapping matches Clarifications Q-7/Q-9/Q-14 (401/403 → 503 `aiKeyRejected`, 404 → 503 `aiModelUnavailable`, models-check network/5xx → 502, `insufficient_quota` → 502 `aiQuota` no retry, 400/409/422 → 502 no retry, 5xx/network/429/timeout retried, incomplete/refusal/malformed/schema → 502 `AI_INVALID_DECISION`). `validateDecision` is the single acceptance point for both providers; invalid decisions are non-retryable, recorded with their cost, never executed. Client UI shows only translated keys and whitelisted numeric details (`apps/web/src/dev/ai/errorText.ts`).
+4. **Architectural isolation.** ESLint: `openai` banned everywhere except `apps/api/src/ai/**`; AI layer may not import games, sessions, game-registry or dev code; dev code may not import `openai`/games; `process.env`/`loadEnvFile` only in `config/env.ts`; api tests may not import `openai`. `DevAiModule` and the body gate are registered only when `nodeEnv !== 'production'` (404 tested); guard checks TCP peer, `Host`, `Origin`, every XFF hop and `Sec-Fetch-Site`, and runs before body parsing; 8 KiB body cap → 413. Structured Outputs schema is strict (`enum` = context ids, `additionalProperties:false`, both fields required); `store:false`. AI layer has no access to game state (decision test asserts game tables unchanged). Web route and Settings link behind the literal `import.meta.env.DEV`.
+5. **Tests.** Real SDK with fake fetch, non-loopback `fetch` guard in every api test file, sentinel key scans of logs/bodies, concurrency tests for the budget, D-1 regression tests for Vitest and the e2e API child.
+
+## Re-review (round 2)
+
+Scope: fixes for round 1 according to `specification.md` «CODE_REVIEW round 1 — решения Analyst» (F-5 left unchanged by
+decision). I read the changed code, the logs `artifacts/logs/qa-f1-fix.log` and `artifacts/logs/review-fix-be.log`, and
+the rewritten final gate log `artifacts/logs/integration-verify.log` (run 2, 2026-11-08T19:59:04Z). I did not edit any code.
+
+| Command (reviewer) | Result |
+|---|---|
+| `pnpm exec vitest run test/ai/prompt.unit.test.ts test/ai/openai-provider.unit.test.ts test/ai/ai-decision-service.unit.test.ts test/package-scripts.unit.test.ts test/env-isolation.int.test.ts test/dev-ai-budget.int.test.ts` (in `apps/api`, run after verify run 2 had finished) | 6 files / 49 tests passed |
+| `artifacts/logs/integration-verify.log` (run 2, read) | `pnpm verify` → `exit=0`: api 492 passed + 1 skipped, web 518, platform 76, rebellion 411, forbidden-stars 5; `check:bundle` 12 rules / 0 findings, 0 `apps/web/src/dev` modules; e2e `118 passed` (116 + 2 new F-1 specs) |
+| `artifacts/logs/qa-f1-fix.log` (read) | negative control (blanking reverted) → `e2e/env-isolation.spec.ts` 2 failed; restored → `env-isolation` + `dev-ai` 12 passed |
+| `artifacts/logs/review-fix-be.log` (read) | api 53 files passed / 1 skipped, 492 passed; negative control (3 behavioural fixes reverted) → 4 new tests fail as expected; typecheck, eslint and prettier exit 0 |
+
+| # | Round-1 severity | Status | Evidence / notes |
+|---|---|---|---|
+| F-1 | major | **resolved** | `playwright.config.ts:4` imports `e2e/support/blank-openai-env.ts` first. That module blanks every present `OPENAI_*` plus `BLANKED_OPENAI_VARS` from `apps/api/scripts/e2e-env.mjs` (the same single list) and sets `OPENAI_ENABLED=false`. The config is evaluated in the runner and in every worker, and webServer children inherit the blanked env. `e2e/support/seed.ts` imports the module first and calls `blankOpenAiEnv()` again right before `require('@prisma/client')`. The regression check `e2e/env-isolation.spec.ts` uses names only, covers the worker and a spawned child, and has a working negative control. |
+| F-2 | minor | **resolved** | `openai.provider.ts:62-64` `mayHaveBeenBilled` = `AI_TIMEOUT` or `AI_PROVIDER_ERROR`/`network`. Line 203 charges `perAttempt` for those. The reservation (`perAttempt × (maxRetries+1)`) still covers the worst case. Test: `openai-provider.unit.test.ts:321`. |
+| F-3 | minor | **resolved** | `prompt.ts:42-56`: the bound is now UTF-8 bytes + 256, which is a true upper bound because a token is at least 1 byte. Service and provider use the same function, so the reservation matches the per-attempt charge. Effect on usable budget: with the 8 KiB body cap a worst-case strategy reserve is about $0.10, which is still below the $0.25 limit. Test: `prompt.unit.test.ts:67`. |
+| F-4 | minor | **resolved** | `apps/api/package.json:9` `"start": "NODE_ENV=production node dist/main.js"`; the schema default stays `development` for `pnpm dev`. Test: `test/package-scripts.unit.test.ts`. |
+| F-5 | nit | accepted as is (Analyst decision) | follow-up for Stage F |
+| F-6 | nit | **resolved** | `ai-decision.service.ts:80-85` `usageStatusFor` throws for `AI_DEV_FORBIDDEN`. If it ever throws inside `runProvider`, `recorded` stays false and the hold is kept, so the failure is conservative. Test: `ai-decision-service.unit.test.ts:103`. |
+| F-7 | nit | **resolved** | `reset-ai-budget.mjs:9-11` now states that Prisma loads `.env` and that the URL is passed explicitly. |
+
+New finding in round 2:
+
+| # | Severity | File:line | Finding | Recommendation |
+|---|---|---|---|---|
+| F-8 | nit | `apps/api/package.json:9` | The inline `NODE_ENV=production node …` form only works in POSIX shells; `cmd.exe` on Windows rejects it. The project runs on macOS/Node 20, and the build is not deployed in this task. | If Windows support is ever needed, use `node --env-file` or a tiny wrapper script instead of `cross-env`, so no new dependency is added. Not blocking. |
+
+No blocking or major findings remain.
 
 ## Verdict
-changes_requested
+approved
+
+Round 2: F-1 (major) and F-2, F-3, F-4, F-6, F-7 are resolved and verified (see «Re-review (round 2)»). F-5 is accepted by the Analyst. F-8 (new nit) does not block. Round-1 verdict was `changes_requested`.

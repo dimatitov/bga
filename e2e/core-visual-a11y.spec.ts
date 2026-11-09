@@ -1,5 +1,7 @@
 // SWR-005 visual & accessibility (test-cases.md §14): TC-VA-01..TC-VA-14 + evidence screenshots of plan-frontend §10
-// into docs/tasks/SWR-005/artifacts/screenshots/ (CURRENT_SCREENSHOT_TASK = 'SWR-005', support/board.ts). Reduced motion,
+// into docs/tasks/SWR-005/artifacts/screenshots/ — SWR-005B: the task is passed explicitly (`SWR005`), so after the switch of
+// CURRENT_SCREENSHOT_TASK to 'SWR-005B' these PNGs go to test-results/screenshots/SWR-005/ and the SWR-005 evidence is
+// rewritten only by a deliberate `SCREENSHOT_TASK=SWR-005 pnpm e2e` (support/board.ts routing rule). Reduced motion,
 // ru (default UI language) unless noted; 18 is the en copy. Layout/focus/contrast use the SWR-004 helpers (TR-9).
 import { readFileSync } from 'node:fs';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
@@ -49,6 +51,8 @@ import {
 import { seedCore, seedLegacyV2 } from './support/seed';
 import { T } from './support/testids';
 
+/** Evidence task of these screenshots (SWR-005B: explicit, like visual-a11y.spec.ts does for SWR-004). */
+const SWR005 = 'SWR-005';
 const D = { width: 1440, height: 900 };
 const SIZES = [
   ['01-core-fit-1440x900', D],
@@ -116,7 +120,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
       for (const id of [T.timeTrack, T.phaseIndicator, T.turnIndicator]) {
         await expect(page.getByTestId(id), `${name} › ${id}`).toBeVisible();
       }
-      await saveScreenshot(page, name);
+      await saveScreenshot(page, name, SWR005);
     }
     await page.setViewportSize(D);
     await page.goto('/settings');
@@ -124,7 +128,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await openCore(page, sessionId);
     await expect(page.getByTestId(T.prototypeBadge)).toHaveText(/Real map/);
-    await saveScreenshot(page, '18-core-fit-1440-en');
+    await saveScreenshot(page, '18-core-fit-1440-en', SWR005);
   });
 
   test('TC-VA-02: leader armed (04), keyboard activation picker (05), move panel (06), unit drag (07)', async ({
@@ -136,7 +140,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await openCore(page, sessionId);
     await armLeader(page, plan.leaderId);
     await openSidebarTab(page, 'objects');
-    await saveScreenshot(page, '04-leader-armed-targets');
+    await saveScreenshot(page, '04-leader-armed-targets', SWR005);
 
     const input = page.getByTestId(T.activationSystemSelect).locator('input');
     await keyboardFocus(page, input);
@@ -144,12 +148,12 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await expectFieldFocus(input, 'activation picker');
-    await saveScreenshot(page, '05-activation-keyboard');
+    await saveScreenshot(page, '05-activation-keyboard', SWR005);
 
     await commandViaUi(page, () => page.getByTestId(T.activationConfirm).click());
     await page.getByTestId(T.movePiece(plan.pieceId)).check();
     await expect(page.getByTestId(T.movePanel)).toBeVisible();
-    await saveScreenshot(page, '06-activation-move-panel');
+    await saveScreenshot(page, '06-activation-move-panel', SWR005);
     await page.getByTestId(T.movePiece(plan.pieceId)).uncheck();
 
     await zoomToDetailAround(page, await midpoint(page, plan.fromSystemId, plan.systemId));
@@ -160,7 +164,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await page.mouse.move(from.x + 8, from.y + 8, { steps: 3 });
     await page.mouse.move(to.x, to.y, { steps: 12 });
     expect(await dbg.isDragging(page)).toBe(true);
-    await saveScreenshot(page, '07-move-drag');
+    await saveScreenshot(page, '07-move-drag', SWR005);
     await commandViaUi(page, () => page.mouse.up());
   });
 
@@ -176,11 +180,11 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await openSidebarTab(page, 'log');
     await expect(page.getByTestId(T.logEntryAuto(auto.seq))).toBeVisible();
     await expectTextContrastDeep(page.getByTestId(T.logEntry(auto.seq)), 'auto-pass log entry');
-    await saveScreenshot(page, '08-ai-autopass-log');
+    await saveScreenshot(page, '08-ai-autopass-log', SWR005);
     await passViaUi(page, true);
     await expect(page.getByTestId(T.timeTrack)).toHaveAttribute('data-time', '2');
     await expect(page.getByTestId(T.leaderPool).getByRole('radio')).toHaveCount(4);
-    await saveScreenshot(page, '09-new-round');
+    await saveScreenshot(page, '09-new-round', SWR005);
   });
 
   test('TC-VA-04/05 + TC-VA-12: hidden zone (10), base revealed (11), contested system (12) — not colour-only', async ({
@@ -194,7 +198,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await zone.click();
     await expect(page.getByTestId(T.hiddenZonePanel)).toBeVisible();
     await expectTextContrastDeep(page.getByTestId(T.hiddenZonePanel), 'hidden zone panel');
-    await saveScreenshot(page, '10-empire-hidden-zone');
+    await saveScreenshot(page, '10-empire-hidden-zone', SWR005);
 
     const { seed } = await runSeedCommands(request, 'ai-empire-before-reveal');
     const baseId = seed.rebelBaseSystemId;
@@ -202,7 +206,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await openSidebarTab(page, 'log');
     await expect(page.locator('[data-type="BASE_REVEALED"]')).toHaveCount(1);
     await expect(page.getByTestId(T.mapSystem(baseId))).toHaveAttribute('data-rebel-base', 'true');
-    await saveScreenshot(page, '11-base-revealed');
+    await saveScreenshot(page, '11-base-revealed', SWR005);
 
     // D-1: contested = units of both sides; marked by text (list suffix, panel line) and data, not colour only.
     await openSidebarTab(page, 'objects');
@@ -219,7 +223,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await item.click();
     await expect(page.getByTestId(T.systemPanelContested)).toBeVisible();
     await expectTextContrast(page.getByTestId(T.systemPanelContested), 'contested note');
-    await saveScreenshot(page, '12-contested');
+    await saveScreenshot(page, '12-contested', SWR005);
   });
 
   test('TC-VA-06: game over banners (13 Rebels, 13b Empire) — readable, reason shown, no turn buttons', async ({
@@ -233,13 +237,13 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await expect(page.getByTestId(T.turnControls)).toHaveCount(0);
     await expectTextContrastDeep(banner, 'game over banner');
     await expectNotClipped(page.getByTestId(T.gameOverReason), 'reason');
-    await saveScreenshot(page, '13-game-over-rebels');
+    await saveScreenshot(page, '13-game-over-rebels', SWR005);
 
     const { seed } = await runSeedCommands(request, 'hotseat-empire-before-win');
     await openCore(page, seed.sessionId);
     await expect(banner).toHaveAttribute('data-winner', 'empire');
     await expect(page.getByTestId(T.turnControls)).toHaveCount(0);
-    await saveScreenshot(page, '13b-game-over-empire');
+    await saveScreenshot(page, '13b-game-over-empire', SWR005);
   });
 
   test('TC-VA-07/08/09: core handoff (16), legacy table (15), game page with completed + legacy rows (14)', async ({
@@ -253,13 +257,13 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await expect(page.getByTestId(T.boardCanvas)).toHaveCount(0);
     await expect(page.getByTestId(T.eventLog)).toHaveCount(0);
     await expectNoHorizontalScroll(page, 'handoff');
-    await saveScreenshot(page, '16-hotseat-handoff-core');
+    await saveScreenshot(page, '16-hotseat-handoff-core', SWR005);
 
     const legacy = await seedLegacyV2('empireAi');
     await openLegacy(page, legacy.sessionId);
     await expect(page.getByTestId(T.prototypeBadge)).toHaveAttribute('data-variant', 'legacy');
     await expectTextContrastDeep(page.getByTestId(T.prototypeBadge), 'legacy badge');
-    await saveScreenshot(page, '15-legacy-table');
+    await saveScreenshot(page, '15-legacy-table', SWR005);
 
     const done = await gameOverRebels(request);
     await page.goto(gamePath(REBELLION));
@@ -270,7 +274,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await expect(
       rows.getByTestId(T.recentSession(legacy.sessionId)).getByTestId(T.recentSessionEngine),
     ).not.toBeEmpty();
-    await saveScreenshot(page, '14-game-page-completed');
+    await saveScreenshot(page, '14-game-page-completed', SWR005);
   });
 
   test('TC-VA-10: top bar and panels at 1024×768 and 768×1024 — no overlap, no horizontal scroll, finish/pass not clipped', async ({
@@ -325,7 +329,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await page.keyboard.press('Enter');
     await expect(page.getByTestId(T.passConfirm)).toBeVisible();
     await expect.poll(() => focusedInside(page, T.passConfirm)).toBe(true);
-    await saveScreenshot(page, '17-pass-confirm');
+    await saveScreenshot(page, '17-pass-confirm', SWR005);
     await expect
       .soft(page.getByTestId(T.passConfirmCancel), 'dialog opens with focus on «Cancel»')
       .toBeFocused();

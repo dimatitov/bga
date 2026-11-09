@@ -20,6 +20,13 @@
 // game-package module outside ./definition ./schema ./board ./assets (e.g. rules, scenario, server, ai)
 // got into the bundle.
 //
+// SWR-005B (plan-frontend §3.3, AC-09/AC-10): the dev-only AI diagnostics must leave no trace in production — no
+// `/dev/ai` path (route and `/api/dev/ai/*` endpoints), no `dev-ai-*` / `ai-dev-*` testids — and no OpenAI secret may
+// reach the client: no `OPENAI_API_KEY` / other `OPENAI_*` variable names, no `sk-…` key-looking values, no
+// `api.openai.com`. `AI_*` error codes and their texts ARE allowed (they belong to `@bga/platform` ErrorCodeSchema).
+// Module composition additionally fails on any source under `apps/web/src/dev/**` (the strongest proof: even a renamed
+// string cannot hide a bundled module of the diagnostics page).
+//
 // Usage: node scripts/check-web-bundle.mjs [--dist <dir>] [--rebuild] [--modules] [--modules-dir <dir>] [--skip-modules]
 //   Reads apps/web/dist; builds it first (pnpm --filter @bga/web build) if it is missing or --rebuild.
 //   --modules          also print every game-package module of the bundle;
@@ -43,11 +50,49 @@ function escapeRegExp(s) {
 }
 
 /**
+ * Static rules of SWR-005B: dev diagnostics and OpenAI secrets (plan-frontend §3.3, AC-10). Stable ids for QA logs.
+ * @type {{ id: string, description: string, regex: RegExp }[]}
+ */
+export const DEV_AI_AND_SECRET_RULES = [
+  {
+    id: 'dev-ai-path',
+    description: 'dev AI diagnostics path (`/dev/ai` route or `/api/dev/ai/*` endpoint) in a production bundle',
+    regex: /\/dev\/ai\b/,
+  },
+  {
+    id: 'dev-ai-testid',
+    description: 'dev AI diagnostics testid (`dev-ai-*` / `ai-dev-*`): the `import.meta.env.DEV` guard did not fold',
+    regex: /\b(?:dev-ai|ai-dev)-[a-z]/,
+  },
+  {
+    id: 'openai-key-name',
+    description: '`OPENAI_API_KEY` (server-only secret variable name) in the web bundle (AC-10)',
+    regex: /OPENAI_API_KEY/,
+  },
+  {
+    id: 'openai-env-name',
+    description: 'other `OPENAI_*` server environment variable name in the web bundle (AC-10)',
+    regex: /\bOPENAI_(?!API_KEY)[A-Z]/,
+  },
+  {
+    id: 'openai-key-value',
+    description: 'string that looks like an OpenAI API key (`sk-…`) in the web bundle (AC-10)',
+    regex: /\bsk-[A-Za-z0-9_-]{20,}/,
+  },
+  {
+    id: 'openai-api-host',
+    description: '`api.openai.com` in the web bundle: OpenAI is called only by the server (AC-10)',
+    regex: /api\.openai\.com/,
+  },
+];
+
+/**
  * Rules derived from a scenario object ({ pieces: [{ id, hidden?, typeKey }], rebelBaseSystemId }).
  * @returns {{ id: string, description: string, regex: RegExp }[]}
  */
 export function forbiddenFromScenario(scenario) {
   const rules = [
+    ...DEV_AI_AND_SECRET_RULES,
     {
       id: 'board-debug-hook',
       description: '`__boardDebug` dev/test hook in a production bundle (R-11, TC-ARCH-08)',
@@ -170,6 +215,16 @@ export function forbiddenGameModules(sources) {
   return gameModules(sources).filter((m) => !WEB_GAME_SUBPATHS.includes(m.subpath));
 }
 
+/**
+ * Sources of the dev-only diagnostics (`apps/web/src/dev/**`) — must never be in the production bundle (SWR-005B).
+ * Matches the absolute/repo form (`…/apps/web/src/dev/…`) and the form relative to `apps/web/dist/assets`
+ * (`../../src/dev/…`).
+ */
+const WEB_DEV_MODULE_RE = /(?:^|\/)apps\/web\/src\/dev\/|^(?:\.\.\/)+src\/dev\//;
+export function forbiddenWebModules(sources) {
+  return sources.map((raw) => String(raw).replace(/\\/g, '/')).filter((source) => WEB_DEV_MODULE_RE.test(source));
+}
+
 /** `sources` of every *.map file under `dir`. */
 export function readMapSources(dir) {
   const sources = [];
@@ -234,11 +289,20 @@ function checkBundleModules({ modulesDir, listModules }) {
     for (const m of forbidden) {
       console.log(`FORBIDDEN module ${m.source} [game-${m.game}/${m.subpath}] — web may bundle only ${WEB_GAME_SUBPATHS.join(', ')}`);
     }
-    if (forbidden.length > 0) {
-      console.log(`FAIL check-web-bundle: ${forbidden.length} forbidden game module(s) in the bundle`);
+    // SWR-005B: an empty result is the expected state (not a setup error, unlike the game modules above).
+    const devModules = forbiddenWebModules(sources);
+    for (const source of devModules) {
+      console.log(`FORBIDDEN module ${source} [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)`);
+    }
+    if (forbidden.length > 0 || devModules.length > 0) {
+      console.log(
+        `FAIL check-web-bundle: ${forbidden.length} forbidden game module(s), ${devModules.length} dev module(s) in the bundle`,
+      );
       return 1;
     }
-    console.log(`OK check-web-bundle modules: ${sources.length} sources, ${all.length} game modules, only ${WEB_GAME_SUBPATHS.join('/')}`);
+    console.log(
+      `OK check-web-bundle modules: ${sources.length} sources, ${all.length} game modules, only ${WEB_GAME_SUBPATHS.join('/')}; 0 apps/web/src/dev modules`,
+    );
     return 0;
   } finally {
     if (!modulesDir) fs.rmSync(dir, { recursive: true, force: true });

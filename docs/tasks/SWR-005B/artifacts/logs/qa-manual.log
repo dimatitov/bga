@@ -1,0 +1,139 @@
+# SWR-005B TC-M-01 manual browser check (mock mode) — qa-lead, 2026-11-08T20:20:38Z
+# Servers: reused the e2e setup instead of 'pnpm dev' — 'pnpm dev' (NODE_ENV=development) falls back to apps/api/.env for every
+# blank variable (env.ts loadAppConfig), so it would surface the PO's key flag/model ids. e2e setup = isolated, no real DB touched:
+#   PORT=3100 pnpm --filter @bga/api run e2e:serve   (fresh apps/api/.tmp/e2e.db, NODE_ENV=test, all OPENAI_* blank, OPENAI_ENABLED=false)
+#   WEB_PORT=5174 API_PROXY_TARGET=http://localhost:3100 pnpm --filter @bga/web run dev
+# apps/api/prisma/dev.db NOT used; apps/api/.env NOT read. No real OpenAI request made (provider mock only; browser host check below).
+# Driver: Playwright chromium scripts (headless, locale ru-RU) run from the session scratchpad: manual.cjs, kbd.cjs, arrow.cjs.
+
+$ curl -s http://localhost:3100/api/dev/ai/status
+{"openaiEnabled":false,"provider":"mock","keyConfigured":false,"models":{"strategy":{"id":null,"available":null},"tactical":{"id":null,"available":null}},"budget":{"budgetKey":"dev-diagnostics","spentUsd":0,"spentMicroUsd":0,"limitUsd":null,"limitMicroUsd":null,"remainingUsd":null,"remainingMicroUsd":null}}
+
+## 1. States + scenario at 1440x900 and 375x812 (manual.cjs) — exit=0
+
+=== viewport 1440x900 (desktop) ===
+  dev-ai-status-openai: OpenAI:выключен
+  dev-ai-status-provider: Провайдер по умолчанию:mock
+  dev-ai-status-key: Ключ API:не задан
+  dev-ai-model-strategy: strategyне заданане проверялась
+  dev-ai-model-tactical: tacticalне заданане проверялась
+  dev-ai-budget: Бюджет:потрачено 0,00 $; лимита нет (OpenAI выключен)
+  dev-ai-scenario-note: Тестовые данные, не правила Rebellion
+PASS status: key not configured shown (no real key in test env) — Ключ API:не задан
+PASS DOM has no sk- key literal / OPENAI_API_KEY
+PASS actions list has 3 test actions
+PASS no horizontal overflow — scrollWidth-clientWidth=0
+PASS submit reachable by Tab — 1 Tab presses
+  focused submit style: outline=solid 2px; box-shadow=rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px
+  dev-ai-result-action: action-1 · MOVE_FLEET · corellia
+  dev-ai-result-provider: mock
+  dev-ai-result-model: mock-deterministic-v1
+  dev-ai-result-duration: 0 мс
+  dev-ai-result-attempts: 1
+  dev-ai-result-reason: Mock provider: deterministic choice of the first available action.
+  dev-ai-tokens-total: 0
+  dev-ai-cost: 0,00 $
+  dev-ai-budget-remaining: лимита нет
+PASS result provider is mock
+PASS result action is one of the 3 test actions
+PASS no horizontal overflow after result — 0
+PASS no browser requests to non-localhost hosts
+PASS no console errors
+
+=== viewport 375x812 (mobile) ===
+  dev-ai-status-openai: OpenAI:выключен
+  dev-ai-status-provider: Провайдер по умолчанию:mock
+  dev-ai-status-key: Ключ API:не задан
+  dev-ai-model-strategy: strategyне заданане проверялась
+  dev-ai-model-tactical: tacticalне заданане проверялась
+  dev-ai-budget: Бюджет:потрачено 0,00 $; лимита нет (OpenAI выключен)
+  dev-ai-scenario-note: Тестовые данные, не правила Rebellion
+PASS status: key not configured shown (no real key in test env) — Ключ API:не задан
+PASS DOM has no sk- key literal / OPENAI_API_KEY
+PASS actions list has 3 test actions
+PASS no horizontal overflow — scrollWidth-clientWidth=0
+PASS submit reachable by Tab — 1 Tab presses
+  focused submit style: outline=solid 2px; box-shadow=rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px
+  dev-ai-result-action: action-1 · MOVE_FLEET · corellia
+  dev-ai-result-provider: mock
+  dev-ai-result-model: mock-deterministic-v1
+  dev-ai-result-duration: 0 мс
+  dev-ai-result-attempts: 1
+  dev-ai-result-reason: Mock provider: deterministic choice of the first available action.
+  dev-ai-tokens-total: 0
+  dev-ai-cost: 0,00 $
+  dev-ai-budget-remaining: лимита нет
+PASS result provider is mock
+PASS result action is one of the 3 test actions
+PASS no horizontal overflow after result — 0
+PASS no browser requests to non-localhost hosts
+PASS no console errors
+
+TOTAL FAILURES: 0
+
+## 2. Keyboard-only path from a fresh load (kbd.cjs) — exit=0
+=== 1440x900 fresh load, Tab order ===
+  A[] "Перейти к содержимому"
+  A[nav-catalog] "AI-компаньон настольных игр"
+  DIV[mock-badge] "MOCK"
+  A[nav-settings] "Настройки"
+  BUTTON[dev-ai-back] "Назад"
+  BUTTON[dev-ai-status-refresh] "Обновить статус"
+  BUTTON[dev-ai-role-tactical] "tactical"
+  BUTTON[dev-ai-provider-mock] "Mock — бесплатно"
+    -> Enter on mock provider
+  BUTTON[dev-ai-submit] "Тестировать AI"
+PASS keyboard-only: reached submit=true, Enter -> mock result=true; live regions: status
+=== 375x812 fresh load, Tab order ===
+  A[] "Перейти к содержимому"
+  A[nav-catalog] "AI-компаньон настольных игр"
+  DIV[mock-badge] "MOCK"
+  A[nav-settings] "Настройки"
+  BUTTON[dev-ai-back] "Назад"
+  BUTTON[dev-ai-status-refresh] "Обновить статус"
+  BUTTON[dev-ai-role-tactical] "tactical"
+  BUTTON[dev-ai-provider-mock] "Mock — бесплатно"
+    -> Enter on mock provider
+  BUTTON[dev-ai-submit] "Тестировать AI"
+PASS keyboard-only: reached submit=true, Enter -> mock result=true; live regions: status
+TOTAL FAILURES: 0
+
+## 3. Radio groups role/provider: roving tabindex + arrows (arrow.cjs) — exit=0
+dev-ai-role-tactical: tabindex=0 role=radio aria-checked=true aria-pressed=null
+dev-ai-role-strategy: tabindex=-1 role=radio aria-checked=false aria-pressed=null
+dev-ai-provider-mock: tabindex=0 role=radio aria-checked=true aria-pressed=null
+dev-ai-provider-auto: tabindex=-1 role=radio aria-checked=false aria-pressed=null
+PASS ArrowRight dev-ai-role-tactical -> dev-ai-role-strategy: focused=true selected=true
+PASS ArrowRight dev-ai-provider-mock -> dev-ai-provider-auto: focused=true selected=true
+after selecting auto with OpenAI disabled: paid-warning=0, auto-mock-hint=1
+
+## Screenshots (artifacts/screenshots/)
+  qa-manual-1440-keyboard-arrows-auto.png
+  qa-manual-1440-keyboard-result.png
+  qa-manual-1440-result-mock.png
+  qa-manual-1440-status.png
+  qa-manual-1440-submit-focus.png
+  qa-manual-375-keyboard-result.png
+  qa-manual-375-result-mock.png
+  qa-manual-375-status.png
+  qa-manual-375-submit-focus.png
+
+## Observation (not a defect): after Enter on «Тестировать AI» the screenshot qa-manual-375-keyboard-result.png shows no
+## clearly visible focus ring on the button (focus ring is visible before submit: qa-manual-*-submit-focus.png, outline solid 2px).
+## Result is announced via a role=status live region. Not in the AC; left to FE as a possible polish item.
+
+## Servers stopped after the check; ports 3000/5173/3100/5174 free.
+RESULT: TC-M-01 passed (0 failures in 3 scripts).
+
+## 4. Review of SWR-005B e2e screenshots regenerated by this QA pnpm verify (mtime 2026-11-08 23:14 local = 20:14Z, qa-verify.log)
+Checked visually (D-1 regression: no PO .env values in the e2e process):
+  dev-ai-1440-status-mock.png, dev-ai-375-status-mock.png  — OpenAI «выключен», provider mock, Ключ API «не задан», models «не задана / не проверялась», budget 0,00 $ no limit. OK
+  dev-ai-1440-result-mock.png, dev-ai-375-result-mock.png  — status as above; result action-1 MOVE_FLEET corellia, mock, mock-deterministic-v1, 0 ms, tokens 0, 0,00 $. OK
+  settings-375-dev-link.png — Settings «Для разработчиков → Диагностика AI (dev)» link, no key/model data. OK
+  dev-ai-1440-paid-warning.png — shows «включён / задан / gpt-6.1-sol / gpt-6-luna / потрачено 0,0012 $»: this is the page.route FIXTURE
+    (e2e/support/dev-ai.ts:126-136: keyConfigured:true, strategy gpt-6.1-sol available:true, tactical gpt-6-luna available:null,
+    spentMicroUsd 1200), test «S-6 … (status intercepted)» — not the real server. Model ids equal the .env.example defaults. OK
+  dev-ai-1440-status-unavailable / -error-budget / -375-error-invalid / -1440-en-result / -1440-pending — route-intercepted UI states (Q-25).
+Real-server assertion: e2e/dev-ai.spec.ts:124 `expect.soft(body.keyConfigured, 'no OpenAI key in the e2e API process').toBe(false)` — test #37 TC-E-01 ✓ in qa-verify.log;
+F-1 (Playwright side): e2e/env-isolation.spec.ts tests #47, #48 ✓ in qa-verify.log.
+RESULT: D-1 / F-1 fixed — no keyConfigured=true or PO model ids from the real e2e API in any screenshot.

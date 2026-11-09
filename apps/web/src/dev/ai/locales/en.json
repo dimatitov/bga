@@ -1,0 +1,136 @@
+{
+  "title": "AI diagnostics",
+  "devBadge": "DEV",
+  "intro": "Development only. Not part of the game. The scenario below is test data.",
+  "back": "Back",
+  "status": {
+    "title": "Connection",
+    "openai": {
+      "label": "OpenAI",
+      "on": "enabled",
+      "off": "disabled"
+    },
+    "provider": "Default provider",
+    "key": {
+      "label": "API key",
+      "yes": "configured",
+      "no": "not configured"
+    },
+    "models": {
+      "title": "Models",
+      "strategy": "strategy",
+      "tactical": "tactical",
+      "notConfigured": "not set",
+      "available": "available",
+      "unavailable": "unavailable",
+      "unknown": "not checked"
+    },
+    "budget": {
+      "title": "Budget",
+      "line": "spent {{spent}} of {{limit}}, {{remaining}} left",
+      "unlimited": "spent {{spent}}; no limit (OpenAI disabled)"
+    },
+    "refresh": "Refresh status",
+    "retry": "Retry",
+    "unavailable": "The diagnostics dev endpoint was not found (the API runs in production or without the diagnostics module).",
+    "errorTitle": "Status not loaded"
+  },
+  "run": {
+    "title": "Run",
+    "role": {
+      "label": "Model role",
+      "tactical": "tactical",
+      "strategy": "strategy",
+      "withModel": "{{role}} — {{model}}"
+    },
+    "provider": {
+      "label": "Provider",
+      "mock": "Mock — free",
+      "auto": "Auto (server setting)"
+    },
+    "paidWarning": "Auto with OpenAI enabled: this is a paid OpenAI request. The cost is charged to the diagnostics budget.",
+    "autoMockHint": "OpenAI is disabled: mock will answer, the request is free.",
+    "submit": "Test AI",
+    "pending": "Request in progress…"
+  },
+  "scenario": {
+    "title": "Test scenario",
+    "note": "Test data, not Rebellion rules",
+    "faction": "Side",
+    "phase": "Phase",
+    "objective": "Objective",
+    "actions": "Available actions",
+    "selected": "selected",
+    "noTarget": "no target"
+  },
+  "result": {
+    "title": "Result",
+    "empty": "Press “Test AI” to get a decision.",
+    "pending": "Waiting for the AI answer…",
+    "action": "Selected action",
+    "outOfList": "The action is not in the local scenario list",
+    "reason": "Reason",
+    "reasonNote": "The model explains in English.",
+    "provider": "Provider",
+    "model": "Model",
+    "duration": "Response time",
+    "durationValue": "{{value}} ms",
+    "attempts": "Attempts",
+    "tokens": {
+      "title": "Tokens",
+      "input": "input",
+      "cached": "cached",
+      "output": "output",
+      "reasoning": "reasoning",
+      "total": "total",
+      "noData": "no data"
+    },
+    "cost": "Cost (estimate)",
+    "costNote": "estimate; the final OpenAI bill may differ",
+    "pricing": "Pricing: {{version}}",
+    "budgetRemaining": "Budget left",
+    "budgetUnlimited": "no limit"
+  },
+  "error": {
+    "generic": {
+      "title": "Request failed"
+    },
+    "AI_NOT_CONFIGURED": {
+      "title": "AI is not configured",
+      "hint": "Choose the Mock provider or check apps/api/.env."
+    },
+    "AI_BUDGET_EXCEEDED": {
+      "title": "Budget exhausted",
+      "hint": "The limit is shared by all diagnostic requests and does not reset by itself."
+    },
+    "AI_RATE_LIMITED": {
+      "title": "Too many requests",
+      "hint": "There is no automatic retry — press the button later."
+    },
+    "AI_TIMEOUT": {
+      "title": "OpenAI timeout",
+      "hint": "The game state was not changed."
+    },
+    "AI_PROVIDER_ERROR": {
+      "title": "OpenAI API error",
+      "hint": "The game state was not changed."
+    },
+    "AI_INVALID_DECISION": {
+      "title": "Invalid model answer",
+      "hint": "The action was rejected, nothing was executed."
+    },
+    "AI_DEV_FORBIDDEN": {
+      "title": "Access denied",
+      "hint": "Open the page on the machine where the API runs (localhost)."
+    },
+    "details": {
+      "budget": "{{remaining}} left of {{limit}}.",
+      "retryAfter": "You can retry in {{seconds}} s.",
+      "attempts": "Attempts: {{attempts}}."
+    }
+  },
+  "announce": {
+    "success": "AI selected action {{id}}",
+    "error": "Error: {{text}}"
+  }
+}

@@ -2,15 +2,21 @@ import 'reflect-metadata';
 import type { INestApplication, LogLevel } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import type { GameDefinition, ServerGameModule } from '@bga/platform';
-import { AppModule } from './app.module';
+import type { AiTestOverrides } from './ai/ai.types';
+import { AppModule, isDevRoutesEnabled } from './app.module';
 import { ApiExceptionFilter } from './common/api-exception.filter';
 import type { Clock, IdGenerator } from './common/runtime.tokens';
+import type { AppConfig } from './config/env';
+import { DEV_AI_PATH, devAiBodyGate } from './dev/ai/dev-ai-body.middleware';
 import { GAME_DEFINITIONS } from './game-registry/definitions';
 import { SERVER_GAME_MODULES } from './game-registry/registry';
 
 export interface CreateAppOptions {
-  /** SQLite URL; defaults to `process.env.DATABASE_URL`. Tests pass a per-test file (R-5, R-6). */
-  databaseUrl?: string;
+  /**
+   * Validated configuration (SWR-005B, AC-01): `main.ts` passes `loadAppConfig()`, tests pass `testConfig()`.
+   * `createApp` never reads the environment or `.env`; the SQLite URL is `config.databaseUrl` (R-5, R-6).
+   */
+  config: AppConfig;
   logger?: LogLevel[] | false;
   /** Deterministic time source for tests (R-5); defaults to the system clock. */
   clock?: Clock;
@@ -20,6 +26,19 @@ export interface CreateAppOptions {
   gameModules?: readonly ServerGameModule[];
   /** Catalogue definitions incl. coming_soon (TR-3); defaults to `GAME_DEFINITIONS`. */
   gameDefinitions?: readonly GameDefinition[];
+  /**
+   * Test-only AI overrides (SWR-005B §5.9: fake fetch for the real OpenAI SDK, mock failure script, clocks, log sink,
+   * dev rate limits). Refused with `nodeEnv: 'production'`.
+   */
+  ai?: AiTestOverrides;
+}
+
+/** `createApp` was given test-only options under `nodeEnv: 'production'`. */
+export class ProductionOverridesError extends Error {
+  constructor() {
+    super('AI test overrides are not allowed in production');
+    this.name = 'ProductionOverridesError';
+  }
 }
 
 /**
@@ -28,21 +47,23 @@ export interface CreateAppOptions {
  * response the unified body `{ ok: false, error }` (R-8). Several apps may be created in turn
  * on the same DB file (TC-API-21). An inconsistent game registry makes it throw (validateRegistry).
  */
-export async function createApp(options: CreateAppOptions = {}): Promise<INestApplication> {
-  const databaseUrl = options.databaseUrl ?? process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error('DATABASE_URL is not set (see apps/api/.env.example)');
+export async function createApp(options: CreateAppOptions): Promise<INestApplication> {
+  if (options.config.nodeEnv === 'production' && options.ai !== undefined) {
+    throw new ProductionOverridesError();
   }
   const app = await NestFactory.create(
     AppModule.forRoot({
-      databaseUrl,
+      config: options.config,
       clock: options.clock,
       idGenerator: options.idGenerator,
       gameModules: options.gameModules ?? SERVER_GAME_MODULES,
       gameDefinitions: options.gameDefinitions ?? GAME_DEFINITIONS,
+      ai: options.ai,
     }),
     { logger: options.logger ?? ['error', 'warn', 'log'] },
   );
+  // Dev AI routes: loopback guard + 8 KiB body reader BEFORE the global body parsers (non-production only).
+  if (isDevRoutesEnabled(options.config)) app.use(DEV_AI_PATH, devAiBodyGate());
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new ApiExceptionFilter());
   app.enableShutdownHooks();

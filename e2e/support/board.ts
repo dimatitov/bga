@@ -362,8 +362,9 @@ export async function keyboardFocus(page: Page, target: Locator, maxSteps = 250)
  * - screenshots of any other task go to the untracked `test-results/screenshots/<task>/<name>.png` (the screens are
  *   still exercised, but historical evidence of finished tasks — SWR-002, SWR-003 — is never rewritten by a run).
  * Regenerate old evidence deliberately: `SCREENSHOT_TASK=SWR-003 pnpm e2e` (then SWR-004 shots go to test-results).
+ * SWR-005B: current task is SWR-005B (dev-ai.spec.ts); SWR-005 specs pass 'SWR-005' explicitly.
  */
-export const CURRENT_SCREENSHOT_TASK = 'SWR-005';
+export const CURRENT_SCREENSHOT_TASK = 'SWR-005B';
 
 /** Task whose evidence folder receives screenshots in this run. */
 export function evidenceTask(): string {
@@ -379,13 +380,18 @@ export function screenshotPath(repoRoot: string, name: string, task: string): st
   return path.join(dir, `${name}.png`);
 }
 
-/** Saves a viewport screenshot of `task` (see the routing rule above). */
+/** Saves a viewport (or, with `fullPage`, full-page) screenshot of `task` (see the routing rule above). */
 export async function saveScreenshot(
   page: Page,
   name: string,
   task: string = CURRENT_SCREENSHOT_TASK,
+  options: { fullPage?: boolean } = {},
 ): Promise<void> {
   const { configFile } = test.info().config;
   const repoRoot = configFile ? path.dirname(configFile) : process.cwd();
-  await page.screenshot({ path: screenshotPath(repoRoot, name, task), animations: 'disabled' });
+  await page.screenshot({
+    path: screenshotPath(repoRoot, name, task),
+    animations: 'disabled',
+    fullPage: options.fullPage ?? false,
+  });
 }

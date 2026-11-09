@@ -18,5 +18,9 @@
     "language": "Interface language: English",
     "reduceMotionOn": "Reduced motion is on",
     "reduceMotionOff": "Reduced motion is off"
+  },
+  "dev": {
+    "title": "For developers",
+    "aiLink": "AI diagnostics (dev)"
   }
 }

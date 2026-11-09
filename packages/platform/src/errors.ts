@@ -13,6 +13,20 @@ export const ErrorCodeSchema = z.enum([
   'SETUP_UNSUPPORTED',
   /** `Idempotency-Key` already used with a different request body → HTTP 409 (SWR-004, Q-2). */
   'IDEMPOTENCY_KEY_REUSED',
+  /** AI provider is off / key rejected / model or pricing unknown → HTTP 503 (SWR-005B). */
+  'AI_NOT_CONFIGURED',
+  /** Budget key spent + worst-case reserve ≥ limit; OpenAI is not called → HTTP 429 (SWR-005B). */
+  'AI_BUDGET_EXCEEDED',
+  /** Upstream 429 or the dev rate limit → HTTP 429 (SWR-005B). */
+  'AI_RATE_LIMITED',
+  /** Provider timeout after retries → HTTP 504 (SWR-005B). */
+  'AI_TIMEOUT',
+  /** Network / 5xx / bad request / quota from the provider → HTTP 502 (SWR-005B). */
+  'AI_PROVIDER_ERROR',
+  /** The model answer is not JSON, refused, incomplete or picks an id outside the legal list → HTTP 502 (SWR-005B). */
+  'AI_INVALID_DECISION',
+  /** Dev-only AI endpoint called from a non-local origin / without the dev guard → HTTP 403 (SWR-005B). */
+  'AI_DEV_FORBIDDEN',
 ]);
 export type ErrorCode = z.infer<typeof ErrorCodeSchema>;
 
@@ -26,6 +40,13 @@ export const ERROR_HTTP_STATUS = {
   GAME_UNAVAILABLE: 422,
   SETUP_UNSUPPORTED: 422,
   INTERNAL: 500,
+  AI_DEV_FORBIDDEN: 403,
+  AI_BUDGET_EXCEEDED: 429,
+  AI_RATE_LIMITED: 429,
+  AI_PROVIDER_ERROR: 502,
+  AI_INVALID_DECISION: 502,
+  AI_NOT_CONFIGURED: 503,
+  AI_TIMEOUT: 504,
 } as const satisfies Record<ErrorCode, number>;
 
 /**
@@ -43,10 +64,47 @@ export const ERROR_MESSAGE_KEYS = {
   /** Fallback for 422 `SETUP_UNSUPPORTED`; a game normally sends its own `errors.<name>` key. */
   setupUnsupported: 'errors.setupUnsupported',
   idempotencyKeyReused: 'errors.idempotencyKeyReused',
+  // AI layer (SWR-005B, AM-BE-2 / Q-FE-6: flat `errors.ai*`). Mapping to codes: plan-backend §6.1.
+  /** `AI_NOT_CONFIGURED`: OpenAI disabled / key or models not set. */
+  aiNotConfigured: 'errors.aiNotConfigured',
+  /** `AI_NOT_CONFIGURED`: the configured model is not available to the key (404). */
+  aiModelUnavailable: 'errors.aiModelUnavailable',
+  /** `AI_NOT_CONFIGURED`: no pricing entry for the model (cost cannot be bounded). */
+  aiPricingUnknown: 'errors.aiPricingUnknown',
+  /** `AI_NOT_CONFIGURED`: OpenAI rejected the key (401/403). */
+  aiKeyRejected: 'errors.aiKeyRejected',
+  /** `AI_BUDGET_EXCEEDED`. */
+  aiBudgetExceeded: 'errors.aiBudgetExceeded',
+  /** `AI_RATE_LIMITED`: upstream (OpenAI) rate limit. */
+  aiRateLimited: 'errors.aiRateLimited',
+  /** `AI_RATE_LIMITED`: the local dev endpoint rate limit (AM-BE-11). */
+  aiDevRateLimited: 'errors.aiDevRateLimited',
+  /** `AI_TIMEOUT`. */
+  aiTimeout: 'errors.aiTimeout',
+  /** `AI_PROVIDER_ERROR`: network / 5xx / bad request / unknown. */
+  aiProviderError: 'errors.aiProviderError',
+  /** `AI_PROVIDER_ERROR`: `insufficient_quota` (Clarification Q-7/Q-9/Q-14). */
+  aiQuota: 'errors.aiQuota',
+  /** `AI_INVALID_DECISION`. */
+  aiInvalidDecision: 'errors.aiInvalidDecision',
+  /** `AI_DEV_FORBIDDEN`. */
+  aiDevForbidden: 'errors.aiDevForbidden',
 } as const;
 export type PlatformErrorMessageKey = (typeof ERROR_MESSAGE_KEYS)[keyof typeof ERROR_MESSAGE_KEYS];
 /** Alias of `ERROR_MESSAGE_KEYS` (name used by plan-frontend §12). */
 export const PLATFORM_ERROR_MESSAGE_KEYS = ERROR_MESSAGE_KEYS;
+
+/** The AI-layer subset of `ErrorCodeSchema` (SWR-005B). */
+export const AiErrorCodeSchema = ErrorCodeSchema.extract([
+  'AI_NOT_CONFIGURED',
+  'AI_BUDGET_EXCEEDED',
+  'AI_RATE_LIMITED',
+  'AI_TIMEOUT',
+  'AI_PROVIDER_ERROR',
+  'AI_INVALID_DECISION',
+  'AI_DEV_FORBIDDEN',
+]);
+export type AiErrorCode = z.infer<typeof AiErrorCodeSchema>;
 
 export const ApiErrorSchema = z.strictObject({
   code: ErrorCodeSchema,

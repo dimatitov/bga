@@ -1,0 +1,206 @@
+# SWR-005B F-1 fix — QA log (2026-11-08T19:54:34Z)
+$ npx tsc -p e2e/tsconfig.json
+exit=0
+$ npx eslint playwright.config.ts e2e/env-isolation.spec.ts e2e/support/blank-openai-env.ts e2e/support/seed.ts
+exit=0
+$ npx prettier --check (same files)
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+$ pnpm exec playwright test e2e/env-isolation.spec.ts --reporter=list
+[WebServer] 
+[WebServer] > @bga/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+[WebServer] Environment variables loaded from .env
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 4 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] AppModule dependencies initialized +29ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +1ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +21ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] AiModule dependencies initialized +27ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +1ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RoutesResolver] HealthController {/api/health}: +5ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +3ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +2ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +2ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +1ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +1ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +0ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +1ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +1ms
+[WebServer] [Nest] 53492  - 11/08/2026, 10:54:51 PM     LOG [NestApplication] Nest application successfully started +3ms
+
+Running 2 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/env-isolation.spec.ts:15:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › worker: after loading AND constructing the Prisma client like seed.ts, no OPENAI_* is non-blank (61ms)
+  ✓  2 [chromium] › e2e/env-isolation.spec.ts:24:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › child spawned from a spec inherits a clean env even after it loads the Prisma client itself (234ms)
+
+  2 passed (12.3s)
+exit=0
+
+# NEGATIVE CONTROL (temporary, reverted): blankOpenAiEnv() made a no-op — the spec must FAIL (names only in output)
+$ pnpm exec playwright test e2e/env-isolation.spec.ts --reporter=line
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Running 2 tests using 1 worker
+
+[1/2] [chromium] › e2e/env-isolation.spec.ts:15:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › worker: after loading AND constructing the Prisma client like seed.ts, no OPENAI_* is non-blank
+  1) [chromium] › e2e/env-isolation.spec.ts:15:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › worker: after loading AND constructing the Prisma client like seed.ts, no OPENAI_* is non-blank 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 6
+
+    - Array []
+    + Array [
+    +   "OPENAI_API_KEY",
+    +   "OPENAI_STRATEGY_MODEL",
+    +   "OPENAI_TACTICAL_MODEL",
+    +   "OPENAI_MAX_COST_PER_SESSION_USD",
+    + ]
+
+      15 |   test('worker: after loading AND constructing the Prisma client like seed.ts, no OPENAI_* is non-blank', async () => {
+      16 |     await loadPrismaClientLikeSeed();
+    > 17 |     expect(nonBlankOpenAiVarNames()).toEqual([]);
+         |                                      ^
+      18 |     expect(process.env.OPENAI_ENABLED === 'false').toBe(true);
+      19 |     // Every listed name is PRESENT (blank) — dotenv never overwrites a present key, so it cannot fill them later.
+      20 |     const missing = BLANKED_OPENAI_VARS.filter((key) => process.env[key] !== '');
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/env-isolation.spec.ts:17:38
+
+    Error Context: test-results/env-isolation-F-1-no-OpenA-1d93e-d-ts-no-OPENAI-is-non-blank-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/env-isolation-F-1-no-OpenA-1d93e-d-ts-no-OPENAI-is-non-blank-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/env-isolation-F-1-no-OpenA-1d93e-d-ts-no-OPENAI-is-non-blank-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+[2/2] [chromium] › e2e/env-isolation.spec.ts:24:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › child spawned from a spec inherits a clean env even after it loads the Prisma client itself
+  2) [chromium] › e2e/env-isolation.spec.ts:24:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › child spawned from a spec inherits a clean env even after it loads the Prisma client itself 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 7
+
+      Object {
+    -   "bad": Array [],
+    -   "enabledFalse": true,
+    +   "bad": Array [
+    +     "OPENAI_API_KEY",
+    +     "OPENAI_STRATEGY_MODEL",
+    +     "OPENAI_TACTICAL_MODEL",
+    +     "OPENAI_MAX_COST_PER_SESSION_USD",
+    +   ],
+    +   "enabledFalse": false,
+      }
+
+      36 |       encoding: 'utf8',
+      37 |     });
+    > 38 |     expect(JSON.parse(out)).toEqual({ bad: [], enabledFalse: true });
+         |                             ^
+      39 |   });
+      40 | });
+      41 |
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/env-isolation.spec.ts:38:29
+
+    Error Context: test-results/env-isolation-F-1-no-OpenA-4b4e8-ds-the-Prisma-client-itself-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/env-isolation-F-1-no-OpenA-4b4e8-ds-the-Prisma-client-itself-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/env-isolation-F-1-no-OpenA-4b4e8-ds-the-Prisma-client-itself-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  2 failed
+    [chromium] › e2e/env-isolation.spec.ts:15:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › worker: after loading AND constructing the Prisma client like seed.ts, no OPENAI_* is non-blank 
+    [chromium] › e2e/env-isolation.spec.ts:24:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › child spawned from a spec inherits a clean env even after it loads the Prisma client itself 
+exit=
+
+# after revert of the negative control
+$ pnpm exec playwright test e2e/env-isolation.spec.ts e2e/dev-ai.spec.ts --reporter=list
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/dev-ai.spec.ts:111:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-01: status shows mock / OpenAI disabled; PO scenario is listed as test data (1.8s)
+  ✓   2 [chromium] › e2e/dev-ai.spec.ts:171:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-02: «Тестировать AI» with mock → result card; button disabled while pending; one request (1.5s)
+  ✓   3 [chromium] › e2e/dev-ai.spec.ts:226:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-PS-04 (e2e): provider «auto» with OpenAI disabled → hint, and the server answers with mock (1.2s)
+  ✓   4 [chromium] › e2e/dev-ai.spec.ts:240:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › keyboard: role, provider and «Тестировать AI» are reachable and operable without a mouse (1.3s)
+  ✓   5 [chromium] › e2e/dev-ai.spec.ts:267:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-S-09: no key / OPENAI_API_KEY in DOM, storage or dev-AI responses (1.0s)
+  ✓   6 [chromium] › e2e/dev-ai.spec.ts:290:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-05 + S-10/S-11: Settings dev link → /dev/ai (en); back to the catalog; sessions untouched (1.4s)
+  ✓   7 [chromium] › e2e/dev-ai.spec.ts:326:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › TC-E-03 / TC-W-05: every AI_* code renders a localized role=alert; button usable again (2.3s)
+  ✓   8 [chromium] › e2e/dev-ai.spec.ts:405:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › pending with an intercepted answer: controls disabled until the answer arrives (1.0s)
+  ✓   9 [chromium] › e2e/dev-ai.spec.ts:423:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › status card: 404 → «unavailable» (S-9); 500 → error alert + retry recovers (3.0s)
+  ✓  10 [chromium] › e2e/dev-ai.spec.ts:443:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › S-6: provider «auto» with OpenAI enabled (status intercepted) shows the paid-request warning (949ms)
+  ✓  11 [chromium] › e2e/env-isolation.spec.ts:15:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › worker: after loading AND constructing the Prisma client like seed.ts, no OPENAI_* is non-blank (59ms)
+  ✓  12 [chromium] › e2e/env-isolation.spec.ts:24:3 › F-1: no OpenAI values from apps/api/.env in the Playwright process › child spawned from a spec inherits a clean env even after it loads the Prisma client itself (253ms)
+
+  12 passed (32.5s)
+exit=
+# note: the "exit=" lines after the two piped playwright runs are empty because the shell is zsh (bash PIPESTATUS is unset there); the outcome is the Playwright summary line itself: negative control "2 failed", final run "12 passed".

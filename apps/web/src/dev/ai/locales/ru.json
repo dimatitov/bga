@@ -1,0 +1,136 @@
+{
+  "title": "Диагностика AI",
+  "devBadge": "DEV",
+  "intro": "Только для разработки. Не входит в игру. Сценарий ниже — тестовые данные.",
+  "back": "Назад",
+  "status": {
+    "title": "Подключение",
+    "openai": {
+      "label": "OpenAI",
+      "on": "включён",
+      "off": "выключен"
+    },
+    "provider": "Провайдер по умолчанию",
+    "key": {
+      "label": "Ключ API",
+      "yes": "задан",
+      "no": "не задан"
+    },
+    "models": {
+      "title": "Модели",
+      "strategy": "strategy",
+      "tactical": "tactical",
+      "notConfigured": "не задана",
+      "available": "доступна",
+      "unavailable": "недоступна",
+      "unknown": "не проверялась"
+    },
+    "budget": {
+      "title": "Бюджет",
+      "line": "потрачено {{spent}} из {{limit}}, осталось {{remaining}}",
+      "unlimited": "потрачено {{spent}}; лимита нет (OpenAI выключен)"
+    },
+    "refresh": "Обновить статус",
+    "retry": "Повторить",
+    "unavailable": "Dev-эндпоинт диагностики не найден (API запущен в production или без модуля диагностики).",
+    "errorTitle": "Статус не загружен"
+  },
+  "run": {
+    "title": "Запуск",
+    "role": {
+      "label": "Роль модели",
+      "tactical": "tactical",
+      "strategy": "strategy",
+      "withModel": "{{role}} — {{model}}"
+    },
+    "provider": {
+      "label": "Провайдер",
+      "mock": "Mock — бесплатно",
+      "auto": "Авто (по настройке сервера)"
+    },
+    "paidWarning": "Авто при включённом OpenAI: это платный запрос к OpenAI. Стоимость спишется из бюджета диагностики.",
+    "autoMockHint": "OpenAI выключен: ответит mock, запрос бесплатный.",
+    "submit": "Тестировать AI",
+    "pending": "Запрос выполняется…"
+  },
+  "scenario": {
+    "title": "Тестовый сценарий",
+    "note": "Тестовые данные, не правила Rebellion",
+    "faction": "Сторона",
+    "phase": "Фаза",
+    "objective": "Цель",
+    "actions": "Доступные действия",
+    "selected": "выбрано",
+    "noTarget": "без цели"
+  },
+  "result": {
+    "title": "Результат",
+    "empty": "Нажмите «Тестировать AI», чтобы получить решение.",
+    "pending": "Ждём ответ AI…",
+    "action": "Выбранное действие",
+    "outOfList": "Действия нет в локальном списке сценария",
+    "reason": "Объяснение",
+    "reasonNote": "Объяснение модели — на английском.",
+    "provider": "Провайдер",
+    "model": "Модель",
+    "duration": "Время ответа",
+    "durationValue": "{{value}} мс",
+    "attempts": "Попыток",
+    "tokens": {
+      "title": "Токены",
+      "input": "вход",
+      "cached": "из кеша",
+      "output": "выход",
+      "reasoning": "рассуждение",
+      "total": "всего",
+      "noData": "нет данных"
+    },
+    "cost": "Стоимость (оценка)",
+    "costNote": "оценка; итог по счёту OpenAI может отличаться",
+    "pricing": "Тарифы: {{version}}",
+    "budgetRemaining": "Остаток бюджета",
+    "budgetUnlimited": "лимита нет"
+  },
+  "error": {
+    "generic": {
+      "title": "Запрос не выполнен"
+    },
+    "AI_NOT_CONFIGURED": {
+      "title": "AI не настроен",
+      "hint": "Выберите провайдер Mock или проверьте apps/api/.env."
+    },
+    "AI_BUDGET_EXCEEDED": {
+      "title": "Бюджет исчерпан",
+      "hint": "Лимит общий для всех запросов диагностики и сам не сбрасывается."
+    },
+    "AI_RATE_LIMITED": {
+      "title": "Слишком много запросов",
+      "hint": "Автоповтора нет — нажмите кнопку позже."
+    },
+    "AI_TIMEOUT": {
+      "title": "Таймаут OpenAI",
+      "hint": "Игровое состояние не изменялось."
+    },
+    "AI_PROVIDER_ERROR": {
+      "title": "Ошибка OpenAI API",
+      "hint": "Игровое состояние не изменялось."
+    },
+    "AI_INVALID_DECISION": {
+      "title": "Недопустимый ответ модели",
+      "hint": "Действие отклонено, ничего не выполнено."
+    },
+    "AI_DEV_FORBIDDEN": {
+      "title": "Доступ запрещён",
+      "hint": "Откройте страницу на машине, где запущен API (localhost)."
+    },
+    "details": {
+      "budget": "Осталось {{remaining}} из {{limit}}.",
+      "retryAfter": "Повторить можно через {{seconds}} с.",
+      "attempts": "Попыток: {{attempts}}."
+    }
+  },
+  "announce": {
+    "success": "AI выбрал действие {{id}}",
+    "error": "Ошибка: {{text}}"
+  }
+}

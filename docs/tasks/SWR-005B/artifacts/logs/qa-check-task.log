@@ -1,0 +1,4 @@
+# 2026-11-08T20:22:39Z qa-lead (run 2; run 1 exit=1: 3 x [R6] non-path tokens in backticks in the AC table of qa-results.md — fixed the backticks)
+$ node scripts/check-task.mjs docs/tasks/SWR-005B
+OK docs/tasks/SWR-005B
+exit=0

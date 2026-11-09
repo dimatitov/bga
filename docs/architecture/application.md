@@ -1,7 +1,9 @@
 # Архитектура приложения (платформа AI-компаньонов для настольных игр)
 
-Статус: **действующий** — состояние после SWR-005 (реальные данные и срез правил `core-v1`: раунд и активация), 2026-11-08;
-раздел BE обновлён backend-lead на INTEGRATION SWR-005. История: SWR-002 (фундамент, одна
+Статус: **действующий** — состояние после SWR-005B (серверный AI-слой OpenAI + dev-диагностика), 2026-11-08;
+разделы §7.1 (AI-слой) и §8.1 (окружение) добавлены backend-lead на INTEGRATION SWR-005B
+([`docs/tasks/SWR-005B/`](../tasks/SWR-005B/): `specification.md` → Contract, Clarifications, Decisions during IMPLEMENTATION;
+`plan-backend.md`). История: SWR-002 (фундамент, одна
 игра) — [`docs/tasks/SWR-002/`](../tasks/SWR-002/); SWR-003 (мультиигровая платформа) — [`docs/tasks/SWR-003/`](../tasks/SWR-003/);
 SWR-004 (статус сессии, публичные настройки, идемпотентное создание, hot-seat Rebellion) — [`docs/tasks/SWR-004/`](../tasks/SWR-004/)
 (`specification.md` → Contract + Clarifications Q-1..Q-25, `plan-backend.md`, `plan-frontend.md`); SWR-005 (state v3, два
@@ -26,7 +28,10 @@ packages/games/<id>  @bga/game-<id>  — всё, что специфично д�
 packages/platform    @bga/platform   — GameDefinition, GameId, SessionStatus, SessionSummary, DTO сессий, Idempotency-Key,
                                        единый формат ошибок, общие messageKey, ServerGameModule (типы), рамка CommandEnvelope
 apps/api/persistence                 — SQLite через Prisma: Session (gameId, setup, снимок state + version, status,
-                                       idempotencyKey/Hash), SessionEvent (журнал)
+                                       idempotencyKey/Hash), SessionEvent (журнал), AiUsage (учёт AI-запросов, SWR-005B)
+apps/api/config                      — единственное чтение окружения: Zod-схема → замороженный AppConfig (§8.1)
+apps/api/ai                          — серверный AI-слой: AIProvider (OpenAI | mock), бюджет, учёт, цены (§7.1); игр не знает
+apps/api/dev/ai                      — dev-only эндпоинты диагностики AI (нет в production)
 ```
 
 Игры: `star-wars-rebellion` (`@bga/game-rebellion`, `available`) и `forbidden-stars` (`@bga/game-forbidden-stars`,
@@ -43,6 +48,10 @@ apps/api/persistence                 — SQLite через Prisma: Session (game
 - Общий серверный код (`sessions/`, `common/`, `persistence/`, `health/`) не импортирует игровые пакеты — только реестр
   `apps/api/src/game-registry/` (он видит `@bga/game-*/definition` и `/server`).
 - Нигде (кроме тестов) нет `import()` с вычисляемым именем; реестры — обычные типизированные массивы (AC-9 SWR-003).
+- SDK `openai` импортируется только в `apps/api/src/ai/**` (фактически — `ai/providers/openai-client.ts` и
+  `openai-errors.ts`); `apps/api/src/ai/**` не импортирует игровые пакеты, `sessions/`, `game-registry/`, `dev/`;
+  `apps/api/src/dev/**` не импортирует `openai` и игры; `@bga/platform` и `packages/games/*` не зависят от OpenAI;
+  `process.env` в `apps/api/src` читается только в `config/env.ts` (ESLint `no-restricted-properties` + `architecture.int.test.ts`).
 
 ## 2. Реестры и поток данных
 
@@ -213,7 +222,81 @@ AI-сторона получает свой `PlayerView` (без секрето�
 С SWR-005 это реализовано для детерминированного авто-паса `core-v1` (§4.3) внутри модуля игры; будущий AI Commander
 подставляется как другая `AutoPolicy` (`(view) => Command | null`).
 Параметры стратегии — данные `@bga/game-<id>/ai` (у Rebellion — уровни сложности и веса целей). OpenAI SDK и ключ — только в
-`apps/api` (пока отсутствуют).
+`apps/api/src/ai` (§7.1); к ходу партии AI-слой пока не подключён (SWR-005B — только dev-диагностика).
+
+### 7.1 Серверный AI-слой (`apps/api/src/ai`, SWR-005B)
+
+Задача слоя — **выбрать** одно действие из списка legal actions, который вычислил вызывающий код; модель ничего не
+выполняет и не «изобретает» действий, игровое состояние слой не видит и не меняет. Слой game-agnostic: контекст —
+непрозрачная `side`, `phase`, `objective`, 2..10 действий с уникальными id (`AIDecisionContext`, `ai/ai.types.ts`).
+
+- **Провайдер** — интерфейс `AIProvider { id: 'openai' | 'mock'; makeDecision(ctx) }`.
+  - `OpenAIProvider` (`ai/providers/openai.provider.ts`): официальный SDK `openai` (точная версия в `apps/api/package.json`),
+    Responses API, `text.format = json_schema strict` (`selectedActionId` — enum id контекста, `reason` ≤ 300),
+    `max_output_tokens` по роли (`ai/model-roles.ts`: tactical 400, strategy 1600). Клиент создаётся лениво и только при
+    `OPENAI_ENABLED=true` в `ai/providers/openai-client.ts` — единственном месте, где ключ раскрывается (`Secret.reveal()`);
+    все опции SDK (baseURL, organization, project, logLevel `off`, `maxRetries: 0`, timeout) передаются явно, поэтому
+    переменные `OPENAI_BASE_URL`/`OPENAI_LOG` и т. п. из окружения не действуют. Ошибки SDK оборачиваются в `AiFailure`
+    (`ai/ai.errors.ts`, `providers/openai-errors.ts`) без исходных сообщений и заголовков.
+  - Повторы — свои (`ai/retry.ts`): только сеть / таймаут / 429 / 5xx, не более `OPENAI_MAX_RETRIES`, backoff с учётом
+    `retry-after`.
+  - `MockAIProvider` (`providers/mock.provider.ts`): детерминированный, бесплатный (стоимость 0, бюджет не трогает);
+    режимы сбоев (`invalid-action`, `malformed`, `timeout`, `rate-limit`, `network`, `server-error`) задаются только
+    тестовыми overrides `createApp({ ai: { mockScript } })` — не из запроса и не из окружения.
+  - Выбор: `OPENAI_ENABLED=false` → только mock; `true` → OpenAI, запрос может явно попросить `mock`.
+- **Оркестрация** — `AiDecisionService` (`ai/ai-decision.service.ts`): провайдер → модель по роли → нет тарифа → 503
+  `AI_NOT_CONFIGURED` (`errors.aiPricingUnknown`, без сети) → доступность модели (`GET /v1/models/{id}`, бесплатно, кэш в
+  памяти, `ai/model-availability.service.ts`) → резерв бюджета → вызов → `validateDecision` (единая точка приёма решения:
+  Zod + id ∈ `availableActions`, иначе 502 `AI_INVALID_DECISION`) → строка `AiUsage` на **каждый** исход → снятие резерва.
+  Если строку `AiUsage` не удалось записать (после одного повтора) — 500, а резерв **не снимается** до перезапуска процесса
+  (оплаченный вызов не должен выпасть из учёта; INTEGRATION SWR-005B).
+- **Деньги — целые micro-USD** (1 USD = 1 000 000). Тарифы — `ai/pricing.ts` (`MODEL_PRICING`, `PRICING_VERSION`, ссылка на
+  источник), поиск по настроенному id модели (точное совпадение); оценка
+  `(input − cached)·in + cached·cachedIn + output·out` (reasoning входит в output), long-context множители, округление
+  **вверх** на попытку. Стоимость в ответе — оценка; итог — по счёту OpenAI.
+- **Учёт** — таблица `AiUsage` (миграция `20261108230000_ai_usage`): budgetKey, provider, model, role, status, attempts,
+  токены (input/cached/output/reasoning), `estimatedCostMicroUsd`, `pricingVersion`, durationMs, errorCode, createdAt.
+  Без текста промпта и ответа. Репозиторий — `ai/ai-usage.repository.ts`.
+- **Бюджет** по `budgetKey` (`ai/budget.service.ts`): до платного вызова `spent (Σ AiUsage) + held + reserve ≥ limit` → 429
+  `AI_BUDGET_EXCEEDED` (и строка `budget_exceeded`) без запроса к OpenAI. `reserve` — худший случай
+  (верхняя граница входных токенов + `max_output_tokens`) × (`OPENAI_MAX_RETRIES` + 1). Проверка и резерв —
+  под мьютексом ключа (promise-chain), сам вызов модели — вне блокировки; резервы хранятся в памяти процесса.
+  **Ограничение:** лимит гарантирован только в пределах одного процесса API (как и SQLite у нас); несколько процессов на
+  одной БД лимит не гарантируют. Лимит — `OPENAI_MAX_COST_PER_SESSION_USD`; ключ dev-диагностики — `dev-diagnostics`
+  (для будущих игровых сессий — `sessionId`). Бюджет копится бессрочно; HTTP-сброса нет (см. ниже).
+- **Логи** (`ai/ai-log.ts`): строка на попытку и итоговая строка из allow-list полей (провайдер, модель, роль, попытка,
+  длительность, токены, стоимость, статус/код, budgetKey, request id) — без ключа, заголовков, промпта, `objective`, текста
+  ответа и сообщений SDK. Пишутся в Nest `Logger('AI')`.
+- **Nest** — `AiModule.forRoot` (`ai/ai.module.ts`, global): фабрики над обычными классами. Под `nodeEnv: 'test'` включённый
+  OpenAI без тестового fake fetch отклоняется ещё при сборке модуля (и `createOpenAIClient` тоже) — тест не может уйти в сеть.
+  Тестовые overrides (`createApp({ ai })`: fake fetch для настоящего SDK, mock-скрипт, часы, sink логов, лимиты частоты)
+  запрещены при `nodeEnv: 'production'` (`ProductionOverridesError`).
+
+**Dev-only эндпоинты** (`apps/api/src/dev/ai`, модуль подключается только при `NODE_ENV !== 'production'`; в production — 404):
+`GET /api/dev/ai/status` (провайдер, `keyConfigured` — только флаг, модели и их доступность, бюджет) и
+`POST /api/dev/ai/test-decision` (строгая Zod-схема: тестовый сценарий, `role`, `provider: auto|mock`, `budgetKey` только
+`dev-diagnostics`). Порядок проверок POST: 404 → 403 → 413/400 → 429 (лимит частоты) → 503/502 → 429 (бюджет) → вызов модели.
+Защита (`loopback.guard.ts` + `dev-ai-body.middleware.ts`, middleware стоит **до** глобальных body-парсеров):
+TCP-адрес клиента — loopback (заголовки не учитываются, trust proxy выключен), `Host` — loopback (против DNS rebinding),
+`Origin` (если есть) — loopback, все хопы `X-Forwarded-For` — loopback, `Sec-Fetch-Site ≠ cross-site`; иначе 403
+`AI_DEV_FORBIDDEN` ещё до чтения тела. Тело ≤ 8192 байт (иначе 413 `VALIDATION`/`payload_too_large`). Лимит частоты на
+процесс (`dev-rate-limiter.ts`): ≤ 10 платных и ≤ 120 любых запросов в минуту, 429 `AI_RATE_LIMITED` с `Retry-After`.
+Ответы проходят строгие схемы `@bga/platform` (`ai-dev.ts`) — в них есть и USD, и micro-USD поля, ключа нет.
+Web-страница `/dev/ai` существует только в dev-сборке (`check:bundle` проверяет её отсутствие в production-бандле).
+
+**Сброс dev-бюджета** — только CLI (HTTP-сброса нет намеренно): удаляет строки `AiUsage` одного ключа в одной SQLite-БД.
+
+```bash
+cd apps/api
+node scripts/reset-ai-budget.mjs --database-url file:./dev.db --key dev-diagnostics --yes
+```
+
+- без `--yes` ничего не открывается и не удаляется (exit 2); `--database-url` важнее переменной `DATABASE_URL`;
+  `apps/api/.env` скрипт **не** читает;
+- только `file:` URL; **относительный путь разрешается от `apps/api/prisma`** (как у Prisma для `schema.prisma`), т. е.
+  `file:./dev.db` — это `apps/api/prisma/dev.db`, а не `apps/api/dev.db`; для уверенности можно передать абсолютный путь;
+- удаляется история учёта ключа (другие таблицы не трогаются) — при необходимости сначала сделать копию БД. Работающий API
+  подхватывает сброс сразу (бюджет каждый раз читает Σ из БД; резервы в памяти относятся только к идущим запросам).
 
 ## 8. Запуск и среды
 
@@ -226,6 +309,36 @@ AI-сторона получает свой `PlayerView` (без секрето�
 Внутренние пакеты исполняются API из собранного `dist` (CommonJS), а Vite, Vitest и typecheck читают их TypeScript-исходники
 через export-условие `@bga/source`. Runtime: Node 20.19.x (NestJS 11, Prisma 6).
 
+### 8.1 Окружение API (`apps/api/src/config/env.ts`, SWR-005B)
+
+- **Одна Zod-схема** (`EnvSchema`, `ENV_KEYS`): `DATABASE_URL` (обязательна), `PORT` (1..65535, 3000), `NODE_ENV`
+  (`development|test|production`, по умолчанию `development`), `OPENAI_ENABLED` (обязательна, строго `true|false`), при
+  `OPENAI_ENABLED=true` обязательны `OPENAI_API_KEY`, `OPENAI_STRATEGY_MODEL`, `OPENAI_TACTICAL_MODEL`,
+  `OPENAI_MAX_COST_PER_SESSION_USD` (> 0 и ≤ 5); `OPENAI_TIMEOUT_MS` (1000..120000, 30000) и `OPENAI_MAX_RETRIES` (0..5, 2).
+  Пустое значение = не задано; при `OPENAI_ENABLED=false` прочие `OPENAI_*` не проверяются. Результат — глубоко
+  замороженный `AppConfig`, ключ — объект `Secret` (`toString`/`toJSON`/`inspect` → `[redacted]`). Конфиг передаётся в
+  `createApp({ config })` и доступен провайдерам как `APP_CONFIG`; больше никто окружение не читает.
+- **Fail-fast:** `main.ts` → `runBootstrap` (`bootstrap.ts`): при ошибке — одна строка
+  `Invalid environment: <VAR>: <причина>; …` (только имена и фиксированные причины, без значений) и exit 1 — до создания app.
+- **`.env`:** `loadAppConfig` читает `apps/api/.env` (создаётся из `.env.example` скриптом `db:prepare`), только если
+  `NODE_ENV ≠ test`; переменные окружения процесса важнее файла; файл разбирается в локальный объект, `process.env` не
+  меняется. `.env` не коммитится; `apps/api/.env.example` содержит все переменные схемы (ключ пустой,
+  `OPENAI_ENABLED=false`), совпадение со схемой проверяет `env-example.unit.test.ts`. `DATABASE_URL="file:./dev.db"`
+  разрешается Prisma относительно `prisma/schema.prisma`.
+- **`NODE_ENV=test`:** `.env` не читается, а `OPENAI_ENABLED=true` отклоняется схемой. Тесты строят конфиг явно
+  (`test/support/test-config.ts`, OpenAI выключен); тесты OpenAI используют настоящий SDK с fake fetch
+  (`test/support/openai-fake-fetch.ts`); `setupFiles` Vitest ставят сетевой guard (`test/setup/no-network.ts`).
+- **Поведение Prisma с `.env` (дефект D-1 SWR-005B):** сгенерированный `@prisma/client` при импорте (и при
+  `new PrismaClient`), а также CLI `prisma` сами загружают `apps/api/.env` и копируют в `process.env` все переменные, которых
+  там ещё нет (существующие, даже пустые, не перезаписывают). Поэтому:
+  - `main.ts` импортирует `app.factory` (а с ним Prisma) только **после** валидации конфига — `AppConfig` никогда не видит
+    значений, подложенных Prisma (в dev-процессе они после этого могут оказаться в `process.env`, но их никто не читает, а
+    SDK OpenAI получает все опции явно);
+  - тестовые и e2e-процессы получают все `OPENAI_*` явно пустыми и `OPENAI_ENABLED=false`: первый `setupFiles` Vitest
+    (`test/setup/blank-openai-env.ts`), окружение e2e-API и его дочерних `prisma migrate deploy`/`tsc`
+    (`scripts/e2e-env.mjs` → `buildE2eEnv`, `NODE_ENV=test`), дочерний `prisma migrate deploy` в `test/global-setup.ts`
+    (тот же `buildE2eEnv`). Проверки — `test/env-isolation.int.test.ts` (только наличие/пустота, значения не читаются).
+
 ## 9. Известные ограничения
 
 Нет авторизации и изоляции сессий; hot-seat — доверительный (кто держит устройство, не проверяется); AI-соперник сохраняет
@@ -233,5 +346,7 @@ AI-сторона получает свой `PlayerView` (без секрето�
 недостижима), в `mock-v1` не ходит; Rise of the Empire и режим с физическими компонентами — только 422; правила `core-v1` —
 срез «раунд + активация» (без боя, миссий, производства; отклонения D-1…D-7 в `docs/game-rules/rebellion-core-v1.md`),
 старые партии — mock-правила на вымышленной карте; Forbidden Stars —
-только карточка каталога; SQLite и один процесс API; NestJS 11 / CommonJS (переход на ESM и Nest 12 — отдельной задачей,
+только карточка каталога; SQLite и один процесс API (в т.ч. AI-бюджет гарантирован только в пределах одного процесса —
+резервы в памяти, §7.1); AI-слой OpenAI подключён только к dev-диагностике (не к ходу партии), бюджет копится до ручного
+сброса скриптом; NestJS 11 / CommonJS (переход на ESM и Nest 12 — отдельной задачей,
 вероятно вместе с Node 22).

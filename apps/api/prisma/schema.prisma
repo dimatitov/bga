@@ -42,3 +42,30 @@ model SessionEvent {
 
   @@unique([sessionId, seq])
 }
+
+/// One AI decision attempt (SWR-005B): token usage and ESTIMATED cost. A row is written for every attempt —
+/// successful, failed, mock (cost 0) and budget refusals (`budget_exceeded`, 0 attempts) — AM-BE-7.
+/// Never stores prompt or response text (no such columns on purpose).
+model AiUsage {
+  id                    String   @id // UUID
+  budgetKey             String
+  provider              String // 'openai' | 'mock'
+  model                 String // configured model id ('mock-deterministic-v1' for mock)
+  role                  String // 'strategy' | 'tactical'
+  /// 'ok' | 'invalid_decision' | 'timeout' | 'rate_limited' | 'provider_error' | 'not_configured' | 'budget_exceeded'
+  status                String
+  attempts              Int
+  inputTokens           Int      @default(0)
+  cachedInputTokens     Int      @default(0)
+  outputTokens          Int      @default(0)
+  reasoningTokens       Int?
+  /// Estimated cost in integer micro-USD (1 USD = 1 000 000), Q-15: summed without float error.
+  estimatedCostMicroUsd Int      @default(0)
+  /// Version of the pricing table the estimate was computed with (AM-BE-7).
+  pricingVersion        String
+  durationMs            Int
+  errorCode             String? // platform ErrorCode
+  createdAt             DateTime @default(now())
+
+  @@index([budgetKey, createdAt])
+}

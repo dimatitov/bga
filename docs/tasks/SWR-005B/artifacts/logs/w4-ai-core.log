@@ -1,0 +1,109 @@
+# SWR-005B W4 — AI core and providers (backend-worker). 2026-11-08T18:49:54Z
+# node v20.19.5, pnpm 10.34.9
+
+$ grep openai apps/api/package.json
+24:    "openai": "6.49.0",
+
+$ pnpm --filter @bga/api add openai@6.49.0 --save-exact  (run earlier; lock diff below)
+ pnpm-lock.yaml | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+$ pnpm install --frozen-lockfile
+apps/api postinstall: ✔ Generated Prisma Client (v6.19.3) to ./../../node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3/node_modules/@prisma/client in 96ms
+apps/api postinstall: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+apps/api postinstall: Done
+Done in 4s using pnpm v10.34.9
+exit=0
+
+$ pnpm ls openai --filter @bga/api --depth 0
+│   dependencies:
+└── openai@6.49.0
+
+1 package
+
+$ pnpm --filter @bga/api test
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 25184  - [39m11/08/2026, 9:50:14 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=447f0d5f-7acd-41d6-a0bb-701894e8d127 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:24 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25971  - [39m11/08/2026, 9:50:25 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=715997c2-9e96-4e9b-be70-285c33a361fd code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 25888  - [39m11/08/2026, 9:50:26 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 25888  - [39m11/08/2026, 9:50:26 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 25888  - [39m11/08/2026, 9:50:26 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 26275  - [39m11/08/2026, 9:50:32 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=01176a86-d0a9-42c0-bdd7-502ca0eff8a5 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 26275  - [39m11/08/2026, 9:50:32 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=01176a86-d0a9-42c0-bdd7-502ca0eff8a5 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 26326  - [39m11/08/2026, 9:50:32 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 26352  - [39m11/08/2026, 9:50:33 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 26352  - [39m11/08/2026, 9:50:33 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  44 passed | 1 skipped (45)
+      Tests  410 passed | 1 skipped (411)
+   Start at  21:50:06
+   Duration  52.39s (transform 3.96s, setup 1.05s, import 31.24s, tests 242.39s, environment 4ms)
+
+exit=0
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm lint
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+[warn] apps/api/test/migration-swr005b.int.test.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+ ELIFECYCLE  Command failed with exit code 1.
+exit=1
+
+$ pnpm exec prettier --check <W4 files> apps/api/package.json
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ node --test scripts/
+# tests 408
+# pass 408
+# fail 0
+# skipped 0
+exit=0
+
+(pnpm lint: eslint passed — prettier runs only after eslint succeeds; the only prettier finding is W3's apps/api/test/migration-swr005b.int.test.ts, not a W4 file)
+
+$ grep -rn "from 'openai'" apps packages --include='*.ts' --exclude-dir=node_modules
+apps/api/test/architecture.int.test.ts:88:      "import OpenAI from 'openai';",
+apps/api/src/ai/providers/openai-client.ts:7:import OpenAI from 'openai';
+apps/api/src/ai/providers/openai-errors.ts:20:} from 'openai';
+
+$ grep -rnE "(from|import|require)\(?\s*['\"]openai" apps packages (ts/tsx/mts, no node_modules/dist) | grep -v '^apps/api/src/ai/'   # expect only the architecture-test self-check strings
+apps/api/test/architecture.int.test.ts:88:      "import OpenAI from 'openai';",
+apps/api/test/architecture.int.test.ts:89:      "import { APIError } from 'openai/error';",
+apps/api/test/architecture.int.test.ts:90:      "const m = require('openai');",
+apps/api/test/architecture.int.test.ts:91:      "const m = await import('openai');",
+apps/api/test/architecture.int.test.ts:92:      "import 'openai';",
+
+$ grep -rnE "new OpenAI\(|\.reveal\(" apps/api/src
+apps/api/src/ai/providers/openai-client.ts:37:  return new OpenAI({
+apps/api/src/ai/providers/openai-client.ts:38:    apiKey: options.openai.apiKey.reveal(),
+
+$ grep -rn "sk-" apps/api/src/ai   # expect nothing
+(grep exit=1)
+
+$ grep -rniE "rebels|empire|faction|ruleset|gameMode" apps/api/src/ai   # expect nothing (TC-A-01)
+(grep exit=1)

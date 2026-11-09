@@ -1,0 +1,14 @@
+# W3 drift check — 2026-11-08T18:21:47Z
+$ pnpm --filter @bga/api exec prisma migrate diff --from-migrations prisma/migrations --to-schema-datamodel prisma/schema.prisma --shadow-database-url file:./.tmp/shadow-w3.db --exit-code
+No difference detected.
+
+exit=0
+
+$ git diff --exit-code -- prisma/migrations/20261107235651_init prisma/migrations/20261108120000_sessions prisma/migrations/20261108200000_session_status_idempotency
+exit=0
+
+$ shasum -a 256 prisma/migrations/*/migration.sql
+4915407ea5c0ff1b41885db1a41aa0171024732465d67d47efb00adcdf7a6a13  prisma/migrations/20261107235651_init/migration.sql
+fdc537c6a6841eeee30c9185911b154c38773a6a0684beac4c56417639ae62f8  prisma/migrations/20261108120000_sessions/migration.sql
+9bd55de2b2c6102b4ff3764787ae3d2c566351b99972c2064b0cf573dc7d432d  prisma/migrations/20261108200000_session_status_idempotency/migration.sql
+8257753cb9a2c98e89326075d35729980d05fdbfd7e5104cba9f135fa89a2428  prisma/migrations/20261108230000_ai_usage/migration.sql

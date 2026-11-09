@@ -1,0 +1,114 @@
+# SWR-005B W1 — config, test harness, boundaries. 2026-11-08T18:26:37Z. node v20.19.5. Never reads apps/api/.env; sentinel keys only.
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm lint
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+[warn] apps/api/test/migration-swr005b.int.test.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+ ELIFECYCLE  Command failed with exit code 1.
+exit=
+
+$ node --test scripts/
+# Subtest: AC-5: valid inputs and CLI contract
+# Subtest: AC-1: required files (R1)
+# Subtest: AC-2: AC tables evidence (R5, R6)
+# Subtest: AC-2: Verification section (R7)
+# Subtest: AC-3: status.md (R2, R3, R4)
+# Subtest: AC-4: review verdict, final decision, accepted gate (R8, R9, R10)
+# Subtest: Regression f1 / D1: fenced code and HTML comments are not live markdown
+# Subtest: Regression f2 / D2: duplicated checked sections
+# Subtest: Regression f3 / D3: table rows must be contiguous
+# Subtest: Regression f4 / D4: struck-through text is removed entirely
+# Subtest: D5: passed requires at least one existing path token
+# Subtest: D6 / R11: evidence paths must be relative, inside repoRoot, regular files
+# Subtest: D7: unreadable task files / dir -> exit 2 without stack trace
+# Subtest: D8: Verification bullets
+# Subtest: D9: passed stage needs at least one existing artifact path
+# Subtest: D10: delivery-report AC table (R5) and qa-results AC in the accepted gate (R10)
+# Subtest: D11: verbatim CLI label and lowercase, case-sensitive keywords
+# Subtest: Review f11(d): remaining gaps
+# Subtest: D12: accepted requires >=1 AC, all passed, in qa-results.md AND delivery-report.md
+# Subtest: D13: R11 containment = repo root OR task folder
+# Subtest: D14: AC set comes from specification.md
+# Subtest: D15: fence/comment detection must not hide visible content
+# Subtest: D16: struck-through evidence is removed before path search
+# Subtest: R2-4: absolute path pointing inside the repo is still rejected
+# Subtest: check-web-bundle: rules
+# Subtest: check-web-bundle: module composition (Q-23, TC-ARCH-08)
+# Subtest: check-web-bundle: CLI
+# Subtest: ESLint architecture boundaries (TR-7)
+# tests 403
+# suites 28
+# pass 403
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4668.559084
+exit=
+
+$ pnpm --filter @bga/api test
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[31m[Nest] 15539  - [39m11/08/2026, 9:27:20 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 15539  - [39m11/08/2026, 9:27:20 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 15539  - [39m11/08/2026, 9:27:20 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 15873  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=10c5bbf0-b98e-44e8-abf2-191c045c56d2 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 15927  - [39m11/08/2026, 9:27:23 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=1530bafd-b658-4e60-80f4-b2ea3fbb844c code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 16228  - [39m11/08/2026, 9:27:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 16212  - [39m11/08/2026, 9:27:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=8223a523-c8c3-424c-b676-5fe4b08f157f code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 16212  - [39m11/08/2026, 9:27:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=8223a523-c8c3-424c-b676-5fe4b08f157f code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 16306  - [39m11/08/2026, 9:27:31 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 16306  - [39m11/08/2026, 9:27:31 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+ Test Files  31 passed | 1 skipped (32)
+      Tests  264 passed | 1 skipped (265)
+   Start at  21:27:05
+   Duration  51.49s (transform 4.12s, setup 766ms, import 27.28s, tests 234.28s, environment 3ms)
+exit=
+
+$ grep -rn "process\.env" apps/api/src
+apps/api/src/config/env.ts:2: * SWR-005B (AC-01, plan-backend §2.1): the ONLY place in apps/api/src that reads `process.env` or a `.env`
+apps/api/src/config/env.ts:195: * Pure: validates `raw` (e.g. `process.env`) and returns a frozen `AppConfig`.
+apps/api/src/config/env.ts:287:  /** Defaults to `process.env`; injectable for tests. Never mutated. */
+apps/api/src/config/env.ts:292: * Reads the environment (the only `process.env` access in apps/api/src). The `.env` file is read only when
+apps/api/src/config/env.ts:294: * parsed into a local object — `process.env` is not modified.
+apps/api/src/config/env.ts:297:  const env = options.env ?? process.env;
+
+$ grep -rnE "loadEnvFile|process\[" apps/api/src
+(exit=1 ; 1 = no matches)
+
+## exit codes (re-run under bash; the zsh run above did not capture PIPESTATUS)
+$ pnpm exec eslint . --max-warnings=0 -> exit=0
+[warn] apps/api/test/migration-swr005b.int.test.ts
+[warn] apps/web/src/dev/ai/errorText.ts
+[warn] Code style issues found in 2 files. Run Prettier with --write to fix.
+$ pnpm exec prettier --check . -> exit=1 (flagged files are not W1-owned: apps/api/test/migration-swr005b.int.test.ts = W3, apps/web/src/dev/ai/errorText.ts = FE, both mid-change in the shared tree; all W1 files pass prettier)
+$ node --test scripts/ -> exit=0
+$ pnpm --filter @bga/api typecheck -> exit=0
+All matched files use Prettier code style!
+$ prettier --check <W1 files> -> exit=0
+
+$ pnpm --filter @bga/api test (final full run, last)
+ Test Files  31 passed | 1 skipped (32)
+      Tests  264 passed | 1 skipped (265)
+exit=0

@@ -1,0 +1,112 @@
+# SWR-005B W5 — AiUsage accounting and budget. 2026-11-08T18:40:25Z. Node v20.19.5
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm exec eslint apps/api/src/ai/ai-usage.repository.ts apps/api/src/ai/budget.service.ts apps/api/test/ai/{budget,ai-usage-repository,reset-ai-budget}.int.test.ts apps/api/scripts/reset-ai-budget.mjs --max-warnings=0
+exit=0
+
+$ pnpm exec prettier --check <W5 files>
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ (apps/api) pnpm exec vitest run test/ai/budget.int.test.ts test/ai/ai-usage-repository.int.test.ts test/ai/reset-ai-budget.int.test.ts --reporter=verbose
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > reserves while spent + reserve < limit 63ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > refuses at exact equality spent + reserve = limit and above it 10ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > counts active holds: spent + held + reserve ≥ limit → refuse 7ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > release after the AiUsage insert: the actual cost replaces the hold (no undercount meanwhile) 10ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > release is idempotent and releases only its own hold 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert stores every field (integer micro-USD, pricingVersion) and generates a UUID id 62ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > keeps a given id and createdAt 8ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > sumCostMicroUsd is an exact integer sum per key; 0 for an unknown key 16ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > records failed attempts, mock rows (cost 0) and budget refusals; only real cost counts 13ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (fractional micro-USD) and writes nothing 7ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (negative cost) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (cost over Int32) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (mock with a cost) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (budget refusal with attempts) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (budget refusal with a cost) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (cached > input) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (unknown status) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (unknown provider) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (unknown role) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (empty budget key) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (empty pricingVersion) and writes nothing 3ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (negative tokens) and writes nothing 3ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects extra fields (no prompt/response text can be stored) 4ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > 5 parallel reserves of $0.04 at limit $0.10 → exactly 2 succeed 8ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > serializes check-and-reserve per key even when the SUM query is slow 91ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > a failing SUM does not deadlock the key 5ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > keys are isolated (spent and holds) 7ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > snapshot: remaining = max(0, limit − spent); holds are not subtracted; null limit → null remaining 10ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > mock rows (cost 0) and budget refusal rows never reduce the remaining budget 8ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > the budget accumulates across service instances (persisted, not in memory) 5ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (fractional amount) 3ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (negative amount) 3ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (fractional limit) 3ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (NaN limit) 3ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no --yes): exit 2, no rows deleted 179ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no --yes (env URL)): exit 2, no rows deleted 115ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no key): exit 2, no rows deleted 113ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (empty key): exit 2, no rows deleted 109ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no URL): exit 2, no rows deleted 108ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (non-file URL): exit 2, no rows deleted 107ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (unknown flag): exit 2, no rows deleted 107ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (missing file): exit 2, no rows deleted 107ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > with --yes deletes only the given key (flag URL) 248ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > with --yes uses DATABASE_URL from the environment; --database-url=… inline form works too 492ms
+
+ Test Files  3 passed (3)
+      Tests  44 passed (44)
+   Start at  21:40:36
+   Duration  5.15s (transform 1.34s, setup 132ms, import 3.05s, tests 2.09s, environment 0ms)
+
+exit=0
+
+$ pnpm --filter @bga/api test
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 20712  - [39m11/08/2026, 9:40:48 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=f0045a9c-f1c3-4940-bfe5-6629b5ee8b3e code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21482  - [39m11/08/2026, 9:41:01 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=c5fa5123-a6dd-4431-8a52-949a968bafa2 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 21387  - [39m11/08/2026, 9:41:03 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 21387  - [39m11/08/2026, 9:41:03 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 21387  - [39m11/08/2026, 9:41:03 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 21773  - [39m11/08/2026, 9:41:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=fcadf661-9dbb-4b9a-902b-590dc4fdd2af code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 21773  - [39m11/08/2026, 9:41:08 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=fcadf661-9dbb-4b9a-902b-590dc4fdd2af code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 21840  - [39m11/08/2026, 9:41:09 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 21872  - [39m11/08/2026, 9:41:10 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 21872  - [39m11/08/2026, 9:41:10 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  34 passed | 1 skipped (35)
+      Tests  308 passed | 1 skipped (309)
+   Start at  21:40:43
+   Duration  51.66s (transform 4.10s, setup 781ms, import 30.31s, tests 238.54s, environment 3ms)
+
+exit=(not captured: zsh has no PIPESTATUS; re-run below)
+
+$ pnpm --filter @bga/api test > /dev/null (re-run, exit code only; summary lines)
+exit=0
+ Test Files  34 passed | 1 skipped (35)
+      Tests  308 passed | 1 skipped (309)

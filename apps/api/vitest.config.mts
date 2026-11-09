@@ -13,6 +13,9 @@ export default defineConfig({
   test: {
     include: ['test/**/*.int.test.ts', 'test/**/*.unit.test.ts'],
     globalSetup: ['test/global-setup.ts'],
+    // SWR-005B (AC-13): any fetch to a non-loopback host fails the test file (plan-backend §2.5).
+    // blank-openai-env FIRST (defect D-1): OPENAI_* are blanked before @prisma/client can load apps/api/.env.
+    setupFiles: ['test/setup/blank-openai-env.ts', 'test/setup/no-network.ts'],
     pool: 'forks',
     testTimeout: 20_000,
     hookTimeout: 30_000,

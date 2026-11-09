@@ -96,4 +96,15 @@ describe('SettingsPage', () => {
     await user.click(screen.getByTestId('settings-back'));
     await waitFor(() => expect(router.state.location.pathname).toBe('/'));
   });
+
+  it('T-17 (SWR-005B): in DEV a «Для разработчиков» section links to /dev/ai', () => {
+    mockFetch({});
+    renderWithProviders({ routes, path: '/settings' });
+    const section = screen.getByTestId('settings-dev');
+    expect(section).toContainElement(
+      screen.getByRole('heading', { level: 2, name: 'Для разработчиков' }),
+    );
+    expect(screen.getByTestId('settings-dev-ai-link')).toHaveAttribute('href', '/dev/ai');
+    expect(screen.getByTestId('settings-dev-ai-link')).toHaveTextContent('Диагностика AI (dev)');
+  });
 });

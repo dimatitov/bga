@@ -1,0 +1,273 @@
+# pnpm e2e (full) — QA SWR-005B, started 2026-11-08T19:08:41Z; W6 code present in tree (apps/api/src/dev/ai), W6 not yet formally reported
+
+> board-game-ai@ e2e /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && playwright test
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+[WebServer] 
+[WebServer] > @bga/api@0.0.0 e2e:serve /Users/dimatitov/WebstormProjects/Game automa/apps/api
+[WebServer] > node scripts/e2e-serve.mjs
+[WebServer] 
+[WebServer] Environment variables loaded from .env
+[WebServer] Prisma schema loaded from prisma/schema.prisma
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 4 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer]       
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] AppModule dependencies initialized +24ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +1ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +7ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] AiModule dependencies initialized +14ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +0ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RoutesResolver] HealthController {/api/health}: +4ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +3ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +1ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +1ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +2ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +0ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +0ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +1ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +1ms
+[WebServer] [Nest] 33317  - 11/08/2026, 10:08:51 PM     LOG [NestApplication] Nest application successfully started +3ms
+
+Running 116 tests using 1 worker
+
+  ✓    1 [chromium] › e2e/00-empty-db.spec.ts:15:3 › empty database › TC-GP-13 (was TC-E2E-02): catalog → Rebellion page with no sessions — Continue is disabled (1.2s)
+  ✓    2 [chromium] › e2e/architecture.spec.ts:24:1 › TC-E2E-30 + TC-E2E-31 (core-v1): Empire session leaks no secrets; only allowed requests mutate (5.7s)
+  ✓    3 [chromium] › e2e/board-view.spec.ts:10:1 › TC-E2E-06 (core-v1): table renders the base-game galaxy from the server PlayerView (2.4s)
+  ✓    4 [chromium] › e2e/board-view.spec.ts:71:1 › TC-E2E-32 (SWR-003: old SWR-002 URL): /games/<real session id> is "game not found", not the table (597ms)
+  ✓    5 [chromium] › e2e/catalog.spec.ts:35:1 › TC-CAT-10: catalog shows registry cards with name, loaded cover, description, status; card opens the game page (802ms)
+  ✓    6 [chromium] › e2e/catalog.spec.ts:100:1 › TC-CAT-11: cards are reachable by Tab in registry order with visible focus; Enter opens each game page (713ms)
+  ✓    7 [chromium] › e2e/catalog.spec.ts:127:1 › TC-CAT-12: catalog in English has no Cyrillic (incl. alt), in Russian it is translated; <html lang> follows (1.7s)
+  ✓    8 [chromium] › e2e/catalog.spec.ts:163:1 › TC-GP-16: coming_soon game page and its /new show "coming soon", actions disabled, no session requests (1.3s)
+  ✓    9 [chromium] › e2e/catalog.spec.ts:199:1 › TC-FS-05 (e2e part): sessions API refuses a coming_soon game (422) and an unknown game (404) (32ms)
+  ✓   10 [chromium] › e2e/catalog.spec.ts:225:1 › TC-GP-17: unknown game id (page and /new) shows "game not found"; its link leads to the catalog (1.0s)
+  ✓   11 [chromium] › e2e/core-fit.spec.ts:61:5 › SWR-005 AC-12: fit shows all 32 systems with labels › TC-E-12: «fit» at 1440×900 — 32 centres and labels inside the canvas, labels apart (2.2s)
+  ✓   12 [chromium] › e2e/core-fit.spec.ts:61:5 › SWR-005 AC-12: fit shows all 32 systems with labels › TC-E-12: «fit» at 1024×768 — 32 centres and labels inside the canvas, labels apart (2.1s)
+  ✓   13 [chromium] › e2e/core-fit.spec.ts:61:5 › SWR-005 AC-12: fit shows all 32 systems with labels › TC-E-12: «fit» at 768×1024 — 32 centres and labels inside the canvas, labels apart (2.0s)
+  ✓   14 [chromium] › e2e/core-fit.spec.ts:86:3 › SWR-005 AC-12: fit shows all 32 systems with labels › TC-E-12 (resize): a resize before any interaction re-fits the map (userAdjusted = false) (1.6s)
+  ✓   15 [chromium] › e2e/core-hidden-base.spec.ts:45:3 › SWR-005 hidden rebel base (core-v1) › TC-E-04: AI game as the Empire — Empire to move on first show, AI auto-pass logged, hidden zone of exactly the 6 «on base» units, base id in no response, DOM or debug hook (3.1s)
+  ✓   16 [chromium] › e2e/core-hidden-base.spec.ts:147:3 › SWR-005 hidden rebel base (core-v1) › TC-E-06 (scenario 4, seed ai-empire-before-reveal): Empire moves ground units into the base → «base revealed in <system>», zone gone, base marked (2.2s)
+  ✓   17 [chromium] › e2e/core-turn.spec.ts:75:3 › SWR-005 scenario 1: AI game as the Rebels (core-v1) › TC-E-01: setup defaults → core-v1 table: 32 systems in 8 regions, time 1 / reputation 14, Orders, Rebels to move, pool of 4, slice badge (2.0s)
+  ✓   18 [chromium] › e2e/core-turn.spec.ts:148:3 › SWR-005 scenario 1: AI game as the Rebels (core-v1) › TC-E-02: leader → system click → drag a unit from a neighbour → finish: PIECES_MOVED, ACTIVATION_FINISHED, auto PASSED of the AI; Rebels again (3.2s)
+  ✓   19 [chromium] › e2e/core-turn.spec.ts:248:3 › SWR-005 scenario 1: AI game as the Rebels (core-v1) › TC-E-03: another activation (the AI does not move) → Pass + confirm → both passed: leaders back in the pool, time 2, Rebels to move (2.2s)
+  ✓   20 [chromium] › e2e/core-turn.spec.ts:295:3 › SWR-005 scenario 1: AI game as the Rebels (core-v1) › TC-E-10: keyboard only — pool (arrows) → system picker → Activate → move panel → Move → Finish → Pass + dialog (4.1s)
+  ✓   21 [chromium] › e2e/core-turn.spec.ts:396:3 › SWR-005 scenario 1: AI game as the Rebels (core-v1) › TC-E-11: 422 notAdjacent / insufficientCapacity on MOVE_PIECES → readable inline message, draft kept, retry possible (2.0s)
+  ✓   22 [chromium] › e2e/core-turn.spec.ts:449:3 › SWR-005 scenario 1: AI game as the Rebels (core-v1) › TC-E-13: ADVANCE_PHASE / END_TURN in core-v1 → 422 commandUnavailable, no state change; no mock buttons in the UI (1.3s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:09:40 PM     LOG [SessionCommandsService] sessionId=5b482416-dc47-48ba-9ef1-d30c081ef509 gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   23 [chromium] › e2e/core-victory.spec.ts:77:3 › SWR-005 victories (core-v1) › TC-E-07 (scenario 5a): 13th Pass in the UI → time reaches reputation → «Rebels win», completed, commands → 422 gameOver, base shown to the Empire (3.1s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:09:44 PM     LOG [SessionCommandsService] sessionId=1679769f-94f9-4ed8-bd1f-9ea490eedd6e gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   24 [chromium] › e2e/core-victory.spec.ts:152:3 › SWR-005 victories (core-v1) › TC-E-08 (scenario 5b, hot-seat seed): Empire reveals an empty base → BASE_REVEALED + GAME_OVER (empire, rebelBaseCaptured), completed, no handoff (2.3s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:09:44 PM     LOG [SessionCommandsService] sessionId=81eba6dc-20cb-462f-86b2-274d8018f387 gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   25 [chromium] › e2e/core-victory.spec.ts:218:3 › SWR-005 victories (core-v1) › TC-E-14: game page — core, legacy and completed sessions are distinguishable; «Continue» → latest unfinished (2.3s)
+  ✓   26 [chromium] › e2e/core-visual-a11y.spec.ts:110:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-01: fit screenshots 1440 / 1024 / 768 (32 systems with labels, track, phase, turn) + en copy (18) (5.2s)
+  ✓   27 [chromium] › e2e/core-visual-a11y.spec.ts:134:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-02: leader armed (04), keyboard activation picker (05), move panel (06), unit drag (07) (4.1s)
+  ✓   28 [chromium] › e2e/core-visual-a11y.spec.ts:171:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-03: AI auto-pass in the log (08) and the new round (09) (2.1s)
+  ✓   29 [chromium] › e2e/core-visual-a11y.spec.ts:190:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-04/05 + TC-VA-12: hidden zone (10), base revealed (11), contested system (12) — not colour-only (3.2s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:01 PM     LOG [SessionCommandsService] sessionId=5aa2e597-7787-41a4-ac3b-7c35ea27abfb gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:02 PM     LOG [SessionCommandsService] sessionId=a552388b-589a-496e-9cd1-c756b48c8f8a gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   30 [chromium] › e2e/core-visual-a11y.spec.ts:229:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-06: game over banners (13 Rebels, 13b Empire) — readable, reason shown, no turn buttons (2.6s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:06 PM     LOG [SessionCommandsService] sessionId=f9e7a69b-8778-497b-a21d-5910eaed03d4 gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   31 [chromium] › e2e/core-visual-a11y.spec.ts:249:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-07/08/09: core handoff (16), legacy table (15), game page with completed + legacy rows (14) (2.6s)
+  ✓   32 [chromium] › e2e/core-visual-a11y.spec.ts:280:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-10: top bar and panels at 1024×768 and 768×1024 — no overlap, no horizontal scroll, finish/pass not clipped (3.3s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:14 PM     LOG [SessionCommandsService] sessionId=e79c8026-081b-4ee7-adc0-5dc8b9f0feff gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   33 [chromium] › e2e/core-visual-a11y.spec.ts:308:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-11: visible focus — pool, picker, move checkbox / submit, finish, pass, dialog (17: focus on Cancel, Esc), banner (5.4s)
+  ✓   34 [chromium] › e2e/core-visual-a11y.spec.ts:361:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-12: contrast of the new texts (track, phase, turn, pool, turn status, log, badge) (2.5s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:21 PM     LOG [SessionCommandsService] sessionId=24a89e17-1982-4e09-9bd7-96fa17963cc1 gameId=star-wars-rebellion code=STATUS_CHANGED prototype→completed
+  ✓   35 [chromium] › e2e/core-visual-a11y.spec.ts:380:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-13: roles and names — pool radiogroup/radios, turn panel, banner region, live region announces the auto-pass (5.1s)
+  ✓   36 [chromium] › e2e/core-visual-a11y.spec.ts:409:3 › SWR-005 visual & accessibility (core-v1) › TC-VA-14 (PO-1): opening a core table loads no external domains and no raster board images (1.8s)
+[WebServer] 10:10:25 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+  ✘   37 [chromium] › e2e/dev-ai.spec.ts:111:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-01: status shows mock / OpenAI disabled; PO scenario is listed as test data (6.7s)
+[WebServer] 10:10:34 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:35 PM     LOG [AI] ai.attempt provider=mock model=mock-deterministic-v1 role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics requestId=-
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:35 PM     LOG [AI] ai.decision provider=mock model=mock-deterministic-v1 role=tactical attempts=1 outcome=ok code=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics
+  ✓   38 [chromium] › e2e/dev-ai.spec.ts:171:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-02: «Тестировать AI» with mock → result card; button disabled while pending; one request (2.2s)
+[WebServer] 10:10:36 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:36 PM     LOG [AI] ai.attempt provider=mock model=mock-deterministic-v1 role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics requestId=-
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:36 PM     LOG [AI] ai.decision provider=mock model=mock-deterministic-v1 role=tactical attempts=1 outcome=ok code=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics
+  ✓   39 [chromium] › e2e/dev-ai.spec.ts:226:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-PS-04 (e2e): provider «auto» with OpenAI disabled → hint, and the server answers with mock (1.3s)
+[WebServer] 10:10:37 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:38 PM     LOG [AI] ai.attempt provider=mock model=mock-deterministic-v1 role=strategy attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics requestId=-
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:38 PM     LOG [AI] ai.decision provider=mock model=mock-deterministic-v1 role=strategy attempts=1 outcome=ok code=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics
+  ✓   40 [chromium] › e2e/dev-ai.spec.ts:240:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › keyboard: role, provider and «Тестировать AI» are reachable and operable without a mouse (1.7s)
+[WebServer] 10:10:39 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:39 PM     LOG [AI] ai.attempt provider=mock model=mock-deterministic-v1 role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics requestId=-
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:39 PM     LOG [AI] ai.decision provider=mock model=mock-deterministic-v1 role=tactical attempts=1 outcome=ok code=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics
+  ✓   41 [chromium] › e2e/dev-ai.spec.ts:267:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-S-09: no key / OPENAI_API_KEY in DOM, storage or dev-AI responses (1.3s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:41 PM     LOG [AI] ai.attempt provider=mock model=mock-deterministic-v1 role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics requestId=-
+[WebServer] [Nest] 33317  - 11/08/2026, 10:10:41 PM     LOG [AI] ai.decision provider=mock model=mock-deterministic-v1 role=tactical attempts=1 outcome=ok code=- durationMs=0 in=0 cached=0 out=0 reasoning=- costUsd=0.000000 budgetKey=dev-diagnostics
+  ✓   42 [chromium] › e2e/dev-ai.spec.ts:290:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-05 + S-10/S-11: Settings dev link → /dev/ai (en); back to the catalog; sessions untouched (1.8s)
+[WebServer] 10:10:42 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+  ✓   43 [chromium] › e2e/dev-ai.spec.ts:326:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › TC-E-03 / TC-W-05: every AI_* code renders a localized role=alert; button usable again (2.9s)
+[WebServer] 10:10:45 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+  ✓   44 [chromium] › e2e/dev-ai.spec.ts:405:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › pending with an intercepted answer: controls disabled until the answer arrives (1.3s)
+[WebServer] 10:10:46 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+[WebServer] 10:10:47 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+  ✓   45 [chromium] › e2e/dev-ai.spec.ts:423:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › status card: 404 → «unavailable» (S-9); 500 → error alert + retry recovers (2.9s)
+[WebServer] 10:10:49 PM [vite] (client) [console.warn] No `HydrateFallback` element provided to render during initial hydration
+  ✓   46 [chromium] › e2e/dev-ai.spec.ts:443:3 › SWR-005B /dev/ai — UI states (page.route, Q-25) › S-6: provider «auto» with OpenAI enabled (status intercepted) shows the paid-request warning (912ms)
+  ✓   47 [chromium] › e2e/game-page.spec.ts:17:1 › TC-GP-01 (e2e): Rebellion game page shows cover, name, description, players, AI and both actions (703ms)
+  ✓   48 [chromium] › e2e/game-page.spec.ts:43:1 › TC-GP-18: keyboard only — "New session" and "Continue" are reachable and activate with Enter (2.4s)
+  ✓   49 [chromium] › e2e/game-page.spec.ts:70:1 › TC-NEW-04 (e2e): the new-session screen links back to the game page (994ms)
+  ✓   50 [chromium] › e2e/game-page.spec.ts:80:1 › TC-HOST-07: session host → "back to game" → game page lists the session and continues it (2.0s)
+  ✓   51 [chromium] › e2e/game-page.spec.ts:108:1 › TC-HOST-08: unknown session id shows "session not found" with a way to the catalog (745ms)
+  ✓   52 [chromium] › e2e/game-setup.spec.ts:56:3 › SWR-004 PO TC-001..TC-006: game setup › TC-001: standard AI game — catalog → Rebellion → New game → defaults → Start → prototype table (2.4s)
+  ✓   53 [chromium] › e2e/game-setup.spec.ts:130:3 › SWR-004 PO TC-001..TC-006: game setup › TC-002: play as the Empire — caption flips, AI hard, view for the Empire, Rebel base hidden (1.8s)
+  ✓   54 [chromium] › e2e/game-setup.spec.ts:171:3 › SWR-004 PO TC-001..TC-006: game setup › TC-003: against a second player — difficulty hidden, no aiDifficulty sent, null stored, pass-turn shown (2.0s)
+  ✓   55 [chromium] › e2e/game-setup.spec.ts:210:3 › SWR-004 PO TC-001..TC-006: game setup › TC-004: restore — reload and a fresh browser context show the same session, settings and move (4.9s)
+  ✓   56 [chromium] › e2e/game-setup.spec.ts:278:3 › SWR-004 PO TC-001..TC-006: game setup › TC-005: server errors (500, 422, network) keep the form, show an alert and a retry works (2.4s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:11:13 PM     LOG [SessionsService] sessionId=b9f10945-4fc5-4606-baaa-e0040d6394f0 gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+[WebServer] [Nest] 33317  - 11/08/2026, 10:11:15 PM     LOG [SessionsService] sessionId=5a5310f9-48a2-4a19-903f-20e9364c7272 gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+  ✓   57 [chromium] › e2e/game-setup.spec.ts:345:3 › SWR-004 PO TC-001..TC-006: game setup › TC-006: double click and rapid clicks/Enter with a delayed response → one POST, one session (5.3s)
+[WebServer] [Nest] 33317  - 11/08/2026, 10:11:15 PM     LOG [SessionsService] sessionId=c62d7465-97bf-4a3c-ad06-49d732fb8752 gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+[WebServer] [Nest] 33317  - 11/08/2026, 10:11:15 PM    WARN [SessionsService] sessionId=- gameId=star-wars-rebellion code=IDEMPOTENCY_KEY_REUSED status=409
+  ✓   58 [chromium] › e2e/game-setup.spec.ts:406:3 › SWR-004 PO TC-001..TC-006: game setup › TC-006 (API): same Idempotency-Key → same session (201 then 200); same key, other body → 409 (66ms)
+  ✓   59 [chromium] › e2e/game-setup.spec.ts:436:3 › SWR-004 PO TC-001..TC-006: game setup › TC-E2E-RT-01: direct /new and refresh show defaults; back/forward re-open with defaults (Q-19) (2.5s)
+  ✓   60 [chromium] › e2e/hot-seat.spec.ts:110:3 › SWR-005 hot-seat (core-v1) › TC-E-05 (scenario 3): finish → handoff → «I am the Empire» → Empire passes → handoff → «I am the Rebels» → Rebels move again without a handoff (3.2s)
+  ✓   61 [chromium] › e2e/hot-seat.spec.ts:170:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-01 (core-v1): finish activation → handoff screen without map, panels, log; responses carry no board data (2.3s)
+  ✓   62 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.0s)
+  ✓   63 [chromium] › e2e/hot-seat.spec.ts:258:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-03 (core-v1): «I am the Empire» → Empire table (own secrets only), selection / armed leader / zoom reset; cycle back (3.4s)
+  ✓   64 [chromium] › e2e/hot-seat.spec.ts:329:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-04 (core-v1): commands of the inactive side and board commands during the handoff are rejected (422) (107ms)
+  ✓   65 [chromium] › e2e/hot-seat.spec.ts:374:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-05 (core-v1): AI game has no handoff — END_TURN → 422 commandUnavailable, ACCEPT_HANDOFF → 422 handoffNotAvailable (2.3s)
+  ✓   66 [chromium] › e2e/hot-seat.spec.ts:402:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M1: seeded handoff → «I am the Empire» → mock table → «Pass the turn» → handoff without board data (1.8s)
+  ✓   67 [chromium] › e2e/hot-seat.spec.ts:440:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M2: seeded handoff — mock commands during the handoff and of the inactive side → 422 (976ms)
+  ✓   68 [chromium] › e2e/keyboard.spec.ts:13:1 › TC-E2E-28 (core-v1): keyboard-only — arm a leader, select a system in the object list, activate it; visible focus and aria-live feedback (4.3s)
+  ✓   69 [chromium] › e2e/legacy.spec.ts:41:3 › SWR-005 scenario 6: legacy sessions (mock-v1) › TC-E-09: /games/R → seeded v2 session → fictional map, «Old prototype» badge, advance-phase + mock move, reload keeps the move (2.8s)
+  ✓   70 [chromium] › e2e/legacy.spec.ts:99:3 › SWR-005 scenario 6: legacy sessions (mock-v1) › TC-E-09 (v1 row): a seeded SWR-003 session (no schemaVersion) opens as a legacy table and accepts a mock command (1.5s)
+  ✓   71 [chromium] › e2e/move.spec.ts:63:1 › TC-E2E-17: move via the actions panel (selection + 1 click) (1.6s)
+  ✓   72 [chromium] › e2e/move.spec.ts:83:1 › TC-E2E-18: move by dragging the piece onto a highlighted system (1.9s)
+  ✓   73 [chromium] › e2e/move.spec.ts:100:1 › TC-E2E-18b: move by clicking a highlighted target on the map (1.6s)
+  ✓   74 [chromium] › e2e/move.spec.ts:110:1 › TC-E2E-19: drop on a non-adjacent system is refused without a request and rolled back (3.2s)
+  ✓   75 [chromium] › e2e/move.spec.ts:133:1 › TC-E2E-20: server rejects an illegal move with 422 and the state is unchanged (1.9s)
+  ✓   76 [chromium] › e2e/move.spec.ts:156:1 › TC-E2E-21: dragging an enemy piece sends nothing and the piece stays in its system (2.4s)
+  ✓   77 [chromium] › e2e/move.spec.ts:185:1 › TC-E2E-34: stale view → 409, message, refetch, selection kept (A-19) (1.6s)
+  ✓   78 [chromium] › e2e/new-game.spec.ts:26:1 › TC-NEW-05 (was TC-E2E-03): catalog → game page → new session (Empire, AI, hard) → its table (2.0s)
+  ✓   79 [chromium] › e2e/new-game.spec.ts:94:1 › TC-NEW-06 (was TC-E2E-04): human opponent — difficulty unavailable, setup has no difficulty (2.5s)
+  ✓   80 [chromium] › e2e/new-game.spec.ts:121:1 › TC-NEW-07 (was TC-E2E-05): new session as the Rebels — view is for the Rebels (1.7s)
+  ✓   81 [chromium] › e2e/new-game.spec.ts:144:1 › TC-NEW-05 (old URL): SWR-002 `/games/new` is now an unknown game id → not found (521ms)
+  ✓   82 [chromium] › e2e/persistence.spec.ts:32:1 › TC-E2E-22 (core-v1): after an activation and a move, reload of /sessions/:id restores the state from the server (3.1s)
+  ✓   83 [chromium] › e2e/persistence.spec.ts:74:1 › TC-GP-14 (core-v1, was TC-E2E-23): "Continue" on the game page in a fresh context opens the latest session (1.6s)
+  ✓   84 [chromium] › e2e/persistence.spec.ts:117:1 › TC-GP-15 (was TC-E2E-23b): game page lists exactly 5 recent sessions newest first and opens one (1.5s)
+  ✓   85 [chromium] › e2e/phase.spec.ts:27:1 › TC-E2E-24: "End phase (mock)" cycles phases, increments the round and persists (2.7s)
+  ✓   86 [chromium] › e2e/phase.spec.ts:57:1 › TC-E2E-24 (move in any phase): a move is offered and accepted in the "command" phase (1.7s)
+  ✓   87 [chromium] › e2e/screenshots.spec.ts:46:1 › SWR-003 platform screenshots: catalog, game pages, new session, session table, not-found (5.2s)
+  ✓   88 [chromium] › e2e/screenshots.spec.ts:103:1 › TC-E2E-33 (SWR-003 routes): table regression screenshots (7.1s)
+  ✓   89 [chromium] › e2e/selection.spec.ts:32:1 › TC-E2E-13 (core-v1): clicking a system selects it and opens the system panel (1.6s)
+  ✓   90 [chromium] › e2e/selection.spec.ts:57:1 › TC-E2E-14 (core-v1): own unit → unit panel; armed leader → exactly the server targets; activation → exactly the server move sources (2.9s)
+  ✓   91 [chromium] › e2e/selection.spec.ts:96:1 › TC-E2E-15 (core-v1): enemy units and the hidden zone offer no commands (2.6s)
+  ✓   92 [chromium] › e2e/selection.spec.ts:118:1 › TC-E2E-16 (core-v1): background click (< 4 px) and Esc clear the selection; Esc first drops an armed leader (2.3s)
+  ✓   93 [chromium] › e2e/session-list.spec.ts:25:3 › SWR-004 prototype labelling › TC-E2E-PR-01: "Prototype" on the table (1440 and 375), game tab, every list row, Continue hint and the form (3.6s)
+  ✓   94 [chromium] › e2e/session-list.spec.ts:80:3 › SWR-004 continue from the game page › TC-E2E-CT-01: list rows show side, opponent, status, date per session; Continue → newest; row → that session (1.9s)
+  ✓   95 [chromium] › e2e/settings.spec.ts:19:1 › TC-E2E-25: switching ru → en → ru changes the UI language and persists over reload (3.4s)
+  ✓   96 [chromium] › e2e/settings.spec.ts:50:1 › TC-E2E-26: in English no Cyrillic text remains on the main screens (incl. system names) (4.3s)
+  ✓   97 [chromium] › e2e/settings.spec.ts:81:1 › TC-E2E-27: reduce motion toggles the documented flag, persists and makes zoom instant (2.2s)
+  ✓   98 [chromium] › e2e/smoke.spec.ts:6:1 › api health is reachable through the web proxy (15ms)
+  ✓   99 [chromium] › e2e/smoke.spec.ts:12:1 › TC-E2E-01 (SWR-003: catalog): home page loads without console errors (578ms)
+  ✓  100 [chromium] › e2e/visual-a11y.spec.ts:63:3 › SWR-004 visual & accessibility › TC-VA-01: game page with sessions (D, M) — no horizontal scroll on M (1.2s)
+  ✓  101 [chromium] › e2e/visual-a11y.spec.ts:80:3 › SWR-004 visual & accessibility › TC-VA-02..04: form defaults, Empire selected, human selected (D, M) + en copy (5.4s)
+  ✓  102 [chromium] › e2e/visual-a11y.spec.ts:124:3 › SWR-004 visual & accessibility › TC-VA-05 + TC-VA-13: error state is visible next to the button (D, M) and reads as human text (2.0s)
+  ✓  103 [chromium] › e2e/visual-a11y.spec.ts:144:3 › SWR-004 visual & accessibility › TC-VA-06 + TC-VA-07: table with the prototype badge and the handoff screen (D, M) (4.3s)
+  ✓  104 [chromium] › e2e/visual-a11y.spec.ts:167:3 › SWR-004 visual & accessibility › TC-VA-08 (D-1): table top bar at 1024×768 and 768×1024 does not overflow (AI and human games) (8.0s)
+  ✓  105 [chromium] › e2e/visual-a11y.spec.ts:209:3 › SWR-004 visual & accessibility › TC-VA-09 + TC-VA-10: keyboard-only path through the form, visible focus, Enter creates the session (2.1s)
+  ✓  106 [chromium] › e2e/visual-a11y.spec.ts:290:3 › SWR-004 visual & accessibility › TC-VA-10 (lists, handoff): keyboard focus is visible on the game page rows and on "I am …" (2.1s)
+  ✓  107 [chromium] › e2e/visual-a11y.spec.ts:308:3 › SWR-004 visual & accessibility › TC-VA-11: text and selection contrast (form, error, badge, handoff) — WCAG helper (TR-9) (4.0s)
+  ✓  108 [chromium] › e2e/visual-a11y.spec.ts:352:3 › SWR-004 visual & accessibility › TC-VA-12: roles and names — radiogroups, radios, alert, busy button, handoff heading (1.9s)
+  ✓  109 [chromium] › e2e/visual-a11y.spec.ts:397:3 › SWR-004 visual & accessibility › TC-VA-15: the form loads only same-origin resources (emblems are local) (1.2s)
+  ✓  110 [chromium] › e2e/zoom-pan.spec.ts:44:1 › TC-E2E-07: zoom buttons + / − change the scale and the DOM mirror (2.4s)
+  ✓  111 [chromium] › e2e/zoom-pan.spec.ts:58:1 › TC-E2E-08: mouse wheel zooms around the cursor (2.0s)
+  ✓  112 [chromium] › e2e/zoom-pan.spec.ts:85:3 › limits › TC-E2E-09: zoom is clamped to min/max and buttons disable at the limits (3.8s)
+  ✓  113 [chromium] › e2e/zoom-pan.spec.ts:110:1 › TC-E2E-10: fit shows every system inside the canvas (2.9s)
+  ✓  114 [chromium] › e2e/zoom-pan.spec.ts:129:1 › TC-E2E-11: dragging the background pans and keeps the selection (3.1s)
+  ✓  115 [chromium] › e2e/zoom-pan.spec.ts:149:1 › TC-E2E-12: drag started on a movable unit does not pan; drop on empty space cancels (4.9s)
+  ✓  116 [chromium] › e2e/zoom-pan.spec.ts:181:1 › TC-E2E-29: zoom controls and canvas are labelled and keyboard operable (2.3s)
+
+
+  1) [chromium] › e2e/dev-ai.spec.ts:111:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-01: status shows mock / OpenAI disabled; PO scenario is listed as test data 
+
+    Error: no OpenAI key in the e2e API process
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: false
+    Received: true
+
+      122 |     // e2e-serve drops every OPENAI_* and sets NODE_ENV=test, so no key may reach the e2e API (TR-3, AM-BE-3). Soft: the
+      123 |     // rest of the case (and its screenshots) still runs if this regresses.
+    > 124 |     expect.soft(body.keyConfigured, 'no OpenAI key in the e2e API process').toBe(false);
+          |                                                                             ^
+      125 |     expect(body.budget.budgetKey).toBe(DEV_BUDGET_KEY);
+      126 |     expect(body.budget.spentMicroUsd).toBe(0);
+      127 |     expectNoSecrets(JSON.stringify(body), 'status body');
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/dev-ai.spec.ts:124:77
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  getByTestId('dev-ai-status-key')
+    Expected: "false"
+    Received: "true"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "soft toHaveAttribute" getByTestId('dev-ai-status-key') with timeout 5000ms
+      - waiting for getByTestId('dev-ai-status-key')
+        14 × locator resolved to <div data-configured="true" class="MuiBox-root css-5ii0n6" data-testid="dev-ai-status-key">…</div>
+           - unexpected value "true"
+
+
+      132 |     await expect(page.getByTestId(DA.statusOpenai)).toContainText(msg(RU, 'status.openai.off'));
+      133 |     await expect(page.getByTestId(DA.statusProvider)).toHaveAttribute('data-provider', 'mock');
+    > 134 |     await expect.soft(page.getByTestId(DA.statusKey)).toHaveAttribute('data-configured', 'false');
+          |                                                       ^
+      135 |     await expect(page.getByTestId(DA.modelStrategy)).toBeVisible();
+      136 |     await expect(page.getByTestId(DA.modelTactical)).toBeVisible();
+      137 |     await expect(page.getByTestId(DA.budget)).toBeVisible();
+        at /Users/dimatitov/WebstormProjects/Game automa/e2e/dev-ai.spec.ts:134:55
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/dev-ai-SWR-005B-dev-ai-—-r-9152d-ario-is-listed-as-test-data-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/dev-ai-SWR-005B-dev-ai-—-r-9152d-ario-is-listed-as-test-data-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/dev-ai-SWR-005B-dev-ai-—-r-9152d-ario-is-listed-as-test-data-chromium/trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results/dev-ai-SWR-005B-dev-ai-—-r-9152d-ario-is-listed-as-test-data-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › e2e/dev-ai.spec.ts:111:3 › SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false) › TC-E-01: status shows mock / OpenAI disabled; PO scenario is listed as test data 
+  115 passed (5.1m)
+ ELIFECYCLE  Command failed with exit code 1.
+# exit code: 1
+# finished 2026-11-08T19:13:47Z

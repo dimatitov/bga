@@ -10,6 +10,18 @@
   "idempotencyKeyReused": "Could not create the session. Press “Start game” again.",
   "network": "Server unavailable. Check the connection and try again.",
   "unknown": "Unknown error.",
+  "aiNotConfigured": "OpenAI is not configured. Choose the Mock provider or check apps/api/.env.",
+  "aiModelUnavailable": "The configured OpenAI model is not available for this key.",
+  "aiPricingUnknown": "No pricing is known for the configured model, so the cost cannot be limited.",
+  "aiKeyRejected": "OpenAI rejected the API key. Check the key in apps/api/.env.",
+  "aiBudgetExceeded": "The AI budget is exhausted. Mock keeps working for free.",
+  "aiRateLimited": "OpenAI rate limit reached. Wait a little and try again.",
+  "aiDevRateLimited": "Too many diagnostic requests. Wait a minute and try again.",
+  "aiTimeout": "OpenAI did not answer in time. Try again later.",
+  "aiProviderError": "OpenAI request failed. Try again later.",
+  "aiQuota": "The OpenAI account has no quota left. Check billing in the OpenAI dashboard.",
+  "aiInvalidDecision": "The AI returned an invalid decision. Nothing was executed.",
+  "aiDevForbidden": "AI diagnostics are available only from the local developer machine.",
   "code": {
     "ILLEGAL_COMMAND": "Action not allowed.",
     "VERSION_CONFLICT": "The game state has changed. Repeat the action.",
@@ -21,6 +33,13 @@
     "HTTP_ERROR": "Server error.",
     "GAME_UNAVAILABLE": "Game unavailable.",
     "SETUP_UNSUPPORTED": "These settings are not supported yet.",
-    "IDEMPOTENCY_KEY_REUSED": "Could not create the session. Please try again."
+    "IDEMPOTENCY_KEY_REUSED": "Could not create the session. Please try again.",
+    "AI_NOT_CONFIGURED": "AI is not configured.",
+    "AI_BUDGET_EXCEEDED": "AI budget exhausted.",
+    "AI_RATE_LIMITED": "Too many AI requests. Please wait.",
+    "AI_TIMEOUT": "The AI did not answer in time.",
+    "AI_PROVIDER_ERROR": "AI provider error.",
+    "AI_INVALID_DECISION": "The AI returned an invalid decision.",
+    "AI_DEV_FORBIDDEN": "AI diagnostics are not allowed."
   }
 }

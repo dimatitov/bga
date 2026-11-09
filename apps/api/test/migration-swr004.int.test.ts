@@ -23,6 +23,8 @@ import { createSwr003Db, type Swr003Db } from './support/swr003-db';
 import { api, startApp, stopApp } from './support/test-app';
 
 const SWR004_MIGRATION = '20261108200000_session_status_idempotency';
+/** SWR-005B: applied by the same deploy (CREATE only, see migration-swr005b). */
+const SWR005B_MIGRATION = '20261108230000_ai_usage';
 
 type RawRow = Record<string, unknown>;
 
@@ -124,6 +126,7 @@ describe(`migration ${SWR004_MIGRATION}`, { timeout: 60_000 }, () => {
       INIT_MIGRATION,
       SESSIONS_MIGRATION,
       SWR004_MIGRATION,
+      SWR005B_MIGRATION,
     ]);
 
     expect(prisma(db.url, ['migrate', 'deploy'])).toMatch(/No pending migrations/);

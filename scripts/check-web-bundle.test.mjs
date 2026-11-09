@@ -8,8 +8,10 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import {
+  DEV_AI_AND_SECRET_RULES,
   forbiddenFromScenario,
   forbiddenGameModules,
+  forbiddenWebModules,
   gameModules,
   readMapSources,
   readTextFiles,
@@ -207,6 +209,110 @@ describe('check-web-bundle: CLI', () => {
       assert.match(res.stdout, /FORBIDDEN assets\/leak\.js \[rebel-base-choice-symbol\]/);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)', () => {
+  const FAKE_KEY = `sk-${'proj'}${'A1b2C3d4E5f6G7h8I9j0K1'}`; // synthetic, assembled at runtime
+
+  test('static rules are part of every rule set', () => {
+    const ids = rules.map((r) => r.id);
+    for (const r of DEV_AI_AND_SECRET_RULES) assert.ok(ids.includes(r.id), r.id);
+  });
+
+  test('dev paths, testids and secrets are found', () => {
+    const cases = [
+      ['fetch("/api/dev/ai/status")', 'dev-ai-path'],
+      ['r("/api/dev/ai/test-decision",{method:"POST"})', 'dev-ai-path'],
+      ['{path:`/dev/ai`,lazy:()=>import("./route-x.js")}', 'dev-ai-path'],
+      ['e("button",{"data-testid":"dev-ai-submit"})', 'dev-ai-testid'],
+      ['{"data-testid":"settings-dev-ai-link"}', 'dev-ai-testid'],
+      ['{"data-testid":"ai-dev-status"}', 'dev-ai-testid'],
+      ['const k=process.env.OPENAI_API_KEY;', 'openai-key-name'],
+      ['{"OPENAI_ENABLED":"true"}', 'openai-env-name'],
+      ['const m="OPENAI_TACTICAL_MODEL";', 'openai-env-name'],
+      [`const key="${FAKE_KEY}";`, 'openai-key-value'],
+      ['fetch("https://api.openai.com/v1/responses")', 'openai-api-host'],
+    ];
+    for (const [content, rule] of cases) assert.ok(scan(content).includes(rule), `${rule}: ${content}`);
+  });
+
+  test('no false positives: AI_* codes and their texts, platform paths, look-alike words', () => {
+    const content = [
+      'const c=["AI_NOT_CONFIGURED","AI_BUDGET_EXCEEDED","AI_RATE_LIMITED","AI_TIMEOUT","AI_PROVIDER_ERROR","AI_INVALID_DECISION","AI_DEV_FORBIDDEN"];',
+      '{"code":{"AI_BUDGET_EXCEEDED":"Бюджет AI исчерпан."},"aiNotConfigured":"OpenAI is not configured. Check apps/api/.env."}',
+      'fetch("/api/sessions?gameId=x");fetch("/api/devices");',
+      'e("div",{"data-testid":"task-ai"});const devices=1;',
+      '{"risk-assessment":1,"desk-lamp-with-a-very-long-name":2,"task-list-item-abcdefghijklmnopqrstu":3}',
+      'const s="dev-diagnostics";const devAi=1;',
+      'const OPENAIX=1;',
+    ].join('\n');
+    assert.deepEqual(scan(content), []);
+  });
+
+  test('module check: apps/web/src/dev/** is forbidden, other web modules are fine', () => {
+    assert.deepEqual(
+      forbiddenWebModules([
+        '../../apps/web/src/dev/ai/DevAiPage.tsx',
+        '../../src/dev/ai/route.tsx',
+        '/abs/repo/apps/web/src/dev/ai/locales/ru.json',
+        '..\\..\\src\\dev\\ai\\api.ts',
+        'apps/web/src/app/router.tsx',
+        '../../src/app/router.tsx',
+        '../../src/devices/x.ts',
+        '../../../../packages/platform/src/ai-dev.ts',
+      ]),
+      [
+        '../../apps/web/src/dev/ai/DevAiPage.tsx',
+        '../../src/dev/ai/route.tsx',
+        '/abs/repo/apps/web/src/dev/ai/locales/ru.json',
+        '../../src/dev/ai/api.ts',
+      ],
+    );
+  });
+
+  test('CLI: dev path / testid / key name in dist → exit 1; dev module in maps → exit 1', (t) => {
+    const scenarioDist = path.resolve(path.dirname(CLI), '..', 'packages', 'games', 'rebellion', 'dist', 'scenario', 'index.js');
+    if (!fs.existsSync(scenarioDist)) {
+      t.skip('packages/games/rebellion/dist missing (run pnpm run build:packages)');
+      return;
+    }
+    const dist = fs.mkdtempSync(path.join(os.tmpdir(), 'bga-bundle-'));
+    const maps = fs.mkdtempSync(path.join(os.tmpdir(), 'bga-bundle-maps-'));
+    try {
+      fs.writeFileSync(path.join(dist, 'index.html'), '<!doctype html><div id="root"></div>');
+      fs.mkdirSync(path.join(dist, 'assets'));
+      for (const [content, rule] of [
+        ['fetch("/api/dev/ai/status")', 'dev-ai-path'],
+        ['{"data-testid":"ai-dev-status"}', 'dev-ai-testid'],
+        ['const k="OPENAI_API_KEY";', 'openai-key-name'],
+      ]) {
+        fs.writeFileSync(path.join(dist, 'assets', 'leak.js'), content);
+        const res = spawnSync(process.execPath, [CLI, '--dist', dist, '--skip-modules'], { encoding: 'utf8' });
+        assert.equal(res.status, 1, res.stdout + res.stderr);
+        assert.match(res.stdout, new RegExp(`FORBIDDEN assets/leak\\.js \\[${rule}\\]`));
+      }
+      fs.writeFileSync(path.join(dist, 'assets', 'leak.js'), 'const c="AI_BUDGET_EXCEEDED";');
+      const sources = [
+        '../../../../packages/games/rebellion/src/schema/enums.ts',
+        '../../src/app/router.tsx',
+      ];
+      fs.writeFileSync(path.join(maps, 'index.js.map'), JSON.stringify({ version: 3, sources, mappings: '' }));
+      let res = spawnSync(process.execPath, [CLI, '--dist', dist, '--modules-dir', maps], { encoding: 'utf8' });
+      assert.equal(res.status, 0, res.stdout + res.stderr);
+      assert.match(res.stdout, /0 apps\/web\/src\/dev modules/);
+
+      fs.writeFileSync(
+        path.join(maps, 'index.js.map'),
+        JSON.stringify({ version: 3, sources: [...sources, '../../src/dev/ai/DevAiPage.tsx'], mappings: '' }),
+      );
+      res = spawnSync(process.execPath, [CLI, '--dist', dist, '--modules-dir', maps], { encoding: 'utf8' });
+      assert.equal(res.status, 1, res.stdout + res.stderr);
+      assert.match(res.stdout, /FORBIDDEN module \.\.\/\.\.\/src\/dev\/ai\/DevAiPage\.tsx \[web-dev\]/);
+    } finally {
+      fs.rmSync(dist, { recursive: true, force: true });
+      fs.rmSync(maps, { recursive: true, force: true });
     }
   });
 });

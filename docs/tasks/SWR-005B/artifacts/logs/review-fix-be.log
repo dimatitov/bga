@@ -1,0 +1,53 @@
+# SWR-005B REVIEW-FIX (backend-lead) — 2026-11-08T19:55:04Z
+$ pnpm --filter @bga/api test
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 53666  - [39m11/08/2026, 10:55:14 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 54119  - [39m11/08/2026, 10:55:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 54119  - [39m11/08/2026, 10:55:29 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 54119  - [39m11/08/2026, 10:55:30 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=1b0bf506-d3fc-4742-b679-3d98411650d9 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54530  - [39m11/08/2026, 10:55:35 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=027fa8b5-71a8-47a5-832a-bb8705a78334 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 54863  - [39m11/08/2026, 10:55:43 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=8ba5f252-1d96-45c8-b7e2-5f2887a0fda8 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 54863  - [39m11/08/2026, 10:55:43 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=8ba5f252-1d96-45c8-b7e2-5f2887a0fda8 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 54962  - [39m11/08/2026, 10:55:47 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 55049  - [39m11/08/2026, 10:55:50 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 55049  - [39m11/08/2026, 10:55:50 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  53 passed | 1 skipped (54)
+      Tests  492 passed | 1 skipped (493)
+   Start at  22:55:05
+   Duration  75.63s (transform 8.86s, setup 2.50s, import 67.12s, tests 369.69s, environment 6ms)
+
+exit=0
+
+$ pnpm exec vitest run (new tests with the 3 behavioural fixes temporarily reverted: old bytes/2, timeout-only billing, start without NODE_ENV)
+Test Files 3 failed (3); Tests 4 failed | 32 passed (36) — F-2 x2, F-3 x1, F-4 x1 fail as expected; restored → 4 files / 40 tests passed
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm exec eslint apps/api --max-warnings=0
+exit=0
+
+$ pnpm exec prettier --check apps/api/src/ai/providers/openai.provider.ts apps/api/src/ai/prompt.ts apps/api/src/ai/ai-decision.service.ts apps/api/package.json apps/api/scripts/reset-ai-budget.mjs apps/api/test/ai/prompt.unit.test.ts apps/api/test/ai/openai-provider.unit.test.ts apps/api/test/ai/ai-decision-service.unit.test.ts apps/api/test/package-scripts.unit.test.ts
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

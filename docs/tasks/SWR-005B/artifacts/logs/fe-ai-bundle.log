@@ -1,0 +1,79 @@
+## 2026-11-08T18:38:16Z node --test scripts/check-web-bundle.test.mjs
+# tests 16
+# pass 16
+# fail 0
+# skipped 0
+exit=
+## pnpm --filter @bga/web build
+
+> @bga/web@0.0.0 build /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b && vite build
+
+vite v8.3.6 building client environment for production...
+transforming...
+✓ 1183 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                             0.68 kB │ gzip:   0.37 kB
+dist/assets/FactionEmblem-1w1KEp6D.js       0.35 kB │ gzip:   0.27 kB
+dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+dist/assets/SetupScreen-Ch97Zlvy.js         6.60 kB │ gzip:   2.29 kB
+dist/assets/TableScreen-CBzsd2Ym.js       121.76 kB │ gzip:  34.80 kB
+dist/assets/index-H9k6toi5.js             131.25 kB │ gzip:  41.53 kB
+dist/assets/vendor-DIbOl8aa.js            186.48 kB │ gzip:  54.97 kB
+dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+
+✓ built in 324ms
+exit=0
+## pnpm check:bundle
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 10 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-3Z6vIM
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 771 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit=0
+## (re-run for exit code) node --test scripts/check-web-bundle.test.mjs
+exit=0
+## negative probe: development-mode build (DEV=true) must FAIL the check
+build exit=0
+   1 FAIL check-web-bundle: 4 finding(s) in 18 files
+   1 FORBIDDEN assets/TableScreen-CBzsd2Ym.js.map [board-debug-hook] `__boardDebug` dev/test hook in a production bundle (R-11, TC-ARCH-08)
+   1 FORBIDDEN assets/index-H9k6toi5.js.map [dev-ai-path] dev AI diagnostics path (`/dev/ai` route or `/api/dev/ai/*` endpoint) in a production bundle
+   1 FORBIDDEN assets/index-H9k6toi5.js.map [dev-ai-testid] dev AI diagnostics testid (`dev-ai-*` / `ai-dev-*`): the `import.meta.env.DEV` guard did not fold
+   1 FORBIDDEN assets/index-H9k6toi5.js.map [openai-env-name] other `OPENAI_*` server environment variable name in the web bundle (AC-10)
+   1 OK check-web-bundle modules: 771 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+check exit=1
+## negative probe (corrected): NODE_ENV=development vite build --mode development --sourcemap hidden (DEV=true, route chunk present); maps moved to a separate dir so only JS is text-scanned
+(the previous probe without NODE_ENV still built with DEV=false: no route chunk, findings only in .map sourcesContent, 0 dev modules — not a valid negative)
+FORBIDDEN assets/boardDebugImpl-DGJEAeh0.js [board-debug-hook] `__boardDebug` dev/test hook in a production bundle (R-11, TC-ARCH-08)
+FORBIDDEN assets/coreBoardDebugImpl-B0HaUKhE.js [board-debug-hook] `__boardDebug` dev/test hook in a production bundle (R-11, TC-ARCH-08)
+FORBIDDEN assets/index-CIjelSUN.js [dev-ai-path] dev AI diagnostics path (`/dev/ai` route or `/api/dev/ai/*` endpoint) in a production bundle
+FORBIDDEN assets/index-CIjelSUN.js [dev-ai-testid] dev AI diagnostics testid (`dev-ai-*` / `ai-dev-*`): the `import.meta.env.DEV` guard did not fold
+FORBIDDEN assets/route-CZplehQ2.js [dev-ai-path] dev AI diagnostics path (`/dev/ai` route or `/api/dev/ai/*` endpoint) in a production bundle
+FORBIDDEN assets/route-CZplehQ2.js [dev-ai-testid] dev AI diagnostics testid (`dev-ai-*` / `ai-dev-*`): the `import.meta.env.DEV` guard did not fold
+FAIL check-web-bundle: 6 finding(s) in 13 files
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/AiErrorAlert.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV
+FORBIDDEN module <repo>/apps/web/src/dev/ai/format.ts [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/Section.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/TokenTable.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/ResultCard.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/RunControls.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/ScenarioList.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV
+FORBIDDEN module <repo>/apps/web/src/dev/ai/errorText.ts [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/ModelRow.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/components/StatusCard.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/api.ts [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/queries.ts [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/testScenario.ts [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/DevAiPage.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/locales/en.json [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/locales/ru.json [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/i18n.ts [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FORBIDDEN module <repo>/apps/web/src/dev/ai/route.tsx [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)
+FAIL check-web-bundle: 0 forbidden game module(s), 18 dev module(s) in the bundle
+check exit=1

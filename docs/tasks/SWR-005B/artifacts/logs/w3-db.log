@@ -1,0 +1,146 @@
+# W3 (SWR-005B) — 2026-11-08T18:20:42Z
+$ pnpm --filter @bga/api exec prisma generate
+Environment variables loaded from .env
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.3) to ./../../node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3/node_modules/@prisma/client in 98ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Interested in query caching in just a few lines of code? Try Accelerate today! https://pris.ly/tip-3-accelerate
+
+exit=0
+
+$ pnpm --filter @bga/api test
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 9897  - [39m11/08/2026, 9:20:53 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=31a4d4c8-8a88-44c3-8d01-ff9c7e8a5e61 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:04 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:05 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10722  - [39m11/08/2026, 9:21:05 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=7c8e74fe-b12d-45d2-8cab-879024a75b99 code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 10614  - [39m11/08/2026, 9:21:06 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 10614  - [39m11/08/2026, 9:21:06 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 10614  - [39m11/08/2026, 9:21:06 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 10994  - [39m11/08/2026, 9:21:11 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=7d19d86e-b910-409a-bbcb-f53f88c860a4 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 10994  - [39m11/08/2026, 9:21:11 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=7d19d86e-b910-409a-bbcb-f53f88c860a4 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 11049  - [39m11/08/2026, 9:21:12 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+ ❯ test/architecture.int.test.ts (5 tests | 1 failed) 59ms
+     × TC-A-02: no OpenAI / AI client in apps/api/src 25ms
+[31m[Nest] 11075  - [39m11/08/2026, 9:21:13 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 11075  - [39m11/08/2026, 9:21:13 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-A-02: no OpenAI / AI client in apps/api/src
+AssertionError: expected [ …(68) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:7: * - `OPENAI_ENABLED` is required and only `true` | `false` (case-sensitive);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:8: * - with `OPENAI_ENABLED=false` the other `OPENAI_*` variables are not checked (invalid ones are ignored);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:9: * - with `OPENAI_ENABLED=true` the key, both models and the session cost limit are required;",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:10: * - `NODE_ENV=test` never loads `.env` and rejects `OPENAI_ENABLED=true`;",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:21: 'OPENAI_ENABLED',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:22: 'OPENAI_API_KEY',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:23: 'OPENAI_STRATEGY_MODEL',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:24: 'OPENAI_TACTICAL_MODEL',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:25: 'OPENAI_MAX_COST_PER_SESSION_USD',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:26: 'OPENAI_TIMEOUT_MS',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:27: 'OPENAI_MAX_RETRIES',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:34: export const DEFAULT_OPENAI_TIMEOUT_MS = 30_000;",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:35: export const DEFAULT_OPENAI_MAX_RETRIES = 2;",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:42: OPENAI_ENABLED: z.enum(['true', 'false']).transform((v) => v === 'true'),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:43: OPENAI_API_KEY: z.string().regex(/^\\S+$/).optional(),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:44: OPENAI_STRATEGY_MODEL: z.string().regex(MODEL_ID).optional(),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:45: OPENAI_TACTICAL_MODEL: z.string().regex(MODEL_ID).optional(),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:46: OPENAI_MAX_COST_PER_SESSION_USD: z.coerce.number().positive().max(5).optional(),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:47: OPENAI_TIMEOUT_MS: z.coerce.number().int().min(1000).max(120_000).default(DEFAULT_OPENAI_TIMEOUT_MS),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:48: OPENAI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(DEFAULT_OPENAI_MAX_RETRIES),",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:56: OPENAI_ENABLED: 'must be \"true\" or \"false\"',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:57: OPENAI_API_KEY: 'must be a non-empty string without whitespace',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:58: OPENAI_STRATEGY_MODEL: 'must be a model id ([A-Za-z0-9._:-], up to 100 chars)',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:59: OPENAI_TACTICAL_MODEL: 'must be a model id ([A-Za-z0-9._:-], up to 100 chars)',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:60: OPENAI_MAX_COST_PER_SESSION_USD: 'must be a number > 0 and <= 5',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:61: OPENAI_TIMEOUT_MS: 'must be an integer 1000..120000',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:62: OPENAI_MAX_RETRIES: 'must be an integer 0..5',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:65: const REASON_REQUIRED_WHEN_ENABLED = 'is required when OPENAI_ENABLED=true';",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:68: /** Variables checked only when OPENAI_ENABLED=true (Q-3: ignored when false). */",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:69: const OPENAI_DEPENDENT: readonly EnvKey[] = [",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:70: 'OPENAI_API_KEY',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:71: 'OPENAI_STRATEGY_MODEL',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:72: 'OPENAI_TACTICAL_MODEL',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:73: 'OPENAI_MAX_COST_PER_SESSION_USD',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:74: 'OPENAI_TIMEOUT_MS',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:75: 'OPENAI_MAX_RETRIES',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:78: 'OPENAI_API_KEY',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:79: 'OPENAI_STRATEGY_MODEL',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:80: 'OPENAI_TACTICAL_MODEL',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:81: 'OPENAI_MAX_COST_PER_SESSION_USD',",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:93: /** The raw value. Only the OpenAI client factory may call this (architecture test). */",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:129: export type OpenAIConfig =",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:132: /** The key itself is not kept when OpenAI is off. */",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:154: readonly openai: OpenAIConfig;",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:200: const enabled = checkField('OPENAI_ENABLED', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:205: ['OPENAI_ENABLED', enabled],",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:210: const openaiOn = enabled.ok && enabled.value === true;",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:211: if (openaiOn && nodeEnv.ok && nodeEnv.value === 'test') {",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:212: issues.set('OPENAI_ENABLED', REASON_FALSE_IN_TEST);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:215: const apiKey = checkField('OPENAI_API_KEY', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:216: const strategyModel = checkField('OPENAI_STRATEGY_MODEL', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:217: const tacticalModel = checkField('OPENAI_TACTICAL_MODEL', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:218: const maxCost = checkField('OPENAI_MAX_COST_PER_SESSION_USD', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:219: const timeoutMs = checkField('OPENAI_TIMEOUT_MS', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:220: const maxRetries = checkField('OPENAI_MAX_RETRIES', input);",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:222: if (openaiOn) {",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:224: OPENAI_API_KEY: apiKey,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:225: OPENAI_STRATEGY_MODEL: strategyModel,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:226: OPENAI_TACTICAL_MODEL: tacticalModel,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:227: OPENAI_MAX_COST_PER_SESSION_USD: maxCost,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:228: OPENAI_TIMEOUT_MS: timeoutMs,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:229: OPENAI_MAX_RETRIES: maxRetries,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:231: for (const key of OPENAI_DEPENDENT) {",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:251: const openai: OpenAIConfig = openaiOn",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:263: apiKeyConfigured: input.OPENAI_API_KEY !== undefined,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:267: timeoutMs: timeoutMs.ok ? timeoutMs.value : DEFAULT_OPENAI_TIMEOUT_MS,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:268: maxRetries: maxRetries.ok ? maxRetries.value : DEFAULT_OPENAI_MAX_RETRIES,",
++   "/Users/dimatitov/WebstormProjects/Game automa/apps/api/src/config/env.ts:275: openai,",
++ ]
+
+ ❯ test/architecture.int.test.ts:77:7
+     75|     expect(
+     76|       offending(API_SRC, /openai|responses\.create|chat\.completions|a…
+     77|     ).toEqual([]);
+       |       ^
+     78|   });
+     79|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 26 passed | 1 skipped (28)
+      Tests  1 failed | 223 passed | 1 skipped (225)
+   Start at  21:20:45
+   Duration  52.52s (transform 4.41s, setup 0ms, import 28.48s, tests 242.09s, environment 3ms)
+
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/api@0.0.0 test: `vitest run`
+Exit status 1
+exit=1
+
+# Note (2026-11-08T18:24:35Z): rerun of 'pnpm --filter @bga/api test' → same result: 1 failed | 223 passed | 1 skipped.
+# The only failure is test/architecture.int.test.ts TC-A-02 (regex /openai/ matches the new apps/api/src/config/env.ts),
+# i.e. W1-owned files mid-change, unrelated to W3. All 3 migration test files pass (13 tests).

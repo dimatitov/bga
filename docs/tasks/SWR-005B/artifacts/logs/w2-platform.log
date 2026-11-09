@@ -1,0 +1,52 @@
+=== $ pnpm --filter @bga/platform test (2026-11-08T18:22:52Z)
+
+> @bga/platform@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+
+ Test Files  5 passed (5)
+      Tests  76 passed (76)
+   Start at  21:22:53
+   Duration  851ms (transform 1.31s, setup 0ms, import 2.29s, tests 117ms, environment 0ms)
+
+=== exit 0
+=== $ pnpm --filter @bga/platform typecheck (2026-11-08T18:22:54Z)
+
+> @bga/platform@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> tsc -p tsconfig.test.json
+
+=== exit 0
+=== $ pnpm --filter @bga/platform lint (2026-11-08T18:22:57Z)
+
+> @bga/platform@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> eslint . --max-warnings=0
+
+=== exit 0
+=== $ pnpm build:packages (2026-11-08T18:23:00Z)
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+=== exit 0
+=== $ pnpm --filter @bga/web test (2026-11-08T18:23:02Z)
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  58 passed (58)
+      Tests  480 passed (480)
+   Start at  21:23:05
+   Duration  46.73s (transform 21.72s, setup 43.65s, import 84.84s, tests 139.81s, environment 106.03s)
+
+=== exit 0
+=== $ pnpm exec prettier --check packages/platform/src packages/platform/test apps/web/src/locales/ru/errors.json apps/web/src/locales/en/errors.json (2026-11-08T18:23:51Z)
+Checking formatting...
+All matched files use Prettier code style!
+=== exit 0
