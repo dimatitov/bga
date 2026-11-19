@@ -27,7 +27,9 @@ test.describe('F-1: no OpenAI values from apps/api/.env in the Playwright proces
       "const path = require('node:path');",
       "const requireFromApi = createRequire(path.join(process.argv[1], 'package.json'));",
       "const { PrismaClient } = requireFromApi('@prisma/client');",
-      'new PrismaClient();',
+      // SWR-007: Prisma 7 requires a driver adapter (and no longer loads .env itself); constructing is still checked.
+      "const { PrismaBetterSqlite3 } = requireFromApi('@prisma/adapter-better-sqlite3');",
+      "new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: 'file::memory:' }) });",
       "const bad = Object.keys(process.env).filter((k) => /^OPENAI_/.test(k) && k !== 'OPENAI_ENABLED' && (process.env[k] || '').trim() !== '');",
       "process.stdout.write(JSON.stringify({ bad, enabledFalse: process.env.OPENAI_ENABLED === 'false' }));",
     ].join('\n');

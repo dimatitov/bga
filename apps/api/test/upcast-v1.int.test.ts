@@ -4,6 +4,7 @@
  * SWR-004: the platform migration (status / idempotency columns) is deployed first, as `db:prepare` does.
  */
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { ListSessionsResponseSchema, SessionResponseSchema } from '@bga/platform';
 import {
   GameStateSchema,
@@ -64,7 +65,7 @@ describe('SWR-003 DB with v1 data → API (lazy upcast v1 → v2)', { timeout: 6
           fixture.state.setup.humanFaction === 'empire' ? 'empire' : 'rebels',
         );
       }
-      const client = new PrismaClient({ datasourceUrl: db.url });
+      const client = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
       try {
         const rows = await client.session.findMany({ orderBy: { id: 'asc' } });
         expect(rows.map((r) => r.state)).toEqual(
@@ -92,7 +93,7 @@ describe('SWR-003 DB with v1 data → API (lazy upcast v1 → v2)', { timeout: 6
       expect(res.body.view.version).toBe(played.version + 1);
       expect(res.body.events.map((e: { actor: string }) => e.actor)).toEqual(['rebels']);
 
-      const client = new PrismaClient({ datasourceUrl: db.url });
+      const client = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
       try {
         const row = await client.session.findUniqueOrThrow({ where: { id: played.id } });
         const state = GameStateSchema.parse(JSON.parse(row.state));

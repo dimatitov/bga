@@ -1,0 +1,32 @@
+# SWR-007 AC-05 Prisma 7 compatibility on a COPY of the Prisma-6 fixture — v22.23.5, 2026-11-19T14:30:41Z
+pristine sha256 before: c1cb18b3a3305f8775e7109d25348bfdcbd3f1a4a351e14d323d9bdc2696a62e
+$ prisma --version
+prisma               : 7.10.1
+@prisma/client       : 7.10.1
+Node.js              : v22.23.5
+$ DATABASE_URL=file:<copy> prisma migrate deploy  (expect: no pending migrations)
+
+
+No pending migrations to apply.
+$ prisma migrate status
+
+Database schema is up to date!
+$ node fixture-check-prisma7.mjs file:<copy>
+READ {"id":"fixture-s1","gameId":"rebellion","setup":"{\"a\":1}","state":"{\"round\":1}","version":3,"createdAt":"2026-11-01T12:34:56.789Z","updatedAt":"2026-11-19T14:22:10.573Z","status":"active","idempotencyKey":"k-1","idempotencyHash":"h-1","events":[{"id":1,"sessionId":"fixture-s1","seq":1,"type":"SessionCreated","actor":"system","payload":"{}","createdAt":"2026-11-01T12:34:56.789Z"},{"id":2,"sessionId":"fixture-s1","seq":2,"type":"Pass","actor":"empire","payload":"{\"x\":2}","createdAt":"2026-11-19T14:22:10.573Z"}]}
+READ {"id":"fixture-u1","budgetKey":"dev-diagnostics","provider":"mock","model":"mock-deterministic-v1","role":"tactical","status":"ok","attempts":1,"inputTokens":235,"cachedInputTokens":0,"outputTokens":38,"reasoningTokens":null,"estimatedCostMicroUsd":43,"pricingVersion":"openai-2026-11-08","durationMs":4177,"errorCode":null,"createdAt":"2026-11-01T12:34:56.789Z"}
+DATES_AND_FIELDS_MATCH true
+WRITE ok; budget sum micro-USD = 43
+REREAD version=4 events=1@2026-11-01T12:34:56.789Z,2@2026-11-19T14:22:10.573Z,3@2026-11-19T00:00:00.000Z
+$ raw storage after write (typeof createdAt must stay integer)
+1|1793536496789|integer
+2|1795098130573|integer
+3|1795046400000|integer
+fixture-s1|1793536496789|integer|integer
+fixture-u1|integer
+fixture-u2|integer
+pristine sha256 after: c1cb18b3a3305f8775e7109d25348bfdcbd3f1a4a351e14d323d9bdc2696a62e
+$ CONTROL (why unixepoch-ms): adapter with DEFAULT timestampFormat on another copy
+default-format read createdAt=2026-11-01T12:34:56.789Z
+1|1793536496789|integer
+2|1795098130573|integer
+9|2026-11-19T14:30:52.525+00:00|text

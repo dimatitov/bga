@@ -1,0 +1,16 @@
+# Thu Nov 19 18:06:57 MSK 2026 node v22.23.5
+OK docs/tasks/SWR-000
+docs/tasks/SWR-000 exit=0
+OK docs/tasks/SWR-002
+docs/tasks/SWR-002 exit=0
+OK docs/tasks/SWR-003
+docs/tasks/SWR-003 exit=0
+OK docs/tasks/SWR-004
+docs/tasks/SWR-004 exit=0
+OK docs/tasks/SWR-005
+docs/tasks/SWR-005 exit=0
+OK docs/tasks/SWR-005B
+docs/tasks/SWR-005B exit=0
+OK docs/tasks/SWR-007
+docs/tasks/SWR-007 exit=0
+overall fail=0

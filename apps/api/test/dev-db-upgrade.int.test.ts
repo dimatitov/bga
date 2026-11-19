@@ -11,6 +11,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { copyFileSync, readFileSync, rmSync } from 'node:fs';
 import { isAbsolute, join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { ListSessionsResponseSchema } from '@bga/platform';
 import { PlayerViewSchema, type CommandEnvelope } from '@bga/game-rebellion/schema';
 import { afterAll, describe, expect, it } from 'vitest';
@@ -67,7 +68,7 @@ describe.skipIf(!SOURCE)(
       copyFileSync(original, copy);
       log(`copy ${copy}\n${prisma(url, ['migrate', 'deploy'])}`);
 
-      const client = new PrismaClient({ datasourceUrl: url });
+      const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
       const rows = await client.session.findMany({ orderBy: { updatedAt: 'desc' } });
       await client.$disconnect();
       log(
@@ -108,7 +109,7 @@ describe.skipIf(!SOURCE)(
           );
         }
 
-        const after = new PrismaClient({ datasourceUrl: url });
+        const after = new PrismaClient({ adapter: createSqliteAdapter(url) });
         for (const row of await after.session.findMany()) {
           const state = JSON.parse(row.state) as { schemaVersion: number; rulesEngine: string };
           expect([state.schemaVersion, state.rulesEngine, row.status], row.id).toEqual([

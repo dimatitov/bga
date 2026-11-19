@@ -5,6 +5,7 @@
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../../src/persistence/sqlite-adapter';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { AiUsageRepository, type NewAiUsageRow } from '../../src/ai/ai-usage.repository';
 import { API_ROOT } from '../global-setup';
@@ -47,7 +48,7 @@ describe('reset-ai-budget.mjs (SWR-005B W5)', () => {
 
   beforeEach(async () => {
     db = createTestDb();
-    prisma = new PrismaClient({ datasourceUrl: db.url });
+    prisma = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
     const repo = new AiUsageRepository(prisma);
     await repo.insert(row('dev-diagnostics', 100));
     await repo.insert(row('dev-diagnostics', 250));

@@ -1,0 +1,14 @@
+# SWR-007 business validation (dev path without ports 3000/5173): v22.23.5, pnpm 12.21.0 — 2026-11-19T15:07:12Z
+$ DATABASE_URL=file:./bv-dev.db prisma migrate deploy   (relative URL, as in .env.example)
+Datasource "db": SQLite database "bv-dev.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/prisma/bv-dev.db"
+4 migrations found in prisma/migrations
+The following migration(s) have been applied:
+migrations/
+All migrations have been successfully applied.
+$ node dist/main.js (NestJS 12 via require(esm), Prisma 7 adapter) on :3917
+Nest application successfully started
+GET /api/health → {"status":"ok"}
+GET /api/games → {"ok":false,"error":{"code":"NOT_FOUND","messageKey":"errors.notFound"}}…
+GET /api/sessions → []
+GET /api/dev/ai/status → {"openaiEnabled":false,"provider":"mock","keyConfigured":false,"models":{"strategy":{"id":null,"available":null},"tactical":{"id":null,"available":null}},"budget":{"budgetKey":"dev-diagnostics","spent
+DB file at apps/api/prisma/bv-dev.db: yes; apps/api/bv-dev.db (cwd-relative, wrong): no

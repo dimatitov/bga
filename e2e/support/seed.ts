@@ -68,9 +68,20 @@ function prismaClient(): PrismaLike {
   blankOpenAiEnv();
   const requireFromApi = createRequire(path.join(API_ROOT, 'package.json'));
   const { PrismaClient } = requireFromApi('@prisma/client') as {
-    PrismaClient: new (options: { datasourceUrl: string }) => PrismaLike;
+    PrismaClient: new (options: { adapter: unknown }) => PrismaLike;
   };
-  return new PrismaClient({ datasourceUrl: `file:${E2E_DB_FILE}` });
+  // SWR-007 (Prisma 7): driver adapter with the same DateTime storage as apps/api/src/persistence/sqlite-adapter.ts.
+  const { PrismaBetterSqlite3 } = requireFromApi('@prisma/adapter-better-sqlite3') as {
+    PrismaBetterSqlite3: new (
+      config: { url: string },
+      options: { timestampFormat: 'unixepoch-ms' },
+    ) => unknown;
+  };
+  const adapter = new PrismaBetterSqlite3(
+    { url: `file:${E2E_DB_FILE}` },
+    { timestampFormat: 'unixepoch-ms' },
+  );
+  return new PrismaClient({ adapter });
 }
 
 /**

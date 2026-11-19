@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup, configure } from '@testing-library/react';
-import { afterEach, beforeEach, vi } from 'vitest';
+import { afterAll, afterEach, beforeEach, vi } from 'vitest';
 import { resetFeedbackStore } from '@/shared/feedback/feedbackStore';
 import { i18n } from '@/shared/i18n/i18n';
 import { resetSettingsStore } from '@/shared/settings/settingsStore';
@@ -41,4 +41,28 @@ afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
+});
+
+// SWR-007: a timer a test file leaves pending (e.g. `focusWhenReady` retries, up to 12 × 16 ms) must not fire after
+// Vitest tore the jsdom environment down — `document is not defined` then fails the whole run as an unhandled error
+// (seen under the load of `pnpm verify`). Real timers created by the file are tracked and cleared when it is done.
+const pendingTimers = new Set<ReturnType<typeof setTimeout>>();
+const realSetTimeout = globalThis.setTimeout;
+const realClearTimeout = globalThis.clearTimeout;
+globalThis.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => {
+  const id = realSetTimeout(() => {
+    pendingTimers.delete(id);
+    if (typeof handler === 'function') (handler as (...a: unknown[]) => void)(...args);
+  }, timeout);
+  pendingTimers.add(id);
+  return id;
+}) as typeof setTimeout;
+globalThis.clearTimeout = ((id?: Parameters<typeof clearTimeout>[0]) => {
+  pendingTimers.delete(id as ReturnType<typeof setTimeout>);
+  realClearTimeout(id);
+}) as typeof clearTimeout;
+
+afterAll(() => {
+  for (const id of pendingTimers) realClearTimeout(id);
+  pendingTimers.clear();
 });

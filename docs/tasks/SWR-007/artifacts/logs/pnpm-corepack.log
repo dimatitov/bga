@@ -1,0 +1,7 @@
+# SWR-007 AC-02: corepack + pnpm under v22.23.5 — 2026-11-19T14:35:07Z
+corepack 0.36.0
+packageManager pnpm@12.21.0 -> corepack pnpm -v: 12.21.0
+packageManager pnpm@10.34.9 -> corepack pnpm -v: 10.34.9
+repo (packageManager pnpm@12.21.0): pnpm -v = 12.21.0
+Node 20.19.5 bundled corepack: 0.33.0
+Node 20.19.5 corepack 0.33.0, packageManager pnpm@12.21.0 -> 12.21.0 

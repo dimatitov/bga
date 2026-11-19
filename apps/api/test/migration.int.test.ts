@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { ListSessionsResponseSchema, SessionResponseSchema } from '@bga/platform';
 import { PlayerViewSchema } from '@bga/game-rebellion/schema';
 import { rebellionServerModule, upcastState } from '@bga/game-rebellion/server';
@@ -23,7 +24,7 @@ interface RawRow {
 
 /** Raw rows (no Prisma model mapping): exactly what is stored. */
 async function raw(url: string, sql: string): Promise<RawRow[]> {
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     return await client.$queryRawUnsafe<RawRow[]>(sql);
   } finally {
@@ -181,7 +182,7 @@ describe('migration 20261108120000_sessions (AC-7, TR-6)', () => {
     async () => {
       db = await createPreMigrationDb({ rows: 3 });
       deploy(db.url);
-      const client = new PrismaClient({ datasourceUrl: db.url });
+      const client = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
       try {
         await expect(
           client.$executeRawUnsafe(

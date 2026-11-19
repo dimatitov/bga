@@ -4,6 +4,7 @@
  */
 import { randomUUID } from 'node:crypto';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../../src/persistence/sqlite-adapter';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   AiUsageRepository,
@@ -39,7 +40,7 @@ describe('AiUsageRepository (SWR-005B W5)', () => {
 
   beforeEach(() => {
     db = createTestDb();
-    prisma = new PrismaClient({ datasourceUrl: db.url });
+    prisma = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
     repo = new AiUsageRepository(prisma);
   });
 

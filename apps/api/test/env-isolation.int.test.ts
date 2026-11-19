@@ -8,6 +8,7 @@ import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { afterEach, describe, expect, it } from 'vitest';
 import { BLANKED_OPENAI_VARS, buildE2eEnv } from '../scripts/e2e-env.mjs';
 import { ENV_KEYS } from '../src/config/env';
@@ -32,7 +33,9 @@ describe('defect D-1: no OpenAI values from apps/api/.env in test processes', ()
   });
 
   it('after importing AND constructing the Prisma client, no OPENAI_* is non-blank and OPENAI_ENABLED is false', async () => {
-    const client = new PrismaClient({ datasourceUrl: `file:${join(TMP_DIR, 'never-opened.db')}` });
+    const client = new PrismaClient({
+      adapter: createSqliteAdapter(`file:${join(TMP_DIR, 'never-opened.db')}`),
+    });
     await client.$disconnect();
     expect(nonBlankOpenAIVars()).toEqual([]);
     expect(process.env.OPENAI_ENABLED === 'false').toBe(true);
@@ -63,7 +66,9 @@ describe('defect D-1: no OpenAI values from apps/api/.env in test processes', ()
     });
     const script = [
       "const { PrismaClient } = require('@prisma/client');",
-      'new PrismaClient();',
+      // SWR-007: Prisma 7 requires a driver adapter (and no longer loads .env itself); constructing is still checked.
+      "const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');",
+      'new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: process.env.DATABASE_URL }) });',
       "const bad = Object.keys(process.env).filter((k) => /^OPENAI_/.test(k) && k !== 'OPENAI_ENABLED' && (process.env[k] || '').trim() !== '');",
       "process.stdout.write(JSON.stringify({ bad, enabledFalse: process.env.OPENAI_ENABLED === 'false' }));",
     ].join('\n');

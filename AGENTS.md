@@ -48,11 +48,12 @@ ESLint, Prettier, TS strict. Не добавлять Redis, микросерви
 ## Команды
 
 ```bash
-node --test scripts/          # тесты инструментов процесса
+node --test "scripts/*.test.mjs"   # тесты инструментов процесса
 node scripts/check-task.mjs docs/tasks/SWR-000   # проверка артефактов задачи
+pnpm verify                        # lint + typecheck + test + build + check:bundle + e2e (то же гоняет CI)
 ```
 
-Команды lint/typecheck/build/e2e появятся на Этапах B–C. Пока их нет — в отчётах они `not_run`.
+Runtime: Node 22 LTS (`.nvmrc`), pnpm через corepack (`packageManager`). CI — `.github/workflows/ci.yml` (push/PR).
 
 ## Рантаймы
 

@@ -1,0 +1,54 @@
+## date: Thu Nov 19 17:50:57 MSK 2026
+## TC-37 grep stale Node 20
+README.md:27:Требования: Node **22 LTS** — `22.23.5` в `.nvmrc` (`engines`: `>=22.22.2`; Node 20 не поддерживается), pnpm **12.21.0**
+docs/process/runtime-adapters.md:13:| Node.js | `v20.19.5` (с SWR-007, 2026-11-19 — `v22.23.5`, см. ниже) | `node -v` |
+(grep exit 0)
+## TC-36 Node 22 / corepack / pnpm / versions
+docs/architecture/application.md:310:через export-условие `@bga/source`. Runtime (SWR-007): Node 22 LTS (`.nvmrc` 22.23.5, `engines` `>=22.22.2`), pnpm 12 через
+docs/architecture/application.md:311:corepack; NestJS 12, Prisma 7, `openai` 7, Vitest 5, React Router 8. API собирается в CommonJS (`tsconfig.build.json`,
+AGENTS.md:56:Runtime: Node 22 LTS (`.nvmrc`), pnpm через corepack (`packageManager`). CI — `.github/workflows/ci.yml` (push/PR).
+README.md:27:Требования: Node **22 LTS** — `22.23.5` в `.nvmrc` (`engines`: `>=22.22.2`; Node 20 не поддерживается), pnpm **12.21.0**
+README.md:28:через corepack, встроенный в Node 22 (`corepack enable`; версия закреплена в `packageManager`). Для установки нужна сеть
+README.md:32:nvm install && nvm use                    # Node из .nvmrc
+README.md:33:corepack enable                           # pnpm из packageManager
+docs/process/runtime-adapters.md:13:| Node.js | `v20.19.5` (с SWR-007, 2026-11-19 — `v22.23.5`, см. ниже) | `node -v` |
+docs/process/runtime-adapters.md:14:| pnpm | **сломан**: corepack пытается скачать pnpm 12.18.0 и падает (исправлено: см. ниже) | `pnpm -v` |
+docs/process/runtime-adapters.md:30:| Node.js | `v22.23.5` (Node 22 LTS «Jod», `.nvmrc`; `engines` `>=22.22.2`) | `node -v` |
+docs/process/runtime-adapters.md:31:| corepack | `0.36.0` (встроен в Node 22.23.5) | `corepack --version` |
+docs/process/runtime-adapters.md:32:| pnpm | `12.21.0` из `packageManager` через corepack | `pnpm -v` (`docs/tasks/SWR-007/artifacts/logs/pnpm-corepack.log`) |
+## versions in application.md
+21:apps/api  (NestJS)                   — sessions/** (общий сервис сессий), game-registry/** (единственное место, где названы игры),
+30:apps/api/persistence                 — SQLite через Prisma: Session (gameId, setup, снимок state + version, status,
+44:- `./rules` — чистый детерминированный TS: без React/NestJS/Prisma/OpenAI/`node:*`, без `Date`/`Math.random` (время и id — через ctx);
+51:- SDK `openai` импортируется только в `apps/api/src/ai/**` (фактически — `ai/providers/openai-client.ts` и
+52:  `openai-errors.ts`); `apps/api/src/ai/**` не импортирует игровые пакеты, `sessions/`, `game-registry/`, `dev/`;
+53:  `apps/api/src/dev/**` не импортирует `openai` и игры; `@bga/platform` и `packages/games/*` не зависят от OpenAI;
+203:  сканированием ответов API скриптованной партии и логов Nest (`apps/api/test/hidden-info-core.int.test.ts`).
+233:- **Провайдер** — интерфейс `AIProvider { id: 'openai' | 'mock'; makeDecision(ctx) }`.
+234:  - `OpenAIProvider` (`ai/providers/openai.provider.ts`): официальный SDK `openai` (точная версия в `apps/api/package.json`),
+237:    `OPENAI_ENABLED=true` в `ai/providers/openai-client.ts` — единственном месте, где ключ раскрывается (`Secret.reveal()`);
+240:    (`ai/ai.errors.ts`, `providers/openai-errors.ts`) без исходных сообщений и заголовков.
+250:  Zod + id ∈ `availableActions`, иначе 502 `AI_INVALID_DECISION`) → строка `AiUsage` на **каждый** исход → снятие резерва.
+253:- **Деньги — целые micro-USD** (1 USD = 1 000 000). Тарифы — `ai/pricing.ts` (`MODEL_PRICING`, `PRICING_VERSION`, ссылка на
+269:  ответа и сообщений SDK. Пишутся в Nest `Logger('AI')`.
+296:- только `file:` URL; **относительный путь разрешается от `apps/api/prisma`** (как у Prisma для `schema.prisma`), т. е.
+306:| integration-тесты | `pnpm test` (Vitest + supertest, реальный Nest) | файл `apps/api/.tmp/test-<uuid>.db` на каждый тест |
+309:Внутренние пакеты исполняются API из собранного `dist` (CommonJS), а Vite, Vitest и typecheck читают их TypeScript-исходники
+311:corepack; NestJS 12, Prisma 7, `openai` 7, Vitest 5, React Router 8. API собирается в CommonJS (`tsconfig.build.json`,
+312:NodeNext), а ESM-only пакеты NestJS 12 грузятся через `require(esm)` Node 22 (без флагов). Prisma 7: URL для CLI — в
+315:Prisma ≤ 6). CI: `.github/workflows/ci.yml` — `pnpm verify` + `check-task` на каждый push/PR, без секретов.
+336:  (`test/support/openai-fake-fetch.ts`); `setupFiles` Vitest ставят сетевой guard (`test/setup/no-network.ts`).
+337:- **Поведение Prisma с `.env` (дефект D-1 SWR-005B):** до SWR-007 (Prisma 6) сгенерированный `@prisma/client` при импорте
+338:  (и при `new PrismaClient`), а также CLI `prisma` сами загружали `apps/api/.env` и копировали в `process.env` все
+339:  переменные, которых там ещё не было. Prisma 7 этого не делает (проверено: `docs/tasks/SWR-007/artifacts/logs/prisma7-dotenv-probe.log`);
+342:  - `main.ts` импортирует `app.factory` (а с ним Prisma) только **после** валидации конфига — `AppConfig` никогда не видит
+343:    значений, подложенных Prisma (в dev-процессе они после этого могут оказаться в `process.env`, но их никто не читает, а
+345:  - тестовые и e2e-процессы получают все `OPENAI_*` явно пустыми и `OPENAI_ENABLED=false`: первый `setupFiles` Vitest
+346:    (`test/setup/blank-openai-env.ts`), окружение e2e-API и его дочерних `prisma migrate deploy`/`tsc`
+359:сброса скриптом; сборка API — CommonJS (NestJS 12 грузится через `require(esm)`; перевод `apps/api` на ESM — отдельной
+360:задачей при необходимости); `i18next` 26 / `react-i18next` 17 придержаны (SWR-007: новые мажоры ужесточили типы ключей
+## CI in docs
+README.md:54:CI: GitHub Actions [`.github/workflows/ci.yml`](.github/workflows/ci.yml) на каждый push и pull request — Node из
+docs/process/runtime-adapters.md:33:| CI | GitHub Actions `.github/workflows/ci.yml`: `pnpm verify` + `check-task` на push/PR | см. `docs/tasks/SWR-007/delivery-report.md` |
+AGENTS.md:53:pnpm verify                        # lint + typecheck + test + build + check:bundle + e2e (то же гоняет CI)
+AGENTS.md:56:Runtime: Node 22 LTS (`.nvmrc`), pnpm через corepack (`packageManager`). CI — `.github/workflows/ci.yml` (push/PR).

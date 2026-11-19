@@ -7,6 +7,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { afterEach, describe, expect, it } from 'vitest';
 import { API_ROOT, TMP_DIR } from './global-setup';
 import { INIT_MIGRATION, SESSIONS_MIGRATION, prisma } from './support/pre-migration-db';
@@ -19,7 +20,7 @@ const MIGRATIONS_DIR = join(API_ROOT, 'prisma', 'migrations');
 type RawRow = Record<string, unknown>;
 
 async function raw(url: string, sql: string): Promise<RawRow[]> {
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     return await client.$queryRawUnsafe<RawRow[]>(sql);
   } finally {
@@ -80,7 +81,7 @@ async function createSwr005ShapeDb(): Promise<Swr005ShapeDb> {
   prisma(url, ['migrate', 'deploy', '--schema', join(dir, 'schema.prisma')]);
 
   const sessions = v2Sessions();
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     for (const s of [...sessions].reverse()) {
       await client.$executeRaw`INSERT INTO "Session" ("id", "gameId", "setup", "state", "version", "status", "createdAt", "updatedAt")
@@ -193,7 +194,7 @@ describe(`migration ${SWR005B_MIGRATION}`, { timeout: 60_000 }, () => {
       ),
     ).toEqual(['budgetKey', 'createdAt']);
 
-    const client = new PrismaClient({ datasourceUrl: db.url });
+    const client = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
     try {
       // mock row: only the required fields → defaults (0 tokens, cost 0, createdAt now)
       const mock = await client.aiUsage.create({

@@ -8,6 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../../src/persistence/sqlite-adapter';
 import { REBELLION_GAME_ID } from '@bga/game-rebellion/definition';
 import { TMP_DIR } from '../global-setup';
 import {
@@ -39,8 +40,7 @@ export async function createSwr003Db(options: { rows: number }): Promise<Swr003D
     prisma(url, [
       'db',
       'execute',
-      '--url',
-      url,
+      // SWR-007: Prisma 7 `db execute` takes the URL from prisma.config.ts (DATABASE_URL set by prisma()).
       '--file',
       join('prisma', 'migrations', migration, 'migration.sql'),
     ]);
@@ -50,7 +50,7 @@ export async function createSwr003Db(options: { rows: number }): Promise<Swr003D
   }
 
   const { games: sessions, events } = v1Rows(options.rows);
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     for (const s of [...sessions].reverse()) {
       await client.$executeRaw`INSERT INTO "Session" ("id", "gameId", "setup", "state", "version", "createdAt", "updatedAt")

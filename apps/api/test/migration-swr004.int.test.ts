@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { ListSessionsResponseSchema, SessionResponseSchema } from '@bga/platform';
 import { upcastState } from '@bga/game-rebellion/server';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -29,7 +30,7 @@ const SWR005B_MIGRATION = '20261108230000_ai_usage';
 type RawRow = Record<string, unknown>;
 
 async function raw(url: string, sql: string): Promise<RawRow[]> {
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     return await client.$queryRawUnsafe<RawRow[]>(sql);
   } finally {
@@ -138,7 +139,7 @@ describe(`migration ${SWR004_MIGRATION}`, { timeout: 60_000 }, () => {
   it('unique index: a second row with the same key fails, NULL keys may repeat', async () => {
     db = await createSwr003Db({ rows: 3 });
     prisma(db.url, ['migrate', 'deploy']);
-    const client = new PrismaClient({ datasourceUrl: db.url });
+    const client = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
     try {
       const [a, b] = db.sessions;
       await client.session.update({ where: { id: a!.id }, data: { idempotencyKey: 'k' } });

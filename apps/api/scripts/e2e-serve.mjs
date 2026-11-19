@@ -14,7 +14,7 @@ const dbFile = join(tmpDir, 'e2e.db');
 const outDir = join(apiRoot, 'dist-e2e');
 const port = process.env.PORT ?? process.env.E2E_API_PORT ?? '3100';
 // SWR-005B (AM-BE-3, plan-backend §2.5, defect D-1): explicit environment — every OPENAI_* of the parent process is
-// dropped and every OPENAI_* variable is set to '' (so Prisma's dotenv loader cannot copy apps/api/.env values in),
+// dropped and every OPENAI_* variable is set to '' (so Prisma ≤ 6's dotenv loader could not copy apps/api/.env values in; Prisma 7 has none — SWR-007),
 // NODE_ENV=test (apps/api/.env is never read by our config and OPENAI_ENABLED=true is rejected), mock AI only.
 const env = buildE2eEnv(process.env, { databaseUrl: `file:${dbFile}`, port });
 
