@@ -1,0 +1,128 @@
+# 2026-11-20T15:43:02Z QA check of CI run 44761054470 (SWR-008 commit f0a2a12); local HEAD f0a2a126f238aedd3f34249cc48379f678959bfa, origin/main f0a2a126f238aedd3f34249cc48379f678959bfa
+$ gh run view 44761054470 --repo dimatitov/bga --json headSha,conclusion,attempt,url
+{"attempt":2,"conclusion":"success","headSha":"f0a2a126f238aedd3f34249cc48379f678959bfa","url":"https://github.com/dimatitov/bga/actions/runs/44761054470"}
+
+$ gh run view 44761054470 --repo dimatitov/bga --attempt 2
+
+✓ main CI · 44761054470 (Attempt #2)
+Triggered via push about 13 minutes ago
+
+JOBS
+✓ pnpm verify + check-task in 12m0s (ID 136382888795)
+
+ARTIFACTS
+playwright-report
+
+For more information about the job, try: gh run view --job=136382888795
+View this run on GitHub: https://github.com/dimatitov/bga/actions/runs/44761054470/attempts/2
+$ gh run view 44761054470 --repo dimatitov/bga --attempt 1
+
+X main CI · 44761054470 (Attempt #1)
+Triggered via push about 29 minutes ago
+
+JOBS
+X pnpm verify + check-task in 15m36s (ID 136373372116)
+  ✓ Set up job
+  ✓ Run actions/checkout@v7
+  ✓ Set up Node (version from .nvmrc)
+  ✓ Enable pnpm (corepack)
+  ✓ Locate pnpm store
+  ✓ Cache pnpm store
+  ✓ Install dependencies (frozen lockfile)
+  ✓ Cache Playwright browsers
+  - Install Playwright browser (chromium)
+  ✓ Install Playwright system dependencies
+  X pnpm verify (lint, typecheck, test, build, check:bundle, e2e)
+  - check-task over every task folder
+  ✓ Upload Playwright report
+  - Post Cache Playwright browsers
+  - Post Cache pnpm store
+  - Post Set up Node (version from .nvmrc)
+  ✓ Post Run actions/checkout@v7
+  ✓ Complete job
+
+ANNOTATIONS
+X Process completed with exit code 1.
+pnpm verify + check-task: .github#4962
+
+
+ARTIFACTS
+playwright-report
+
+To see what failed, try: gh run view 44761054470 --log-failed
+View this run on GitHub: https://github.com/dimatitov/bga/actions/runs/44761054470/attempts/1
+
+## attempt 1 (gh run view --attempt 1 --log): totals, failures, check-task
+All matched files use Prettier code style!
+# Subtest: check-web-bundle: rules
+ok 25 - check-web-bundle: rules
+# Subtest: check-web-bundle: module composition (Q-23, TC-ARCH-08)
+ok 26 - check-web-bundle: module composition (Q-23, TC-ARCH-08)
+# Subtest: check-web-bundle: CLI
+ok 27 - check-web-bundle: CLI
+# Subtest: check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)
+ok 28 - check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)
+# tests 449
+# pass 449
+# fail 0
+packages/platform test:  Test Files  17 passed (17)
+packages/platform test:       Tests  366 passed (366)
+packages/games/forbidden-stars test:  Test Files  2 passed (2)
+packages/games/forbidden-stars test:       Tests  5 passed (5)
+packages/games/rebellion test:  Test Files  71 passed (71)
+packages/games/rebellion test:       Tests  875 passed (875)
+apps/web test:  Test Files  71 passed (71)
+apps/web test:       Tests  647 passed (647)
+apps/api test:  Test Files  81 passed | 1 skipped (82)
+apps/api test:       Tests  863 passed | 2 skipped (865)
+$ node scripts/check-web-bundle.mjs
+OK check-web-bundle: 11 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /tmp/bga-bundle-modules-r248lT
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 845 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+  ✘   85 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (3.0s)
+  1 failed
+  138 passed (9.9m)
+[ELIFECYCLE] Command failed with exit code 1.
+[ELIFECYCLE] Command failed with exit code 1.
+##[error]Process completed with exit code 1.
+
+## attempt 2 (gh run view --attempt 2 --log): totals, failures, check-task
+All matched files use Prettier code style!
+# Subtest: check-web-bundle: rules
+ok 25 - check-web-bundle: rules
+# Subtest: check-web-bundle: module composition (Q-23, TC-ARCH-08)
+ok 26 - check-web-bundle: module composition (Q-23, TC-ARCH-08)
+# Subtest: check-web-bundle: CLI
+ok 27 - check-web-bundle: CLI
+# Subtest: check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)
+ok 28 - check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)
+# tests 449
+# pass 449
+# fail 0
+packages/platform test:  Test Files  17 passed (17)
+packages/platform test:       Tests  366 passed (366)
+packages/games/forbidden-stars test:  Test Files  2 passed (2)
+packages/games/forbidden-stars test:       Tests  5 passed (5)
+packages/games/rebellion test:  Test Files  71 passed (71)
+packages/games/rebellion test:       Tests  875 passed (875)
+apps/web test:  Test Files  71 passed (71)
+apps/web test:       Tests  647 passed (647)
+apps/api test:  Test Files  81 passed | 1 skipped (82)
+apps/api test:       Tests  863 passed | 2 skipped (865)
+$ node scripts/check-web-bundle.mjs
+OK check-web-bundle: 11 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /tmp/bga-bundle-modules-bRpmqX
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 845 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+  139 passed (7.3m)
+OK docs/tasks/SWR-000/
+OK docs/tasks/SWR-002/
+OK docs/tasks/SWR-003/
+OK docs/tasks/SWR-004/
+OK docs/tasks/SWR-005/
+OK docs/tasks/SWR-005B/
+OK docs/tasks/SWR-005C/
+OK docs/tasks/SWR-006/
+OK docs/tasks/SWR-007/
+OK docs/tasks/SWR-008/

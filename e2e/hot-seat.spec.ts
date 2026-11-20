@@ -250,7 +250,9 @@ test.describe('SWR-005 hot-seat (core-v1)', () => {
     await page.waitForTimeout(300);
     expect(await page.evaluate(() => window.__sawBoardCanvas)).toBe(false);
     await recorder.settle();
-    const sessionCalls = recorder.calls.filter((c) => c.url.includes(sessionId));
+    // A response still in flight when page.reload() runs loses its body (recordApi stores null) — nothing to check in
+    // it; every response whose body was readable must be handoff-only (flaked on CI, SWR-008 run 44761054470).
+    const sessionCalls = recorder.calls.filter((c) => c.url.includes(sessionId) && c.body !== null);
     expect(sessionCalls.length).toBeGreaterThan(0);
     for (const c of sessionCalls) expectHandoffOnly(c.body, boardIds, `${c.method} ${c.url}`);
   });

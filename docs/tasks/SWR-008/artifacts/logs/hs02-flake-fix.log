@@ -1,0 +1,66 @@
+[WebServer] $ node scripts/e2e-serve.mjs
+[WebServer] Loaded Prisma config from prisma.config.ts.
+[WebServer] 
+[WebServer] Prisma schema loaded from prisma/schema.prisma.
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 5 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] Applying migration `20261120120000_ai_usage_rules`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261120120000_ai_usage_rules/
+[WebServer]     └─ migration.sql
+[WebServer] 
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] AppModule dependencies initialized +9ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] RulesContextModule dependencies initialized +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] AiModule dependencies initialized +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +1ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RoutesResolver] HealthController {/api/health}: +3ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +1ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +1ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/automation/run, POST} route +1ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/sessions/:sessionId/decisions, GET} route +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +0ms
+[WebServer] [Nest] 15877  - 11/20/2026, 6:29:49 PM     LOG [NestApplication] Nest application successfully started +1ms
+[WebServer] $ vite
+
+Running 5 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.6s)
+  ✓  2 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.1s)
+  ✓  3 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.1s)
+  ✓  4 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.1s)
+  ✓  5 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.0s)
+
+  5 passed (18.6s)
+exit=0

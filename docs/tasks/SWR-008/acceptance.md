@@ -52,7 +52,7 @@ Analyst, 2026-11-20. Проверено «глазами PO» на итогов�
 | AC-13 | passed | `artifacts/logs/qa-web.log`, `artifacts/logs/qa-e2e-diagnostics.log`, `artifacts/logs/qa-browser-diag08.log` |
 | AC-14 | passed | `artifacts/logs/qa-rebellion.log`, `artifacts/logs/qa-api.log` |
 | AC-15 | passed | `artifacts/benchmark/real-20261120-140206.md`, `artifacts/logs/bench-real.log`, `artifacts/logs/qa-meas.log` |
-| AC-16 | not_run | `artifacts/logs/final-verify.log` — локально exit 0; CI на коде SWR-008 не запускался (код не закоммичен) |
+| AC-16 | passed | `artifacts/logs/final-verify.log`, `artifacts/logs/ci-swr008.log` — локально exit 0; CI GitHub Actions на `f0a2a12` success (попытка 2; попытка 1 — флейк e2e HS-02, исправлен `artifacts/logs/hs02-flake-fix.log`) |
 
 ## Final decision
-blocked — AC-1..AC-15 passed (QA: `qa-results.md`); AC-16 ждёт CI GitHub Actions на коде SWR-008 после коммита/push (нужен OK пользователя)
+accepted — все AC-1..AC-16 passed с доказательствами; review approved (2 раунда); QA пройдено; CI зелёный на `f0a2a12`. Rules Context подключён и безопасен, но измеримого улучшения качества на срезе core-v1 не дал (+19 % стоимости) — см. рекомендации.

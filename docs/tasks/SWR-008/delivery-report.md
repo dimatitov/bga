@@ -1,6 +1,6 @@
 # Delivery Report — SWR-008 Rules Integration & Game Integrity
 
-Analyst, 2026-11-20. Код SWR-008 **не закоммичен** (ждёт OK пользователя); CI на коде SWR-008 — после push.
+Analyst, 2026-11-20. Код SWR-008 закоммичен и запушен в `main` по OK пользователя: `f0a2a12`; CI зелёный (`artifacts/logs/ci-swr008.log`).
 
 ## Scope
 
@@ -29,7 +29,7 @@ RAG/векторная БД; правила Forbidden Stars; исправлен�
    отбор не входят). Порядок: engine-scope (что не реализовано в core-v1) → `ai:'core'` → по типам команд → по фазе → по тегам;
    фильтр по стороне; `id asc`; обрезка целыми строками по `maxChars` (6000); `needs-review` исключены всегда.
    Факт: 17–20 записей, 5048–5642 символов из 6000, без обрезки; версия `rebellion@1:55b423d7bfef`.
-3. **Найденные и исправленные ошибки.** DEP-1 (Prisma 7 + синхронный SQLite: проигравший писатель → `error` вместо `conflict`;
+3. **Найденные и исправленные ошибки.** e2e HS-02 (тело ответа теряется при reload — флейк CI попытки 1, тест пропускает нечитаемые тела); DEP-1 (Prisma 7 + синхронный SQLite: проигравший писатель → `error` вместо `conflict`;
    итог — `isSqliteBusy` + 250 ms из PR #1 + warn-строка, F-3); DEP-2 (дубль PASS на последнем ходу → 422 gameOver); e2e TC-006
    (кнопка ниже сгиба на Linux CI), e2e session-list (ожидание строк); повреждённый `node_modules` после pnpm под Node 20
    (переустановка); review F-1 (гонка TC-CC-04), F-4 (итоги dev-панели считали отказы бюджета), F-6 (нумерация событий при
@@ -86,7 +86,7 @@ RAG/векторная БД; правила Forbidden Stars; исправлен�
 | AC-13 | passed | `artifacts/logs/qa-web.log`, `artifacts/logs/qa-e2e-diagnostics.log`, `artifacts/logs/qa-browser-diag08.log` |
 | AC-14 | passed | `artifacts/logs/qa-rebellion.log`, `artifacts/logs/qa-api.log` |
 | AC-15 | passed | `artifacts/benchmark/real-20261120-140206.md`, `artifacts/logs/bench-real.log`, `artifacts/logs/qa-meas.log` |
-| AC-16 | not_run | `artifacts/logs/final-verify.log` — локально exit 0; CI на коде SWR-008 не запускался (код не закоммичен) |
+| AC-16 | passed | `artifacts/logs/final-verify.log`, `artifacts/logs/ci-swr008.log` — локально exit 0; CI GitHub Actions на `f0a2a12` success (попытка 2; попытка 1 — флейк e2e HS-02, исправлен `artifacts/logs/hs02-flake-fix.log`) |
 
 ## Verification
 - lint: passed — `artifacts/logs/final-verify.log`
@@ -98,7 +98,8 @@ RAG/векторная БД; правила Forbidden Stars; исправлен�
 - real benchmark (OpenAI, $0.008932): passed — `artifacts/logs/bench-real.log`
 - review: passed — `review.md`
 - CI on the base 3fe4a66: passed — `artifacts/logs/qa-ci.log`
-- CI on the SWR-008 code: not_run — ждёт коммита/push по OK пользователя
+- CI on the SWR-008 code (f0a2a12): passed — `artifacts/logs/ci-swr008.log`
+- e2e HS-02 flake fix (5/5 locally): passed — `artifacts/logs/hs02-flake-fix.log`
 - check-task: passed — `artifacts/logs/delivery-check.log`
 
 ## QA artifacts
@@ -115,4 +116,4 @@ RAG/векторная БД; правила Forbidden Stars; исправлен�
 - Сторонние незакоммиченные файлы в checkout не относятся к SWR-008: `docs/design/`, `.claude/launch.json`, `docs/product/progress-2026-11-20.md`.
 
 ## Final decision
-blocked — все AC кроме AC-16 passed; AC-16 ждёт CI на коде SWR-008 после коммита и push (нужен OK пользователя)
+accepted — все AC-1..AC-16 passed с доказательствами; review approved (2 раунда); QA пройдено; CI зелёный на `f0a2a12`. Rules Context подключён и безопасен, но измеримого улучшения качества на срезе core-v1 не дал (+19 % стоимости) — см. рекомендации.

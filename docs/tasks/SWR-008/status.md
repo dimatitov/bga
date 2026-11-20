@@ -11,5 +11,5 @@
 | CODE_REVIEW | passed | reviewer | `review.md` | round 1 approved (4 minor, 4 nit); round 2 approved — F-1..F-6 resolved (F-2 = INT-1), F-7/F-8 accepted; PR #1 merge (`3fe4a66`) reviewed |
 | BUSINESS_VALIDATION | passed | analyst | `acceptance.md`, `artifacts/benchmark/real-20261120-140206.md`, `artifacts/logs/final-verify.log` | S-1..S-6; real benchmark 126 решений, $0.008932, правила — без измеримого эффекта на качество, +19 % стоимости |
 | QA_EXECUTION | passed | qa-lead | `qa-results.md` | 154/160 TC passed, 2 failed minor (D-1, D-2 → QD-30/31), 4 not_run; D-3 → QD-32; AC-2..AC-15 passed |
-| FINAL_ACCEPTANCE | blocked | analyst | `acceptance.md` | AC-16 ждёт CI на коде SWR-008 (нужен коммит/push по OK пользователя) |
-| DELIVERY | pending | analyst | `delivery-report.md` | |
+| FINAL_ACCEPTANCE | passed | analyst | `acceptance.md` | AC-1..AC-16 passed; CI `f0a2a12` success (`artifacts/logs/ci-swr008.log`) |
+| DELIVERY | passed | analyst | `delivery-report.md`, `artifacts/logs/delivery-check.log` | check-task OK; код в `main` (`f0a2a12`) |

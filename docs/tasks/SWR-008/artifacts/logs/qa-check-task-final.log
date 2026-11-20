@@ -1,0 +1,4 @@
+# 2026-11-20T15:45:24Z node v22.23.5 — QA follow-up, after updating qa-results.md (AC-1, AC-16 passed); HEAD f0a2a12
+$ node scripts/check-task.mjs docs/tasks/SWR-008
+OK docs/tasks/SWR-008
+exit=0

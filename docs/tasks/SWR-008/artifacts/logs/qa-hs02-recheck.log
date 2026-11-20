@@ -1,0 +1,110 @@
+# 2026-11-20T15:43:38Z node v22.23.5; QA re-check of the uncommitted HS-02 flake fix (e2e/hot-seat.spec.ts working tree); ports 3100/5174 free
+$ npx playwright test e2e/hot-seat.spec.ts --repeat-each=3
+[WebServer] $ node scripts/e2e-serve.mjs
+[WebServer] Loaded Prisma config from prisma.config.ts.
+[WebServer] 
+[WebServer] Prisma schema loaded from prisma/schema.prisma.
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 5 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] Applying migration `20261120120000_ai_usage_rules`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261120120000_ai_usage_rules/
+[WebServer]     └─ migration.sql
+[WebServer] 
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] AppModule dependencies initialized +9ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] RulesContextModule dependencies initialized +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] AiModule dependencies initialized +1ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RoutesResolver] HealthController {/api/health}: +6ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +1ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +1ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/automation/run, POST} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +1ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/sessions/:sessionId/decisions, GET} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +0ms
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:43 PM     LOG [NestApplication] Nest application successfully started +2ms
+[WebServer] $ vite
+
+Running 24 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/hot-seat.spec.ts:110:3 › SWR-005 hot-seat (core-v1) › TC-E-05 (scenario 3): finish → handoff → «I am the Empire» → Empire passes → handoff → «I am the Rebels» → Rebels move again without a handoff (4.5s)
+  ✓   2 [chromium] › e2e/hot-seat.spec.ts:170:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-01 (core-v1): finish activation → handoff screen without map, panels, log; responses carry no board data (2.3s)
+  ✓   3 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.2s)
+  ✓   4 [chromium] › e2e/hot-seat.spec.ts:260:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-03 (core-v1): «I am the Empire» → Empire table (own secrets only), selection / armed leader / zoom reset; cycle back (4.2s)
+  ✓   5 [chromium] › e2e/hot-seat.spec.ts:331:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-04 (core-v1): commands of the inactive side and board commands during the handoff are rejected (422) (84ms)
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:59 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:59 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:59 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:43:59 PM     LOG [Automation] automation.run sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=15
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:00 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:00 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:00 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:00 PM     LOG [Automation] automation.step sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion step=4 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:00 PM     LOG [Automation] automation.run sessionId=0bd3615e-c319-4472-8175-5a23bcbadc4f gameId=star-wars-rebellion steps=4 fallbacks=0 stopReason=humanTurn durationMs=12
+  ✓   6 [chromium] › e2e/hot-seat.spec.ts:376:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-05 (core-v1): AI game has no handoff — END_TURN → 422 commandUnavailable, ACCEPT_HANDOFF → 422 handoffNotAvailable (2.5s)
+  ✓   7 [chromium] › e2e/hot-seat.spec.ts:404:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M1: seeded handoff → «I am the Empire» → mock table → «Pass the turn» → handoff without board data (2.0s)
+  ✓   8 [chromium] › e2e/hot-seat.spec.ts:442:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M2: seeded handoff — mock commands during the handoff and of the inactive side → 422 (1.0s)
+  ✓   9 [chromium] › e2e/hot-seat.spec.ts:110:3 › SWR-005 hot-seat (core-v1) › TC-E-05 (scenario 3): finish → handoff → «I am the Empire» → Empire passes → handoff → «I am the Rebels» → Rebels move again without a handoff (3.7s)
+  ✓  10 [chromium] › e2e/hot-seat.spec.ts:170:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-01 (core-v1): finish activation → handoff screen without map, panels, log; responses carry no board data (2.3s)
+  ✓  11 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.6s)
+  ✓  12 [chromium] › e2e/hot-seat.spec.ts:260:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-03 (core-v1): «I am the Empire» → Empire table (own secrets only), selection / armed leader / zoom reset; cycle back (3.9s)
+  ✓  13 [chromium] › e2e/hot-seat.spec.ts:331:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-04 (core-v1): commands of the inactive side and board commands during the handoff are rejected (422) (90ms)
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:18 PM     LOG [Automation] automation.step sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:18 PM     LOG [Automation] automation.step sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:18 PM     LOG [Automation] automation.step sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:18 PM     LOG [Automation] automation.run sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=10
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:20 PM     LOG [Automation] automation.step sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:20 PM     LOG [Automation] automation.step sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:20 PM     LOG [Automation] automation.run sessionId=dc07bfc9-27f9-445d-bfcc-1f9c31f04606 gameId=star-wars-rebellion steps=2 fallbacks=0 stopReason=humanTurn durationMs=8
+  ✓  14 [chromium] › e2e/hot-seat.spec.ts:376:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-05 (core-v1): AI game has no handoff — END_TURN → 422 commandUnavailable, ACCEPT_HANDOFF → 422 handoffNotAvailable (2.9s)
+  ✓  15 [chromium] › e2e/hot-seat.spec.ts:404:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M1: seeded handoff → «I am the Empire» → mock table → «Pass the turn» → handoff without board data (1.9s)
+  ✓  16 [chromium] › e2e/hot-seat.spec.ts:442:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M2: seeded handoff — mock commands during the handoff and of the inactive side → 422 (938ms)
+  ✓  17 [chromium] › e2e/hot-seat.spec.ts:110:3 › SWR-005 hot-seat (core-v1) › TC-E-05 (scenario 3): finish → handoff → «I am the Empire» → Empire passes → handoff → «I am the Rebels» → Rebels move again without a handoff (3.3s)
+  ✓  18 [chromium] › e2e/hot-seat.spec.ts:170:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-01 (core-v1): finish activation → handoff screen without map, panels, log; responses carry no board data (2.3s)
+  ✓  19 [chromium] › e2e/hot-seat.spec.ts:230:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-02 (core-v1): reload during the handoff shows the handoff screen again; the map never renders (2.0s)
+  ✓  20 [chromium] › e2e/hot-seat.spec.ts:260:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-03 (core-v1): «I am the Empire» → Empire table (own secrets only), selection / armed leader / zoom reset; cycle back (3.9s)
+  ✓  21 [chromium] › e2e/hot-seat.spec.ts:331:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-04 (core-v1): commands of the inactive side and board commands during the handoff are rejected (422) (89ms)
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:36 PM     LOG [Automation] automation.step sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:36 PM     LOG [Automation] automation.step sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:36 PM     LOG [Automation] automation.step sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:36 PM     LOG [Automation] automation.run sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=8
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:37 PM     LOG [Automation] automation.step sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:37 PM     LOG [Automation] automation.step sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 17754  - 11/20/2026, 6:44:37 PM     LOG [Automation] automation.run sessionId=e3789979-c7c9-4518-9619-d37693757a84 gameId=star-wars-rebellion steps=2 fallbacks=0 stopReason=humanTurn durationMs=7
+  ✓  22 [chromium] › e2e/hot-seat.spec.ts:376:3 › SWR-005 hot-seat (core-v1) › TC-E2E-HS-05 (core-v1): AI game has no handoff — END_TURN → 422 commandUnavailable, ACCEPT_HANDOFF → 422 handoffNotAvailable (2.4s)
+  ✓  23 [chromium] › e2e/hot-seat.spec.ts:404:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M1: seeded handoff → «I am the Empire» → mock table → «Pass the turn» → handoff without board data (1.9s)
+  ✓  24 [chromium] › e2e/hot-seat.spec.ts:442:3 › SWR-004 hot-seat on a seeded legacy row (mock-v1 regression) › TC-E2E-HS-M2: seeded handoff — mock commands during the handoff and of the inactive side → 422 (6.1s)
+
+  24 passed (1.1m)
+exit=0

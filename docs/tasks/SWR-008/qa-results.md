@@ -1,6 +1,6 @@
 # QA results — SWR-008
 
-QA_EXECUTION, qa-lead (Claude Code subagent; wrote none of the SWR-008 code), 2026-11-20, 14:03–14:15 UTC.
+QA_EXECUTION, qa-lead (Claude Code subagent; wrote none of the SWR-008 code), 2026-11-20, 14:03–14:15 UTC; follow-up for AC-1 / AC-16 at ~15:45 UTC (section «Follow-up after the delivery commit»).
 Tree: `main` at `3fe4a66` (merge of PR #1) plus the uncommitted SWR-008 code with the review fixes (round 2 `approved`), the same tree as
 `artifacts/logs/final-verify.log`. All commands ran on Node v22.23.5 (`nvm use`). QA did **not** change product code or tests, did not
 run `pnpm install` and did not re-run `pnpm verify` (no targeted run showed a regression). QA **made no OpenAI request**: the
@@ -60,17 +60,17 @@ No suite lost cases.
 
 Per TC: priority, covered AC, status, the test(s) that implement the case, and the log with the passing run. The test names
 carry the TC ids. The mapping counts only SWR-008 test files: new ones, or changed ones whose added lines name that id. This keeps out the
-same-named ids of earlier tasks. Totals: **160 TC: 154 passed, 2 failed, 4 not_run**.
+same-named ids of earlier tasks. Totals: **160 TC: 156 passed, 2 failed, 2 not_run** (after the follow-up: TC-WF-01 and TC-R-02 are now passed).
 
 | Priority | passed | failed | not_run | Total |
 |---|---|---|---|---|
-| P0 | 98 | 0 | 3 (TC-WF-01, TC-MEAS-03, TC-R-02) | 101 |
+| P0 | 100 | 0 | 1 (TC-MEAS-03) | 101 |
 | P1 | 49 | 2 (TC-ST-05, TC-H-11) | 1 (TC-WF-03) | 52 |
 | P2 | 7 | 0 | 0 | 7 |
 
 | TC | P | AC | Status | Test(s) | Evidence |
 |---|---|---|---|---|---|
-| TC-WF-01 | P0 | AC-1 | not_run | `node scripts/check-task.mjs docs/tasks/SWR-008` | `artifacts/logs/qa-check-task.log` — Run at QA time: exit 0. The precondition (every stage up to DELIVERY closed) is not met yet; the Analyst re-runs it at DELIVERY |
+| TC-WF-01 | P0 | AC-1 | passed | `node scripts/check-task.mjs docs/tasks/SWR-008` (follow-up, after all 11 stages were closed) | `artifacts/logs/qa-check-task-final.log` — exit 0. The QA-time run is in `artifacts/logs/qa-check-task.log` |
 | TC-WF-02 | P1 | AC-1 | passed | check-task on 2 scratch COPIES (DELIVERY passed after pending + missing artifact; AC passed with empty evidence) | `artifacts/logs/qa-check-task-negative.log` — exit 1 with [R3]/[R4] and [R5]; originals untouched |
 | TC-WF-03 | P1 | AC-1 | not_run | `stat` birth/mtime | `artifacts/logs/qa-static.log` — Cannot be verified: the task files are untracked (no git history). Rewrites reset the birth time (test-cases.md birth = mtime = 15:08, after its reconciliation with the plans; the first SWR-008 code is at 14:53–14:56). The Coverage table does list AC-1..AC-16 (read by QA) |
 | TC-CT-01 | P0 | AC-2 | passed | `packages/platform/test/rules-context.test.ts` | `artifacts/logs/qa-platform.log` |
@@ -226,7 +226,7 @@ same-named ids of earlier tasks. Totals: **160 TC: 154 passed, 2 failed, 4 not_r
 | TC-MEAS-03 | P0 | AC-15 | not_run | — | `artifacts/benchmark/mock-20261120-125656.md` — The precondition did not occur: the real run was possible and was made. The mock report says «NOT a measurement of a model» |
 | TC-MEAS-04 | P1 | AC-15 | passed | Σ of the report decisions vs `usageByRules` (`summarizeCostByRules`) | `artifacts/logs/qa-meas.log` — with rules 4862 µUSD / 95214 in; without 4070 / 36576: equal |
 | TC-R-01 | P0 | AC-16 | passed | `pnpm verify` (final, by the orchestrator; QA read the log) | `artifacts/logs/final-verify.log` — exit=0; ≥ baseline in every suite (see «Regression») |
-| TC-R-02 | P0 | AC-16 | not_run | `gh run list --repo dimatitov/bga --branch main --limit 3` | `artifacts/logs/qa-ci.log` — SWR-008 is not committed or pushed. CI for the base `3fe4a66` (PR #1 merge) is success |
+| TC-R-02 | P0 | AC-16 | passed | `gh run view 44761054470 --repo dimatitov/bga --attempt 2` (follow-up) | `artifacts/logs/qa-ci-swr008.log`, `artifacts/logs/ci-swr008.log` — SWR-008 commit `f0a2a12` on `main` (= origin/main). Attempt 2: success, every suite as in final-verify, e2e 139, check-task OK. Attempt 1 failed only on the pre-SWR-008 e2e TC-E2E-HS-02 flake (D-4) |
 | TC-R-03 | P0 | AC-16 | passed | `git diff --numstat HEAD` of the tests + review of the removed lines | `artifacts/logs/qa-test-diff.log` — See the table «TC-R-03» |
 | TC-R-04 | P1 | AC-16 | passed | `node --test scripts/` (within verify) | `artifacts/logs/final-verify.log` — 449/449 |
 | TC-R-05 | P0 | AC-16 | passed | `pnpm e2e` within verify (incl. core-hidden-base, core-victory, ai-commander, dev-ai, ai-diagnostics) | `artifacts/logs/final-verify.log`, `artifacts/logs/qa-e2e-diagnostics.log` — 139 passed (baseline 136 + 3 new) |
@@ -311,12 +311,12 @@ Hidden-info suites (TC-H-10) are not weakened: `automation-hidden-info.int` +24/
 | 10 session budget respected | TC-BUD-01..03, 07, 10, TC-BEN-09, 10 | passed | `artifacts/logs/qa-api.log` |
 | 11–14 DISC-009: every transition, not premature, not repeated, victory | TC-D-01..37, TC-RS-05 | passed | `artifacts/logs/qa-rebellion.log` |
 | 15 save / restore | TC-RS-01..06 | passed | `artifacts/logs/qa-api.log`, `artifacts/logs/qa-rs06-devdb.log` |
-| 16 all existing tests pass | TC-R-01, 03..05, TC-H-10, TC-BUD-10, TC-FB-07 (TC-R-02 CI: not_run) | passed locally | `artifacts/logs/final-verify.log` |
+| 16 all existing tests pass | TC-R-01..05, TC-H-10, TC-BUD-10, TC-FB-07 | passed | `artifacts/logs/final-verify.log`, `artifacts/logs/qa-ci-swr008.log` |
 
 ## Acceptance criteria
 | AC | Status | Evidence |
 |---|---|---|
-| AC-1 | not_run | `artifacts/logs/qa-check-task.log`, `artifacts/logs/qa-check-task-negative.log` — at QA time check-task exits 0 and catches violations on copies (TC-WF-02). The AC needs all stages through DELIVERY, so the final run is at DELIVERY (Analyst). TC-WF-03 is not verifiable (untracked files) |
+| AC-1 | passed | `artifacts/logs/qa-check-task-final.log`, `artifacts/logs/qa-check-task-negative.log`, `status.md` — follow-up: all 11 stages are passed and their artifacts exist; check-task exits 0 and catches violations on copies (TC-WF-02). TC-WF-03 (time order) stays not verifiable on untracked files |
 | AC-2 | passed | `artifacts/logs/qa-platform.log`, `artifacts/logs/qa-api.log`, `artifacts/logs/qa-static.log`, `docs/architecture/rules-knowledge.md` |
 | AC-3 | passed | `artifacts/logs/qa-api.log` (rules-integration, rules-context-registry, rules-off-golden byte-for-byte, prompt.unit) |
 | AC-4 | passed | `artifacts/logs/qa-rebellion.log` (rules-provider: 1600 combinations, golden in two processes), `artifacts/logs/qa-platform.log`, `artifacts/logs/qa-api.log` |
@@ -331,7 +331,7 @@ Hidden-info suites (TC-H-10) are not weakened: `automation-hidden-info.int` +24/
 | AC-13 | passed | `artifacts/logs/qa-web.log`, `artifacts/logs/qa-api.log`, `artifacts/logs/qa-e2e-diagnostics.log`, `artifacts/logs/final-verify.log`, `artifacts/logs/qa-browser-diag08.log`, `artifacts/screenshots/swr008-dev-diagnostics-panel-rules19-ru-1440.png`, `artifacts/screenshots/swr008-dev-diagnostics-en-375.png` |
 | AC-14 | passed | `artifacts/logs/qa-rebellion.log` (14 scenarios: 8 Empire / 6 Rebels), `artifacts/logs/qa-api.log` (bench), `packages/games/rebellion/benchmark/README.md` |
 | AC-15 | passed | `artifacts/benchmark/real-20261120-140206.md`, `artifacts/benchmark/real-20261120-140206.json`, `artifacts/logs/bench-real.log`, `artifacts/logs/qa-meas.log` — real run by the Analyst: $0.008932 of $1, 3 repeats; conclusion: no measurable quality effect, cost rules-worse |
-| AC-16 | not_run | `artifacts/logs/final-verify.log`, `artifacts/logs/qa-ci.log` — `pnpm verify` exit 0 on Node 22 and every existing suite is green (passed). **CI on the SWR-008 code has not run** (not committed or pushed); CI for the base `3fe4a66` is success |
+| AC-16 | passed | `artifacts/logs/final-verify.log`, `artifacts/logs/qa-ci-swr008.log`, `artifacts/logs/ci-swr008.log` — local `pnpm verify` exit 0 on Node 22. CI run 44761054470 on SWR-008 commit `f0a2a12` is success (attempt 2). Attempt 1 failed only on the pre-existing SWR-005 flake TC-E2E-HS-02 (D-4). The test-only fix is in the working tree, uncommitted: QA re-check 24/24, `artifacts/logs/qa-hs02-recheck.log`. It needs a CI run after it is committed |
 
 ## Verification
 - lint (eslint + prettier): passed — `artifacts/logs/final-verify.log`
@@ -347,8 +347,9 @@ Hidden-info suites (TC-H-10) are not weakened: `automation-hidden-info.int` +24/
 - prompt scan (TC-H-04, QD-29): passed — `artifacts/logs/prompt-scan.log`
 - real benchmark review (AC-15): passed — `artifacts/logs/qa-meas.log`
 - CI on the base 3fe4a66: passed — `artifacts/logs/qa-ci.log`
-- CI on the SWR-008 code: not_run — not committed / pushed yet
-- check-task: passed — `artifacts/logs/qa-check-task.log`
+- CI on the SWR-008 code (run 44761054470, `f0a2a12`): passed — `artifacts/logs/qa-ci-swr008.log`, `artifacts/logs/ci-swr008.log` (attempt 2 success; attempt 1 failed on the D-4 flake)
+- HS-02 flake fix (uncommitted, test-only) re-check: passed — `artifacts/logs/qa-hs02-recheck.log`, `artifacts/logs/hs02-flake-fix.log`
+- check-task (final): passed — `artifacts/logs/qa-check-task-final.log`
 
 ## Defects
 | # | Severity | Steps | Expected | Actual | Status |
@@ -356,6 +357,29 @@ Hidden-info suites (TC-H-10) are not weakened: `automation-hidden-info.int` +24/
 | D-1 | minor | TC-H-11: list KB entries with `ai !== 'none'` and status `verified`; search `id`/`title`/`text` for the 32 core-v1 system ids (QA scan in `artifacts/logs/qa-static.log` steps; guard `packages/games/rebellion/test/knowledge/rules-provider.test.ts` «hidden information guard») | no AI-eligible entry names a system; a new entry that does fails the guard | 4 AI-eligible verified entries name systems in their text: `rebellion:loyalty.basics` (coruscant), `rebellion:cards.probe` (coruscant), `rebellion:setup.first-game-rebels` (8 systems), `rebellion:setup.first-game-empire` (6). The guard checks the ids of all entries but the texts only of the rules selectable in `command`, so these 4 pass without notice. No runtime leak: static public texts, never selected for a core-v1 AI decision (phase `command`) | open — Analyst: accept the narrowed guard (document) or mark these entries `ai:'none'` / widen the guard |
 | D-2 | minor | TC-ST-05: `selectRules` for every TC-SEL-06 combination including phase `refresh` (test `rules-provider.test.ts` «every combination», assertion guarded by `if (phase === 'command')`) | no combat/missions/production/probes entries in any block | in `refresh` the phase group selects build (production) rules (test comment; W3 log limitation 2). The engine-scope line, always first, says production is not implemented. The core-v1 AI decides only in `command`, where the check holds | open — Analyst: accept as documented or exclude not-implemented categories for all phases |
 | D-3 | minor (dev-only, opt-in) | dev web, `/dev/ai` switch on, AI session at 375 px, expand the panel (`artifacts/screenshots/swr008-dev-diagnostics-en-375.png`, `artifacts/screenshots/swr008-dev-diagnostics-panel-rules17-en-375.png`) | the floating dev panel/chip does not hide the player's notices; ids wrap without orphan punctuation | expanded at 375 the panel covers most of the screen, and the chip covers part of the AI fallback notice. In the id list a lone «,» wraps onto its own line («…transport.capacity» / «,»). Not visible to players (dev build + opt-in) | open — backlog (frontend) |
+| D-4 | minor (test flake, pre-existing SWR-005 test, not SWR-008 code) | CI run 44761054470 attempt 1: `e2e/hot-seat.spec.ts` TC-E2E-HS-02 — `page.reload()` during the handoff while an `/api/` response is still in flight | every recorded session response is checked as handoff-only | `recordApi` stores `body: null` for a response whose body was lost by the reload → `expectHandoffOnly(null)` → `TypeError: Cannot read properties of null (reading 'view')`. Attempt 2 of the same SHA: green | fixed by the Analyst in the working tree (not committed): the test skips only null (unreadable) bodies and still requires ≥ 1 checked call. QA review below; QA re-run `hot-seat.spec.ts --repeat-each=3` → 24/24 (`artifacts/logs/qa-hs02-recheck.log`). Needs a CI run after commit |
+
+## Follow-up after the delivery commit (AC-1, AC-16)
+
+I checked these facts myself (`artifacts/logs/qa-ci-swr008.log`):
+- Local `HEAD` = `origin/main` = `f0a2a126` «SWR-008: rules integration & game integrity».
+- CI run 44761054470 (push, `main`, headSha `f0a2a126…`) concluded **success** on attempt 2. That attempt had:
+  - eslint and prettier clean;
+  - scripts 449/449;
+  - platform 366, forbidden-stars 5, rebellion 875, web 647, api 863 + 2 skipped;
+  - check:bundle OK («0 apps/web/src/dev modules»);
+  - e2e **139 passed**;
+  - `OK docs/tasks/SWR-008/` in the check-task step.
+- Attempt 1 failed only in e2e: 1 failed (TC-E2E-HS-02), 138 passed, and every other stage was green. `e2e/hot-seat.spec.ts` is not part of the `f0a2a12` diff, so the flake predates SWR-008.
+
+Review of the uncommitted fix (`git diff e2e/hot-seat.spec.ts`, +3/−1, test only):
+- The filter becomes `c.url.includes(sessionId) && c.body !== null`; `expect(sessionCalls.length).toBeGreaterThan(0)` is kept.
+- The main assertion of the test, `window.__sawBoardCanvas === false` after the reload, is unchanged.
+- **Accepted.** `recordApi` maps any unreadable body to `null`, so a body lost by the reload cannot be checked anyway. Every readable body is still checked as handoff-only.
+- Residual risk: a leaking response that is also unreadable would not be checked. It is low, because the leak test of the server views is in the api suites (`hidden-info*.int`).
+- This is a test change made by the Analyst, not by QA. It still needs a commit and a green CI run.
+
+`status.md` now has all 11 stages `passed`. After this update, `node scripts/check-task.mjs docs/tasks/SWR-008` exits 0 (`artifacts/logs/qa-check-task-final.log`).
 
 ## Observations (not defects)
 - O-1 (TC-DIAG-05): panel labels contain the word «prompt» («Prompt text … are not shown», «dropped by the prompt limit», which QD-9 requires).

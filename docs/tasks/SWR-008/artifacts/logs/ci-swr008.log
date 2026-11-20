@@ -1,0 +1,16 @@
+# GitHub Actions CI for SWR-008 commit f0a2a12 (main)
+{"attempt":2,"conclusion":"success","createdAt":"2026-11-20T15:13:11Z","event":"push","headSha":"f0a2a126f238aedd3f34249cc48379f678959bfa","updatedAt":"2026-11-20T15:41:31Z","url":"https://github.com/dimatitov/bga/actions/runs/44761054470","workflowName":"CI"}
+# attempt 1: failure — only e2e TC-E2E-HS-02 (SWR-005 hot-seat): response body lost on page.reload (recordApi stored null); 138/139 e2e passed, all unit/integration suites passed (platform 366, rebellion 875, web 647, api 863)
+# attempt 2 (rerun of failed job): success
+
+✓ main CI · 44761054470 (Attempt #2)
+Triggered via push about 12 minutes ago
+
+JOBS
+✓ pnpm verify + check-task in 12m0s (ID 136382888795)
+
+ARTIFACTS
+playwright-report
+
+For more information about the job, try: gh run view --job=136382888795
+View this run on GitHub: https://github.com/dimatitov/bga/actions/runs/44761054470/attempts/2
