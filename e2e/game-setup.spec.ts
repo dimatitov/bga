@@ -373,7 +373,18 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
         if (variant === 'dblclick') {
           await start.dblclick();
         } else {
-          const box = await start.boundingBox();
+          // Raw mouse clicks skip Playwright's actionability checks, so wait until the button stops moving
+          // (late layout shifts on a slow CI runner made every click miss — SWR-008 merge CI run).
+          await page.waitForLoadState('networkidle');
+          let box = await start.boundingBox();
+          await expect
+            .poll(async () => {
+              const next = await start.boundingBox();
+              const same = box !== null && next !== null && next.x === box.x && next.y === box.y;
+              box = next;
+              return same;
+            })
+            .toBe(true);
           if (!box) throw new Error('setup-start has no box');
           for (let i = 0; i < 5; i++) {
             await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
