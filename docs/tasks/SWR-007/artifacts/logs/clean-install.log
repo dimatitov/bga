@@ -1,0 +1,16 @@
+# SWR-007: clean checkout copy (tracked + new files, no node_modules) → pnpm install --frozen-lockfile → typecheck → api tests — v22.23.5, 2026-11-19T15:09:21Z
+ls: node_modules: No such file or directory
+12.21.0
++ eslint-plugin-react-hooks 7.1.1
++ eslint-plugin-react-refresh 0.5.7
++ globals 17.14.0
++ prettier 3.9.10
++ typescript 5.9.3
++ typescript-eslint 8.72.1
+
+Done in 8.1s using pnpm v12.21.0
+install exit=0
+typecheck exit=0
+ Test Files  54 passed | 1 skipped (55)
+      Tests  499 passed | 1 skipped (500)
+better-sqlite3 native binding loads

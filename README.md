@@ -18,16 +18,19 @@ Rebellion, Forbidden Stars пока только в каталоге («Скор
 - Демонстрационная задача: [`docs/tasks/SWR-000/`](docs/tasks/SWR-000/)
 
 ```bash
-node --test scripts/
+node --test "scripts/*.test.mjs"
 node scripts/check-task.mjs docs/tasks/SWR-000
 ```
 
 ## Запуск
 
-Требования: Node **20.19+** (см. `.nvmrc`), pnpm **10.34.9** через corepack (`corepack enable`; версия закреплена в
-`packageManager`). Для установки нужна сеть (Prisma engines, браузер Playwright).
+Требования: Node **22 LTS** — `22.23.5` в `.nvmrc` (`engines`: `>=22.22.2`; Node 20 не поддерживается), pnpm **12.21.0**
+через corepack, встроенный в Node 22 (`corepack enable`; версия закреплена в `packageManager`). Для установки нужна сеть
+(Prisma engines, нативный `better-sqlite3`, браузер Playwright).
 
 ```bash
+nvm install && nvm use                    # Node из .nvmrc
+corepack enable                           # pnpm из packageManager
 pnpm install                              # зависимости + prisma generate
 pnpm exec playwright install chromium     # один раз: браузер для e2e
 pnpm dev                                  # api http://localhost:3000 (/api/health) + web http://localhost:5173 (proxy /api)
@@ -41,12 +44,16 @@ pnpm dev                                  # api http://localhost:3000 (/api/heal
 ```bash
 pnpm lint         # ESLint (включая архитектурные границы) + Prettier --check
 pnpm typecheck    # tsc для всех пакетов и e2e
-pnpm test         # node --test scripts/ (инструменты процесса) + Vitest во всех пакетах
+pnpm test         # node --test "scripts/*.test.mjs" (инструменты процесса) + Vitest во всех пакетах
 pnpm build        # сборка packages, api (nest build) и web (vite build)
 pnpm e2e          # Playwright: свои порты api 3100 / web 5174 и отдельная БД apps/api/.tmp/e2e.db
 pnpm check:bundle # web-бандл без секретов сценария и без модулей rules/scenario/server/ai игр
 pnpm verify       # lint + typecheck + test + build + check:bundle + e2e
 ```
+
+CI: GitHub Actions [`.github/workflows/ci.yml`](.github/workflows/ci.yml) на каждый push и pull request — Node из
+`.nvmrc`, pnpm из `packageManager`, `pnpm install --frozen-lockfile`, браузер Playwright, `pnpm verify` и `check-task` по
+всем `docs/tasks/SWR-*`. Секреты не нужны: OpenAI в тестах и e2e всегда замокан.
 
 Порты и переменные: api — `PORT` (3000), `DATABASE_URL` (`apps/api/.env`); web — `WEB_PORT` (5173),
 `API_PROXY_TARGET` (`http://localhost:3000`), `VITE_E2E=1` (включает read-only test-хук `window.__boardDebug`; в DEV он

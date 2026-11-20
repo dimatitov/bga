@@ -7,6 +7,12 @@ import { describe, expect, it } from 'vitest';
 import { createAppTheme, FOCUS_RING } from './createAppTheme';
 import { tokens } from './tokens';
 
+/** '#FFD166' → 'rgb(255, 209, 102)' (CSSOM colour serialisation). */
+function hexToRgb(hex: string): string {
+  const n = Number.parseInt(hex.slice(1), 16);
+  return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
+}
+
 /** WCAG 2.x relative luminance / contrast ratio of two `#RRGGBB` colours. */
 function luminance(hex: string): number {
   const [r, g, b] = [1, 3, 5].map((i) => {
@@ -60,9 +66,10 @@ describe('createAppTheme — D-A-5 focus ring (SWR-004 decision: contained butto
           ref.current?.focusVisible();
         });
         expect(el).toHaveClass('Mui-focusVisible');
-        // jsdom keeps the `outline` shorthand as written (no longhand expansion).
+        // jsdom keeps the `outline` shorthand (no longhand expansion); since jsdom 31 (SWR-007) its colour is
+        // serialised as rgb(), so the #RRGGBB token is compared in that form.
         const style = getComputedStyle(el);
-        expect(style.outline.toLowerCase()).toBe(`2px solid ${tokens.focus.toLowerCase()}`);
+        expect(style.outline).toBe(`2px solid ${hexToRgb(tokens.focus)}`);
         expect(style.outlineOffset).toBe('2px');
       }
     },

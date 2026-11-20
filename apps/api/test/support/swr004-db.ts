@@ -8,6 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../../src/persistence/sqlite-adapter';
 import { API_ROOT, TMP_DIR } from '../global-setup';
 import { prisma } from './pre-migration-db';
 
@@ -49,7 +50,7 @@ export async function createSwr004Db(options: { rows?: number } = {}): Promise<S
 
   const all = v2Sessions();
   const sessions = all.slice(0, options.rows ?? all.length);
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     // Insert in an order different from `updatedAt` so that ordering is really checked.
     for (const s of [...sessions].reverse()) {

@@ -9,6 +9,7 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../../src/persistence/sqlite-adapter';
 import { API_ROOT, TMP_DIR } from '../global-setup';
 
 export const INIT_MIGRATION = '20261107235651_init';
@@ -114,8 +115,7 @@ export async function createPreMigrationDb(options: { rows: number }): Promise<P
   prisma(url, [
     'db',
     'execute',
-    '--url',
-    url,
+    // SWR-007: Prisma 7 `db execute` takes the URL from prisma.config.ts (DATABASE_URL set by prisma()).
     '--file',
     join('prisma', 'migrations', INIT_MIGRATION, 'migration.sql'),
   ]);
@@ -125,7 +125,7 @@ export async function createPreMigrationDb(options: { rows: number }): Promise<P
   // DateTime columns hold unix milliseconds (INTEGER), as Prisma wrote them in SWR-002 (checked on dev.db).
   const insertOrder = [...games].reverse();
 
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     for (const g of insertOrder) {
       await client.$executeRaw`INSERT INTO "Game" ("id", "setup", "state", "version", "createdAt", "updatedAt")

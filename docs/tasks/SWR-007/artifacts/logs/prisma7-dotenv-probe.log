@@ -1,0 +1,5 @@
+# SWR-007: does Prisma 7 load apps/api/.env? (temporary .env with SWR007_PROBE only; removed afterwards) — v22.23.5, 2026-11-19T14:39:27Z
+client require + new PrismaClient(adapter): SWR007_PROBE=undefined
+prisma CLI (migrate status) resolved datasource from prisma.config.ts (.env fallback, DATABASE_URL only):
+Datasource "db": SQLite database "probe-never-created.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/prisma/probe-never-created.db"
+Error: P1003: Database `probe-never-created.db` does not exist

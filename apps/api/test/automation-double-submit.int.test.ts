@@ -169,7 +169,14 @@ describe('SWR-006 W9: double submit and races with the real bot (AC-02)', () => 
       statuses.push(...replies.map((r) => r.status));
       const commands = [replies[0], replies[2]].map((r) => r?.status);
       expect(commands.filter((s) => s === 200)).toHaveLength(1);
-      expect(commands.every((s) => s === 200 || s === 409)).toBe(true);
+      // A duplicate that reads the state after the winning command ended the game gets 422 gameOver (checked before
+      // the version, core apply order) — with the synchronous SQLite driver (SWR-007) this is the usual order on the
+      // last turn. Either way exactly one PASS is applied.
+      const rejectedOk = (r: (typeof replies)[number] | undefined) =>
+        r?.status === 409 ||
+        (r?.status === 422 &&
+          (r.body as { error?: { messageKey?: string } }).error?.messageKey === 'errors.gameOver');
+      expect([replies[0], replies[2]].every((r) => r?.status === 200 || rejectedOk(r))).toBe(true);
       expect(replies[1]?.status).toBe(200);
       expect(replies[3]?.status).toBe(200);
       await expectConsecutiveEvents(app, id);

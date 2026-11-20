@@ -393,7 +393,12 @@ node scripts/reset-ai-budget.mjs --database-url file:./dev.db --key dev-diagnost
 | e2e | `pnpm e2e` (Playwright поднимает свои серверы; API собирается в очищаемый `apps/api/dist-e2e`) | api 3100, web 5174, `apps/api/.tmp/e2e.db` (пересоздаётся) |
 
 Внутренние пакеты исполняются API из собранного `dist` (CommonJS), а Vite, Vitest и typecheck читают их TypeScript-исходники
-через export-условие `@bga/source`. Runtime: Node 20.19.x (NestJS 11, Prisma 6).
+через export-условие `@bga/source`. Runtime (SWR-007): Node 22 LTS (`.nvmrc` 22.23.5, `engines` `>=22.22.2`), pnpm 12 через
+corepack; NestJS 12, Prisma 7, `openai` 7, Vitest 5, React Router 8. API собирается в CommonJS (`tsconfig.build.json`,
+NodeNext), а ESM-only пакеты NestJS 12 грузятся через `require(esm)` Node 22 (без флагов). Prisma 7: URL для CLI — в
+`apps/api/prisma.config.ts`, клиент работает через driver adapter `@prisma/adapter-better-sqlite3`
+(`src/persistence/sqlite-adapter.ts`, `timestampFormat: 'unixepoch-ms'` — тот же INTEGER-формат DateTime, что писал
+Prisma ≤ 6). CI: `.github/workflows/ci.yml` — `pnpm verify` + `check-task` на каждый push/PR, без секретов.
 
 ### 8.1 Окружение API (`apps/api/src/config/env.ts`, SWR-005B)
 
@@ -410,13 +415,16 @@ node scripts/reset-ai-budget.mjs --database-url file:./dev.db --key dev-diagnost
   `NODE_ENV ≠ test`; переменные окружения процесса важнее файла; файл разбирается в локальный объект, `process.env` не
   меняется. `.env` не коммитится; `apps/api/.env.example` содержит все переменные схемы (ключ пустой,
   `OPENAI_ENABLED=false`), совпадение со схемой проверяет `env-example.unit.test.ts`. `DATABASE_URL="file:./dev.db"`
-  разрешается Prisma относительно `prisma/schema.prisma`.
+  означает `apps/api/prisma/dev.db`: относительный путь разрешается от `prisma/` (`resolveSqliteUrl`,
+  `src/persistence/sqlite-url.ts`) — в `main.ts` и в `prisma.config.ts` (SWR-007; driver adapter сам разрешал бы от cwd).
 - **`NODE_ENV=test`:** `.env` не читается, а `OPENAI_ENABLED=true` отклоняется схемой. Тесты строят конфиг явно
   (`test/support/test-config.ts`, OpenAI выключен); тесты OpenAI используют настоящий SDK с fake fetch
   (`test/support/openai-fake-fetch.ts`); `setupFiles` Vitest ставят сетевой guard (`test/setup/no-network.ts`).
-- **Поведение Prisma с `.env` (дефект D-1 SWR-005B):** сгенерированный `@prisma/client` при импорте (и при
-  `new PrismaClient`), а также CLI `prisma` сами загружают `apps/api/.env` и копируют в `process.env` все переменные, которых
-  там ещё нет (существующие, даже пустые, не перезаписывают). Поэтому:
+- **Поведение Prisma с `.env` (дефект D-1 SWR-005B):** до SWR-007 (Prisma 6) сгенерированный `@prisma/client` при импорте
+  (и при `new PrismaClient`), а также CLI `prisma` сами загружали `apps/api/.env` и копировали в `process.env` все
+  переменные, которых там ещё не было. Prisma 7 этого не делает (проверено: `docs/tasks/SWR-007/artifacts/logs/prisma7-dotenv-probe.log`);
+  CLI берёт из `.env` только `DATABASE_URL` и только при его отсутствии в окружении (`apps/api/prisma.config.ts`).
+  Защитные меры ниже оставлены как страховка (defence in depth):
   - `main.ts` импортирует `app.factory` (а с ним Prisma) только **после** валидации конфига — `AppConfig` никогда не видит
     значений, подложенных Prisma (в dev-процессе они после этого могут оказаться в `process.env`, но их никто не читает, а
     SDK OpenAI получает все опции явно);
@@ -441,5 +449,6 @@ node scripts/reset-ai-budget.mjs --database-url file:./dev.db --key dev-diagnost
 срез «раунд + активация» (без боя, миссий, производства; отклонения D-1…D-7 в `docs/game-rules/rebellion-core-v1.md`),
 старые партии — mock-правила на вымышленной карте; Forbidden Stars —
 только карточка каталога; SQLite и один процесс API (в т.ч. AI-бюджет гарантирован только в пределах одного процесса —
-резервы в памяти, §7.1); бюджет OpenAI (сессий и dev) копится до ручного сброса скриптом; NestJS 11 / CommonJS (переход на ESM и Nest 12 — отдельной задачей,
-вероятно вместе с Node 22).
+резервы в памяти, §7.1); бюджет OpenAI (сессий и dev) копится до ручного сброса скриптом; сборка API — CommonJS
+(NestJS 12 грузится через `require(esm)`; перевод `apps/api` на ESM — отдельной задачей при необходимости); `i18next` 26 /
+`react-i18next` 17 придержаны (SWR-007: новые мажоры ужесточили типы ключей перевода — правки в Rebellion-UI после SWR-006).

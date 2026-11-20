@@ -1,0 +1,181 @@
+## date: Thu Nov 19 17:49:10 MSK 2026
+## node -v
+v22.23.5
+## corepack -v
+0.36.0
+## corepack pnpm -v
+12.21.0
+## pnpm -v
+12.21.0
+## TC-01 cat .nvmrc (od -c)
+22.23.5
+0000000    2   2   .   2   3   .   5  \n                                
+0000010
+## TC-02/03 engines.node
+>=22.22.2
+## packageManager
+pnpm@12.21.0
+semver from node_modules/.pnpm/semver@7.8.6
+22.23.5 true
+24.22.3 true
+26.13.1 true
+20.19.5 false
+20.99.0 false
+22.11.0 false
+22.12.0 false
+22.22.1 false
+22.22.2 true
+## TC-04 @types/node
+package.json:26:    "@types/node": "22.20.5",
+apps/web/package.json:37:    "@types/node": "22.20.5",
+apps/api/package.json:35:    "@types/node": "22.20.5",
+packages/games/forbidden-stars/package.json:27:    "@types/node": "22.20.5",
+packages/platform/package.json:24:    "@types/node": "22.20.5",
+packages/games/rebellion/package.json:58:    "@types/node": "22.20.5",
+## @types/node on main
+package.json:     "@types/node": "20.19.43",
+apps/api/package.json:     "@types/node": "20.19.43",
+apps/web/package.json:     "@types/node": "20.19.43",
+packages/platform/package.json:     "@types/node": "20.19.43",
+packages/games/rebellion/package.json:     "@types/node": "20.19.43",
+packages/games/forbidden-stars/package.json:     "@types/node": "20.19.43",
+## TC-11 openai
+    "openai": "7.59.0",
+node:internal/modules/cjs/loader:671
+      throw e;
+      ^
+
+Error [ERR_PACKAGE_PATH_NOT_EXPORTED]: Package subpath './package.json' is not defined by "exports" in /Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/node_modules/openai/package.json
+    at exportsNotFound (node:internal/modules/esm/resolve:318:10)
+    at packageExportsResolve (node:internal/modules/esm/resolve:665:9)
+    at resolveExports (node:internal/modules/cjs/loader:664:36)
+    at Function._findPath (node:internal/modules/cjs/loader:731:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1415:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12) {
+  code: 'ERR_PACKAGE_PATH_NOT_EXPORTED'
+}
+
+Node.js v22.23.5
+## TC-16 nest
+    "@nestjs/common": "12.5.1",
+    "@nestjs/core": "12.5.1",
+    "@nestjs/platform-express": "12.5.1",
+    "@nestjs/cli": "12.0.13",
+    "@nestjs/testing": "12.5.1",
+## TC-19 prisma
+    "@prisma/adapter-better-sqlite3": "7.10.1",
+    "@prisma/client": "7.10.1",
+    "prisma": "7.10.1",
+7.10.1 / prisma 7.10.1
+## TC-26 other deps
+apps/web/package.json:7:    "dev": "vite",
+apps/web/package.json:23:    "i18next": "26.7.2",
+apps/web/package.json:27:    "react-i18next": "17.1.13",
+apps/web/package.json:29:    "react-router": "8.5.1",
+apps/web/package.json:34:    "@testing-library/jest-dom": "7.0.1",
+apps/web/package.json:41:    "jsdom": "31.0.1",
+apps/web/package.json:43:    "vite": "8.3.6",
+apps/web/package.json:44:    "vitest": "5.1.1"
+packages/platform/package.json:26:    "vite": "8.3.6",
+packages/platform/package.json:27:    "vitest": "5.1.1"
+apps/api/package.json:41:    "vite": "8.3.6",
+apps/api/package.json:42:    "vitest": "5.1.1"
+package.json:27:    "concurrently": "10.0.7",
+packages/games/rebellion/package.json:60:    "vite": "8.3.6",
+packages/games/rebellion/package.json:61:    "vitest": "5.1.1"
+packages/games/forbidden-stars/package.json:29:    "vite": "8.3.6",
+packages/games/forbidden-stars/package.json:30:    "vitest": "5.1.1"
+## TC-02 upstream engines (npm view)
+openai@7.59.0: {"node":">=22.0.0"}
+react-router@8.5.1: {"node":">=22.22.0"}
+jsdom@31.0.1: {"node":"^22.22.2||^24.15.0||>=26.0.0"}
+vitest@5.1.1: {"node":"^22.12.0||^24.0.0||>=26.0.0"}
+concurrently@10.0.7: {"node":">=22"}
+@testing-library/jest-dom@7.0.1: {"npm":">=6","node":">=22","yarn":">=1"}
+@nestjs/core@12.5.1: {"node":">=20"}
+prisma@7.10.1: {"node":"^20.19||^22.12||>=24.0"}
+@prisma/adapter-better-sqlite3@7.10.1: 
+## better-sqlite3 installed
+node:internal/modules/cjs/loader:1433
+  throw err;
+  ^
+
+Error: Cannot find module 'better-sqlite3/package.json'
+Require stack:
+- /Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/[eval]
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1430:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1040:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1045:22)
+    at Function._load (node:internal/modules/cjs/loader:1216:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:254:19)
+    at Module.require (node:internal/modules/cjs/loader:1527:12)
+    at require (node:internal/modules/helpers:147:16)
+    at [eval]:1:1
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:446:12 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/[eval]'
+  ]
+}
+
+Node.js v22.23.5
+## (re-probe; the two stack traces above are QA probe errors: openai has no ./package.json export; better-sqlite3 is transitive, not resolvable from apps/api)
+## TC-11 openai installed (fs read)
+7.59.0
+## TC-10 native modules
+node_modules/.pnpm/@swc+core@1.16.22
+node_modules/.pnpm/better-sqlite3@12.11.1
+esbuild: not in tree
+better-sqlite3 path node_modules/.pnpm/better-sqlite3@12.11.1/node_modules/better-sqlite3
+node_modules/.pnpm/better-sqlite3@12.11.1/node_modules/better-sqlite3/build/Release/better_sqlite3.node
+better-sqlite3 loads, sqlite 3.53.2
+@swc/core loads
+adapter loads function
+## prisma generated client
+node_modules/.pnpm/@prisma+client@7.10.1_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3/node_modules/.prisma/client:
+client.d.ts
+client.js
+default.d.ts
+default.js
+edge.d.ts
+edge.js
+index-browser.js
+index.d.ts
+index.js
+## pnpm-workspace.yaml
+packages:
+  - apps/*
+  # explicit: `packages/*` would also match the `packages/games` folder itself
+  - packages/platform
+  - packages/games/*
+
+# pnpm does not run dependency install scripts by default (pnpm 11+: `allowBuilds`, replaces `onlyBuiltDependencies`).
+# Prisma needs them to download its engines; SWC and better-sqlite3 (Prisma 7 SQLite adapter) need native binaries.
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@swc/core': true
+  better-sqlite3: true
+  prisma: true
+## lockfileVersion
+---
+## git status lockfile
+ M pnpm-lock.yaml
+## @prisma/client dirs in store
+node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3
+node_modules/.pnpm/@prisma+client@7.10.1_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3
+node_modules/.pnpm/@prisma+client@7.10.1_prisma@7.10.1_@types+node@22.20.5_@types+react-dom@19.3.0_@types+_714404430f8a3c83ce9f018318f6f09f
+node_modules/.pnpm/prisma@6.19.3_typescript@5.9.3
+node_modules/.pnpm/prisma@7.10.1_@types+node@22.20.5_@types+react-dom@19.3.0_@types+react@19.3.0__@types+r_bb601ccb50687443b3a0a9280dab8ff0
+## apps/api resolves
+../../../../node_modules/.pnpm/@prisma+client@7.10.1_prisma@7.10.1_@types+node@22.20.5_@types+react-dom@19.3.0_@types+_714404430f8a3c83ce9f018318f6f09f/node_modules/@prisma/client
+../../../node_modules/.pnpm/prisma@7.10.1_@types+node@22.20.5_@types+react-dom@19.3.0_@types+react@19.3.0__@types+r_bb601ccb50687443b3a0a9280dab8ff0/node_modules/prisma
+## lockfile references to prisma@6
+4770:  '@prisma/client@7.10.1(prisma@7.10.1(@types/node@22.20.5)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(better-sqlite3@12.11.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@5.9.3))(typescript@5.9.3)':
+## lockfileVersion
+lockfileVersion: '9.0'

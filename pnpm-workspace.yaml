@@ -4,11 +4,11 @@ packages:
   - packages/platform
   - packages/games/*
 
-# pnpm 10 does not run dependency install scripts by default.
-# Prisma needs them to download its engines; SWC/esbuild need their native binaries.
-onlyBuiltDependencies:
-  - '@prisma/client'
-  - '@prisma/engines'
-  - prisma
-  - '@swc/core'
-  - esbuild
+# pnpm does not run dependency install scripts by default (pnpm 11+: `allowBuilds`, replaces `onlyBuiltDependencies`).
+# Prisma needs them to download its engines; SWC and better-sqlite3 (Prisma 7 SQLite adapter) need native binaries.
+allowBuilds:
+  '@prisma/client': true
+  '@prisma/engines': true
+  '@swc/core': true
+  better-sqlite3: true
+  prisma: true

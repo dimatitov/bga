@@ -1,0 +1,159 @@
+## date: Thu Nov 19 17:49:52 MSK 2026; HEAD=7195758 main=c1ace26
+## TC-20 git diff --stat main -- apps/api/prisma/migrations
+(exit 0)
+## git status --porcelain apps/api/prisma/migrations
+(end)
+## TC-38 git diff --stat main -- packages/platform packages/games/*/src
+ packages/platform/package.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+(end)
+## untracked under packages
+ M packages/games/forbidden-stars/package.json
+ M packages/games/rebellion/package.json
+ M packages/platform/package.json
+(end)
+## TC-13 git diff --stat main -- apps/api/test
+ apps/api/test/ai/ai-usage-repository.int.test.ts | 3 ++-
+ apps/api/test/ai/budget.int.test.ts              | 3 ++-
+ apps/api/test/ai/reset-ai-budget.int.test.ts     | 3 ++-
+ apps/api/test/dev-db-upgrade.int.test.ts         | 5 +++--
+ apps/api/test/env-isolation.int.test.ts          | 9 +++++++--
+ apps/api/test/migration-swr004.int.test.ts       | 5 +++--
+ apps/api/test/migration-swr005b.int.test.ts      | 7 ++++---
+ apps/api/test/migration.int.test.ts              | 5 +++--
+ apps/api/test/settings-source.int.test.ts        | 3 ++-
+ apps/api/test/support/pre-migration-db.ts        | 6 +++---
+ apps/api/test/support/swr003-db.ts               | 6 +++---
+ apps/api/test/support/swr004-db.ts               | 3 ++-
+ apps/api/test/upcast-v1.int.test.ts              | 5 +++--
+ apps/api/test/upcast-v2.int.test.ts              | 3 ++-
+ 14 files changed, 41 insertions(+), 25 deletions(-)
+## untracked apps/api/test
+ M apps/api/test/ai/ai-usage-repository.int.test.ts
+ M apps/api/test/ai/budget.int.test.ts
+ M apps/api/test/ai/reset-ai-budget.int.test.ts
+ M apps/api/test/dev-db-upgrade.int.test.ts
+ M apps/api/test/env-isolation.int.test.ts
+ M apps/api/test/migration-swr004.int.test.ts
+ M apps/api/test/migration-swr005b.int.test.ts
+ M apps/api/test/migration.int.test.ts
+ M apps/api/test/settings-source.int.test.ts
+ M apps/api/test/support/pre-migration-db.ts
+ M apps/api/test/support/swr003-db.ts
+ M apps/api/test/support/swr004-db.ts
+ M apps/api/test/upcast-v1.int.test.ts
+ M apps/api/test/upcast-v2.int.test.ts
+?? apps/api/test/sqlite-url.unit.test.ts
+## TC-13 AI-layer tests diff (test/ai, dev-ai-*, support/openai-fake-fetch, support/ai-fakes, setup)
+ apps/api/test/ai/ai-usage-repository.int.test.ts | 3 ++-
+ apps/api/test/ai/budget.int.test.ts              | 3 ++-
+ apps/api/test/ai/reset-ai-budget.int.test.ts     | 3 ++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+## TC-14 vitest config + setup diff
+18:    setupFiles: ['test/setup/blank-openai-env.ts', 'test/setup/no-network.ts'],
+19-    pool: 'forks',
+20-    testTimeout: 20_000,
+21-    hookTimeout: 30_000,
+22-  },
+## TC-18/39 git diff --name-only main (src/test/e2e/scripts) + untracked
+apps/api/prisma/schema.prisma
+apps/api/scripts/reset-ai-budget.mjs
+apps/api/src/main.ts
+apps/api/src/persistence/prisma.service.ts
+apps/api/test/ai/ai-usage-repository.int.test.ts
+apps/api/test/ai/budget.int.test.ts
+apps/api/test/ai/reset-ai-budget.int.test.ts
+apps/api/test/dev-db-upgrade.int.test.ts
+apps/api/test/env-isolation.int.test.ts
+apps/api/test/migration-swr004.int.test.ts
+apps/api/test/migration-swr005b.int.test.ts
+apps/api/test/migration.int.test.ts
+apps/api/test/settings-source.int.test.ts
+apps/api/test/support/pre-migration-db.ts
+apps/api/test/support/swr003-db.ts
+apps/api/test/support/swr004-db.ts
+apps/api/test/upcast-v1.int.test.ts
+apps/api/test/upcast-v2.int.test.ts
+apps/api/tsconfig.json
+apps/web/src/app/theme/createAppTheme.test.tsx
+apps/web/src/test/setup.ts
+e2e/env-isolation.spec.ts
+e2e/support/seed.ts
+ M apps/api/package.json
+ M apps/api/prisma/schema.prisma
+ M apps/api/scripts/reset-ai-budget.mjs
+ M apps/api/src/main.ts
+ M apps/api/src/persistence/prisma.service.ts
+ M apps/api/test/ai/ai-usage-repository.int.test.ts
+ M apps/api/test/ai/budget.int.test.ts
+ M apps/api/test/ai/reset-ai-budget.int.test.ts
+ M apps/api/test/dev-db-upgrade.int.test.ts
+ M apps/api/test/env-isolation.int.test.ts
+ M apps/api/test/migration-swr004.int.test.ts
+ M apps/api/test/migration-swr005b.int.test.ts
+ M apps/api/test/migration.int.test.ts
+ M apps/api/test/settings-source.int.test.ts
+ M apps/api/test/support/pre-migration-db.ts
+ M apps/api/test/support/swr003-db.ts
+ M apps/api/test/support/swr004-db.ts
+ M apps/api/test/upcast-v1.int.test.ts
+ M apps/api/test/upcast-v2.int.test.ts
+ M apps/api/tsconfig.json
+ M apps/web/package.json
+ M apps/web/src/app/theme/createAppTheme.test.tsx
+ M apps/web/src/test/setup.ts
+ M e2e/env-isolation.spec.ts
+ M e2e/support/seed.ts
+ M packages/games/forbidden-stars/package.json
+ M packages/games/rebellion/package.json
+ M packages/platform/package.json
+?? .github/workflows/ci.yml
+?? apps/api/prisma.config.ts
+?? apps/api/src/persistence/sqlite-adapter.ts
+?? apps/api/src/persistence/sqlite-url.ts
+?? apps/api/test/sqlite-url.unit.test.ts
+## full stat
+ .nvmrc                                             |    2 +-
+ AGENTS.md                                          |    5 +-
+ README.md                                          |   15 +-
+ apps/api/package.json                              |   21 +-
+ apps/api/prisma/schema.prisma                      |    3 +-
+ apps/api/scripts/reset-ai-budget.mjs               |   10 +-
+ apps/api/src/main.ts                               |    8 +-
+ apps/api/src/persistence/prisma.service.ts         |    3 +-
+ apps/api/test/ai/ai-usage-repository.int.test.ts   |    3 +-
+ apps/api/test/ai/budget.int.test.ts                |    3 +-
+ apps/api/test/ai/reset-ai-budget.int.test.ts       |    3 +-
+ apps/api/test/dev-db-upgrade.int.test.ts           |    5 +-
+ apps/api/test/env-isolation.int.test.ts            |    9 +-
+ apps/api/test/migration-swr004.int.test.ts         |    5 +-
+ apps/api/test/migration-swr005b.int.test.ts        |    7 +-
+ apps/api/test/migration.int.test.ts                |    5 +-
+ apps/api/test/settings-source.int.test.ts          |    3 +-
+ apps/api/test/support/pre-migration-db.ts          |    6 +-
+ apps/api/test/support/swr003-db.ts                 |    6 +-
+ apps/api/test/support/swr004-db.ts                 |    3 +-
+ apps/api/test/upcast-v1.int.test.ts                |    5 +-
+ apps/api/test/upcast-v2.int.test.ts                |    3 +-
+ apps/api/tsconfig.json                             |    2 +-
+ apps/web/package.json                              |   16 +-
+ apps/web/src/app/theme/createAppTheme.test.tsx     |   11 +-
+ apps/web/src/test/setup.ts                         |   26 +-
+ docs/architecture/application.md                   |   23 +-
+ docs/process/runtime-adapters.md                   |   21 +-
+ docs/product/status-and-next-steps.md              |   48 -
+ .../screenshots/dev-ai-1440-result-mock.png        |  Bin 162067 -> 162548 bytes
+ e2e/env-isolation.spec.ts                          |    4 +-
+ e2e/support/seed.ts                                |   15 +-
+ package.json                                       |   10 +-
+ packages/games/forbidden-stars/package.json        |    4 +-
+ packages/games/rebellion/package.json              |    4 +-
+ packages/platform/package.json                     |    4 +-
+ pnpm-lock.yaml                                     | 3322 +++++++++++++-------
+ pnpm-workspace.yaml                                |   16 +-
+ 38 files changed, 2373 insertions(+), 1286 deletions(-)
+## .db in git
+no .db tracked
+## git status dev.db
+ls: apps/api/prisma/dev.db: No such file or directory
+## note: main moved to c1ace26 (+docs/product/status-and-next-steps.md only); SWR-007 base = HEAD 7195758, working-tree diff vs HEAD is authoritative

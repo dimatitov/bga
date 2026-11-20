@@ -6,6 +6,7 @@
  */
 import { Logger, type INestApplication } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { SessionResponseSchema } from '@bga/platform';
 import { StoredRebellionSetupSchema, toStoredSetup } from '@bga/game-rebellion/schema';
 import { upcastState } from '@bga/game-rebellion/server';
@@ -42,7 +43,7 @@ describe(
       db = await createSwr003Db({ rows: 3 });
       prisma(db.url, ['migrate', 'deploy']);
       const app = await startApp(db.url);
-      const client = new PrismaClient({ datasourceUrl: db.url });
+      const client = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
       try {
         for (const row of db.sessions) {
           const before = await client.session.findUniqueOrThrow({ where: { id: row.id } });

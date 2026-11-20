@@ -4,6 +4,7 @@
  * write; the first command persists the snapshot as `schemaVersion: 3`, `rulesEngine: 'mock-v1'`, setup v2 kept.
  */
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { ListSessionsResponseSchema, SessionResponseSchema } from '@bga/platform';
 import {
   GameStateSchema,
@@ -41,7 +42,7 @@ function mockCommandFor(row: V2SessionFixture) {
 }
 
 async function storedRows(url: string) {
-  const client = new PrismaClient({ datasourceUrl: url });
+  const client = new PrismaClient({ adapter: createSqliteAdapter(url) });
   try {
     return {
       sessions: await client.session.findMany({ orderBy: { id: 'asc' } }),

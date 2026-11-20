@@ -1,0 +1,69 @@
+## date: Thu Nov 19 17:50:26 MSK 2026
+## TC-33 grep secrets/OPENAI_/sk- in .github/workflows
+.github/workflows/ci.yml:2:# No secrets: OpenAI stays mocked (tests and e2e force OPENAI_ENABLED=false and blank every OPENAI_* variable;
+(grep exit 0 ; 1 = no match)
+## TC-31 grep continue-on-error / || true / set +e
+(grep exit 1 ; 1 = no match)
+## TC-30 key lines
+6:on:
+7:  push:
+8:  pull_request:
+11:  contents: read
+15:  cancel-in-progress: true
+19:    name: pnpm verify + check-task
+20:    runs-on: ubuntu-latest
+28:          node-version-file: .nvmrc
+33:          corepack enable
+41:        uses: actions/cache@v6
+44:          key: pnpm-store-${{ runner.os }}-${{ hashFiles('.nvmrc', 'pnpm-lock.yaml') }}
+48:        run: pnpm install --frozen-lockfile
+52:        uses: actions/cache@v6
+55:          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+59:        run: pnpm exec playwright install --with-deps chromium
+63:        run: pnpm exec playwright install-deps chromium
+65:      - name: pnpm verify (lint, typecheck, test, build, check:bundle, e2e)
+66:        run: pnpm verify
+68:      - name: check-task over every task folder
+72:            node scripts/check-task.mjs "$dir" || status=1
+## TC-32 YAML parse
+(eval):6: no matches found: node_modules/.pnpm/yaml@2*
+yaml lib: 
+node:internal/modules/cjs/loader:1210
+  throw err;
+  ^
+
+Error: Cannot find module './/node_modules/yaml'
+Require stack:
+- /Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/[eval]
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+    at Module._load (node:internal/modules/cjs/loader:1038:27)
+    at Module.require (node:internal/modules/cjs/loader:1289:19)
+    at require (node:internal/modules/helpers:182:18)
+    at [eval]:1:9
+    at runScriptInThisContext (node:internal/vm:209:10)
+    at node:internal/process/execution:118:14
+    at [eval]-wrapper:6:24
+    at runScript (node:internal/process/execution:101:62)
+    at evalScript (node:internal/process/execution:133:3) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/[eval]'
+  ]
+}
+
+Node.js v20.19.5
+## actionlint
+actionlint not found
+actionlint not installed
+## action tags exist upstream (git ls-remote)
+actions/checkout@v7 -> 3d3c42e5aac5ba805825da76410c181273ba90b1	refs/tags/v7
+actions/setup-node@v7 -> 949feb2413d6458794dcd2491c4babbbce0c15c1	refs/tags/v7
+actions/cache@v6 -> 55cc8345863c7cc4c66a329aec7e433d2d1c52a9	refs/tags/v6
+actions/upload-artifact@v7 -> cf430e030ddbb5b0abf93d22962f4752f3646cd9	refs/tags/v7
+## TC-34 .env in CI: verify script & who creates .env
+pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle && pnpm e2e
+apps/api/package.json:13:    "db:prepare": "node scripts/ensure-env.mjs && prisma generate && prisma migrate deploy",
+package.json:9:    "dev": "pnpm run build:packages && pnpm --filter @bga/api run db:prepare && concurrently -k --names pkgs,api,web --prefix-colors gray,blue,magenta \"pnpm run watch:packages\" \"pnpm --filter @bga/api run dev\" \"pnpm --filter @bga/web run dev\"",
+## TC-32 YAML parse (retry under Node v22.23.5, js-yaml 4.3.2 from store)
+parsed OK; on= [ 'push', 'pull_request' ] jobs= [ 'verify' ] runs-on= ubuntu-latest strategy= none steps= 12 permissions= {"contents":"read"} concurrency= {"group":"ci-${{ github.workflow }}-${{ github.ref }}","cancel-in-progress":true}
+## apps/api/.env present in worktree? no (QA did not open it) — local verify therefore runs like CI, without .env

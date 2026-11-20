@@ -3,6 +3,7 @@
  * (plan-backend §5.2–§5.3, AC-07, Q-15). All money in integer micro-USD.
  */
 import { PrismaClient } from '@prisma/client';
+import { createSqliteAdapter } from '../../src/persistence/sqlite-adapter';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { usdToMicroUsd } from '@bga/platform';
 import { AiUsageRepository, type NewAiUsageRow } from '../../src/ai/ai-usage.repository';
@@ -42,7 +43,7 @@ describe('BudgetService (SWR-005B W5)', () => {
 
   beforeEach(() => {
     db = createTestDb();
-    prisma = new PrismaClient({ datasourceUrl: db.url });
+    prisma = new PrismaClient({ adapter: createSqliteAdapter(db.url) });
     repo = new AiUsageRepository(prisma);
     budget = new BudgetService(repo);
   });

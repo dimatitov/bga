@@ -6,9 +6,9 @@
 //   DATABASE_URL=file:./dev.db node scripts/reset-ai-budget.mjs --key dev-diagnostics --yes
 //
 // - `--yes` is mandatory: without it nothing is opened or deleted (exit 2).
-// - `--database-url` wins over the DATABASE_URL environment variable. This script never reads apps/api/.env itself, but
-//   importing `@prisma/client` makes Prisma load apps/api/.env into process.env; the URL resolved here is passed to
-//   PrismaClient explicitly (`datasourceUrl`), so a DATABASE_URL from .env never wins, and nothing prints the env.
+// - `--database-url` wins over the DATABASE_URL environment variable. This script never reads apps/api/.env itself (nor does
+//   Prisma 7 — SWR-007; Prisma ≤ 6 loaded it on import); the URL resolved here is passed to PrismaClient explicitly
+//   (driver adapter `url`), so a DATABASE_URL from .env never wins, and nothing prints the env.
 // - Only `file:` URLs; a relative path is resolved against apps/api/prisma (as Prisma does for schema.prisma).
 // - The deleted rows are the usage history of that key (no other table is touched). Back up the DB first if needed.
 import { existsSync } from 'node:fs';
@@ -61,9 +61,15 @@ async function main() {
     console.error(`[reset-ai-budget] Database file not found: ${args.file}`);
     process.exit(2);
   }
-  // DATABASE_URL was resolved above, before this import (Prisma loads apps/api/.env here); it is passed explicitly.
+  // DATABASE_URL was resolved above and is passed explicitly (Prisma 7 does not load apps/api/.env; Prisma ≤ 6 did here).
   const { PrismaClient } = await import('@prisma/client');
-  const prisma = new PrismaClient({ datasourceUrl: args.databaseUrl });
+  const { PrismaBetterSqlite3 } = await import('@prisma/adapter-better-sqlite3');
+  // SWR-007 (Prisma 7): driver adapter; same on-disk DateTime format as src/persistence/sqlite-adapter.ts.
+  const adapter = new PrismaBetterSqlite3(
+    { url: args.databaseUrl },
+    { timestampFormat: 'unixepoch-ms' },
+  );
+  const prisma = new PrismaClient({ adapter });
   try {
     const before = await prisma.aiUsage.aggregate({
       where: { budgetKey: args.key },

@@ -1,4 +1,5 @@
 // SWR-005B (AM-BE-3, defect D-1): environment of the e2e API child processes.
+// (SWR-007: Prisma 7 no longer loads .env as described below; the blanking stays as defence in depth.)
 // Importing the generated @prisma/client runs Prisma's own dotenv loader on apps/api/.env (schema-relative path) and
 // copies every variable that is NOT already present into process.env — so the PO's real OPENAI_API_KEY and model
 // names would reach a NODE_ENV=test process. dotenv never overwrites a key that exists, even with an empty value, and

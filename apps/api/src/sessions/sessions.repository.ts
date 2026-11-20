@@ -195,6 +195,12 @@ export class SessionsRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         return { ok: false, reason: 'VERSION_CONFLICT' };
       }
+      // SWR-008 (merge of SWR-007, Prisma 7 + better-sqlite3): a write that lost the SQLite lock to another
+      // writer fails with P1008 after the busy timeout. The transaction is rolled back, so nothing was written —
+      // the same outcome as a lost version race.
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P1008') {
+        return { ok: false, reason: 'VERSION_CONFLICT' };
+      }
       throw error;
     }
   }
