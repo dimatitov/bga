@@ -14,10 +14,16 @@
  * run is captured and must not contain the base id (Q-17). After the reveal: `BASE_REVEALED` and
  * `view.rebelBase.systemId` for both sides. The list of scanned responses → `.tmp/hidden-info-scan.log`
  * (copied to `docs/tasks/SWR-005/artifacts/logs/hidden-info-scan.log`).
+ * SWR-006 W7 (plan-backend §9.1, AM-BE-6): the AI moves are made by the automation runner. The scripted games keep
+ * the SWR-005 auto-pass policy (`chooseAutoCommand`, exact script); one more game runs the same path scanner against
+ * the REAL bot (AI Rebels moving in and out of their hidden base, automated steps at creation, after every Empire
+ * command and through `POST …/automation/run`) — AC-04.
  */
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { INestApplication } from '@nestjs/common';
+import { chooseAutoCommand } from '@bga/game-rebellion/ai';
+import { createRebellionServerModule } from '@bga/game-rebellion/server';
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   AI_EMP_SESSION,
@@ -38,6 +44,8 @@ import {
   storedState,
   type Step,
 } from './support/core-fixtures';
+import { CoreGameStateV3Schema } from '@bga/game-rebellion/schema';
+import { PrismaService } from '../src/persistence/prisma.service';
 import { R, postCommand, tickingClock } from './support/fixtures';
 import { api, createTestDb, startApp, stopApp, type TestDb } from './support/test-app';
 import { TMP_DIR } from './global-setup';
@@ -120,6 +128,9 @@ interface ScanRecord {
   leaks: string[];
 }
 
+/** AM-BE-6: the SWR-005 auto-pass policy instead of the bot (tests only). */
+const PASS_MODULE = createRebellionServerModule({ automation: { policy: chooseAutoCommand } });
+
 const records: ScanRecord[] = [];
 const captured: string[] = [];
 
@@ -140,6 +151,7 @@ describe('core-v1 hidden base: path-aware scan of every Empire-addressed API res
     stderr = vi.spyOn(process.stderr, 'write').mockImplementation(capture('stderr') as never);
     db = createTestDb();
     app = await startApp(db.url, {
+      gameModules: [PASS_MODULE],
       clock: tickingClock(),
       idGenerator: fixedIds(AI_EMP_SESSION, HS_SESSION_2),
       logger: ['error', 'warn', 'log', 'debug', 'verbose'],
@@ -496,5 +508,96 @@ describe('core-v1 hidden base: path-aware scan of every Empire-addressed API res
     expect(scannedHere.length).toBeGreaterThan(40);
     expect(captured.some((c) => c.includes('Nest'))).toBe(true);
     expect(captured.filter((c) => c.includes(baseId))).toEqual([]);
+  });
+
+  it('SWR-006 AC-04: Empire vs the REAL bot (easy) — every Empire-addressed body with automated Rebel moves is clean', async () => {
+    // Its own app on its own DB: the registered module (the ranked bot), automated steps logged at 'log' level.
+    const botDb = createTestDb();
+    const botApp = await startApp(botDb.url, {
+      clock: tickingClock(),
+      idGenerator: fixedIds('swr006-hidden-bot-1'),
+      logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+    });
+    try {
+      const setup = { ...AI_EMP_SETUP, aiDifficulty: 'easy' as const };
+      const created = await api(botApp).post('/api/sessions').send({ gameId: R, setup });
+      expect(created.status).toBe(201);
+      const sessionId = created.body.sessionId as string;
+      const stored = await botApp
+        .get(PrismaService)
+        .session.findUniqueOrThrow({ where: { id: sessionId } });
+      const baseId = CoreGameStateV3Schema.parse(JSON.parse(stored.state)).rebelBase.systemId;
+      expect(baseId).toBeTruthy();
+      let n = 0;
+      const record = (label: string, status: number, body: unknown, request?: unknown) => {
+        const found = leaks(body, baseId, request);
+        n += 1;
+        records.push({
+          game: 'AI_EMP_BOT',
+          label,
+          status,
+          addressedTo: 'empire',
+          toEmpire: true,
+          scanned: true,
+          revealed: false,
+          leaks: found,
+        });
+        expect(found, `AI_EMP_BOT: ${label} leaks the base`).toEqual([]);
+        const view = (body as { view?: { kind?: string; viewer?: string } }).view;
+        if (view?.kind === 'player') {
+          expect(asCore(view)).toMatchObject({
+            viewer: 'empire',
+            rebelBase: { systemId: null, revealed: false },
+          });
+        }
+      };
+      const observe = async () => {
+        const got = await api(botApp).get(`/api/sessions/${sessionId}`);
+        record('GET /api/sessions/:id', got.status, got.body);
+        record('GET /api/sessions', 200, (await api(botApp).get('/api/sessions')).body);
+        return got.body as { view: { version: number } };
+      };
+      record('POST /api/sessions (Empire vs bot, easy)', 201, created.body);
+      expect(created.body.automation).toEqual({ pending: false, strategy: 'bot' });
+      let version = (await observe()).view.version;
+
+      for (let round = 0; round < 4; round += 1) {
+        const env = { actor: 'empire', expectedVersion: version, command: { type: 'PASS' } };
+        const res = await postCommand(botApp, sessionId, env);
+        expect(res.status).toBe(200);
+        record(`POST /commands empire PASS (round ${round + 1})`, 200, res.body, env);
+        expect(res.body.automation).toMatchObject({ strategy: 'bot', pending: false });
+        const run = await api(botApp).post(`/api/sessions/${sessionId}/automation/run`).send({});
+        expect(run.status).toBe(200);
+        record('POST /automation/run (nothing pending)', 200, run.body, {});
+        expect(run.body.automation).toMatchObject({ steps: 0, stopReason: 'none' });
+        version = (await observe()).view.version;
+      }
+
+      // The bot really played the Rebels (not only passes), and the redaction was exercised on its events.
+      const events = await botApp
+        .get(PrismaService)
+        .sessionEvent.findMany({ where: { sessionId }, orderBy: { seq: 'asc' } });
+      expect(events.some((e) => e.actor === 'rebels' && e.type === 'SYSTEM_ACTIVATED')).toBe(true);
+      expect(events.some((e) => e.actor === 'rebels' && e.type === 'PIECES_MOVED')).toBe(true);
+      // At least one automated Rebel move touched the hidden base (stored with its id, shown to the Empire as null).
+      const baseMoves = events.filter((e) => {
+        if (e.actor !== 'rebels' || e.type !== 'PIECES_MOVED') return false;
+        const p = JSON.parse(e.payload) as { fromSystemId?: string; toSystemId?: string };
+        return p.fromSystemId === baseId || p.toSystemId === baseId;
+      });
+      expect(baseMoves.length).toBeGreaterThan(0);
+      const empireView = asCore((await observe()).view);
+      for (const e of baseMoves) {
+        const shown = empireView.log.find((l) => l.seq === e.seq);
+        expect(shown?.type).toBe('PIECES_MOVED');
+        expect(JSON.stringify(shown?.payload)).toContain('null');
+      }
+      expect(n).toBeGreaterThan(15);
+      expect(captured.some((c) => c.includes('automation.step'))).toBe(true);
+      expect(captured.filter((c) => c.includes(baseId))).toEqual([]);
+    } finally {
+      await stopApp(botApp, botDb);
+    }
   });
 });

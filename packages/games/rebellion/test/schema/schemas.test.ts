@@ -335,6 +335,7 @@ describe('results, errors and API DTOs', () => {
         status: 'prototype',
         settings: sampleState().settings,
         view: { ...sampleViewBase(), legalActions: [] },
+        automation: { pending: false, strategy: null },
       }).success,
     ).toBe(true);
     const WithSettings = makeSessionResponseSchema(PlayerViewSchema, RebellionSettingsSchema);
@@ -345,6 +346,7 @@ describe('results, errors and API DTOs', () => {
         status: 'prototype',
         settings: sampleState().settings,
         view: sampleHandoff(),
+        automation: { pending: false, strategy: null },
       }).success,
     ).toBe(true);
     expect(
@@ -354,6 +356,7 @@ describe('results, errors and API DTOs', () => {
         status: 'prototype',
         settings: { ...sampleState().settings, schemaVersion: 2 },
         view: sampleHandoff(),
+        automation: { pending: false, strategy: null },
       }).success,
     ).toBe(false);
     expect(

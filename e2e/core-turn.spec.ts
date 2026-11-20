@@ -1,6 +1,8 @@
 // SWR-005 scenario 1 (AI game as the Rebels) and the core-v1 turn flow: TC-E-01, TC-E-02, TC-E-03, TC-E-10, TC-E-11,
 // TC-E-13 (AC-01, AC-03..AC-06, AC-08, AC-12, AC-13). Fixtures come from the server view (never hard-coded ids except
 // the base-game leader ids of spec Data clarifications).
+// SWR-006: the AI no longer auto-passes — after FINISH_ACTIVATION / PASS the AI Empire plays real moves in the same
+// response; TC-E-02/TC-E-03 assert properties of that turn (Clarification Q-BE-8), never the exact AI moves.
 import { expect, test } from '@playwright/test';
 import {
   actionOf,
@@ -36,7 +38,9 @@ import {
   armLeader,
   clickSystem,
   commandViaUi,
+  eventsBy,
   eventsOf,
+  expectAiTurn,
   expectTrack,
   expectTurn,
   finishViaUi,
@@ -52,7 +56,7 @@ import { T } from './support/testids';
 
 test.use({ reducedMotion: 'reduce' });
 
-/** Activation + finish through the API (the AI auto-pass follows in the same response). */
+/** Activation + finish through the API (SWR-006: the AI's turn follows in the same response). */
 async function activateAndFinishViaApi(
   request: Parameters<typeof commandOk>[0],
   sessionId: string,
@@ -145,7 +149,7 @@ test.describe('SWR-005 scenario 1: AI game as the Rebels (core-v1)', () => {
     expect(await dbg.rulesEngine(page)).toBe('core-v1');
   });
 
-  test('TC-E-02: leader → system click → drag a unit from a neighbour → finish: PIECES_MOVED, ACTIVATION_FINISHED, auto PASSED of the AI; Rebels again', async ({
+  test("TC-E-02: leader → system click → drag a unit from a neighbour → finish: PIECES_MOVED, ACTIVATION_FINISHED, then the AI Empire's turn (SWR-006); Rebels again", async ({
     page,
     request,
   }) => {
@@ -221,58 +225,72 @@ test.describe('SWR-005 scenario 1: AI game as the Rebels (core-v1)', () => {
       plan.systemId,
     );
 
-    // Finish → the AI (Empire) passes automatically in the same response.
+    // Finish → SWR-006: the AI (Empire) plays its real turn in the same response (no auto-pass any more);
+    // properties only (Q-BE-8): AI-side events, one per step, and the turn is back with the Rebels.
     const fin = await finishViaUi(page);
-    const types = fin.body.events.map((e) => e.type);
-    expect(types[0]).toBe('ACTIVATION_FINISHED');
-    const autoPass = eventsOf(fin.body, 'PASSED');
-    expect(autoPass).toHaveLength(1);
-    expect(autoPass[0]).toMatchObject({ actor: 'empire', payload: { auto: true } });
-    expect(fin.view.version).toBe(moved.view.version + 2); // Q-19: player command + AI command
-    expect(fin.view.passed).toEqual({ rebels: false, empire: true });
+    expect(fin.body.events[0]).toMatchObject({ type: 'ACTIVATION_FINISHED', actor: 'rebels' });
+    const ai = expectAiTurn(fin.body, 'empire');
+    expect(ai.stopReason).toBe('humanTurn');
+    const aiEvents = eventsBy(fin.body, 'empire');
+    expect(fin.view.version).toBe(moved.view.version + 1 + ai.steps); // player command + AI commands
     expect(fin.view.activeSide).toBe('rebels');
     await expectTurn(page, 'rebels');
     await expect(page.getByTestId(T.turnPanel)).toHaveAttribute('data-state', 'idle');
-    await expect(page.getByTestId(T.passedIndicator)).toHaveAttribute('data-empire', 'true');
+    await expect(page.getByTestId(T.aiTurnSummary)).toHaveAttribute('data-steps', String(ai.steps));
+    await expect(page.getByTestId(T.aiTurnSummary)).toHaveAttribute('data-source', 'command');
 
     await openSidebarTab(page, 'log');
-    const entry = page.getByTestId(T.logEntry(autoPass[0]!.seq));
-    await expect(entry).toHaveAttribute('data-type', 'PASSED');
-    await expect(entry).toHaveAttribute('data-actor', 'empire');
-    await expect(entry).toHaveAttribute('data-auto', 'true');
-    await expect(page.getByTestId(T.logEntryAuto(autoPass[0]!.seq))).toBeVisible();
-    await expect(page.getByTestId(T.logEntryAutoHint(autoPass[0]!.seq))).not.toBeEmpty();
+    for (const e of aiEvents) {
+      const entry = page.getByTestId(T.logEntry(e.seq));
+      await expect(entry).toHaveAttribute('data-type', e.type);
+      await expect(entry).toHaveAttribute('data-actor', 'empire');
+      await expect(entry).toHaveAttribute('data-ai', 'true');
+      await expect(page.getByTestId(T.logEntryAi(e.seq))).toBeVisible();
+    }
+    // The Rebels' own entries are not marked as AI.
+    await expect(page.getByTestId(T.logEntry(fin.body.events[0]!.seq))).toHaveAttribute(
+      'data-ai',
+      'false',
+    );
+    await expect(page.getByTestId(T.logEntryAi(fin.body.events[0]!.seq))).toHaveCount(0);
     await expect(page.getByTestId(T.liveRegion)).not.toBeEmpty();
   });
 
-  test('TC-E-03: another activation (the AI does not move) → Pass + confirm → both passed: leaders back in the pool, time 2, Rebels to move', async ({
+  test('TC-E-03: another activation → Pass + confirm → the AI finishes the round: leaders back in the pool, time 2, Rebels to move', async ({
     page,
     request,
   }) => {
     const { sessionId, view } = await createSession(request, REBELS_VS_AI);
     const v1 = await activateAndFinishViaApi(request, sessionId, view);
-    expect(v1.passed.empire).toBe(true);
+    expect(v1.activeSide).toBe('rebels'); // SWR-006: the AI Empire's turn is already played
     await openCore(page, sessionId);
     await expect(page.getByTestId(T.leaderPool).getByRole('radio')).toHaveCount(3);
 
-    // Second activation: the AI has passed for the phase → no AI event, Rebels keep the turn.
+    // Second activation: the AI answers with its own turn unless it has already passed for the phase.
     const plan = planActivation(v1, [v1.rebelBase.systemId!]);
     await armLeader(page, plan.leaderId);
     const act = await commandViaUi(page, () => clickSystem(page, plan.systemId));
     expect(act.body.events.map((e) => e.type)).toEqual(['SYSTEM_ACTIVATED']);
+    expect(act.body.automation).toMatchObject({ steps: 0, stopReason: 'none', pending: false });
     const fin = await finishViaUi(page);
-    expect(fin.body.events.map((e) => e.type)).toEqual(['ACTIVATION_FINISHED']);
+    expect(fin.body.events[0]).toMatchObject({ type: 'ACTIVATION_FINISHED', actor: 'rebels' });
+    if (fin.body.automation.steps > 0) expectAiTurn(fin.body, 'empire');
+    else expect(eventsBy(fin.body, 'empire')).toEqual([]);
     expect(fin.view.activeSide).toBe('rebels');
     await expectTurn(page, 'rebels');
 
-    // Pass: a leader can still activate → confirmation dialog (Q-FE-3).
+    // Pass: a leader can still activate → confirmation dialog (Q-FE-3). The AI plays on until it passes too.
     const passed = await passViaUi(page, true);
     const types = passed.body.events.map((e) => e.type);
-    expect(types[0]).toBe('PASSED');
+    expect(passed.body.events[0]).toMatchObject({ type: 'PASSED', actor: 'rebels' });
     expect(types).toEqual(
       expect.arrayContaining(['LEADERS_RETURNED', 'TIME_ADVANCED', 'PHASE_STARTED']),
     );
     expect(eventsOf(passed.body, 'TIME_ADVANCED')[0]?.payload).toEqual({ from: 1, to: 2 });
+    if (passed.body.automation.steps > 0) expectAiTurn(passed.body, 'empire');
+    // Every AI step of this response happened before the round ended (Rebels move first in round 2).
+    const timeAt = eventsOf(passed.body, 'TIME_ADVANCED')[0]!.seq;
+    expect(eventsBy(passed.body, 'empire').every((e) => e.seq < timeAt)).toBe(true);
     expect(passed.view.markers.time).toBe(2);
     expect(passed.view.round).toBe(2);
     expect(passed.view.phase).toBe('command');

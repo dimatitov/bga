@@ -10,13 +10,24 @@ import { join } from 'node:path';
 import { PrismaClient } from '@prisma/client';
 import { createSqliteAdapter } from '../src/persistence/sqlite-adapter';
 import { afterEach, describe, expect, it } from 'vitest';
-import { BLANKED_OPENAI_VARS, buildE2eEnv } from '../scripts/e2e-env.mjs';
+import { AI_COMMANDER_VARS, BLANKED_OPENAI_VARS, buildE2eEnv } from '../scripts/e2e-env.mjs';
 import { ENV_KEYS } from '../src/config/env';
 import { API_ROOT, TMP_DIR } from './global-setup';
 import { getStatus, startAiApp, type AiApp } from './support/ai-fakes';
 import { api, createTestDb, startApp, stopApp } from './support/test-app';
 
 const OPENAI_KEYS = ENV_KEYS.filter((k) => k.startsWith('OPENAI_') && k !== 'OPENAI_ENABLED');
+const AI_COMMANDER_KEYS = ENV_KEYS.filter((k) => k.startsWith('AI_COMMANDER_'));
+
+/** Names of AI_COMMANDER_* variables that are non-blank, except PROVIDER=bot (names only). */
+function unexpectedAiCommanderVars(env: NodeJS.ProcessEnv = process.env): string[] {
+  return Object.keys(env).filter(
+    (k) =>
+      /^AI_COMMANDER_/.test(k) &&
+      (env[k] ?? '').trim() !== '' &&
+      !(k === 'AI_COMMANDER_PROVIDER' && env[k] === 'bot'),
+  );
+}
 
 /** Names of OPENAI_* variables that hold a non-blank value (names only). */
 function nonBlankOpenAIVars(env: NodeJS.ProcessEnv = process.env): string[] {
@@ -39,6 +50,27 @@ describe('defect D-1: no OpenAI values from apps/api/.env in test processes', ()
     await client.$disconnect();
     expect(nonBlankOpenAIVars()).toEqual([]);
     expect(process.env.OPENAI_ENABLED === 'false').toBe(true);
+    // SWR-006: the commander settings of apps/api/.env never reach a test process either.
+    expect(unexpectedAiCommanderVars()).toEqual([]);
+    expect(process.env.AI_COMMANDER_PROVIDER === 'bot').toBe(true);
+  });
+
+  it('SWR-006 TR-7: the e2e environment drops parent AI_COMMANDER_* and forces the bot', () => {
+    expect([...AI_COMMANDER_VARS].sort()).toEqual([...AI_COMMANDER_KEYS].sort());
+    const env = buildE2eEnv(
+      {
+        PATH: '/bin',
+        AI_COMMANDER_PROVIDER: 'openai',
+        AI_COMMANDER_MAX_STEPS: '1',
+        AI_COMMANDER_EXTRA: 'x',
+      },
+      { databaseUrl: 'file:/tmp/e2e.db', port: '3100' },
+    );
+    expect(env.AI_COMMANDER_PROVIDER).toBe('bot');
+    for (const key of AI_COMMANDER_KEYS.filter((k) => k !== 'AI_COMMANDER_PROVIDER')) {
+      expect(env[key]).toBe('');
+    }
+    expect(env.AI_COMMANDER_EXTRA).toBeUndefined();
   });
 
   it('the e2e environment blanks every config OPENAI_* variable and forces NODE_ENV=test / OPENAI_ENABLED=false', () => {
@@ -70,14 +102,15 @@ describe('defect D-1: no OpenAI values from apps/api/.env in test processes', ()
       "const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');",
       'new PrismaClient({ adapter: new PrismaBetterSqlite3({ url: process.env.DATABASE_URL }) });',
       "const bad = Object.keys(process.env).filter((k) => /^OPENAI_/.test(k) && k !== 'OPENAI_ENABLED' && (process.env[k] || '').trim() !== '');",
-      "process.stdout.write(JSON.stringify({ bad, enabledFalse: process.env.OPENAI_ENABLED === 'false' }));",
+      "const badAi = Object.keys(process.env).filter((k) => /^AI_COMMANDER_/.test(k) && (process.env[k] || '').trim() !== '' && !(k === 'AI_COMMANDER_PROVIDER' && process.env[k] === 'bot'));",
+      "process.stdout.write(JSON.stringify({ bad, badAi, enabledFalse: process.env.OPENAI_ENABLED === 'false', bot: process.env.AI_COMMANDER_PROVIDER === 'bot' }));",
     ].join('\n');
     const out = execFileSync(process.execPath, ['-e', script], {
       cwd: API_ROOT,
       env,
       encoding: 'utf8',
     });
-    expect(JSON.parse(out)).toEqual({ bad: [], enabledFalse: true });
+    expect(JSON.parse(out)).toEqual({ bad: [], badAi: [], enabledFalse: true, bot: true });
   });
 
   it('INTEGRATION: the `prisma migrate deploy` child of global-setup gets its env from buildE2eEnv (no OPENAI_* values)', () => {

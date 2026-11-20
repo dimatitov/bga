@@ -1,0 +1,187 @@
+# SWR-006 INTEGRATION FE (frontend-lead) — 2026-11-19T16:14:22Z
+$ pnpm --filter @bga/web test
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+ Test Files  67 passed (67)
+      Tests  596 passed (596)
+   Start at  19:14:23
+   Duration  27.90s (transform 10.57s, setup 26.76s, import 47.49s, tests 70.67s, environment 68.07s)
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+exit=0
+
+$ pnpm --filter @bga/web lint
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+exit=0
+
+$ npx prettier --check apps/web
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ pnpm --filter @bga/web build
+dist/assets/index-yUkUm66t.js              31.32 kB │ gzip:  10.07 kB
+dist/assets/ui-dLHhrlVV.js                108.19 kB │ gzip:  34.51 kB
+dist/assets/TableScreen-sHT42kk_.js       125.65 kB │ gzip:  36.12 kB
+dist/assets/vendor-BwUA2TaR.js            186.48 kB │ gzip:  54.86 kB
+dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+✓ built in 322ms
+exit=0
+
+$ pnpm check:bundle
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+OK check-web-bundle: 11 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-HEqZyc
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 821 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit=0
+
+# Round 2 — 2026-11-19T16:25:46Z: after the first pnpm verify, the regenerated swr006-ai-continue-en-375.png showed the CoreTable skip link ('To the object list') over the in-flow notice: SKIP_LINK was hidden by top:-64 relative to the table, the notice above the table brought it into view. Fix: skip links clip-hidden until :focus-visible (CoreTable.tsx) + test (CoreTable.test.tsx).
+
+$ pnpm --filter @bga/web test
+> vitest run --passWithNoTests
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+ Test Files  67 passed (67)
+      Tests  597 passed (597)
+   Start at  19:25:47
+   Duration  28.15s (transform 10.67s, setup 27.12s, import 48.62s, tests 72.45s, environment 67.58s)
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+exit=0
+
+$ pnpm --filter @bga/web lint
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+exit=0
+
+$ npx prettier --check apps/web
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ pnpm --filter @bga/web build
+dist/assets/TableScreen-DykifNvU.js       125.74 kB │ gzip:  36.17 kB
+dist/assets/vendor-BwUA2TaR.js            186.48 kB │ gzip:  54.86 kB
+dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+✓ built in 312ms
+exit=0
+
+$ pnpm check:bundle
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+OK check-web-bundle: 11 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-jmS7RH
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 821 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit=0
+
+# Round 3 — 2026-11-19T16:36:14Z: verify run 2 failed 5 e2e (page scrollWidth +8 px at 375/768): the clipped skip link used sx width:1 (= 100% in MUI sx) at left:8. Fix: width/height '1px' (CoreTable.tsx) + test assertion.
+$ npx playwright test e2e/ai-commander.spec.ts e2e/core-visual-a11y.spec.ts e2e/visual-a11y.spec.ts
+  36 passed (2.4m)
+exit=0
+
+# Round 4 — 2026-11-20T09:23:02Z: coordinator's verify (integration-verify-final.log) failed 3 web tests under 'pnpm -r test' load: first findByTestId('game-table') per file (HandoffScreen TC-C-17+20 6193 ms, TableScreen TC-WEB-11 6088 ms, CoreTable 'top bar…' 5699 ms) > asyncUtilTimeout 5000 (already set in src/test/setup.ts). Cause: cold transform of the lazy TableScreen chunk inside the first wait. Fix: NEW src/games/rebellion/test/preloadTable.ts (beforeAll import of ../table/TableScreen, hook timeout 60 s) in the 3 files; assertions and asyncUtilTimeout unchanged.
+
+$ pnpm --filter @bga/web test
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+ Test Files  67 passed (67)
+      Tests  597 passed (597)
+   Start at  12:23:04
+   Duration  37.27s (transform 12.56s, setup 34.88s, import 60.45s, tests 101.02s, environment 94.94s)
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+exit=0
+
+$ pnpm --filter @bga/web lint
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+exit=0
+
+$ npx prettier --check apps/web
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ (cd apps/web && npx vitest run src/games/rebellion/table/HandoffScreen.test.tsx src/games/rebellion/table/TableScreen.test.tsx src/games/rebellion/core-v1/CoreTable.test.tsx) ×5
+ Test Files 3 passed (3)  Tests 38 passed (38)  exit=0 (#1)
+ Test Files 3 passed (3)  Tests 38 passed (38)  exit=0 (#2)
+ Test Files 3 passed (3)  Tests 38 passed (38)  exit=0 (#3)
+ Test Files 3 passed (3)  Tests 38 passed (38)  exit=0 (#4)
+ Test Files 3 passed (3)  Tests 38 passed (38)  exit=0 (#5)
+
+$ pnpm test   (load simulation: process tests + pnpm -r run test in parallel)
+    ok 8 - TC-57 CLI with one valid and one invalid dir -> exit 1, OK for one and FAIL for other
+    ok 9 - TC-58 CLI problem lines are "<taskDir>/<file>: ..." and FAIL count matches checkTask
+    ok 12 - TC-13 CLI with a missing file -> exit 1 and FAIL line
+    ok 1 - TC-136 CLI arg with trailing "/" is used verbatim in problem and FAIL lines
+    ok 2 - TC-137 CLI relative arg "task" -> lines "task/<file>: ..." and "FAIL task (n problems)"
+# tests 449
+# pass 449
+# fail 0
+packages/platform test:  Test Files  6 passed (6)
+packages/platform test:       Tests  95 passed (95)
+packages/games/forbidden-stars test:  Test Files  2 passed (2)
+packages/games/forbidden-stars test:       Tests  5 passed (5)
+packages/games/rebellion test:  Test Files  58 passed (58)
+packages/games/rebellion test:       Tests  510 passed (510)
+apps/web test:  Test Files  67 passed (67)
+apps/web test:       Tests  597 passed (597)
+apps/api test:  Test Files  65 passed | 1 skipped (66)
+apps/api test:       Tests  599 passed | 1 skipped (600)
+exit=0
+
+# Round 5 — 2026-11-20T10:13:31Z: router.test '/sessions/:id of Rebellion → … lazy Rebellion table' flaked under load avg ~60 (table-invalid-view not found). Audit of web tests that wait on a lazy Rebellion screen after a route/SessionHost render: router.test (table) → fixed with a per-wait timeout 30 s + test timeout 60 s (app/ must not import game folders, AC-5 lint, so no preload helper there); HandoffScreen/TableScreen/CoreTable tests → preloadTableScreen beforeAll (round 4); SetupScreen.test → statically imports ./SetupScreen, the lazy chunk is already evaluated, unchanged; PrototypeBadge.test → direct render, no lazy; extensibility/NewSessionPage/SessionHost/GamePage/useCreateSession tests → fake games only (lazy(Promise.resolve)), unchanged.
+
+$ pnpm --filter @bga/web test
+ Test Files  67 passed (67)
+      Tests  598 passed (598)
+   Start at  13:13:32
+   Duration  39.14s (transform 13.95s, setup 35.53s, import 69.13s, tests 106.39s, environment 94.42s)
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+exit=0
+
+$ pnpm --filter @bga/web lint
+> @bga/web@0.0.0 lint /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> eslint . --max-warnings=0
+exit=0
+
+$ npx prettier --check apps/web
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ (cd apps/web && npx vitest run src/app/router.test.tsx src/games/rebellion/table/HandoffScreen.test.tsx src/games/rebellion/table/TableScreen.test.tsx src/games/rebellion/core-v1/CoreTable.test.tsx src/games/rebellion/setup/SetupScreen.test.tsx) ×5
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#1)
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#2)
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#3)
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#4)
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#5)
+
+$ pnpm --filter @bga/game-rebellion test   (background, for load)  +  same 5 web files ×5 in parallel; load avg at start: { 25.89 46.44 49.27 }
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#1, loadavg { 52.70 50.58 50.65 })
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#2, loadavg { 55.95 51.70 51.06 })
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#3, loadavg { 51.03 50.82 50.76 })
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#4, loadavg { 53.55 51.29 50.92 })
+ Test Files 5 passed (5)  Tests 68 passed (68)  exit=0 (#5, loadavg { 59.31 52.90 51.52 })
+game-rebellion:  Test Files 66 passed (66)  Tests 606 passed (606)  exit=0
+# note: the 'exit=' on the game-rebellion line above is the status of the summary subshell, not of the package run; the package run printed 66 files / 606 passed and no failures.

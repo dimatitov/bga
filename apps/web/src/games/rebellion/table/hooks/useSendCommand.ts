@@ -1,13 +1,27 @@
 import { type Command, type CommandEnvelope, CommandOkSchema } from '@bga/game-rebellion/schema';
+import type { AutomationRunSummary } from '@bga/platform';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useRef, useState } from 'react';
-import { postSessionCommand, type SessionEnvelope, sessionKeys } from '@/platform';
+import {
+  commitCommandResult,
+  postSessionCommand,
+  type SessionEnvelope,
+  sessionKeys,
+} from '@/platform';
 import { isApiError, NETWORK_MESSAGE_KEY, UNKNOWN_MESSAGE_KEY } from '@/shared/api/errors';
 import type { CommandOutcome } from '../../board/model/boardContext';
 import { endsGame } from '../../core-v1/model/announcements';
 import { parseRebellionView } from './useRebellionView';
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+/**
+ * `CommandOutcome` + the automation summary of the same response (SWR-006): the AI may have moved in the request
+ * of the viewer's command (`steps > 0`). Optional, so the mock-v1 board code keeps using `CommandOutcome`.
+ */
+export type SendOutcome =
+  | (Extract<CommandOutcome, { ok: true }> & { automation?: AutomationRunSummary })
+  | Extract<CommandOutcome, { ok: false }>;
 
 const INVALID_RESPONSE = 'INVALID_RESPONSE';
 
@@ -21,15 +35,21 @@ const INVALID_RESPONSE = 'INVALID_RESPONSE';
  * is always the viewer of the cached view). A response whose events contain `GAME_OVER` also invalidates the
  * session detail, so the platform status (`completed`) is refetched — the command response carries no status
  * (AM-FE-10 rejected; the table shows the result from `view.outcome` meanwhile).
+ * SWR-006: a 200 is written through the platform's `commitCommandResult(..., 'command')` (view + `automation`
+ * into the cache, one automatic run armed when `pending`, the AI turn summary into the automation store); the
+ * game part `{ ok, view, events }` is validated with the strict `CommandOkSchema` (AM-FE-1). `pendingCommand` —
+ * the command whose request is in flight (`null` otherwise), so the table can tell a turn hand-over (Q-FE-3).
  */
 export function useSendCommand(sessionId: string): {
-  send(command: Command): Promise<CommandOutcome>;
+  send(command: Command): Promise<SendOutcome>;
   isPending: boolean;
+  pendingCommand: Command | null;
   saveStatus: SaveStatus;
 } {
   const qc = useQueryClient();
   const inFlight = useRef(false);
-  const [isPending, setPending] = useState(false);
+  const [pendingCommand, setPendingCommand] = useState<Command | null>(null);
+  const isPending = pendingCommand !== null;
   const [saveStatus, setSaveStatusState] = useState<SaveStatus>('idle');
   // Mirror of `saveStatus` readable inside `send` without re-creating the callback.
   const statusRef = useRef<SaveStatus>('idle');
@@ -39,7 +59,7 @@ export function useSendCommand(sessionId: string): {
   }, []);
 
   const send = useCallback(
-    async (command: Command): Promise<CommandOutcome> => {
+    async (command: Command): Promise<SendOutcome> => {
       if (inFlight.current) return { ok: false, code: 'IGNORED', messageKey: UNKNOWN_MESSAGE_KEY };
       const detailKey = sessionKeys.detail(sessionId);
       const view = parseRebellionView(qc.getQueryData<SessionEnvelope>(detailKey)?.view);
@@ -50,26 +70,41 @@ export function useSendCommand(sessionId: string): {
         command,
       };
       inFlight.current = true;
-      setPending(true);
+      setPendingCommand(command);
       const statusBefore = statusRef.current;
       setSaveStatus('saving');
       try {
         const result = await postSessionCommand(sessionId, envelope);
         if (result.ok) {
-          const ok = CommandOkSchema.safeParse(result);
+          // SWR-006 AM-FE-1: the strict game schema validates only the game part; `automation` was already
+          // validated by the platform frame schema (`postSessionCommand`).
+          const ok = CommandOkSchema.safeParse({
+            ok: true,
+            view: result.view,
+            events: result.events,
+          });
           if (!ok.success) {
             // The command was accepted but the view is not a Rebellion view: reload the authoritative state.
             await qc.invalidateQueries({ queryKey: detailKey });
             setSaveStatus('error');
             return { ok: false, code: INVALID_RESPONSE, messageKey: UNKNOWN_MESSAGE_KEY };
           }
-          qc.setQueryData<SessionEnvelope>(detailKey, (prev) =>
-            prev ? { ...prev, view: ok.data.view } : prev,
+          commitCommandResult(
+            qc,
+            sessionId,
+            { ok: true, view: ok.data.view, events: ok.data.events, automation: result.automation },
+            'command',
           );
-          void qc.invalidateQueries({ queryKey: sessionKeys.lists() });
+          // `commitCommandResult` refetches on `stopReason: 'gameOver'`; a human move that ends the game has
+          // no automated steps (`stopReason: 'none'`), so the GAME_OVER event still triggers the refetch here.
           if (endsGame(ok.data.events)) void qc.invalidateQueries({ queryKey: detailKey });
           setSaveStatus('saved');
-          return { ok: true, view: ok.data.view, events: ok.data.events };
+          return {
+            ok: true,
+            view: ok.data.view,
+            events: ok.data.events,
+            automation: result.automation,
+          };
         }
         const { code, messageKey, details } = result.error;
         if (code === 'VERSION_CONFLICT' || code === 'NOT_FOUND') {
@@ -89,11 +124,11 @@ export function useSendCommand(sessionId: string): {
         };
       } finally {
         inFlight.current = false;
-        setPending(false);
+        setPendingCommand(null);
       }
     },
     [sessionId, qc, setSaveStatus],
   );
 
-  return { send, isPending, saveStatus };
+  return { send, isPending, pendingCommand, saveStatus };
 }

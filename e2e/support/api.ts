@@ -203,7 +203,35 @@ export interface SessionResponse<V = AnyView> {
   status: SessionStatus;
   settings: Settings;
   view: V;
+  /** SWR-006 (required, Q-BE-6): `{ pending, strategy }`; `strategy: null` for hot-seat / mock-v1. */
+  automation: SessionAutomation;
 }
+
+// SWR-006 automation wire (local mirror of `@bga/platform` automation.ts)
+export type AutomationStrategy = 'bot' | 'openai';
+export type AutomationStopReason =
+  'humanTurn' | 'gameOver' | 'none' | 'stepLimit' | 'conflict' | 'error';
+export interface SessionAutomation {
+  pending: boolean;
+  strategy: AutomationStrategy | null;
+}
+export interface AutomationRunSummary {
+  steps: number;
+  pending: boolean;
+  strategy: AutomationStrategy | null;
+  fallbacks: number;
+  fallbackReasons: string[];
+  stopReason: AutomationStopReason;
+}
+/** The summary of a request without automated steps (hot-seat, mock-v1, a human move that keeps the turn). */
+export const NO_AUTOMATION_SUMMARY = {
+  steps: 0,
+  pending: false,
+  strategy: null,
+  fallbacks: 0,
+  fallbackReasons: [],
+  stopReason: 'none',
+} as const;
 
 /** Error body of the unified error format (SWR-002 errors, SWR-003/004 codes). */
 export interface ErrorBody {
@@ -314,6 +342,8 @@ export interface CommandResponse {
   ok: true;
   view: AnyView;
   events: unknown[];
+  /** SWR-006 (required) */
+  automation: AutomationRunSummary;
 }
 
 /** Hot-seat: `END_TURN` by the active side → handoff view (TR-5). */
@@ -354,6 +384,8 @@ export const API = {
   sessions: /^\/api\/sessions$/,
   session: /^\/api\/sessions\/[^/]+$/,
   commands: /^\/api\/sessions\/[^/]+\/commands$/,
+  /** SWR-006 `POST /api/sessions/:id/automation/run` */
+  automationRun: /^\/api\/sessions\/[^/]+\/automation\/run$/,
 } as const;
 
 export function moveActions(view: PlayerView) {
@@ -576,6 +608,8 @@ export interface CoreCommandResponse {
   ok: true;
   view: AnyView;
   events: CoreEventView[];
+  /** SWR-006 (required): the automated steps of this request. */
+  automation: AutomationRunSummary;
 }
 
 export function actionOf<T extends CoreLegalAction['type']>(

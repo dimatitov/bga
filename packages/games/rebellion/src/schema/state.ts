@@ -413,8 +413,9 @@ type CoreGameStateObject = z.infer<typeof CoreGameStateObjectSchema>;
  * Invariants of every STORED `core-v1` state (plan-backend §1.1 `coreInvariants`, with the SWR-005 revisions):
  * references exist; `activation` belongs to the active side and its leader stands in the activated system;
  * `outcome === null ⇒ phase === 'command'` and nobody has both passed; `outcome ⇒` no activation, no handoff;
- * AI game: no handoff, and without `outcome` the player is active. Transient states inside the AI auto-play
- * loop are never stored nor parsed.
+ * AI game: no handoff. SWR-006 (AM-BE-2): the AI side MAY be active — the server runner commits every automated
+ * step separately, so a stored state can wait for the AI's move (an interrupted run is resumed later). The
+ * `mock-v1` rule "the player is always active" is unchanged.
  */
 function checkCoreInvariants(state: CoreGameStateObject, ctx: z.RefinementCtx): void {
   const issue = (path: (string | number)[], message: string) =>
@@ -468,7 +469,7 @@ function checkCoreInvariants(state: CoreGameStateObject, ctx: z.RefinementCtx): 
     if (state.activation !== null) issue(['activation'], 'no activation after the game is over');
     if (state.handoffPending) issue(['handoffPending'], 'no handoff after the game is over');
   }
-  checkAiInvariant(state, ctx, state.outcome === null);
+  checkAiInvariant(state, ctx, false);
 }
 
 /** Full authoritative `core-v1` state (never sent to clients; `rebelBase.systemId` always set). */

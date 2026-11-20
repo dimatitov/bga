@@ -78,6 +78,14 @@ describe('session status after a command (fake game)', () => {
       ok: true,
       view: { count: 1, version: 3, status: FAKE_FINISHED_STATUS },
       events: [{ seq: 3, type: 'FINISHED', count: 1 }],
+      automation: {
+        steps: 0,
+        pending: false,
+        strategy: null,
+        fallbacks: 0,
+        fallbackReasons: [],
+        stopReason: 'none',
+      },
     });
 
     const snap = await dbSnapshot(app, sessionId);

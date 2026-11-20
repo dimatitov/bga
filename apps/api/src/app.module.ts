@@ -16,6 +16,10 @@ import { DevAiModule } from './dev/ai/dev-ai.module';
 import { GameRegistryModule } from './game-registry/game-registry.module';
 import { HealthModule } from './health/health.module';
 import { PersistenceModule } from './persistence/persistence.module';
+import {
+  AUTOMATION_TEST_OVERRIDES,
+  type AutomationTestOverrides,
+} from './sessions/automation/automation.tokens';
 import { SessionsModule } from './sessions/sessions.module';
 
 export interface AppModuleOptions {
@@ -27,6 +31,8 @@ export interface AppModuleOptions {
   gameDefinitions: readonly GameDefinition[];
   /** Test-only AI overrides (SWR-005B §5.9); never set in production (createApp refuses). */
   ai?: AiTestOverrides;
+  /** Test-only automation overrides (SWR-006 §6.3); never set in production (createApp refuses). */
+  automation?: AutomationTestOverrides;
 }
 
 /** Dev-only modules exist only outside production (SWR-005B BD-8): in production their routes are 404. */
@@ -57,8 +63,9 @@ export class AppModule {
         { provide: APP_CONFIG, useValue: options.config },
         { provide: CLOCK, useValue: options.clock ?? wallClock },
         { provide: ID_GENERATOR, useValue: options.idGenerator ?? uuidGenerator },
+        { provide: AUTOMATION_TEST_OVERRIDES, useValue: options.automation ?? {} },
       ],
-      exports: [APP_CONFIG, CLOCK, ID_GENERATOR],
+      exports: [APP_CONFIG, CLOCK, ID_GENERATOR, AUTOMATION_TEST_OVERRIDES],
     };
   }
 }

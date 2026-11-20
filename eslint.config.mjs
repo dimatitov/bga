@@ -131,6 +131,29 @@ const DETERMINISM = {
   ],
 };
 
+/**
+ * SWR-006 B-6: the game's AI (bot policies) must be deterministic — randomness only from a seed derived from game data,
+ * no clock, no host entropy. One message for every B-6 restriction (plan-backend §10, W3).
+ */
+const AI_PURE_MESSAGE = 'ai is pure: only ../schema, deterministic';
+const AI_DETERMINISM = {
+  syntax: [
+    { selector: "NewExpression[callee.name='Date']", message: AI_PURE_MESSAGE },
+    { selector: 'ImportExpression[source.value=/^(node:)?crypto$/]', message: AI_PURE_MESSAGE },
+  ],
+  properties: [
+    { object: 'Date', property: 'now', message: AI_PURE_MESSAGE },
+    { object: 'Math', property: 'random', message: AI_PURE_MESSAGE },
+    { object: 'globalThis', property: 'crypto', message: AI_PURE_MESSAGE },
+    { object: 'globalThis', property: 'performance', message: AI_PURE_MESSAGE },
+    { object: 'globalThis', property: 'Date', message: AI_PURE_MESSAGE },
+  ],
+  globals: [
+    { name: 'crypto', message: AI_PURE_MESSAGE },
+    { name: 'performance', message: AI_PURE_MESSAGE },
+  ],
+};
+
 /** User-facing JSX attributes whose string values must come from i18n (review #2). */
 const UI_TEXT_ATTRS =
   '/^(aria-label|aria-description|aria-roledescription|aria-valuetext|aria-placeholder|title|placeholder|alt|label)$/';
@@ -258,14 +281,21 @@ export default tseslint.config(
       'no-restricted-properties': ['error', ...DETERMINISM.properties],
     },
   },
-  // B-6: AI strategy configuration is data.
+  // B-6: the AI (strategy data + bot policies, SWR-006) is pure and deterministic: only ../schema, no clock,
+  // no Math.random, no crypto/performance. B-15 below skips this folder, so the computed import() ban is repeated.
   {
     files: ['packages/games/*/src/ai/**/*.ts'],
     rules: {
-      'no-restricted-imports': restrict(
-        'ai is configuration data: it may import only ../schema.',
-        gameSrc(...sibling('rules', 'scenario', 'server', 'board', 'assets')),
-      ),
+      'no-restricted-imports': restrict(AI_PURE_MESSAGE, {
+        ...gameSrc(...sibling('rules', 'scenario', 'server', 'board', 'assets')),
+        paths: [
+          { name: 'crypto', message: AI_PURE_MESSAGE },
+          { name: 'node:crypto', message: AI_PURE_MESSAGE },
+        ],
+      }),
+      'no-restricted-syntax': ['error', ...AI_DETERMINISM.syntax, COMPUTED_DYNAMIC_IMPORT],
+      'no-restricted-properties': ['error', ...AI_DETERMINISM.properties],
+      'no-restricted-globals': ['error', ...AI_DETERMINISM.globals],
     },
   },
   // B-7: the server module wires definition + schema + rules + scenario (+ ai).
@@ -455,7 +485,12 @@ export default tseslint.config(
       'packages/platform/src/**/*.ts',
       'packages/games/*/src/**/*.ts',
     ],
-    ignores: ['**/*.test.ts', '**/test/**', 'packages/games/*/src/rules/**'],
+    ignores: [
+      '**/*.test.ts',
+      '**/test/**',
+      'packages/games/*/src/rules/**',
+      'packages/games/*/src/ai/**',
+    ],
     rules: { 'no-restricted-syntax': ['error', COMPUTED_DYNAMIC_IMPORT] },
   },
   prettier,

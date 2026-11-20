@@ -1,0 +1,184 @@
+# QA process checks — SWR-005C
+Fri Nov 20 10:16:28 UTC 2026
+
+$ git rev-parse --short HEAD
+c1ace26
+
+$ git ls-files '*.pdf' '*.PDF'
+EXIT=0 (lines: 0)
+
+$ git status --porcelain --untracked-files=all | grep -i "\.pdf$"
+(matches: 0)
+
+$ find packages/games/rebellion/knowledge docs -iname "*.pdf"
+(done)
+
+$ git diff --stat c1ace26 -- packages/games/rebellion/src/rules packages/games/rebellion/src/scenario
+EXIT=0 (lines: 0)
+
+$ git status --porcelain -- packages/games/rebellion/src/rules packages/games/rebellion/src/scenario
+(lines: 0)
+
+$ git status --short --untracked-files=all -- <SWR-005C paths>
+ M docs/game-rules/rebellion-core-v1.md
+ M docs/game-rules/rebellion-reference.md
+ M packages/platform/package.json
+?? docs/architecture/rules-knowledge.md
+?? docs/game-rules/knowledge-base.md
+?? docs/game-rules/rebellion/coverage-matrix.md
+?? docs/game-rules/rebellion/discrepancies.md
+?? docs/game-rules/rebellion/rules-index.md
+?? docs/tasks/SWR-005C/acceptance.md
+?? docs/tasks/SWR-005C/artifacts/logs/business-validation.log
+?? docs/tasks/SWR-005C/artifacts/logs/integration-verify.log
+?? docs/tasks/SWR-005C/artifacts/logs/qa-platform-rules-kb.log
+?? docs/tasks/SWR-005C/artifacts/logs/qa-process.log
+?? docs/tasks/SWR-005C/artifacts/logs/qa-rebellion-knowledge.log
+?? docs/tasks/SWR-005C/artifacts/logs/qa-verify.log
+?? docs/tasks/SWR-005C/delivery-report.md
+?? docs/tasks/SWR-005C/implementation-plan.md
+?? docs/tasks/SWR-005C/plan-backend.md
+?? docs/tasks/SWR-005C/qa-results.md
+?? docs/tasks/SWR-005C/request.md
+?? docs/tasks/SWR-005C/review.md
+?? docs/tasks/SWR-005C/specification.md
+?? docs/tasks/SWR-005C/status.md
+?? docs/tasks/SWR-005C/test-cases.md
+?? packages/games/rebellion/knowledge/audit-summary.md
+?? packages/games/rebellion/knowledge/coverage.json
+?? packages/games/rebellion/knowledge/discrepancies.json
+?? packages/games/rebellion/knowledge/entries/combat.json
+?? packages/games/rebellion/knowledge/entries/components.json
+?? packages/games/rebellion/knowledge/entries/general.json
+?? packages/games/rebellion/knowledge/entries/implementation-notes.json
+?? packages/games/rebellion/knowledge/entries/missions-cards.json
+?? packages/games/rebellion/knowledge/entries/movement.json
+?? packages/games/rebellion/knowledge/entries/rebel-base.json
+?? packages/games/rebellion/knowledge/entries/refresh.json
+?? packages/games/rebellion/knowledge/entries/round-command.json
+?? packages/games/rebellion/knowledge/entries/setup.json
+?? packages/games/rebellion/knowledge/entries/victory.json
+?? packages/games/rebellion/knowledge/manifest.json
+?? packages/games/rebellion/test/knowledge/content.test.ts
+?? packages/games/rebellion/test/knowledge/context.test.ts
+?? packages/games/rebellion/test/knowledge/coverage.test.ts
+?? packages/games/rebellion/test/knowledge/discrepancies.test.ts
+?? packages/games/rebellion/test/knowledge/generated-docs.test.ts
+?? packages/games/rebellion/test/knowledge/load-kb.ts
+?? packages/games/rebellion/test/knowledge/no-full-texts.test.ts
+?? packages/games/rebellion/test/knowledge/search.test.ts
+?? packages/games/rebellion/test/knowledge/validate.test.ts
+?? packages/platform/src/rules-kb/context.ts
+?? packages/platform/src/rules-kb/index.ts
+?? packages/platform/src/rules-kb/issues.ts
+?? packages/platform/src/rules-kb/parse.ts
+?? packages/platform/src/rules-kb/render.ts
+?? packages/platform/src/rules-kb/schema.ts
+?? packages/platform/src/rules-kb/search.ts
+?? packages/platform/src/rules-kb/text.ts
+?? packages/platform/src/rules-kb/validate-io.ts
+?? packages/platform/src/rules-kb/validate.ts
+?? packages/platform/test/rules-kb/boundaries.test.ts
+?? packages/platform/test/rules-kb/context.test.ts
+?? packages/platform/test/rules-kb/fixture.ts
+?? packages/platform/test/rules-kb/parse.test.ts
+?? packages/platform/test/rules-kb/render.test.ts
+?? packages/platform/test/rules-kb/search.test.ts
+?? packages/platform/test/rules-kb/validate-io.test.ts
+?? packages/platform/test/rules-kb/validate.test.ts
+
+$ git diff c1ace26 -- packages/platform/package.json
+diff --git a/packages/platform/package.json b/packages/platform/package.json
+index d6c338d..b85b684 100644
+--- a/packages/platform/package.json
++++ b/packages/platform/package.json
+@@ -9,6 +9,11 @@
+       "@bga/source": "./src/index.ts",
+       "types": "./dist/index.d.ts",
+       "default": "./dist/index.js"
++    },
++    "./rules-kb": {
++      "@bga/source": "./src/rules-kb/index.ts",
++      "types": "./dist/rules-kb/index.d.ts",
++      "default": "./dist/rules-kb/index.js"
+     }
+   },
+   "scripts": {
+
+$ git status --porcelain -- pnpm-lock.yaml pnpm-workspace.yaml packages/games/rebellion/package.json packages/platform/src/index.ts eslint.config.mjs
+ M eslint.config.mjs
+ M packages/platform/src/index.ts
+(end)
+
+$ git status --porcelain -- apps/api/src/ai packages/games/rebellion/src/ai
+ M apps/api/src/ai/ai-decision.service.ts
+ M apps/api/src/ai/ai.types.ts
+ M apps/api/src/ai/prompt.ts
+ M packages/games/rebellion/src/ai/index.ts
+?? packages/games/rebellion/src/ai/candidates.ts
+?? packages/games/rebellion/src/ai/decision.ts
+?? packages/games/rebellion/src/ai/describe.ts
+?? packages/games/rebellion/src/ai/empire-policy.ts
+?? packages/games/rebellion/src/ai/intel.ts
+?? packages/games/rebellion/src/ai/profiles.ts
+?? packages/games/rebellion/src/ai/random.ts
+?? packages/games/rebellion/src/ai/rank.ts
+?? packages/games/rebellion/src/ai/rebel-policy.ts
+?? packages/games/rebellion/src/ai/types.ts
+?? packages/games/rebellion/src/ai/view-model.ts
+
+$ grep -rni "rebellion" packages/platform/src/rules-kb
+EXIT=1 (1 = no match)
+
+$ grep -rhn "^import\|from " packages/platform/src/rules-kb | grep -o "from .*" | sort -u
+from './context'
+from './issues'
+from './parse'
+from './render'
+from './schema'
+from './search'
+from './text'
+from './validate'
+from './validate-io'
+from 'zod'
+
+$ grep -rn "node:\|@bga" packages/platform/src/rules-kb
+EXIT=1 (1 = no match)
+
+$ grep -rn "rise-of-the-empire\|Rise of the Empire" packages/games/rebellion/knowledge/entries
+EXIT=1 (1 = no match)
+
+$ node scripts/check-task.mjs docs/tasks/SWR-005C
+OK docs/tasks/SWR-005C
+EXIT=0
+
+$ node --test scripts/
+  ...
+1..29
+# tests 449
+# suites 29
+# pass 449
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9756.822083
+EXIT=0
+
+## Addendum Fri Nov 20 10:28:47 UTC 2026
+
+$ grep -rln "rules-kb|buildRulesContext|knowledge/" apps packages/games/rebellion/src   (TC-A-08: no KB integration in AI/prompt code)
+EXIT=1 (1 = no match)
+
+$ RR glossary index (86 topics, extracted from RR) vs manifest sourceSections titles (TC-R-04)
+RR sourceSections: 88 | index topics: 86 | unmatched: []
+
+$ ls (links in the SWR-005C banner of docs/game-rules/rebellion-*.md)
+docs/game-rules/knowledge-base.md
+docs/game-rules/rebellion/coverage-matrix.md
+docs/game-rules/rebellion/discrepancies.md
+
+$ git diff --stat -- docs/game-rules/rebellion-core-v1.md docs/game-rules/rebellion-reference.md
+ docs/game-rules/rebellion-core-v1.md   | 2 ++
+ docs/game-rules/rebellion-reference.md | 2 ++
+ 2 files changed, 4 insertions(+)

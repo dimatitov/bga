@@ -59,10 +59,20 @@ export class SessionsController {
     return this.sessions.get(sessionId);
   }
 
-  /** The only state-changing route besides session creation (TC-SES-15). */
+  /** State-changing route of a human player (TC-SES-15); the automated side then moves in the same request. */
   @Post(':sessionId/commands')
   @HttpCode(200)
   execute(@Param('sessionId') sessionId: string, @Body() body: unknown): Promise<SessionCommandOk> {
     return this.commands.execute(sessionId, body);
+  }
+
+  /** SWR-006: plays pending automated moves (idempotent; body empty or `{}`). */
+  @Post(':sessionId/automation/run')
+  @HttpCode(200)
+  runAutomation(
+    @Param('sessionId') sessionId: string,
+    @Body() body: unknown,
+  ): Promise<SessionCommandOk> {
+    return this.commands.runAutomation(sessionId, body);
   }
 }

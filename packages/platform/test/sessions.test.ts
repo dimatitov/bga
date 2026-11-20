@@ -25,6 +25,15 @@ import {
 } from '../src';
 
 const AT = '2026-11-08T10:00:00.000Z';
+const NO_AUTOMATION = { pending: false, strategy: null };
+const NO_RUN = {
+  steps: 0,
+  pending: false,
+  strategy: null,
+  fallbacks: 0,
+  fallbackReasons: [],
+  stopReason: 'none',
+};
 const SUMMARY = {
   sessionId: 's-1',
   gameId: 'some-game',
@@ -103,13 +112,14 @@ describe('session DTOs', () => {
     );
   });
 
-  it('session response: { sessionId, gameId, status, settings, view }, strict', () => {
+  it('session response: { sessionId, gameId, status, settings, view, automation }, strict', () => {
     const body = {
       sessionId: 's-1',
       gameId: 'g',
       status: 'prototype',
       settings: { level: null, side: 'a' },
       view: { n: 1 },
+      automation: NO_AUTOMATION,
     };
     expect(SessionResponseSchema.parse(body)).toEqual(body);
     expect(Object.keys(SessionResponseSchema.shape)).toEqual([
@@ -118,7 +128,11 @@ describe('session DTOs', () => {
       'status',
       'settings',
       'view',
+      'automation',
     ]);
+    // SWR-006 Q-BE-6: `automation` is required.
+    const { automation: _automation, ...withoutAutomation } = body;
+    expect(SessionResponseSchema.safeParse(withoutAutomation).success).toBe(false);
     const { status: _status, ...withoutStatus } = body;
     const { settings: _settings, ...withoutSettings } = body;
     expect(SessionResponseSchema.safeParse(withoutStatus).success).toBe(false);
@@ -135,6 +149,7 @@ describe('session DTOs', () => {
       status: 'active',
       settings: { side: 'a' },
       view: { n: 1 },
+      automation: { pending: true, strategy: 'bot' },
     };
     const typed = makeSessionResponseSchema(z.strictObject({ n: z.number() }));
     expect(typed.safeParse(body).success).toBe(true);
@@ -150,11 +165,20 @@ describe('session DTOs', () => {
     expect(withSettings.safeParse({ ...body, settings: { side: 'c' } }).success).toBe(false);
     expect(withSettings.safeParse({ ...body, settings: { side: 'a', x: 1 } }).success).toBe(false);
     expect(withSettings.safeParse({ ...body, status: 'nope' }).success).toBe(false);
+    // the game's schema inherits the required platform `automation` field
+    const { automation: _automation, ...withoutAutomation } = body;
+    expect(typed.safeParse(withoutAutomation).success).toBe(false);
+    expect(withSettings.safeParse(withoutAutomation).success).toBe(false);
   });
 
-  it('command result: ok with view/events or the platform error body', () => {
+  it('command result: ok with view/events/automation or the platform error body', () => {
+    expect(
+      SessionCommandResultSchema.safeParse({ ok: true, view: {}, events: [], automation: NO_RUN })
+        .success,
+    ).toBe(true);
+    // SWR-006 Q-BE-6: `automation` is required in the command success.
     expect(SessionCommandResultSchema.safeParse({ ok: true, view: {}, events: [] }).success).toBe(
-      true,
+      false,
     );
     expect(
       SessionCommandResultSchema.safeParse({
@@ -163,8 +187,14 @@ describe('session DTOs', () => {
       }).success,
     ).toBe(true);
     const typed = makeCommandOkSchema(z.object({ n: z.number() }), z.object({ seq: z.number() }));
-    expect(typed.safeParse({ ok: true, view: { n: 1 }, events: [{ seq: 1 }] }).success).toBe(true);
-    expect(typed.safeParse({ ok: true, view: { n: 1 }, events: [{}] }).success).toBe(false);
+    expect(
+      typed.safeParse({ ok: true, view: { n: 1 }, events: [{ seq: 1 }], automation: NO_RUN })
+        .success,
+    ).toBe(true);
+    expect(
+      typed.safeParse({ ok: true, view: { n: 1 }, events: [{}], automation: NO_RUN }).success,
+    ).toBe(false);
+    expect(typed.safeParse({ ok: true, view: { n: 1 }, events: [{ seq: 1 }] }).success).toBe(false);
   });
 
   it('command envelope frame', () => {

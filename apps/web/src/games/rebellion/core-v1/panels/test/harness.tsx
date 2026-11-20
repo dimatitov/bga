@@ -5,7 +5,7 @@
  */
 import type { PlayerViewCore } from '@bga/game-rebellion/schema';
 import type { ReactNode } from 'react';
-import { sessionKeys } from '@/platform';
+import { type SessionAutomationState, sessionKeys } from '@/platform';
 import { resetFeedbackStore } from '@/shared/feedback';
 import {
   createTestQueryClient,
@@ -15,6 +15,7 @@ import {
 } from '@/shared/test';
 import { useSelectionStore } from '../../../board/model/selectionStore';
 import { CORE_SESSION_ID, makeCoreSession } from '../../../test/coreFixtures';
+import { NO_AUTOMATION_RUN } from '../../../test/fixtures';
 import { useCoreUiStore } from '../../model/coreUiStore';
 import { useTurnErrorStore } from '../turnErrorStore';
 import { CoreHarness } from './CoreHarness';
@@ -28,22 +29,29 @@ export function resetCoreStores() {
   resetFeedbackStore();
 }
 
-/** Renders `ui` inside the harness with `view` in the cache; `routes` mock the API (commands). */
+/**
+ * Renders `ui` inside the harness with `view` in the cache; `routes` mock the API (commands); `automation` —
+ * what `useSessionAutomation()` returns (SWR-006; default `null` = outside SessionHost).
+ */
 export function renderCore(
   ui: ReactNode,
   view: PlayerViewCore,
   routes: Record<string, MockHandler> = {},
+  { automation = null }: { automation?: SessionAutomationState | null } = {},
 ) {
   const api = mockFetch(routes);
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(sessionKeys.detail(CORE_SESSION_ID), makeCoreSession(view));
-  const utils = renderWithProviders({ element: <CoreHarness>{ui}</CoreHarness>, queryClient });
+  const utils = renderWithProviders({
+    element: <CoreHarness automation={automation}>{ui}</CoreHarness>,
+    queryClient,
+  });
   return { ...utils, api };
 }
 
 export const ok = (view: PlayerViewCore, events: unknown[] = []) => ({
   status: 200,
-  body: { ok: true, view, events },
+  body: { ok: true, view, events, automation: NO_AUTOMATION_RUN },
 });
 
 export const rejected = (messageKey: string, code = 'ILLEGAL_COMMAND') => ({

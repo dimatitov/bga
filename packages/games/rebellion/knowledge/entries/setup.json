@@ -1,0 +1,227 @@
+[
+  {
+    "id": "rebellion:setup.factions",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Setup 1: choose factions",
+    "text": "Players decide who plays the Empire and who plays the Rebels (randomly if they cannot agree), and each takes his faction's miniatures, leaders, loyalty markers, faction sheet, mission cards and action cards.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 1" },
+      { "sourceId": "LTP", "page": 4, "section": "Setup step 1" }
+    ],
+    "appliesTo": { "phases": ["setup"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.time-track",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Setup 3: board and time track",
+    "text": "The two board halves are put together; the time marker goes on space 1 of the time track and the reputation marker on space 14.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 3" },
+      { "sourceId": "LTP", "page": 4, "section": "Setup step 3" }
+    ],
+    "related": ["rebellion:victory.time-track", "rebellion:victory.reputation"],
+    "appliesTo": { "phases": ["setup"] },
+    "keywords": ["расстановка", "трек времени"]
+  },
+  {
+    "id": "rebellion:setup.decks",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Setup 4-7: decks",
+    "text": "Objectives: shuffle stages I, II and III separately and stack III, II, I (top); the Rebels draw one. Each player shuffles his action cards with a recruit icon into an action deck. Shuffle both tactic decks. Missions: set aside the four starting missions, the Empire shuffles the projects onto the board, and each player shuffles the rest into his mission deck.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup steps 4-7" },
+      { "sourceId": "LTP", "page": 4, "section": "Setup steps 4-5" },
+      { "sourceId": "LTP", "page": 5, "section": "Setup steps 6-7" }
+    ],
+    "appliesTo": { "phases": ["setup"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.standard-loyalty",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Standard setup 8.I: starting loyalty",
+    "text": "Reveal probe cards until three Rebel and five Imperial systems are shown. Each Rebel system gets a Rebel loyalty marker; the first two Imperial systems get subjugation markers and the other three Imperial loyalty markers. The five Imperial probe cards go back to the box; the rest are shuffled back into the probe deck.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 8" },
+      { "sourceId": "LTP", "page": 18, "section": "Advanced Setup" }
+    ],
+    "appliesTo": { "phases": ["setup"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.standard-imperial-units",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Standard setup 8.II: Imperial starting units",
+    "text": "The Empire gets 3 Star Destroyers, 3 Assault Carriers, 12 TIE Fighters, 12 Stormtroopers, 5 AT-STs, 1 AT-AT and 1 Death Star and places them in systems with an Imperial loyalty or subjugation marker, with at least one ground unit in each Imperial system.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 8" },
+      { "sourceId": "LTP", "page": 18, "section": "Advanced Setup" }
+    ],
+    "related": ["rebellion:setup.coruscant-placement"],
+    "appliesTo": { "phases": ["setup"], "sides": ["empire"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.standard-rebel-units",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Standard setup 8.III: Rebel starting units",
+    "text": "The Rebels get 1 Corellian Corvette, 1 Rebel Transport, 2 X-wings, 2 Y-wings, 6 Rebel Troopers and 2 Airspeeders and place them on the \"Rebel Base\" space and/or in one single other system (the RR says a Rebel or neutral system; see the errata).",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 8" },
+      { "sourceId": "LTP", "page": 18, "section": "Advanced Setup" }
+    ],
+    "related": ["rebellion:setup.rebel-units-errata"],
+    "appliesTo": { "phases": ["setup"], "sides": ["rebels"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.rebel-units-errata",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Rebel starting units: any one system without Imperial units (errata)",
+    "text": "Following the Neutral Systems erratum, the Rebel starting units go on the \"Rebel Base\" space and/or any one system that contains no Imperial units.",
+    "sources": [{ "sourceId": "FAQ", "page": 1, "section": "Errata" }],
+    "amends": ["rebellion:setup.standard-rebel-units"],
+    "related": ["rebellion:loyalty.neutral-errata"],
+    "appliesTo": { "phases": ["setup"], "sides": ["rebels"] },
+    "keywords": ["стартовые юниты повстанцев", "starting units placed"]
+  },
+  {
+    "id": "rebellion:setup.starting-action-cards",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Standard setup 8.IV: starting action cards",
+    "text": "Each player draws two random starting action cards (those without a recruit icon) and keeps them facedown; the other starting action cards return to the box unrevealed. In the first game no starting action cards are used.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 8" },
+      { "sourceId": "RR", "page": 2, "section": "Action Cards" },
+      { "sourceId": "LTP", "page": 4, "section": "Setup step 5" }
+    ],
+    "appliesTo": { "phases": ["setup"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.base-choice",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Setup 9: choose the base location",
+    "text": "The Rebel player secretly chooses one card from the probe deck and places it facedown under the \"Location\" space; then the probe deck is shuffled and put on its board space.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 9" },
+      { "sourceId": "LTP", "page": 5, "section": "Setup step 9" }
+    ],
+    "related": ["rebellion:base.secret-location", "rebellion:setup.base-choice-restrictions"],
+    "appliesTo": { "phases": ["setup"], "sides": ["rebels"] },
+    "keywords": ["выбор базы"]
+  },
+  {
+    "id": "rebellion:setup.base-choice-restrictions",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Base choice: no system with Imperial units",
+    "text": "Before choosing, the Rebel player makes sure the probe cards of all systems containing Imperial units have been removed from the deck. In the first game he also picks a system that is not adjacent to any Imperial unit.",
+    "sources": [{ "sourceId": "LTP", "page": 5, "section": "Setup step 9" }],
+    "related": ["rebellion:setup.base-choice"],
+    "appliesTo": { "phases": ["setup"], "sides": ["rebels"] }
+  },
+  {
+    "id": "rebellion:setup.starting-hand",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "Setup 10: starting hand",
+    "text": "Each player takes his four starting missions and draws two cards from his mission deck; this hand is kept secret.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 10" },
+      { "sourceId": "LTP", "page": 5, "section": "Setup step 10" }
+    ],
+    "appliesTo": { "phases": ["setup"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:setup.first-game-or-standard",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "First game setup versus standard setup",
+    "text": "For the first game, starting units and loyalty follow the fixed diagram of the Learn to Play booklet; for later games step 8 is the variable advanced setup, which the Rules Reference setup appendix includes.",
+    "sources": [
+      { "sourceId": "LTP", "page": 5, "section": "Setup step 8" },
+      { "sourceId": "LTP", "page": 18, "section": "Advanced Setup" },
+      { "sourceId": "RR", "page": 15, "section": "Appendix: Complete Setup" }
+    ],
+    "related": ["rebellion:setup.first-game-rebels", "rebellion:setup.first-game-empire"],
+    "appliesTo": { "phases": ["setup"] }
+  },
+  {
+    "id": "rebellion:setup.first-game-rebels",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "First game setup: Rebels and probe deck",
+    "text": "Remove the probe cards of Corellia, Mandalore, Saleucami, Sullust and Mustafar. Rebel loyalty: Kashyyyk, Bothawui, Naboo. Bothawui: 1 Corellian Corvette, 1 Rebel Transport, 1 X-wing, 1 Y-wing, 3 Rebel Troopers, 1 Airspeeder. \"Rebel Base\" space: 1 X-wing, 1 Y-wing, 3 Rebel Troopers, 1 Airspeeder.",
+    "sources": [{ "sourceId": "LTP", "page": 16, "section": "First Game Setup" }],
+    "related": ["rebellion:setup.first-game-empire"],
+    "appliesTo": { "phases": ["setup"] },
+    "keywords": ["первая партия", "стартовая расстановка"]
+  },
+  {
+    "id": "rebellion:setup.first-game-empire",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "First game setup: Empire",
+    "text": "Saleucami (Imperial loyalty): SD, 2 TIE, 2 Stormtroopers, AT-ST. Mandalore (subjugated): Death Star, 4 TIE, 2 Stormtroopers, AT-ST. Coruscant: SD, Assault Carrier, 2 TIE, 3 Stormtroopers, AT-AT, AT-ST. Corellia (Imperial loyalty): Assault Carrier, Stormtrooper. Sullust (subjugated): SD, 2 TIE, 2 Stormtroopers, AT-ST. Mustafar (Imperial loyalty): Assault Carrier, 2 TIE, 2 Stormtroopers, AT-ST.",
+    "sources": [{ "sourceId": "LTP", "page": 16, "section": "First Game Setup" }],
+    "related": ["rebellion:setup.first-game-rebels"],
+    "appliesTo": { "phases": ["setup"] }
+  },
+  {
+    "id": "rebellion:setup.coruscant-placement",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "setup",
+    "title": "Imperial starting units may be placed on Coruscant",
+    "text": "In the standard setup the Empire may place starting units on Coruscant, although it receives no loyalty marker.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 8" },
+      { "sourceId": "RR", "page": 8, "section": "Loyalty" },
+      { "sourceId": "LTP", "page": 16, "section": "First Game Setup" }
+    ],
+    "rationale": "RR p.15 allows systems with an Imperial loyalty or subjugation marker; Coruscant has no marker but is permanently loyal to the Empire (RR p.8), and the first game diagram puts Imperial units there (LTP p.16). Not stated explicitly for the standard setup.",
+    "appliesTo": { "phases": ["setup"], "sides": ["empire"] },
+    "ai": "none"
+  }
+]

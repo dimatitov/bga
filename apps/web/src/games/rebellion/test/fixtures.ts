@@ -4,7 +4,7 @@
  */
 import { REBELLION_GAME_ID } from '@bga/game-rebellion/definition';
 import type { PlayerView, RebellionSessionDetails } from '@bga/game-rebellion/schema';
-import type { SessionSummary } from '@bga/platform';
+import type { AutomationRunSummary, SessionSummary } from '@bga/platform';
 import type { SessionEnvelope } from '@/platform';
 import { GAME_ID, makeView } from '../board/test/fixtures';
 
@@ -38,6 +38,19 @@ export const FIXTURE_SETTINGS = {
 } as const;
 
 /**
+ * `automation` of a command response without automated steps (SWR-006: required in `SessionCommandOk`;
+ * hot-seat / mock-v1 / a human's turn).
+ */
+export const NO_AUTOMATION_RUN = {
+  steps: 0,
+  pending: false,
+  strategy: null,
+  fallbacks: 0,
+  fallbackReasons: [],
+  stopReason: 'none',
+} as const satisfies AutomationRunSummary;
+
+/**
  * `{ sessionId, gameId, status, settings, view }` as returned by `POST /api/sessions` and `GET /api/sessions/:id`.
  * `status: 'prototype'` — Rebellion on the mock scenario (spec Platform).
  */
@@ -51,6 +64,8 @@ export function makeRebellionSession(
     status: 'prototype',
     settings: { ...FIXTURE_SETTINGS },
     view,
+    // SWR-006 (required): mock-v1 sessions have no automated participant.
+    automation: { pending: false, strategy: null },
     ...overrides,
   };
 }

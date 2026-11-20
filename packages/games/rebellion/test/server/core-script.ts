@@ -2,6 +2,10 @@
  * Scripted `core-v1` games on the REAL base-game data through the server module (SWR-005 W5): the golden
  * games (TC-G-01..04), the reference views for FE/QA and the seedable e2e states (Q-35) are all produced
  * from these scripts, so every exported JSON is a state the server really reaches.
+ *
+ * SWR-006 (plan-backend §9.1, AM-BE-6): the module no longer auto-plays; `start` / `send` emulate the server
+ * runner with `drain(passModule, …)` (the SWR-005 auto-pass policy) after creation and after every accepted
+ * command, so versions, events and golden files stay byte-identical (one commit per step on the server).
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -19,8 +23,8 @@ import {
   type PlayerView,
   type RebellionSettings,
 } from '../../src/schema';
-import { rebellionServerModule } from '../../src/server';
-import { createCoreInitialState } from '../../src/server/rebellion-server-module';
+import { createCoreInitialState } from '../../src/server';
+import { drain, passModule } from './drain-automation';
 
 export const NOW = '2026-11-08T10:00:00.000Z';
 
@@ -69,13 +73,23 @@ export type CommandResult =
   | { ok: true; state: CoreGameState; events: GameEvent[] }
   | { ok: false; error: { code: string; messageKey: string; details?: unknown } };
 
-/** `module.applyCommand` with the current version (or an explicit one). */
+/**
+ * `module.applyCommand` with the current version (or an explicit one), then the AI's automated moves (auto-pass
+ * policy, like the SWR-005 auto-play) — events = the player's + the AI's.
+ */
 export function send(state: CoreGameState, step: Step, expectedVersion = state.version) {
-  return rebellionServerModule.applyCommand(
+  const result = passModule.applyCommand(
     state,
     { actor: step.actor, expectedVersion, command: step.command },
     { now: NOW },
   ) as CommandResult;
+  if (!result.ok) return result;
+  const auto = drain(passModule, result.state, NOW);
+  return {
+    ok: true,
+    state: auto.state,
+    events: [...result.events, ...auto.events],
+  } as CommandResult;
 }
 
 export interface Played {
@@ -84,10 +98,14 @@ export interface Played {
   events: GameEvent[];
 }
 
-/** New `core-v1` session (AI moves at creation applied) — what the server stores on `POST /sessions`. */
+/**
+ * New `core-v1` session + the AI's automated moves right after it (auto-pass) — what the server has stored
+ * once `POST /sessions` returns.
+ */
 export function start(settings: RebellionSettings, sessionId: string): Played {
   const created = createCoreInitialState(toStoredSetup(settings), { sessionId, now: NOW });
-  return { state: created.state, events: created.events };
+  const auto = drain(passModule, created.state, NOW);
+  return { state: auto.state, events: [...created.events, ...auto.events] };
 }
 
 /** Apply steps in order; a rejected step fails the test with its message key and index. */
@@ -110,8 +128,8 @@ export function play(from: Played, steps: readonly Step[]): Played {
 
 /** The session view the server would send (`module.toPlayerView`, status from `statusOf`). */
 export function sessionView(state: CoreGameState): PlayerView {
-  const status = rebellionServerModule.statusOf(state);
-  return PlayerViewSchema.parse(rebellionServerModule.toPlayerView(state, { status }));
+  const status = passModule.statusOf(state);
+  return PlayerViewSchema.parse(passModule.toPlayerView(state, { status }));
 }
 
 export function eventLine(event: GameEvent): string {

@@ -1,0 +1,347 @@
+[
+  {
+    "id": "rebellion:refresh.steps",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Refresh Phase steps",
+    "text": "The Refresh Phase prepares the next round in six steps: 1 retrieve leaders; 2 draw missions; 3 launch probe droids (Empire draws probe cards); 4 draw an objective (Rebels); 5 advance the time marker, then recruit and/or build if the new space shows those icons; 6 deploy units from the build queue. Then a new round starts with the Assignment Phase.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" },
+      { "sourceId": "LTP", "page": 20, "section": "Quick Reference: Round Summary" }
+    ],
+    "related": ["rebellion:round.structure"],
+    "appliesTo": { "phases": ["refresh"] },
+    "keywords": ["фаза обновления", "refresh phase"]
+  },
+  {
+    "id": "rebellion:refresh.retrieve-leaders",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Step 1: retrieve leaders",
+    "text": "All leaders on the board return to their owners' leader pools; a leader still on a mission card returns to the pool and the card goes back to the hand. Just before this step the Rebel player may play one \"Start of Refresh Phase\" objective.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "appliesTo": { "phases": ["refresh"] },
+    "keywords": ["возврат лидеров"]
+  },
+  {
+    "id": "rebellion:refresh.draw-missions",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Step 2: draw missions, hand limit 10",
+    "text": "Each player draws two mission cards and then discards down to ten. Project cards count toward the limit, objective cards do not, and starting missions can never be discarded. During the Assignment and Command Phases the limit may be exceeded.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "appliesTo": { "phases": ["refresh"] }
+  },
+  {
+    "id": "rebellion:refresh.probe-droids",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Step 3: launch probe droids",
+    "text": "The Imperial player draws two probe cards and keeps them hidden. Each probe card names a system where the Rebel base is not.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "RR", "page": 10, "section": "Probe Cards" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "related": ["rebellion:cards.probe"],
+    "appliesTo": { "phases": ["refresh"], "sides": ["empire"] },
+    "keywords": ["зонды", "карты зондов"]
+  },
+  {
+    "id": "rebellion:refresh.draw-objective",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Step 4: draw an objective",
+    "text": "The Rebel player draws one objective card into his hand.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "related": ["rebellion:cards.objectives"],
+    "appliesTo": { "phases": ["refresh"], "sides": ["rebels"] }
+  },
+  {
+    "id": "rebellion:refresh.advance-time",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Step 5: advance the time marker, recruit and build",
+    "text": "The time marker moves one space along the track. If the new space shows a recruit icon, both players recruit a leader; if it shows a build icon, both players build units.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "related": [
+      "rebellion:recruit.procedure",
+      "rebellion:build.build-units",
+      "rebellion:victory.time-track",
+      "rebellion:refresh.time-track-icons"
+    ],
+    "appliesTo": { "phases": ["refresh"] }
+  },
+  {
+    "id": "rebellion:refresh.time-track-icons",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "refresh",
+    "title": "Which time track spaces show recruit and build icons",
+    "text": "The exact time track spaces carrying recruit and build icons are printed on the board and are not listed in the rules text. Until checked against the board, any use of these positions (future Refresh implementation) is unverified.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "rationale": "Both books only say to recruit or build if the icon is in the time marker's new space; the positions are known only from board illustrations and fan sources with low confidence.",
+    "discrepancyIds": ["DISC-018"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:refresh.deploy-step",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "Step 6: slide the build queue and deploy",
+    "text": "Starting with the Rebel player, each player slides every unit on his build queue one space toward his edge of the board. Units that slide off the \"1\" space are deployed.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "related": ["rebellion:deploy.deploy-units"],
+    "appliesTo": { "phases": ["refresh"] }
+  },
+  {
+    "id": "rebellion:build.build-units",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Building units",
+    "text": "When the time marker reaches a build icon, both players build at the same time: for each resource icon in his loyal and subjugated systems a player takes the matching unit from the supply and places it on his build queue on the space given by the number next to the icon. A subjugated system provides only its left-most icon.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Build Units" },
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "related": ["rebellion:map.resource-icons", "rebellion:loyalty.subjugation"],
+    "appliesTo": { "phases": ["refresh"] },
+    "keywords": ["постройка юнитов", "очередь постройки"]
+  },
+  {
+    "id": "rebellion:build.blocked-by-enemy",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Enemy units and sabotage block building",
+    "text": "A player cannot use a system's resource icons to build if his opponent has a unit in that system or if the system holds a sabotage marker.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Build Units" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "related": ["rebellion:build.sabotage"],
+    "appliesTo": { "phases": ["refresh"] }
+  },
+  {
+    "id": "rebellion:build.rebel-base-icons",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Building from the Rebel Base space",
+    "text": "The Rebel player may also build with the resource icons of the \"Rebel Base\" space, unless the base is revealed and the Empire has a unit or loyalty in the base's system.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Build Units" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "appliesTo": { "phases": ["refresh"], "sides": ["rebels"] }
+  },
+  {
+    "id": "rebellion:build.rebel-choices",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Rebel unit choices",
+    "text": "The Rebel faction sheet offers several units for the blue and the orange resource icon; for each such icon the Rebel player chooses one unit of that type to put on his build queue.",
+    "sources": [{ "sourceId": "RR", "page": 3, "section": "Build Units" }],
+    "appliesTo": { "phases": ["refresh"], "sides": ["rebels"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:build.fewer-units",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Building fewer units is allowed",
+    "text": "A player may build fewer units during the Refresh Phase than his resource icons would allow.",
+    "sources": [{ "sourceId": "FAQ", "page": 5, "section": "Miscellaneous" }],
+    "amends": ["rebellion:build.build-units"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:build.sabotage",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Sabotage markers",
+    "text": "A sabotage marker (placed by a Rebel mission) stops a system from using its resource icons to build and stops deployment there, for both players. A system holds at most one; it stays until an Imperial mission removes it. Abilities that only \"gain\" units or refer to resource icons are not affected.",
+    "sources": [
+      { "sourceId": "RR", "page": 13, "section": "Sabotage Markers" },
+      { "sourceId": "LTP", "page": 12, "section": "Sabotage Markers" }
+    ],
+    "ai": "none",
+    "keywords": ["саботаж"]
+  },
+  {
+    "id": "rebellion:build.sabotage-wording",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Sabotage only affects \"build\" and \"deploy\" abilities",
+    "text": "Sabotage blocks only abilities that use the words Build or Deploy; abilities that place units on the build queue are unaffected.",
+    "sources": [{ "sourceId": "FAQ", "page": 5, "section": "Miscellaneous" }],
+    "amends": ["rebellion:build.sabotage"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:deploy.deploy-units",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Deploying units",
+    "text": "Units that leave the build queue are placed in the owner's loyal or subjugated systems, at most two per system per Refresh Phase. Units a player cannot or does not want to deploy go back to the \"1\" space of his build queue.",
+    "sources": [
+      { "sourceId": "RR", "page": 7, "section": "Deploy Units" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "appliesTo": { "phases": ["refresh"] },
+    "keywords": ["развёртывание юнитов"]
+  },
+  {
+    "id": "rebellion:deploy.restrictions",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Where units cannot be deployed",
+    "text": "Units cannot be deployed to a system holding a sabotage marker or any enemy ships or ground units, nor to remote systems (they cannot have loyalty).",
+    "sources": [
+      { "sourceId": "RR", "page": 7, "section": "Deploy Units" },
+      { "sourceId": "RR", "page": 12, "section": "Remote Systems" }
+    ],
+    "appliesTo": { "phases": ["refresh"] }
+  },
+  {
+    "id": "rebellion:deploy.rebel-base-space",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Deploying to the Rebel Base space",
+    "text": "While the base is hidden, the Rebel player may deploy up to two units to the \"Rebel Base\" space, and also to the base's system if that system is loyal to him. While the base is revealed nothing can be deployed to the space.",
+    "sources": [
+      { "sourceId": "RR", "page": 7, "section": "Deploy Units" },
+      { "sourceId": "LTP", "page": 12, "section": "The Rebel Base" }
+    ],
+    "appliesTo": { "phases": ["refresh"], "sides": ["rebels"] }
+  },
+  {
+    "id": "rebellion:deploy.gain-units",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Gaining units",
+    "text": "When an ability lets a player gain a unit in a system, the unit comes straight from the supply into that system, not via the build queue.",
+    "sources": [{ "sourceId": "RR", "page": 7, "section": "Deploy Units" }],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:deploy.subjugated-not-for-rebels",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "build-deploy",
+    "title": "Rebels cannot use subjugated systems",
+    "text": "The Rebel player cannot build from or deploy to a subjugated system, even if his loyalty marker lies under the subjugation marker.",
+    "sources": [{ "sourceId": "LTP", "page": 13, "section": "Subjugation" }],
+    "related": ["rebellion:loyalty.subjugation"],
+    "appliesTo": { "phases": ["refresh"], "sides": ["rebels"] }
+  },
+  {
+    "id": "rebellion:recruit.procedure",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "recruit",
+    "title": "Recruiting leaders",
+    "text": "When the time marker reaches a recruit icon, each player draws two action cards, picks a leader shown on either card and puts it in his leader pool. He keeps the chosen card facedown for later use and puts the other on the bottom of his action deck unrevealed. Players choose simultaneously, but the Rebel player announces his leader first.",
+    "sources": [
+      { "sourceId": "RR", "page": 11, "section": "Recruiting" },
+      { "sourceId": "RR", "page": 12, "section": "Refresh Phase" },
+      { "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }
+    ],
+    "appliesTo": { "phases": ["refresh"] },
+    "keywords": ["вербовка лидеров", "новые лидеры"]
+  },
+  {
+    "id": "rebellion:recruit.restrictions",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "recruit",
+    "title": "Who can be recruited",
+    "text": "A leader already on the board, in a pool or eliminated cannot be recruited. If neither drawn card shows a recruitable leader, the player may keep drawing one card at a time; he may also take a card without recruiting anyone. An ability that recruits a named leader takes it from the supply.",
+    "sources": [{ "sourceId": "RR", "page": 11, "section": "Recruiting" }],
+    "appliesTo": { "phases": ["refresh"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:recruit.card-choice",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "recruit",
+    "title": "Choosing an action card that recruits nobody",
+    "text": "A player who keeps drawing need not take the last card drawn and may choose a card that recruits no one. He may pick a card whose leaders are all captured, eliminated or lured; then no leader is recruited, its Immediate ability has no effect and the card is discarded.",
+    "sources": [
+      { "sourceId": "FAQ", "page": 5, "section": "Mission and Action Cards (continued)" }
+    ],
+    "amends": ["rebellion:recruit.restrictions"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:recruit.first-game",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "recruit",
+    "title": "First game: action card abilities are ignored",
+    "text": "In the first game, the abilities on both drawn action cards are ignored when recruiting and the cards go back to the box.",
+    "sources": [{ "sourceId": "LTP", "page": 10, "section": "3. Refresh Phase" }],
+    "ai": "none"
+  }
+]

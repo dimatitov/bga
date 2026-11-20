@@ -1,0 +1,1104 @@
+{
+  "script": "E-HUNT",
+  "aiSide": "rebels",
+  "easy": [
+    {
+      "sessionId": "swr006-d01",
+      "base": "ilum",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 59,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ord-mantell"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "coruscant",
+          "toSystemId": "ord-mantell"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ilum"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "ord-mantell",
+          "toSystemId": "ilum"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d02",
+      "base": "ryloth",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 3,
+      "finalVersion": 33,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "naboo"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "sullust",
+          "toSystemId": "naboo"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "geonosis"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "naboo",
+          "toSystemId": "geonosis"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ryloth"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "geonosis",
+          "toSystemId": "ryloth"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d04",
+      "base": "utapau",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 4,
+      "finalVersion": 36,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dagobah"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "mustafar",
+          "toSystemId": "dagobah"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "utapau"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "dagobah",
+          "toSystemId": "utapau"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d05",
+      "base": "tatooine",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 3,
+      "finalVersion": 29,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "toydaria"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "saleucami",
+          "toSystemId": "toydaria"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "bothawui"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "toydaria",
+          "toSystemId": "bothawui"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "tatooine"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "bothawui",
+          "toSystemId": "tatooine"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d06",
+      "base": "endor",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 5,
+      "finalVersion": 45,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "bespin"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "mustafar",
+          "toSystemId": "bespin"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "endor"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "bespin",
+          "toSystemId": "endor"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d07",
+      "base": "dantooine",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 55,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dathomir"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-21", "u-22", "u-23", "u-24", "u-25", "u-26", "u-27", "u-28"],
+          "fromSystemId": "mandalore",
+          "toSystemId": "dathomir"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dantooine"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-21", "u-22", "u-23", "u-24", "u-25", "u-26", "u-27", "u-28"],
+          "fromSystemId": "dathomir",
+          "toSystemId": "dantooine"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d08",
+      "base": "rodia",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 2,
+      "finalVersion": 19,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "malastare"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "sullust",
+          "toSystemId": "malastare"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "rodia"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "malastare",
+          "toSystemId": "rodia"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d09",
+      "base": "nal-hutta",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 2,
+      "finalVersion": 19,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "kessel"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "saleucami",
+          "toSystemId": "kessel"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "nal-hutta"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "kessel",
+          "toSystemId": "nal-hutta"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d10",
+      "base": "dantooine",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 49,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dathomir"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-21", "u-22", "u-23", "u-24", "u-25", "u-26", "u-27", "u-28"],
+          "fromSystemId": "mandalore",
+          "toSystemId": "dathomir"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dantooine"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-21", "u-22", "u-23", "u-24", "u-25", "u-26", "u-27", "u-28"],
+          "fromSystemId": "dathomir",
+          "toSystemId": "dantooine"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d14",
+      "base": "rodia",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 2,
+      "finalVersion": 15,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "malastare"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "sullust",
+          "toSystemId": "malastare"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "rodia"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "malastare",
+          "toSystemId": "rodia"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d15",
+      "base": "ryloth",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 3,
+      "finalVersion": 27,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "naboo"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "sullust",
+          "toSystemId": "naboo"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "geonosis"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "naboo",
+          "toSystemId": "geonosis"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ryloth"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-40", "u-41", "u-42", "u-43", "u-44", "u-45"],
+          "fromSystemId": "geonosis",
+          "toSystemId": "ryloth"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d16",
+      "base": "ilum",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 57,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ord-mantell"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "coruscant",
+          "toSystemId": "ord-mantell"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ilum"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "ord-mantell",
+          "toSystemId": "ilum"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d17",
+      "base": "nal-hutta",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 2,
+      "finalVersion": 17,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "kessel"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "saleucami",
+          "toSystemId": "kessel"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "nal-hutta"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "kessel",
+          "toSystemId": "nal-hutta"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d18",
+      "base": "ilum",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 59,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ord-mantell"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "coruscant",
+          "toSystemId": "ord-mantell"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ilum"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "ord-mantell",
+          "toSystemId": "ilum"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d19",
+      "base": "nal-hutta",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 2,
+      "finalVersion": 17,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "kessel"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "saleucami",
+          "toSystemId": "kessel"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "nal-hutta"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "kessel",
+          "toSystemId": "nal-hutta"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d20",
+      "base": "dantooine",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 44,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dathomir"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-21", "u-22", "u-23", "u-24", "u-25", "u-26", "u-27", "u-28"],
+          "fromSystemId": "mandalore",
+          "toSystemId": "dathomir"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dantooine"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-21", "u-22", "u-23", "u-24", "u-25", "u-26", "u-27", "u-28"],
+          "fromSystemId": "dathomir",
+          "toSystemId": "dantooine"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    }
+  ],
+  "normal": [
+    {
+      "sessionId": "swr006-d05",
+      "base": "tatooine",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 3,
+      "finalVersion": 20,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "toydaria"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "saleucami",
+          "toSystemId": "toydaria"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "bothawui"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "toydaria",
+          "toSystemId": "bothawui"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "tatooine"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "bothawui",
+          "toSystemId": "tatooine"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d06",
+      "base": "endor",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 5,
+      "finalVersion": 29,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "bespin"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "mustafar",
+          "toSystemId": "bespin"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "endor"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "bespin",
+          "toSystemId": "endor"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d13",
+      "base": "utapau",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 4,
+      "finalVersion": 24,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "dagobah"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "mustafar",
+          "toSystemId": "dagobah"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "utapau"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-46", "u-47", "u-49", "u-50", "u-51"],
+          "fromSystemId": "dagobah",
+          "toSystemId": "utapau"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d16",
+      "base": "ilum",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 34,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ord-mantell"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "coruscant",
+          "toSystemId": "ord-mantell"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ilum"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "ord-mantell",
+          "toSystemId": "ilum"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d17",
+      "base": "nal-hutta",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 2,
+      "finalVersion": 15,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "kessel"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "saleucami",
+          "toSystemId": "kessel"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "nal-hutta"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-15", "u-16", "u-17", "u-18", "u-19", "u-20"],
+          "fromSystemId": "kessel",
+          "toSystemId": "nal-hutta"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        }
+      ]
+    },
+    {
+      "sessionId": "swr006-d18",
+      "base": "ilum",
+      "winner": "empire",
+      "reason": "rebelBaseCaptured",
+      "finalRound": 6,
+      "finalVersion": 34,
+      "humanCommands": [
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ord-mantell"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "coruscant",
+          "toSystemId": "ord-mantell"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "ACTIVATE_SYSTEM",
+          "leaderId": "palpatine",
+          "systemId": "ilum"
+        },
+        {
+          "type": "MOVE_PIECES",
+          "pieceIds": ["u-29", "u-30", "u-31", "u-32", "u-33", "u-34", "u-35", "u-36", "u-37"],
+          "fromSystemId": "ord-mantell",
+          "toSystemId": "ilum"
+        },
+        {
+          "type": "FINISH_ACTIVATION"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        },
+        {
+          "type": "PASS"
+        }
+      ]
+    }
+  ]
+}

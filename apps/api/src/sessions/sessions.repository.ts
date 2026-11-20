@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { SessionEventRecord, SessionStatus } from '@bga/platform';
 import { PrismaService } from '../persistence/prisma.service';
+import { isSqliteBusy } from '../persistence/sqlite-adapter';
 
 export interface SessionRow {
   id: string;
@@ -195,6 +196,8 @@ export class SessionsRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         return { ok: false, reason: 'VERSION_CONFLICT' };
       }
+      // SWR-007 (Prisma 7 driver adapter): another connection holds the write lock → this writer lost the race.
+      if (isSqliteBusy(error)) return { ok: false, reason: 'VERSION_CONFLICT' };
       throw error;
     }
   }

@@ -18,6 +18,7 @@ import {
 } from '../../src/schema';
 import { rebellionServerModule, upcastStoredSetup } from '../../src/server';
 import { playEmpireWin, playRebelsTimeWin } from './core-scenarios';
+import { drain, passModule } from './drain-automation';
 
 const v1Setups = JSON.parse(
   readFileSync(new URL('../fixtures/v1/setups.v1.json', import.meta.url), 'utf8'),
@@ -67,6 +68,12 @@ function coreBoard(view: unknown): CorePlayerView {
 function core(state: GameState): CoreGameState {
   if (state.rulesEngine !== 'core-v1') throw new Error('expected a core-v1 state');
   return state;
+}
+
+/** What the server has stored after creation: the AI's automated moves drained (auto-pass policy). */
+function createDrained(setup: RebellionSetupInput) {
+  const created = create(setup);
+  return { ...created, state: drain(passModule, created.state, ctx.now).state };
 }
 
 function command(state: GameState, actor: string, type: string) {
@@ -212,20 +219,41 @@ describe('rebellionServerModule', () => {
     GameStateSchema.parse(state);
   });
 
-  it('createInitialState (AI Rebels): their automatic pass is applied — version 2, Empire to move (AC-08, TC-AI-06)', () => {
+  it('SWR-006 createInitialState (AI Rebels): no automatic move inside — version 1, the AI side to move (pending)', () => {
     const { state, events } = create(EMPIRE_AI);
     const s = core(state);
-    expect(s).toMatchObject({ version: 2, activeSide: 'empire', handoffPending: false });
+    expect(s).toMatchObject({ version: 1, activeSide: 'rebels', handoffPending: false });
     expect(events).toEqual(s.log);
-    expect(events.at(-1)).toMatchObject({
-      seq: 4,
-      type: 'PASSED',
-      actor: 'rebels',
-      payload: { auto: true },
-    });
-    expect(module.version(state)).toBe(2);
+    expect(events.map((e) => (e as { type: string }).type)).toEqual([
+      'GAME_CREATED',
+      'PHASE_STARTED',
+      'PHASE_STARTED',
+    ]);
+    expect(module.version(state)).toBe(1);
     GameStateSchema.parse(state);
     expect(JSON.stringify(create(EMPIRE_AI).state)).toBe(JSON.stringify(state));
+    expect(module.automation?.isAutomated(state)).toBe(true);
+    expect(module.automation?.pendingActor(state)).toBe('rebels');
+    // The runner's first step (auto-pass policy here) gives the SWR-005 creation result: version 2, Empire to move.
+    const drained = drain(passModule, s, ctx.now);
+    expect(drained.steps).toBe(1);
+    expect(drained.state).toMatchObject({ version: 2, activeSide: 'empire' });
+    expect(drained.events).toEqual([
+      expect.objectContaining({ seq: 4, type: 'PASSED', actor: 'rebels', payload: { auto: true } }),
+    ]);
+    expect(module.automation?.pendingActor(drained.state)).toBeNull();
+  });
+
+  it('SWR-006: the module exposes automation; rebellionServerModule uses the bot, hot-seat is not automated', () => {
+    expect(module.automation).toBeDefined();
+    const point = module.automation?.decisionPoint(create(EMPIRE_AI).state);
+    expect(point?.policyId).toBe('rebellion-bot-v1:normal');
+    expect(passModule.automation?.decisionPoint(create(EMPIRE_AI).state).policyId).toBe(
+      'auto-pass-v1',
+    );
+    const hotSeat = create(REBELS_HUMAN).state;
+    expect(module.automation?.isAutomated(hotSeat)).toBe(false);
+    expect(module.automation?.pendingActor(hotSeat)).toBeNull();
   });
 
   it('parseState: JSON roundtrip; mismatching id or version → throw; schema-invalid → throw', () => {
@@ -246,8 +274,8 @@ describe('rebellionServerModule', () => {
     ).toThrow();
   });
 
-  it('applyCommand (core-v1): 400 → 409 → 422 order, player command + AI auto-pass in one result, input not mutated', () => {
-    const { state } = create(EMPIRE_AI);
+  it('applyCommand (core-v1): 400 → 409 → 422 order, ONLY the player command (no AI move inside), input not mutated', () => {
+    const { state } = createDrained(EMPIRE_AI);
     const snapshot = JSON.stringify(state);
     const r400 = module.applyCommand(
       state,
@@ -288,12 +316,17 @@ describe('rebellionServerModule', () => {
     );
     if (!ok.ok) throw new Error('PASS rejected');
     const next = core(ok.state as GameState);
-    // Empire pass → refresh → round 2 → AI Rebels pass again (auto) → Empire to move; +1 per engine command.
-    expect(next).toMatchObject({ version: 4, round: 2, activeSide: 'empire' });
+    // Empire pass → refresh → round 2 → the AI Rebels to move (stored as is; the runner plays them).
+    expect(next).toMatchObject({ version: 3, round: 2, activeSide: 'rebels' });
     const events = module.toPlayerEvents(ok.events, ok.state) as { type: string; actor: string }[];
     expect(events).toHaveLength(ok.events.length);
     expect(events[0]).toMatchObject({ type: 'PASSED', actor: 'empire' });
-    expect(events.at(-1)).toMatchObject({
+    expect(events.some((e) => e.actor === 'rebels')).toBe(false);
+    expect(module.automation?.pendingActor(next)).toBe('rebels');
+    // The runner's step: AI Rebels pass again (auto) → Empire to move; +1 per engine command.
+    const drained = drain(passModule, next, ctx.now);
+    expect(drained.state).toMatchObject({ version: 4, round: 2, activeSide: 'empire' });
+    expect(drained.events.at(-1)).toMatchObject({
       type: 'PASSED',
       actor: 'rebels',
       payload: { auto: true },
@@ -301,8 +334,13 @@ describe('rebellionServerModule', () => {
     expect(JSON.stringify(state)).toBe(snapshot);
   });
 
-  it('toPlayerView (AI game): the player board; the Empire does not see the base (zone without a system)', () => {
-    const { state } = create(EMPIRE_AI);
+  it('toPlayerView (AI game): the player board, also while the AI is to move; the Empire does not see the base', () => {
+    const pending = create(EMPIRE_AI).state;
+    const pendingView = coreBoard(module.toPlayerView(pending, VIEW_CTX));
+    expect(pendingView).toMatchObject({ viewer: 'empire', activeSide: 'rebels', legalActions: [] });
+    expect(pendingView.rebelBase).toEqual({ systemId: null, revealed: false });
+
+    const { state } = createDrained(EMPIRE_AI);
     const base = core(state).rebelBase.systemId;
     const view = coreBoard(module.toPlayerView(state, VIEW_CTX));
     expect(view).toMatchObject({ kind: 'player', viewer: 'empire', activeSide: 'empire' });

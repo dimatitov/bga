@@ -8,6 +8,13 @@ import {
 } from '@/platform/test/fakeGame';
 import { mockFetch, renderWithProviders } from '@/shared/test';
 
+/**
+ * Wait for a game's lazily loaded screen on its first render in this file (SWR-006 final gate: under heavy load the
+ * cold transform of the Rebellion table chunk alone exceeded the 5 s `asyncUtilTimeout`). A per-wait timeout, not a
+ * preload: platform code (app/) must not import game folders (AC-5), so the game's preload helper is not usable here.
+ */
+const LAZY_CHUNK_TIMEOUT_MS = 30_000;
+
 describe('app routes (SWR-003 plan-frontend §2)', () => {
   it('/ → catalogue from the registry without network requests (Q-1); header, skip-link, <main id="main">', () => {
     const { fetch } = mockFetch({});
@@ -128,26 +135,33 @@ describe('app routes (SWR-003 plan-frontend §2)', () => {
     expect(await screen.findByTestId('session-unsupported')).toBeInTheDocument();
   });
 
-  it('/sessions/:id of Rebellion → SessionHost dispatches to the lazy Rebellion table (view passed unparsed)', async () => {
-    // An incompatible view is enough to prove the dispatch without Konva: Rebellion's TableScreen parses `view`
-    // itself and shows its own `table-invalid-view` (full table behaviour — games/rebellion/table/TableScreen.test).
-    mockFetch({
-      'GET /api/sessions/r1': {
-        status: 200,
-        body: makeSessionEnvelope({
-          sessionId: 'r1',
-          gameId: 'star-wars-rebellion',
-          view: { nope: 1 },
-        }),
-      },
-    });
-    renderWithProviders({ path: '/sessions/r1' });
-    expect(await screen.findByTestId('table-invalid-view')).toBeInTheDocument();
-    const host = screen.getByTestId('session-host');
-    expect(host).toHaveAttribute('data-session-id', 'r1');
-    expect(host).toHaveAttribute('data-game-id', 'star-wars-rebellion');
-    expect(screen.queryByTestId('session-unsupported')).not.toBeInTheDocument();
-  });
+  it(
+    '/sessions/:id of Rebellion → SessionHost dispatches to the lazy Rebellion table (view passed unparsed)',
+    async () => {
+      // An incompatible view is enough to prove the dispatch without Konva: Rebellion's TableScreen parses `view`
+      // itself and shows its own `table-invalid-view` (full table behaviour — games/rebellion/table/TableScreen.test).
+      mockFetch({
+        'GET /api/sessions/r1': {
+          status: 200,
+          body: makeSessionEnvelope({
+            sessionId: 'r1',
+            gameId: 'star-wars-rebellion',
+            view: { nope: 1 },
+          }),
+        },
+      });
+      renderWithProviders({ path: '/sessions/r1' });
+      // The first wait includes the cold transform of the lazy Rebellion table chunk (Konva): > 5 s under parallel load.
+      expect(
+        await screen.findByTestId('table-invalid-view', {}, { timeout: LAZY_CHUNK_TIMEOUT_MS }),
+      ).toBeInTheDocument();
+      const host = screen.getByTestId('session-host');
+      expect(host).toHaveAttribute('data-session-id', 'r1');
+      expect(host).toHaveAttribute('data-game-id', 'star-wars-rebellion');
+      expect(screen.queryByTestId('session-unsupported')).not.toBeInTheDocument();
+    },
+    LAZY_CHUNK_TIMEOUT_MS * 2,
+  );
 
   it('injected registry (TR-5): a fake game is reachable through the real routes', async () => {
     mockFetch({ 'GET /api/sessions': { status: 200, body: [] } });

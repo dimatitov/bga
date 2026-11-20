@@ -4,9 +4,21 @@ import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { type SessionEnvelope, sessionKeys } from '@/platform';
+// Test-only: the automation store of the platform (SessionHost sets its session in the app).
+import {
+  resetAutomation,
+  resetAutomationStore,
+  useAutomationStore,
+} from '@/platform/automation/automationStore';
 import { createTestQueryClient, mockFetch, type MockReply } from '@/shared/test';
 import type { PlayerView, PlayerViewCore } from '@bga/game-rebellion/schema';
-import { makeHandoffView, makeRebellionSession, makeView, SESSION_ID } from '../../test/fixtures';
+import {
+  makeHandoffView,
+  makeRebellionSession,
+  makeView,
+  NO_AUTOMATION_RUN,
+  SESSION_ID,
+} from '../../test/fixtures';
 import {
   CORE_SESSION_ID,
   CS_CORELLIA,
@@ -16,6 +28,7 @@ import {
   makeCoreEmpireView,
   makeCoreOutcomeView,
   makeCoreSession,
+  makeAutomationSummary,
   makeCoreView,
   U_RT_SULLUST,
   U_TRANSPORT,
@@ -43,7 +56,7 @@ function setup(replies: MockReply[], view: PlayerView = makeView()) {
 
 const ok = (): MockReply => ({
   status: 200,
-  body: { ok: true, view: makeView({ version: 4 }), events: [] },
+  body: { ok: true, view: makeView({ version: 4 }), events: [], automation: NO_AUTOMATION_RUN },
 });
 const illegal: MockReply = {
   status: 422,
@@ -137,7 +150,12 @@ describe('useSendCommand — session cache (SWR-003 plan-frontend §3.1)', () =>
   });
 
   it('accepted command with a non-Rebellion view → INVALID_RESPONSE, detail invalidated', async () => {
-    const { result, qc } = setup([{ status: 200, body: { ok: true, view: { x: 1 }, events: [] } }]);
+    const { result, qc } = setup([
+      {
+        status: 200,
+        body: { ok: true, view: { x: 1 }, events: [], automation: NO_AUTOMATION_RUN },
+      },
+    ]);
     const invalidate = vi.spyOn(qc, 'invalidateQueries');
     let outcome: Awaited<ReturnType<typeof result.current.send>> | undefined;
     await act(async () => {
@@ -152,13 +170,17 @@ describe('useSendCommand — session cache (SWR-003 plan-frontend §3.1)', () =>
     const handoff = makeHandoffView({ activeSide: 'rebels', version: 4 });
     const { result, qc } = setup(
       [
-        { status: 200, body: { ok: true, view: handoff, events: [] } },
+        {
+          status: 200,
+          body: { ok: true, view: handoff, events: [], automation: NO_AUTOMATION_RUN },
+        },
         {
           status: 200,
           body: {
             ok: true,
             view: makeView({ version: 5, viewer: 'rebels', activeSide: 'rebels' }),
             events: [],
+            automation: NO_AUTOMATION_RUN,
           },
         },
       ],
@@ -225,7 +247,12 @@ describe('useSendCommand — core-v1 commands (SWR-005 FE-0)', () => {
     async (_, view, command) => {
       const next = { ...view, version: view.version + 2 };
       const { result, qc } = setupCore(
-        [{ status: 200, body: { ok: true, view: next, events: [] } }],
+        [
+          {
+            status: 200,
+            body: { ok: true, view: next, events: [], automation: NO_AUTOMATION_RUN },
+          },
+        ],
         view,
       );
       const invalidate = vi.spyOn(qc, 'invalidateQueries');
@@ -249,7 +276,12 @@ describe('useSendCommand — core-v1 commands (SWR-005 FE-0)', () => {
     const over = makeCoreOutcomeView('rebels');
     const gameOver = over.log.at(-1)!;
     const { result, qc } = setupCore(
-      [{ status: 200, body: { ok: true, view: over, events: [gameOver] } }],
+      [
+        {
+          status: 200,
+          body: { ok: true, view: over, events: [gameOver], automation: NO_AUTOMATION_RUN },
+        },
+      ],
       makeCoreView(),
     );
     const invalidate = vi.spyOn(qc, 'invalidateQueries');
@@ -293,5 +325,54 @@ describe('useSendCommand — core-v1 commands (SWR-005 FE-0)', () => {
     );
     expect(invalidate).not.toHaveBeenCalled();
     expect(result.current.saveStatus).toBe('idle');
+  });
+
+  it('SWR-006 R-1: a response with AI steps → cache automation, store lastRun (command), outcome.automation', async () => {
+    resetAutomation(CORE_SESSION_ID);
+    const view = makeCoreEmpireView();
+    const next = { ...view, version: view.version + 4 };
+    const automation = makeAutomationSummary({
+      steps: 3,
+      pending: true,
+      strategy: 'bot',
+      stopReason: 'stepLimit',
+    });
+    const { result, qc } = setupCore(
+      [{ status: 200, body: { ok: true, view: next, events: [], automation } }],
+      view,
+    );
+    let outcome: Awaited<ReturnType<typeof result.current.send>> | undefined;
+    let sending: Promise<unknown> = Promise.resolve();
+    act(() => {
+      sending = result.current.send({ type: 'PASS' });
+    });
+    // Q-FE-3: the table knows which command is in flight (a PASS hands the turn over).
+    expect(result.current.pendingCommand).toEqual({ type: 'PASS' });
+    expect(result.current.isPending).toBe(true);
+    await act(async () => {
+      outcome = (await sending) as typeof outcome;
+    });
+    expect(result.current.pendingCommand).toBeNull();
+    expect(outcome).toMatchObject({ ok: true, automation });
+    const cached = qc.getQueryData<SessionEnvelope>(sessionKeys.detail(CORE_SESSION_ID));
+    expect(cached?.view).toEqual(next);
+    expect(cached?.automation).toEqual({ pending: true, strategy: 'bot' });
+    const store = useAutomationStore.getState();
+    expect(store.lastRun).toMatchObject({ source: 'command', summary: automation });
+    // `pending` after a command → one automatic run is armed (Q-FE-1).
+    expect(store.autoRunArmed).toBe(true);
+    resetAutomationStore();
+  });
+
+  it('SWR-006 R-1: mock-v1 / no automation (strategy null) → as before, cache automation stays null', async () => {
+    const { result, qc } = setup([ok()]);
+    await act(async () => {
+      await result.current.send(MOVE);
+    });
+    expect(qc.getQueryData<SessionEnvelope>(sessionKeys.detail(SESSION_ID))?.automation).toEqual({
+      pending: false,
+      strategy: null,
+    });
+    expect(result.current.saveStatus).toBe('saved');
   });
 });

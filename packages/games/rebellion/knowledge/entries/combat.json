@@ -1,0 +1,239 @@
+[
+  {
+    "id": "rebellion:combat.trigger",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "When combat happens",
+    "text": "Combat is resolved when, after the movement step of an activation, both factions have units in the activated system in the same theater (space or ground); this includes activations that moved no units. Typically it starts when a player moves units into a system holding his opponent's units.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 4,
+        "section": "Combat"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 14,
+        "section": "Combat"
+      },
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      }
+    ],
+    "related": [
+      "rebellion:combat.steps",
+      "rebellion:combat.theater",
+      "rebellion:command.activate.steps"
+    ],
+    "keywords": ["бой", "сражение", "combat"]
+  },
+  {
+    "id": "rebellion:combat.steps",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Combat steps",
+    "text": "1 Add leader: a player without a leader with tactic values there may add one from his pool (current player decides first), then Start of Combat cards may be used. 2 Draw tactic cards by the highest space and ground tactic values, only for theaters where both sides have units, current player first. 3 Resolve combat rounds.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 4,
+        "section": "Combat"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 14,
+        "section": "Combat"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 20,
+        "section": "Quick Reference: Combat Summary"
+      }
+    ],
+    "related": ["rebellion:combat.round", "rebellion:cards.tactic"]
+  },
+  {
+    "id": "rebellion:combat.round",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Combat round",
+    "text": "Each combat round: space battle (each side attacks once with all ships, current player first, only if both have ships); ground battle (likewise with ground units); retreat (current player first); then another round if both still share a theater. Rebel structures left alone against Imperial ground units, and a lone Death Star Under Construction facing Rebel ships, are destroyed.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 4,
+        "section": "Combat"
+      },
+      {
+        "sourceId": "RR",
+        "page": 13,
+        "section": "Rounds"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 14,
+        "section": "Combat"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:combat.end",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "End of combat",
+    "text": "Combat ends when after a round no theater holds units of both factions. Then all tactic cards in hand are discarded and the decks reshuffled, and all damage markers are removed.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 4,
+        "section": "Ending Combat"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:combat.attack",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Resolving an attack",
+    "text": "Roll dice matching the attack values of the participating units (at most five black and five red; reductions apply first). Perform combat actions: spend specials to draw or play tactic cards of this theater. Assign damage: hits only to units with matching health colour, direct hits to any, only in this theater, all assignable dice must be assigned. The defender may block with tactic cards. Units with enough damage are destroyed at the end of the step but still attack.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 4,
+        "section": "Resolving an Attack"
+      },
+      {
+        "sourceId": "RR",
+        "page": 5,
+        "section": "Resolving an Attack"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 14,
+        "section": "Resolving an Attack"
+      }
+    ],
+    "related": ["rebellion:general.dice", "rebellion:combat.damage"]
+  },
+  {
+    "id": "rebellion:combat.damage",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Damage and damage markers",
+    "text": "After blocks, a unit with damage equal to or above its health is destroyed. Smaller damage is tracked with damage markers, which cannot be blocked and stay until the end of the combat. A unit may be assigned more damage than it has health left.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Damage"
+      },
+      {
+        "sourceId": "RR",
+        "page": 5,
+        "section": "Resolving an Attack"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:combat.theater",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Theaters",
+    "text": "There are two theaters, space and ground. Every unit attacks in one of them and damage can only be dealt to units of the theater being resolved.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Theater"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:combat.retreat",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Retreating",
+    "text": "To retreat a player moves one of his leaders from the combat to an adjacent system and then moves his units there by normal movement and transport rules. He must pick a system with his units or loyalty if possible, otherwise an empty adjacent system; never one with enemy units, never the system the attacker came from, and the Rebels never to the \"Rebel Base\" space.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 5,
+        "section": "Retreating"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 15,
+        "section": "Retreat"
+      }
+    ],
+    "related": ["rebellion:combat.retreat-limits"],
+    "keywords": ["отступление"]
+  },
+  {
+    "id": "rebellion:combat.retreat-limits",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Retreat restrictions",
+    "text": "No retreat if the opponent has no units in the system, and the Empire cannot retreat while a Death Star or unfinished station is in the combat. A retreat moves all ships out; ground units and TIE Fighters may stay; immobile units stay. One retreat per player per combat, with any of his leaders there, and a leader only retreats together with units. Rebel Transports left as the only Rebel ships must retreat or are destroyed.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 5,
+        "section": "Retreating"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:combat.retreat-faq",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Retreat rulings",
+    "text": "Ground units and TIE Fighters may always be left behind. The opponent may also retreat in the same retreat step as long as he still has any unit there. Imperial ships may retreat after their ground units were destroyed. Lone Rebel Transports are destroyed in the retreat step only if at least one Imperial ship is present.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 2,
+        "section": "FAQ: Combat"
+      }
+    ],
+    "amends": ["rebellion:combat.retreat-limits"]
+  },
+  {
+    "id": "rebellion:combat.winning-battle",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "Winning a battle",
+    "text": "A player wins a battle in a theater if, at the end, his opponent has no units of that theater in the system, including when the opponent retreated them all. Each side can win a different theater; if both sides are wiped out nobody wins; nobody wins a theater where the opponent had no units at the start of combat.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 5,
+        "section": "Winning a Battle"
+      }
+    ]
+  }
+]

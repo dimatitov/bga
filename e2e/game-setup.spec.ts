@@ -84,7 +84,16 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
     expect(idempotencyKeyOf(req), 'Idempotency-Key is a UUID').toMatch(UUID_RE);
 
     const body = (await res.json()) as SessionResponse;
-    expect(Object.keys(body).sort()).toEqual(['gameId', 'sessionId', 'settings', 'status', 'view']);
+    // SWR-006 (Q-BE-6): + required `automation`; the e2e API plays the bot, its first turn is done (not pending).
+    expect(Object.keys(body).sort()).toEqual([
+      'automation',
+      'gameId',
+      'sessionId',
+      'settings',
+      'status',
+      'view',
+    ]);
+    expect(body.automation).toEqual({ pending: false, strategy: 'bot' });
     expect(body.status).toBe('prototype'); // AC-13
     expect(Object.keys(body.settings).sort()).toEqual([...SETTINGS_KEYS]);
     expect(body.settings).toEqual({

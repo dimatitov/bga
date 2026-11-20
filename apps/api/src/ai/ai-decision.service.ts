@@ -341,20 +341,51 @@ function toFailure(err: unknown): AiFailure {
   return AiFailure.providerError('unknown', { sdkErrorName: 'UnknownError' });
 }
 
-/** The service re-checks what the DTO already guarantees (2..10 actions, unique ids). */
+/** SWR-006 (plan-backend §8.1): limits of the commander-only fields (the platform decision point has the same). */
+export const COMMANDER_SITUATION_MAX = 4000;
+export const COMMANDER_SUMMARY_MAX = 160;
+
+function invalidContext(path: string[], code: string, message: string): ApiError {
+  return new ApiError('VALIDATION', ERROR_MESSAGE_KEYS.validation, {
+    issues: [{ path, code, message }],
+  });
+}
+
+/**
+ * The service re-checks what the DTO / the decision point already guarantee (2..10 actions, unique ids). A commander
+ * context (SWR-006) additionally needs a `situation` ≤ 4000 chars and summaries ≤ 160 chars; the dev path is unchanged
+ * (its DTO still accepts only the `dev-diagnostics` budget key).
+ */
 function assertContext(ctx: AIDecisionContext): void {
   const ids = ctx.availableActions.map((a) => a.id);
   const n = ids.length;
   if (n < MIN_ACTIONS || n > MAX_ACTIONS || new Set(ids).size !== n) {
-    throw new ApiError('VALIDATION', ERROR_MESSAGE_KEYS.validation, {
-      issues: [
-        {
-          path: ['scenario', 'availableActions'],
-          code: 'invalid_actions',
-          message: 'availableActions must hold 2..10 actions with unique ids',
-        },
-      ],
-    });
+    throw invalidContext(
+      ['scenario', 'availableActions'],
+      'invalid_actions',
+      'availableActions must hold 2..10 actions with unique ids',
+    );
+  }
+  if (ctx.purpose !== 'commander') return;
+  if (
+    typeof ctx.situation !== 'string' ||
+    ctx.situation.length === 0 ||
+    ctx.situation.length > COMMANDER_SITUATION_MAX
+  ) {
+    throw invalidContext(
+      ['situation'],
+      'invalid_situation',
+      `situation must hold 1..${COMMANDER_SITUATION_MAX} characters`,
+    );
+  }
+  for (const action of ctx.availableActions) {
+    if (action.summary !== undefined && action.summary.length > COMMANDER_SUMMARY_MAX) {
+      throw invalidContext(
+        ['availableActions', 'summary'],
+        'invalid_summary',
+        `summary must hold at most ${COMMANDER_SUMMARY_MAX} characters`,
+      );
+    }
   }
 }
 

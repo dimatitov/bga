@@ -1,13 +1,24 @@
 /**
  * SWR-005 W6b — AI games of both sides on `core-v1` through HTTP (AC-08; TC-AI-03..07a, 10, 11, 13, 15..17):
- * the server applies the AI side's pass in the SAME operation (actor = AI side, `payload.auto = true`), the
- * response carries the version after the last auto move, the stored state never waits on the AI and has no
- * handoff, and nothing calls OpenAI / the network (there is no dependency: `architecture.int.test.ts` TC-A-02;
- * here `fetch` is spied during full rounds of both sides).
+ * the server applies the AI side's pass in the SAME request (actor = AI side, `payload.auto = true`), the
+ * response carries the version after the last auto move, the stored state never waits on the AI once the request is
+ * answered and has no handoff, and nothing calls OpenAI / the network (here `fetch` is spied during full rounds of
+ * both sides).
+ * SWR-006 W7 (plan-backend §9.1, AM-BE-6): the AI moves are now made by the automation runner (one commit per step)
+ * after the human's commit / the insert; this file keeps the SWR-005 auto-pass policy (`chooseAutoCommand`) through
+ * `createRebellionServerModule({ automation: { policy } })`, so versions and events stay byte-identical; each
+ * response additionally carries `automation` (the run summary / the session envelope).
  */
 import type { INestApplication } from '@nestjs/common';
-import { IDEMPOTENCY_KEY_HEADER, SessionResponseSchema } from '@bga/platform';
+import {
+  IDEMPOTENCY_KEY_HEADER,
+  SessionCommandOkSchema,
+  SessionResponseSchema,
+  type AutomationRunSummary,
+} from '@bga/platform';
+import { chooseAutoCommand } from '@bga/game-rebellion/ai';
 import type { Faction } from '@bga/game-rebellion/schema';
+import { createRebellionServerModule } from '@bga/game-rebellion/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   AI_EMP_SETUP,
@@ -31,6 +42,21 @@ import { api, createTestDb, startApp, stopApp, type TestDb } from './support/tes
 
 const IDEM_KEY = '6f1c2a3e-6b1d-4c1e-9a52-5e0c1d2b3a40';
 
+/** AM-BE-6: the SWR-005 auto-pass policy instead of the bot (tests only). */
+const PASS_MODULE = createRebellionServerModule({ automation: { policy: chooseAutoCommand } });
+
+/** `automation` of a command response of these games (bot strategy configured). */
+function ran(steps: number): AutomationRunSummary {
+  return {
+    steps,
+    pending: false,
+    strategy: 'bot',
+    fallbacks: 0,
+    fallbackReasons: [],
+    stopReason: steps === 0 ? 'none' : 'humanTurn',
+  };
+}
+
 const REFRESH = [
   'PHASE_STARTED system',
   'LEADERS_RETURNED system',
@@ -50,7 +76,11 @@ describe('core-v1 AI auto-pass over HTTP (AC-08)', () => {
     delete process.env.OPENAI_API_KEY;
     fetchSpy = vi.spyOn(globalThis, 'fetch');
     db = createTestDb();
-    app = await startApp(db.url, { clock: tickingClock(), idGenerator: sequentialIds('ai') });
+    app = await startApp(db.url, {
+      clock: tickingClock(),
+      idGenerator: sequentialIds('ai'),
+      gameModules: [PASS_MODULE],
+    });
   });
 
   afterEach(async () => {
@@ -71,6 +101,8 @@ describe('core-v1 AI auto-pass over HTTP (AC-08)', () => {
   async function sendChecked(s: CoreSession, step: Step, player: Faction, engineCommands: number) {
     const before = s.version;
     const res = await s.send(step);
+    // SWR-006: every engine command after the player's one is one automated step of the runner.
+    expect(SessionCommandOkSchema.parse(res.raw).automation).toEqual(ran(engineCommands - 1));
     // Q-19: every engine command (player's and each auto move) is version + 1; one response version.
     expect(res.view.version).toBe(before + engineCommands);
     expect(asCore(res.view).viewer).toBe(player);
@@ -96,6 +128,7 @@ describe('core-v1 AI auto-pass over HTTP (AC-08)', () => {
     ]);
     expect(view.log.at(-1)?.payload).toEqual({ auto: true });
     expect(view.passed).toEqual({ rebels: true, empire: false });
+    expect(body.automation).toEqual({ pending: false, strategy: 'bot' });
     await expectAiInvariant(body.sessionId, 'empire');
     expect((await getSession(app, body.sessionId)).body).toEqual(res.body);
     const events = await expectConsecutiveEvents(app, body.sessionId);
@@ -120,6 +153,10 @@ describe('core-v1 AI auto-pass over HTTP (AC-08)', () => {
     const view0 = asCore(created.view);
     // No AI move at creation: the Rebels start (AC-03).
     expect(view0).toMatchObject({ viewer: 'rebels', activeSide: 'rebels', version: 1 });
+    expect(SessionResponseSchema.parse(created.body).automation).toEqual({
+      pending: false,
+      strategy: 'bot',
+    });
     expect(lines(view0.log)).toEqual([
       'GAME_CREATED system',
       'PHASE_STARTED system',
@@ -207,6 +244,9 @@ describe('core-v1 AI auto-pass over HTTP (AC-08)', () => {
     const s = new CoreSession(app, created.sessionId, created.view.version);
     const results = await Promise.all([s.post(pass('rebels')), s.post(pass('rebels'))]);
     expect(results.map((r) => r.status).sort()).toEqual([200, 409]);
+    // The 409 never starts the runner; the 200 carries the one automated pass.
+    const ok = results.find((r) => r.status === 200);
+    expect(SessionCommandOkSchema.parse(ok?.body).automation).toEqual(ran(1));
     const events = await expectConsecutiveEvents(app, s.id);
     expect(events.filter((e) => e.type === 'PASSED' && e.actor === 'empire')).toHaveLength(1);
     expect((await storedRow(app, s.id)).version).toBe(3);

@@ -62,10 +62,14 @@ apps/api/dev/ai                      — dev-only эндпоинты диагн�
   Тест `games/registry.consistency.test.ts` сверяет web- и серверный списки definitions.
 
 **HTTP API** (`/api`): `GET /health`; `POST /sessions { gameId, setup }` (+ необязательный заголовок `Idempotency-Key: <UUID>`)
-→ `201 { sessionId, gameId, status, settings, view }` (повтор → `200` + `Idempotent-Replay: true`);
+→ `201 { sessionId, gameId, status, settings, view, automation }` (повтор → `200` + `Idempotent-Replay: true`);
 `GET /sessions?gameId=` → `SessionSummary[]` (`{ sessionId, gameId, version, status, createdAt, updatedAt, details }`,
-`updatedAt desc`, ≤ 20); `GET /sessions/:sessionId` → `{ sessionId, gameId, status, settings, view }`;
-`POST /sessions/:sessionId/commands` → `{ ok: true, view, events }`.
+`updatedAt desc`, ≤ 20); `GET /sessions/:sessionId` → `{ sessionId, gameId, status, settings, view, automation }`;
+`POST /sessions/:sessionId/commands` → `{ ok: true, view, events, automation }`;
+`POST /sessions/:sessionId/automation/run` (тело пустое или `{}`) → `{ ok: true, view, events, automation }` (SWR-006, §7.2).
+`automation` в ответах сессии — `{ pending, strategy }` (`strategy: 'bot' | 'openai' | null`; `null` — в сессии нет
+автоматического участника); в ответах команды и run — сводка прогона `AutomationRunSummary`
+(`{ steps, pending, strategy, fallbacks, fallbackReasons, stopReason }`).
 
 Три слоя данных сессии (SWR-004): **метаданные** платформы (`status`, `gameId`, даты, ключ идемпотентности — колонки
 `Session`), **полное состояние** (`Session.setup` + `Session.state`, только сервер) и **представление** для стороны
@@ -97,8 +101,10 @@ SHA-256 канонического `{gameId, setup}` → 200-повтор с т�
 внутри — у игры: 400 схема → 409 версия → 422 правила, игровой `messageKey`; у Rebellion `core-v1` — 400 → 422 `gameOver` →
 409 → 422) → `module.statusOf(newState)` → в одной транзакции SQLite `UPDATE Session SET state, setup, version, status …
 WHERE id = ? AND version = expected` (0 строк → 409, откат) + вставка `SessionEvent` → ответ с новым `view` и
-отфильтрованными событиями. Одна команда может дать **несколько** событий и включать автоматические ходы AI (§4.3) —
-всё это один `applyCommand` и один commit.
+отфильтрованными событиями. Одна команда может дать **несколько** событий. **С SWR-006** ходы AI в `applyCommand` не
+входят: после commit команды человека тот же запрос запускает раннер автоматизации (§7.2), который делает ходы AI
+**отдельными** commit'ами (по одному на шаг); ответ — view после прогона, события человека + события AI (через
+`toPlayerEvents` человека) и сводка прогона. 409 на commit человека раннер не запускает.
 
 UI не меняет состояние «оптимистично». Все ошибки — `{ ok: false, error: { code, messageKey, details? } }`; тексты — в i18n
 клиента (`translateError`: сначала `<игра>.errors`, затем общие `errors`).
@@ -107,10 +113,11 @@ UI не меняет состояние «оптимистично». Все о�
 
 - Источник истины — JSON-снимок состояния игры в `Session.state`; `Session.version` = `module.version(state)`;
   `Session.gameId` связывает сессию с игрой (индекс `(gameId, updatedAt)`).
-- Новая сессия — версия ≥ 1 и начальные события (игра может применить автоматические ходы при создании: AI-партия
-  Rebellion за Империю создаётся с версией 2 — пас AI-Повстанцев уже применён). Каждая команда **движка** — версия + 1
-  (команда игрока + каждый авто-ход AI, Q-19); ответ несёт версию после последнего авто-хода, следующий
-  `expectedVersion` = `view.version`. Отклонённая команда ничего не меняет.
+- Новая сессия — версия ≥ 1 и начальные события. С SWR-006 `createInitialState` автоматических ходов не делает: если
+  первым ходит AI (Rebellion: человек за Империю), раннер (§7.2) сразу после вставки делает ходы AI отдельными commit'ами,
+  и ответ создания показывает состояние после прогона. Каждая команда **движка** — версия + 1 (команда игрока + каждый
+  ход AI, Q-19); ответ несёт версию после последнего хода AI, следующий `expectedVersion` = `view.version`. Отклонённая
+  команда ничего не меняет.
 - Правило «одно событие на версию» (A-15 SWR-002) действует только для `mock-v1`. В `core-v1` одна команда даёт несколько
   событий (напр. `PASSED` → `PHASE_STARTED{refresh}` → `LEADERS_RETURNED` → `TIME_ADVANCED` → `PHASE_STARTED{assignment}` →
   `PHASE_STARTED{command}`, затем авто-пас AI); инварианты — `seq` подряд без пропусков (= журнал state), версия + 1 на
@@ -162,17 +169,40 @@ UI не меняет состояние «оптимистично». Все о�
 фактической смене активной стороны и никогда при `outcome`. handoff-view — ровно 8 ключей: `kind, id, version, activeSide,
 round, phase, sessionStatus, rulesEngine` (Q-38).
 
-### 4.3 AI авто-пас (сервер, без OpenAI)
+### 4.3 AI-противник Rebellion (SWR-006; бот + опционально OpenAI)
 
-`src/server/auto-play.ts` (`runAutoPlay`) вызывается модулем игры: в `createInitialState` (`createCoreInitialState` =
-`createCoreGame(coreDataBaseV1)` + авто-ход) и в `applyCommand` после принятой `core-v1`-команды игрока (`origin: 'player'`).
-Цикл: пока партия не окончена и активна AI-сторона, политика `chooseAutoCommand` (`src/ai/auto-pass.ts`, `auto-pass-v1`)
-получает **только** `toSideView(state, aiSide)` и выбирает `PASS` (или `FINISH_ACTIVATION`) из его `legalActions`; команда
-проходит полный конвейер движка с `origin: 'auto'` (разрешён только AI-стороне AI-партии), событие —
-`actor = <AI-сторона>`, `payload.auto = true`. События ответа = события игрока + авто-ходов. Нет хода у политики, отказ
-движка или > `MAX_AUTO_STEPS` (16) шагов → throw → 500, ничего не записано (Q-27; сообщение без данных state). Инвариант
-SWR-004 сохранён: в AI-партии между командами активна сторона игрока, `handoffPending = false`; view и события в AI-партии
-всегда строятся для `playerFaction` (в т.ч. если партия закончилась на ходу AI).
+До SWR-006 AI `core-v1` только пасовал внутри `applyCommand` (`src/server/auto-play.ts`, удалён). Теперь AI-сторону
+`core-v1`-AI-партии играет **серверный раннер** (§7.2) через `ServerGameModule.automation` Rebellion
+(`src/server/automation.ts`, `createRebellionAutomation`); `createInitialState` и `applyCommand` модуля ходов AI не делают.
+
+- `isAutomated` — `rulesEngine = 'core-v1'` и `opponentType = 'ai'` (hot-seat и `mock-v1` не автоматизированы,
+  `strategy: null`); `pendingActor` — AI-сторона, когда она активна, нет `handoffPending` и партия не окончена.
+- `decisionPoint` — `buildDecision(toSideView(state, aiSide))` (`src/ai/decision.ts`): бот получает **только** view своей
+  стороны (типы бота state не принимают), строит кандидатов из `legalActions` (`src/ai/candidates.ts`), ранжирует их
+  политикой стороны и сложности (`src/ai/{rank,empire-policy,rebel-policy,profiles}.ts`), оставляет top-10 с непрозрачными
+  id `c1..cN` (завершающее действие `PASS`/`FINISH_ACTIVATION` всегда в списке), `fallbackCandidateId = 'c1'` (выбор
+  бота), `policyId = 'rebellion-bot-v1:<difficulty>'`. `objective`/`situation`/`summary` — английский текст только из
+  view AI-стороны (`src/ai/describe.ts`); сложность в `situation` названа нейтрально («game difficulty setting: …»), без
+  «bot difficulty», чтобы модель не читала её как указание играть слабо (review F-8).
+- `applyCandidate` — заново строит то же решение (детерминированно), id → команда → полный конвейер движка с
+  `origin: 'auto'` и `expectedVersion = state.version` (`origin: 'auto'` разрешён только AI-стороне AI-партии, событие —
+  `actor = <AI-сторона>`). Человек не может сходить за AI: `applyCommand` модуля всегда `origin: 'player'`.
+- Детерминизм: случайность бота — засеянный PRNG от `view.id#version` (`src/ai/random.ts`); часы и энтропия в
+  `packages/games/*/src/ai/**` запрещены ESLint (B-6). Сложность (`easy | normal | hard`) — веса и знания профиля
+  (`profiles.ts`); калибровка — симуляции `test/ai/sim/**`.
+- **Знания бота-Империи о базе** (`src/ai/intel.ts`) — только из своего view и журнала: видимые юниты Повстанцев,
+  отредактированный журнал, собственные обыски. Два источника приняты решениями Analyst:
+  - **Q-BE-4** (только `hard`): публичное правило стартовой расстановки (база не в системах со стартовыми имперскими
+    юнитами и не рядом с ними), восстановленное из своего журнала, — знание правил, не скрытая информация; `easy`/`normal`
+    его не используют (часть разницы сложностей).
+  - **Q-BE-5** (`normal`/`hard`): отредактированное событие SWR-005 «ход Повстанцев из S в скрытую зону» оставляет
+    видимой систему-источник S ⇒ база смежна с S. Это публичная часть представления (то же видит человек за Империю);
+    изменение redaction — вне SWR-006 (known limitation, §9); если его поменяют, бот просто перестанет получать подсказку.
+
+Инвариант SWR-004 сохранён между прогонами: когда ход у человека, активна его сторона, `handoffPending = false`; view и
+события в AI-партии всегда строятся для `playerFaction` (в т.ч. если партия закончилась на ходу AI). Старая политика
+`auto-pass-v1` (`src/ai/auto-pass.ts`) осталась только для тестов (`createRebellionServerModule({ automation: { policy } })`,
+golden-партии SWR-005 побайтно не изменились).
 
 Настройки (SWR-004): фракции `rebels | empire`; клиент шлёт `{ playerFaction, opponentType, aiDifficulty?, ruleset, gameMode }`,
 сервер вычисляет `opponentFaction = opponentOf(playerFaction)`; `ruleset: 'rise-of-the-empire'` и `gameMode: 'physical_companion'`
@@ -219,10 +249,10 @@ Pan/zoom/drag — локальное состояние клиента (Zustand)
 
 AI-сторона получает свой `PlayerView` (без секретов человека), выбирает действие **из `legalActions`**, строит такой же конверт
 команды и проходит ту же цепочку валидация → `applyCommand` → транзакция → журнал. Отдельного «AI-пути» мутации состояния нет.
-С SWR-005 это реализовано для детерминированного авто-паса `core-v1` (§4.3) внутри модуля игры; будущий AI Commander
-подставляется как другая `AutoPolicy` (`(view) => Command | null`).
+С SWR-006 ходы AI делает game-agnostic раннер сервера (§7.2) через `GameAutomation` игры: игра строит кандидатов из view
+своей AI-стороны, стратегия сервера (бот или OpenAI) только выбирает один из них.
 Параметры стратегии — данные `@bga/game-<id>/ai` (у Rebellion — уровни сложности и веса целей). OpenAI SDK и ключ — только в
-`apps/api/src/ai` (§7.1); к ходу партии AI-слой пока не подключён (SWR-005B — только dev-диагностика).
+`apps/api/src/ai` (§7.1); к ходу партии AI-слой подключает стратегия `openai` раннера (§7.2), если она включена.
 
 ### 7.1 Серверный AI-слой (`apps/api/src/ai`, SWR-005B)
 
@@ -271,6 +301,62 @@ AI-сторона получает свой `PlayerView` (без секрето�
   OpenAI без тестового fake fetch отклоняется ещё при сборке модуля (и `createOpenAIClient` тоже) — тест не может уйти в сеть.
   Тестовые overrides (`createApp({ ai })`: fake fetch для настоящего SDK, mock-скрипт, часы, sink логов, лимиты частоты)
   запрещены при `nodeEnv: 'production'` (`ProductionOverridesError`).
+
+### 7.2 Раннер автоматизации и стратегии AI Commander (`apps/api/src/sessions/automation`, SWR-006)
+
+Контракт платформы — `packages/platform/src/automation.ts`: необязательное `ServerGameModule.automation: GameAutomation`
+(`isAutomated`, `pendingActor`, `decisionPoint`, `applyCandidate`), схема точки решения `AutomationDecisionPoint`
+(`actor`, `phase`, `objective`, `situation` ≤ 4000, 1..10 кандидатов `{ id, type, target?, summary }`,
+`fallbackCandidateId`, `policyId`), коды `AutomationFallbackCode`, `AutomationStopReason`, сводка `AutomationRunSummary`.
+Ни платформа, ни `apps/api/src/sessions/**` не знают слов и данных конкретной игры (`architecture.int.test.ts`).
+Как реализовать `GameAutomation` в игре — [`adding-a-game.md`](adding-a-game.md) §5.2.
+
+**Раннер** (`AutomationRunner`, `automation-runner.service.ts`):
+
+- Кто запускает: `POST /api/sessions` (сразу после вставки), `POST …/commands` (после commit человека),
+  `POST …/automation/run` (идемпотентно: нечего делать → `steps: 0`, `stopReason: 'none'`; клиент вызывает его, когда
+  `automation.pending: true`, например после перезапуска сервера или прерванного прогона). Повтор создания по
+  `Idempotency-Key` и `GET` раннер не запускают.
+- Шаг: прочитать строку → `pendingActor` → `decisionPoint` (валидируется схемой платформы; невалидная точка — ошибка
+  программы, модели не отправляется, `stopReason: 'error'`) → стратегия выбирает id → `applyCandidate` → commit с
+  optimistic-guard версии (та же запись, что у команды человека: setup, status, события; `session-writer.ts`). Отказ
+  движка на выбор стратегии → одна повторная попытка с выбором бота (`AI_INVALID_DECISION`); второй отказ → `error`.
+- Остановка: ход человека (`humanTurn`), конец партии (`gameOver`), `AI_COMMANDER_MAX_STEPS` шагов (`stepLimit`, ход AI
+  продолжит следующий прогон), проигранная гонка за версию (`conflict` + перечитанное состояние), ошибка (`error`,
+  `pending` остаётся true). 0 шагов → `none`.
+- Один прогон на сессию в процессе (`KeyedMutex`): второй вызывающий ждёт, перечитывает строку и находит `steps: 0` — без
+  дублей ходов и платных вызовов. Каждый шаг — свой commit, поэтому прерванный прогон не теряет принятых ходов.
+- **Принятый запрос никогда не превращается в 500 из-за автоматизации.** Все три вызывающих идут через общий guard
+  `settleRun` (`automation/settle-run.ts`, review F-1; `bestEffortEnvelope` для `{ pending, strategy }` ответа создания):
+  исключение раннера или `pendingActor` игры → 201/200 с последним известным состоянием, `stopReason: 'error'` и
+  `pending: true` (best effort; клиент может повторить `automation/run`), лог `code=AUTOMATION_ERROR`. Регрессия —
+  `apps/api/test/automation-create-guard.int.test.ts`.
+
+**Стратегии** (`commander-strategy.ts`, `openai-commander.strategy.ts`; выбор — `AI_COMMANDER_PROVIDER`):
+
+- `bot` (по умолчанию) — выбор бота игры (`fallbackCandidateId`), бесплатно, детерминированно, без сетевых вызовов.
+- `openai` — поверх неизменного `AiDecisionService.decide(ctx, 'auto')` (§7.1) с промптом `purpose: 'commander'`
+  (`ai/prompt.ts` копирует whitelist полей; `sessionId`, `policyId` и версия в промпт не попадают), ролью модели
+  `AI_COMMANDER_MODEL_ROLE` и `budgetKey = sessionId`. Любой сбой → выбор бота с кодом D-PO-3 (`AI_TIMEOUT`,
+  `AI_RATE_LIMITED`, `AI_PROVIDER_ERROR`, `AI_INVALID_DECISION`, `AI_NOT_CONFIGURED`, `AI_BUDGET_EXCEEDED`, `AI_DEADLINE`);
+  партия из-за модели не останавливается. `< 2` кандидатов → бот без вызова. После `AI_NOT_CONFIGURED`,
+  `AI_BUDGET_EXCEEDED`, `AI_DEADLINE` или исчерпанной квоты остаток прогона — бот без вызовов; после таймаута / 429 / 5xx /
+  невалидного ответа следующий шаг снова пробует модель. Дедлайн прогона `AI_COMMANDER_RUN_DEADLINE_MS` —
+  `Promise.race` без отмены (AM-BE-5). `reason` модели отбрасывается (не хранится, не логируется, не показывается).
+- **Бюджет — на сессию:** `AiUsage.budgetKey = sessionId`, лимит `OPENAI_MAX_COST_PER_SESSION_USD`, резерв худшего случая
+  и строка `AiUsage` на каждый вызов — как в §7.1. Ключ dev-диагностики (`dev-diagnostics`) отдельный и с сессиями не
+  смешивается. `openai` допустим только при `OPENAI_ENABLED=true` (поэтому невозможен в `NODE_ENV=test`); тесты и e2e
+  работают с `bot` (`scripts/e2e-env.mjs`).
+- Тестовые overrides (`createApp({ automation: { strategy, logSink } })`) запрещены в production (`ProductionOverridesError`).
+
+**Логи** (`automation-log.ts`, Nest `Logger('Automation')`, allow-list): `automation.step sessionId gameId step strategy
+source fallbackCode durationMs code`, `automation.run sessionId gameId steps fallbacks stopReason durationMs`,
+`automation.error sessionId gameId step code [error=<имя класса>]` (`ENGINE_REJECTED`, `CONFLICT`, `AUTOMATION_ERROR`,
+`INVALID_DECISION_POINT`, `INVALID_STATUS`, `STRATEGY_ERROR`). Никогда: кандидаты, команды, данные партии, тексты
+`situation`/`summary`, ответы модели, сообщения исключений. Неожиданная ошибка стратегии `openai` логируется с `sessionId`
+прогона (= `AiUsage.budgetKey`; review F-5); `gameId` и `step` стратегия не знает — в этой строке они `?` и `0`, шаг видно
+по соседней строке `automation.step` той же сессии. `sessionId` в серверных логах и `AiUsage` допустим (Q-BE-1), в запрос
+к модели он не попадает.
 
 **Dev-only эндпоинты** (`apps/api/src/dev/ai`, модуль подключается только при `NODE_ENV !== 'production'`; в production — 404):
 `GET /api/dev/ai/status` (провайдер, `keyConfigured` — только флаг, модели и их доступность, бюджет) и
@@ -346,16 +432,23 @@ Prisma ≤ 6). CI: `.github/workflows/ci.yml` — `pnpm verify` + `check-task` �
     (`test/setup/blank-openai-env.ts`), окружение e2e-API и его дочерних `prisma migrate deploy`/`tsc`
     (`scripts/e2e-env.mjs` → `buildE2eEnv`, `NODE_ENV=test`), дочерний `prisma migrate deploy` в `test/global-setup.ts`
     (тот же `buildE2eEnv`). Проверки — `test/env-isolation.int.test.ts` (только наличие/пустота, значения не читаются).
+- **AI Commander (SWR-006)** — проверяются всегда (независимо от `OPENAI_ENABLED`), пустое = по умолчанию:
+  `AI_COMMANDER_PROVIDER` (`bot | openai`, `bot`; `openai` требует принятого `OPENAI_ENABLED=true`),
+  `AI_COMMANDER_MODEL_ROLE` (`tactical | strategy`, `tactical` — какую из `OPENAI_*_MODEL` использовать),
+  `AI_COMMANDER_MAX_STEPS` (1..256, 64 — шагов AI за один прогон), `AI_COMMANDER_RUN_DEADLINE_MS` (1000..120000, 45000 —
+  время на вызовы OpenAI в одном прогоне; после него прогон доигрывает бот). Результат — `AppConfig.aiCommander`.
 
 ## 9. Известные ограничения
 
-Нет авторизации и изоляции сессий; hot-seat — доверительный (кто держит устройство, не проверяется); AI-соперник сохраняет
-сложность, но в `core-v1` только авто-пасует (AI Commander — Этап F; победа Империи против AI-Повстанцев в срезе
-недостижима), в `mock-v1` не ходит; Rise of the Empire и режим с физическими компонентами — только 422; правила `core-v1` —
+Нет авторизации и изоляции сессий; hot-seat — доверительный (кто держит устройство, не проверяется); AI-соперник в
+`core-v1` играет ботом (или OpenAI-стратегией) в пределах среза правил, в `mock-v1` не ходит; бот-Империя использует
+публичное правило стартовой расстановки (только `hard`, Q-BE-4) и подсказку «ход Повстанцев из S в скрытую зону» ⇒ база
+рядом с S (`normal`/`hard`, Q-BE-5 — следствие redaction SWR-005, вне SWR-006); OpenAI-стратегия: дедлайн прогона без
+отмены вызова (проигравший гонку вызов держит резерв бюджета до своего завершения, AM-BE-5), раннер и `KeyedMutex` — в
+пределах одного процесса API; Rise of the Empire и режим с физическими компонентами — только 422; правила `core-v1` —
 срез «раунд + активация» (без боя, миссий, производства; отклонения D-1…D-7 в `docs/game-rules/rebellion-core-v1.md`),
 старые партии — mock-правила на вымышленной карте; Forbidden Stars —
 только карточка каталога; SQLite и один процесс API (в т.ч. AI-бюджет гарантирован только в пределах одного процесса —
-резервы в памяти, §7.1); AI-слой OpenAI подключён только к dev-диагностике (не к ходу партии), бюджет копится до ручного
-сброса скриптом; сборка API — CommonJS (NestJS 12 грузится через `require(esm)`; перевод `apps/api` на ESM — отдельной
-задачей при необходимости); `i18next` 26 / `react-i18next` 17 придержаны (SWR-007: новые мажоры ужесточили типы ключей
-перевода — правки в Rebellion-UI после SWR-006).
+резервы в памяти, §7.1); бюджет OpenAI (сессий и dev) копится до ручного сброса скриптом; сборка API — CommonJS (NestJS 12
+грузится через `require(esm)`; перевод `apps/api` на ESM — отдельной задачей при необходимости); `i18next` 26 /
+`react-i18next` 17 придержаны (SWR-007: новые мажоры ужесточили типы ключей перевода — правки в Rebellion-UI после SWR-006).

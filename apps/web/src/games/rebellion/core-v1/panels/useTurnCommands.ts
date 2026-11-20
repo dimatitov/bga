@@ -8,6 +8,8 @@ import { REBELLION_ERRORS_NS } from '../../i18n';
 import { reportCommandFailure } from '../../board';
 import type { CommandOutcome } from '../../board/model/boardContext';
 import { IGNORED_CODE } from '../../board/model/commandFeedback';
+import type { SendOutcome } from '../../table/hooks/useSendCommand';
+import { aiSummaryText } from '../model/aiCommander';
 import { announcementI18n, announcementsFor, endsGame } from '../model/announcements';
 import { useCoreBoard } from '../model/coreContext';
 import { useCoreUiStore } from '../model/coreUiStore';
@@ -45,7 +47,7 @@ export function responseAnnouncements(
   view: PlayerViewCore,
   events: readonly PlayerEvent[],
 ): string[] {
-  return announcementsFor(events, view.viewer)
+  return announcementsFor(events, view.viewer, view.settings)
     .filter((a) => exists(announcementI18n(a).key))
     .map((a) => announcementText(a, t, view));
 }
@@ -64,7 +66,8 @@ export function responseEndedGame(
 
 /**
  * The four `core-v1` turn commands (ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION / PASS) with the feedback
- * and focus rules of plan-frontend §5.3. Every command is built from what the caller took out of `legalActions`;
+ * and focus rules of plan-frontend §5.3. SWR-006: when the AI moved in the same response (`automation.steps > 0`)
+ * its summary «Ход AI: N действий» is read out with the rest (the `run` path is announced by `CoreTable`). Every command is built from what the caller took out of `legalActions`;
  * nothing is validated here — the server is the judge, its 422 reason is returned for inline display.
  */
 export function useTurnCommands() {
@@ -77,7 +80,7 @@ export function useTurnCommands() {
       onSuccess: (next: PlayerViewCore | null, events: PlayerEvent[]) => string | null,
       /** Where an inline rejection text goes; without it every rejection goes to the snackbar. */
       showInline?: (text: string | null) => void,
-    ): Promise<CommandOutcome> => {
+    ): Promise<SendOutcome> => {
       const outcome = await send(command);
       if (outcome.ok) {
         const next =
@@ -85,10 +88,11 @@ export function useTurnCommands() {
             ? outcome.view
             : null;
         const own = onSuccess(next, outcome.events);
+        const summary = outcome.automation ? aiSummaryText(t, outcome.automation) : null;
         const extra = next
           ? responseAnnouncements(t, (k) => i18n.exists(k), next, outcome.events)
           : [];
-        const text = [own, ...extra].filter(Boolean).join(' ');
+        const text = [own, summary, ...extra].filter(Boolean).join(' ');
         if (text) announce(text);
         return outcome;
       }

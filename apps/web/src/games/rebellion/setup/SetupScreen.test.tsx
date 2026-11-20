@@ -228,6 +228,7 @@ describe('Rebellion SetupScreen (SWR-004 §2)', () => {
       status: 'prototype',
       settings,
       view,
+      automation: { pending: false, strategy: null },
     });
   });
 

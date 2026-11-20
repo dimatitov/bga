@@ -1,0 +1,69 @@
+=== SWR-006/BV-1 fix — 2026-11-20T09:39:51Z
+
+$ pnpm --filter @bga/web test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  67 passed (67)
+      Tests  598 passed (598)
+   Start at  12:39:52
+   Duration  30.65s (transform 12.40s, setup 29.57s, import 53.42s, tests 79.59s, environment 75.97s)
+
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+exit=0
+
+$ pnpm exec eslint apps/web --max-warnings=0
+exit=0
+
+$ pnpm exec prettier --check apps/web/src/games/rebellion/locales/ru/setup.json apps/web/src/games/rebellion/locales/en/setup.json apps/web/src/games/rebellion/locales.i18n.test.ts
+Checking formatting...
+[warn] apps/web/src/games/rebellion/locales.i18n.test.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+exit=1
+
+$ grep -rnE "AI не ходит|AI does not move|Сохраняется для AI|Saved for the AI" e2e
+e2e/ai-commander.spec.ts:171:/** Activation (no move) of the viewer through the API; the AI does not move in this response. */
+
+=== re-run after prettier --write (zsh array fix) — 2026-11-20T09:40:51Z
+
+$ pnpm --filter @bga/web test
+
+> @bga/web@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> vitest run --passWithNoTests
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  67 passed (67)
+      Tests  598 passed (598)
+   Start at  12:40:52
+   Duration  29.98s (transform 11.84s, setup 27.85s, import 51.49s, tests 81.00s, environment 72.29s)
+
+exit=0
+
+$ pnpm --filter @bga/web typecheck
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+exit=0
+
+$ pnpm exec eslint apps/web --max-warnings=0
+exit=0
+
+$ pnpm exec prettier --check apps/web/src/games/rebellion/locales/ru/setup.json apps/web/src/games/rebellion/locales/en/setup.json apps/web/src/games/rebellion/locales.i18n.test.ts
+Checking formatting...
+All matched files use Prettier code style!
+exit=0

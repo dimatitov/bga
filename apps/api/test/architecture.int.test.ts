@@ -87,6 +87,20 @@ describe('architecture boundaries (SWR-004)', () => {
     expect(GAME_RESULT_TERMS.test('const outcome = await repo.insert(x);')).toBe(false);
   });
 
+  it('SWR-006 TC-PL-01 / TC-PL-02: the session service and its automation runner know no game (words, imports)', () => {
+    const sessionsDir = join(API_SRC, 'sessions');
+    const automationDir = join(sessionsDir, 'automation');
+    expect(sourceFiles(automationDir).length).toBeGreaterThanOrEqual(5);
+    // Comments included: not even a game's vocabulary in the game-agnostic runner and strategies.
+    const words =
+      /rebel|empire|rebellion|ruleset|gameMode|faction|leader|base system|activat|forbidden/i;
+    expect(offending(sessionsDir, words)).toEqual([]);
+    const gameImport = /from\s+['"]@bga\/game-|import\(\s*['"]@bga\/game-|['"][./]*\/packages\//;
+    expect(offending(sessionsDir, gameImport)).toEqual([]);
+    expect(words.test('// the Rebels move')).toBe(true);
+    expect(gameImport.test("import { x } from '@bga/game-rebellion/server';")).toBe(true);
+  });
+
   it('TC-A-02 (SWR-005B §8): the openai package is imported only in apps/api/src/ai/**', () => {
     const outsideAi = offendingCode(API_SRC, IMPORTS_OPENAI).filter(
       (hit) => !relative(API_SRC, hit).startsWith(`ai${sep}`),

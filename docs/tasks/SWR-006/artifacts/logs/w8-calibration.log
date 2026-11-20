@@ -1,0 +1,414 @@
+# SWR-006 W8 — bot simulations, calibration, difficulty metrics (backend-worker Rules/AI, 2026-11-19)
+# Harness: packages/games/rebellion/test/ai/sim/harness.ts — createRebellionServerModule() (production module, bot policy) +
+# its `automation`, exactly like the server runner with the `bot` strategy: pendingActor → decisionPoint (validated with
+# AutomationDecisionPointSchema) → fallbackCandidateId → applyCandidate({ now }); one run per human command, bounded by 64 steps.
+# Human seat: module.applyCommand (origin 'player') with scripts E-PASSIVE, E-HUNT (full-knowledge oracle), R-PASSIVE, R-ACTIVE,
+# or the bot itself (bot-vs-bot). Seeds: DIFF_SEEDS swr006-d01..d20, PROP_SEEDS swr006-p01..p30 (frozen, test/ai/sim/seeds.ts).
+# Thresholds: test-cases.md §7/§10 (frozen, Q-3) — not changed; TC-DIF-07 counted before the reveal only (Analyst decision).
+
+## Metrics table (DIFF_SEEDS, 20 games per cell; values from the run below)
+
+AI Rebels (human Empire E-PASSIVE / E-HUNT)          | easy        | normal      | hard        | threshold (test-cases.md)
+-----------------------------------------------------|-------------|-------------|-------------|------------------------------------------
+games with an empty base, vs E-PASSIVE               | 16/20       | 0/20        | 0/20        | easy ≥ 4; normal = 0; hard = 0   (DIF-02/03/01)
+games with an empty base, vs E-HUNT                  | 16/20       | 6/20        | 0/20        | easy ≥ 8; 1 ≤ normal < easy; hard = 0
+empty-base STATES in 40 games (E-PASSIVE + E-HUNT)   | 1085        | 14          | 0           | hard = 0                         (DIF-01)
+normal emptyings without threat                      | -           | 0           | -           | 0                                (DIF-03)
+mean Rebel moves out of the base per game (40 games) | 1.80        | 0.15        | 0.00        | easy > hard, easy ≥ normal       (DIF-04)
+Empire wins vs E-HUNT                                | 16/20       | 6/20        | 0/20        | easy ≥ 1, normal ≥ 1, hard = 0   (OUT-04/05/07)
+Empire wins vs E-PASSIVE                             | 0/20        | 0/20        | 0/20        | -
+
+AI Empire (human Rebels R-PASSIVE)                   | easy        | normal      | hard        | threshold
+-----------------------------------------------------|-------------|-------------|-------------|------------------------------------------
+bases revealed                                       | 19/20       | 20/20       | 20/20       | hard ≥ easy, hard ≥ 4            (DIF-05)
+mean reveal round (14 = never)                       | 7.35        | 5.70        | 3.10        | hard ≤ easy, one strict          (DIF-05)
+pre-reveal activations / round (mean per game)       | 2.69        | 3.57        | 3.33        | easy < hard                      (DIF-07)
+pre-reveal activations with ground / of searched     | -           | -           | 209/209 / 0 | ≥ 90 % / 0                       (DIF-06)
+Rebel wins on time (R-PASSIVE)                       | 20/20       | 20/20       | 20/20       | all (brief, OUT-01 engine half)
+rounds with ≥ 1 AI activation per game (min of 20)   | 12          | 13          | 13          | ≥ 10 of 13                       (OUT-01)
+
+Decision differences (TC-DIF-08): AI-turn states of the normal DIFF_SEEDS games (AI Rebels vs E-PASSIVE/E-HUNT + AI Empire vs
+R-PASSIVE/R-ACTIVE), FB recomputed with aiDifficulty overridden in a copy:
+  states=6582  FB_easy≠FB_hard = 43.3 % (≥ 20 %)  FB_easy≠FB_normal = 42.3 % (≥ 10 %)
+  by side: Empire 5770 states (easy≠hard 2201, easy≠normal 2141); Rebels 812 states (easy≠hard 646, easy≠normal 640)
+TC-DIF-09: DIFF_SEEDS bases = dantooine, endor, ilum, nal-hutta, rodia, ryloth, tatooine, utapau (8 ≥ 6).
+
+## Calibration done (vs W6 weights)
+
+Only one change was needed; every AC-06 threshold already held with W6's weights (first measurement, before any change:
+DIF-01 0 states; DIF-02 16/16; DIF-03 0 / 6 / noThreat 0; DIF-04 1.80/0.15/0.00; DIF-05 19/20/20, 7.35/5.70/3.10; DIF-06
+209/209, 0; DIF-07 2.69/3.57/3.33 (pooled 2.57/3.63/3.37); OUT-04 16/20; OUT-05 6/20; OUT-07 0/20).
+Gap found: TC-OUT-01 (frozen: AI-Empire activates in ≥ 10 of 13 rounds) FAILED for hard on 7/20 DIFF_SEEDS (9 rounds) — after
+converging all its forces into the revealed base the hard Empire had nothing left to do and passed out rounds 10..13
+(normal min was exactly 10). Fix (src/ai/empire-policy.ts + profiles.ts, new profile knob `cordon`): post-reveal "cordon" for
+normal/hard — once the base is held (own ground there) and not pinned, ACTIVATE an empty neighbour of the base (0.3, below
+converge 0.5/0.6 and assault 1.5/1.6, above PASS 0.05/0.01) and MOVE only the ships out (`ships-only`, 0.8; the ground never
+leaves, so the base stays held); the next round the reinforcement (converge.base) brings them back. easy: cordon 0 (unchanged).
+After: rounds with an AI activation — easy min 12, normal 13, hard 13 (all 20 seeds). Pre-reveal behaviour is untouched
+(DIF-05/06/07 identical), the AI-Rebel side is untouched (DIF-01..04, OUT-04/05/07 identical, fixture seeds identical).
+Plan deviation to accept (like W6 pull-forces): §4.5 has no post-reveal "cordon" row — recorded here, flagged in the report.
+
+## Empire-win seed fixtures for W9 (TC-OUT-06)
+packages/games/rebellion/test/ai/sim/fixtures/empire-win-seeds.json (+ typed wrapper empire-win-seeds.ts; verified by
+test/ai/sim/fixtures.test.ts, regenerated only with UPDATE_SIM_FIXTURES=1). Script E-HUNT (human Empire), AI Rebels.
+Each entry: sessionId, base (oracle), winner/reason, finalRound, finalVersion, humanCommands (exact Empire command sequence).
+  easy  : swr006-d01(base ilum, r6, v59, 11 cmds), swr006-d02(base ryloth, r3, v33, 11 cmds), swr006-d04(base utapau, r4, v36, 9 cmds), swr006-d05(base tatooine, r3, v29, 11 cmds), swr006-d06(base endor, r5, v45, 10 cmds), swr006-d07(base dantooine, r6, v55, 11 cmds), swr006-d08(base rodia, r2, v19, 7 cmds), swr006-d09(base nal-hutta, r2, v19, 7 cmds), swr006-d10(base dantooine, r6, v49, 11 cmds), swr006-d14(base rodia, r2, v15, 7 cmds), swr006-d15(base ryloth, r3, v27, 11 cmds), swr006-d16(base ilum, r6, v57, 11 cmds), swr006-d17(base nal-hutta, r2, v17, 7 cmds), swr006-d18(base ilum, r6, v59, 11 cmds), swr006-d19(base nal-hutta, r2, v17, 7 cmds), swr006-d20(base dantooine, r6, v44, 11 cmds)
+  normal: swr006-d05(base tatooine, r3, v20, 11 cmds), swr006-d06(base endor, r5, v29, 10 cmds), swr006-d13(base utapau, r4, v24, 9 cmds), swr006-d16(base ilum, r6, v34, 11 cmds), swr006-d17(base nal-hutta, r2, v15, 7 cmds), swr006-d18(base ilum, r6, v34, 11 cmds)
+  WIN_SEED_EASY = swr006-d01  WIN_SEED_NORMAL = swr006-d05
+
+## Commands (run from the repo root unless noted; zsh; exit codes captured with $?)
+
+$ pnpm --filter @bga/game-rebellion test
+Test Files  58 passed (58)
+Tests  510 passed (510)
+Duration  31.99s (transform 4.58s, setup 0ms, import 21.44s, tests 109.92s, environment 6ms)
+exit=0
+
+$ pnpm --filter @bga/game-rebellion typecheck
+> tsc -p tsconfig.test.json
+
+exit=0
+
+$ pnpm exec eslint packages/games/rebellion --max-warnings=0
+exit=0 (no output)
+
+$ pnpm exec prettier --check packages/games/rebellion/src/ai/{profiles,empire-policy,index}.ts "packages/games/rebellion/test/ai/sim/**"
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ git diff --stat packages/games/rebellion/test/fixtures   (SWR-005 golden files untouched)
+(empty)
+
+## Sim files — per-file time (cd packages/games/rebellion && pnpm exec vitest run test/ai/sim --reporter=default) exit=0
+✓ test/ai/sim/fixtures.test.ts (1 test) 1199ms
+✓ test/ai/sim/determinism.test.ts (4 tests) 2417ms
+✓ test/ai/sim/legal.test.ts (2 tests) 4233ms
+✓ test/ai/sim/choice.test.ts (1 test) 9951ms
+✓ test/ai/sim/difficulty.test.ts (15 tests) 10912ms
+✓ test/ai/sim/termination.test.ts (13 tests) 25854ms
+Test Files  6 passed (6)
+Tests  36 passed (36)
+Duration  26.86s (transform 2.39s, setup 0ms, import 3.88s, tests 54.57s, environment 1ms)
+
+## Sim summary lines (cd packages/games/rebellion && pnpm exec vitest run test/ai/sim --reporter=verbose --silent=false) exit=0
+[w8-metrics] TC-DIF-09 bases=dantooine,endor,ilum,nal-hutta,rodia,ryloth,tatooine,utapau (8)
+[w8-metrics] TC-DIF-01 hard emptyBaseStates=0 (40 games)
+[w8-termination] bot-vs-bot E:easy/R:easy maxRun=13 outcomes=e7 r14 r14 e8 r14 e6 r14 e3 r14 r14 r14 r14 r14 r14 r14 r14 e6 r14 e5 e6 r14 r14 e2 r14 e4 r14 r14 r14 r14 e5
+[w8-determinism] TC-DET-03 easy picks differing after version+1: 19/20
+[w8-determinism] TC-DET-05 swr006-p01 normal/normal hash=2669f596 version=114 outcome={"winner":"rebels","reason":"timeReachedReputation"}
+[w8-metrics] TC-DIF-02 easy emptyBaseGames E-HUNT=16/20 E-PASSIVE=16/20
+[w8-property] FULL games=27 states=2902 candidates=108863 rejected=0
+[w8-metrics] TC-DIF-03 normal emptyBaseGames E-PASSIVE=0/20 E-HUNT=6/20 (easy 16) emptyingsWithoutThreat=0
+[w8-metrics] TC-DIF-04 movesOutOfBase/game easy=1.80 normal=0.15 hard=0.00
+[w8-termination] bot-vs-bot E:easy/R:normal maxRun=13 outcomes=r14 r14 r14 r14 r14 r14 r14 r14 r14 e5 r14 r14 r14 e7 r14 r14 r14 r14 e5 e5 r14 e10 e6 e7 r14 r14 r14 r14 r14 e5
+[w8-property] TOP-10 games=30 decisionPoints=1646 commands=9585 rejected=0
+[w8-termination] bot-vs-bot E:easy/R:hard maxRun=13 outcomes=r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14
+[w8-termination] bot-vs-bot E:normal/R:easy maxRun=13 outcomes=e2 e5 r14 e3 e5 e2 e7 e3 r14 e10 e6 e7 r14 r14 e2 e5 e5 e2 e5 e7 e9 e8 e2 r14 e3 e5 r14 e4 e8 e5
+[w8-termination] bot-vs-bot E:normal/R:normal maxRun=13 outcomes=r14 e5 r14 e4 r14 r14 r14 r14 r14 e5 r14 r14 r14 e6 e2 r14 r14 r14 e5 e5 r14 e7 e2 e6 r14 r14 r14 e3 e7 e5
+[w8-termination] bot-vs-bot E:normal/R:hard maxRun=13 outcomes=r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14
+[w8-termination] bot-vs-bot E:hard/R:easy maxRun=10 outcomes=e2 e4 r14 e3 e5 e2 e6 e3 r14 e4 e6 e4 r14 r14 e2 e5 e3 e2 e5 e4 e3 e4 e2 r14 e3 e5 r14 e3 e4 e5
+[w8-metrics] TC-DIF-08 states=6582 easy≠hard=0.433 easy≠normal=0.423 bySide={"empire":{"states":5770,"easyHard":2201,"easyNormal":2141},"rebels":{"states":812,"easyHard":646,"easyNormal":640}}
+[w8-termination] bot-vs-bot E:hard/R:normal maxRun=13 outcomes=r14 e4 r14 e3 r14 r14 r14 r14 r14 e4 r14 r14 r14 e6 e2 r14 r14 r14 e5 e4 r14 e4 e2 e6 r14 r14 r14 e3 e4 e5
+[w8-metrics] TC-DIF-05 revealed easy=19 normal=20 hard=20; mean revealRound easy=7.35 normal=5.70 hard=3.10
+[w8-metrics] TC-DIF-06 hard activations=209 withGround=209 ofSearched=0
+[w8-metrics] TC-DIF-07 activations/round before reveal easy=2.69 normal=3.57 hard=3.33
+[w8-metrics] TC-OUT-01(engine) easy rounds with an AI activation per game: 13,13,12,12,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13
+[w8-metrics] TC-OUT-01(engine) normal rounds with an AI activation per game: 13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13
+[w8-metrics] TC-OUT-01(engine) hard rounds with an AI activation per game: 13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13
+[w8-metrics] TC-OUT-04 easy Empire wins 16/20: swr006-d01,swr006-d02,swr006-d04,swr006-d05,swr006-d06,swr006-d07,swr006-d08,swr006-d09,swr006-d10,swr006-d14,swr006-d15,swr006-d16,swr006-d17,swr006-d18,swr006-d19,swr006-d20
+[w8-metrics] TC-OUT-05 normal Empire wins 6/20: swr006-d05,swr006-d06,swr006-d13,swr006-d16,swr006-d17,swr006-d18
+[w8-termination] bot-vs-bot E:hard/R:hard maxRun=14 outcomes=r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14 r14
+[w8-termination] human E-PASSIVE vs AI rebels:easy maxRun=9 wins={"empire":0,"rebels":30}
+[w8-termination] human E-PASSIVE vs AI rebels:normal maxRun=4 wins={"empire":0,"rebels":30}
+[w8-termination] human E-PASSIVE vs AI rebels:hard maxRun=4 wins={"empire":0,"rebels":30}
+[w8-termination] human E-HUNT vs AI rebels:easy maxRun=9 wins={"empire":24,"rebels":6}
+[w8-termination] human E-HUNT vs AI rebels:normal maxRun=4 wins={"empire":13,"rebels":17}
+[w8-termination] human E-HUNT vs AI rebels:hard maxRun=4 wins={"empire":0,"rebels":30}
+[w8-termination] human R-PASSIVE vs AI empire:easy maxRun=13 wins={"empire":0,"rebels":30}
+[w8-termination] human R-PASSIVE vs AI empire:normal maxRun=13 wins={"empire":0,"rebels":30}
+[w8-termination] human R-PASSIVE vs AI empire:hard maxRun=14 wins={"empire":0,"rebels":30}
+[w8-termination] human R-ACTIVE vs AI empire:easy maxRun=10 wins={"empire":0,"rebels":30}
+[w8-termination] human R-ACTIVE vs AI empire:normal maxRun=10 wins={"empire":0,"rebels":30}
+[w8-termination] human R-ACTIVE vs AI empire:hard maxRun=10 wins={"empire":0,"rebels":30}
+
+## Sim test cases
+✓ test/ai/sim/difficulty.test.ts > TC-DIF-09 precondition — DIFF_SEEDS bases > the bases of DIFF_SEEDS cover ≥ 6 different systems 772ms
+✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > same sessionId + same human script → byte-identical final state, log and every intermediate state 1078ms
+✓ test/ai/sim/fixtures.test.ts > Empire-win seed fixtures for W9 (TC-OUT-04/05/06) > match a fresh simulation (E-HUNT vs AI Rebels easy / normal on DIFF_SEEDS) 1199ms
+✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > another sessionId gives another game (seed and base depend on the session) 186ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Rebels (TC-DIF-01..04) > TC-DIF-01: hard never leaves the base empty — 0 empty-base states in 40 games 789ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:easy/R:easy: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 2083ms
+✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > TC-DET-03: the seed depends on the version — easy chooses differently in ≥ 1 of 20 DIFF_SEEDS states 1164ms
+✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > TC-DET-05: golden hash of bot-vs-bot swr006-p01 (normal / normal) 48ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Rebels (TC-DIF-01..04) > TC-DIF-02: easy empties the base in ≥ 8/20 games vs E-HUNT and ≥ 4/20 vs E-PASSIVE 955ms
+✓ test/ai/sim/legal.test.ts > TC-BOT-01 — every candidate is engine-legal (bot-vs-bot, PROP_SEEDS) > FULL enumeration: 3 seeds per difficulty pair (27 games), every state, both sides 2613ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Rebels (TC-DIF-01..04) > TC-DIF-03: normal — 0/20 vs E-PASSIVE; ≥ 1/20 and < easy vs E-HUNT; every emptying under threat 239ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:easy/R:normal: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1052ms
+✓ test/ai/sim/legal.test.ts > TC-BOT-01 — every candidate is engine-legal (bot-vs-bot, PROP_SEEDS) > TOP-10: every decision-point command of every AI turn in 30 games (all PROP_SEEDS) 1682ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:easy/R:hard: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1215ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:normal/R:easy: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1129ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:normal/R:normal: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1195ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:normal/R:hard: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1824ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:hard/R:easy: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 903ms
+✓ test/ai/sim/choice.test.ts > AC-06 TC-DIF-08 — the difficulty changes the bot’s choice > on the AI-turn states of the normal DIFF_SEEDS games: easy≠hard ≥ 20 %, easy≠normal ≥ 10 % 10041ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:hard/R:normal: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1096ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Rebels (TC-DIF-01..04) > TC-DIF-04: mean Rebel moves out of the base per game — easy > hard, easy ≥ normal 1ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Empire vs R-PASSIVE (TC-DIF-05..07) > TC-DIF-05: hard reveals at least as often and no later than easy (one strictly); hard ≥ 4/20 4190ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Empire vs R-PASSIVE (TC-DIF-05..07) > TC-DIF-06: hard — ≥ 90% of pre-reveal activations move ground in, 0 activations of searched systems 1ms
+✓ test/ai/sim/difficulty.test.ts > AC-06 — AI Empire vs R-PASSIVE (TC-DIF-05..07) > TC-DIF-07: pre-reveal activations per round — easy < hard 0ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > R-PASSIVE vs AI Empire easy: every game ends with a Rebel win on time; AI activations in ≥ 10 of 13 rounds 4ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > R-PASSIVE vs AI Empire normal: every game ends with a Rebel win on time; AI activations in ≥ 10 of 13 rounds 4ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > R-PASSIVE vs AI Empire hard: every game ends with a Rebel win on time; AI activations in ≥ 10 of 13 rounds 4ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > TC-OUT-04/05: E-HUNT vs AI Rebels easy → ≥ 1/20 Empire wins; the fixture seeds are exactly the winners 1ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > TC-OUT-04/05: E-HUNT vs AI Rebels normal → ≥ 1/20 Empire wins; the fixture seeds are exactly the winners 0ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > TC-OUT-07: E-HUNT vs AI Rebels hard → 0 Empire wins, base guarded all game, all 20 Rebel wins on time 3ms
+✓ test/ai/sim/difficulty.test.ts > AC-08 — reachable outcomes on DIFF_SEEDS (TC-OUT-01 engine half, TC-OUT-04/05/07) > every DIFF_SEEDS game ends within 13 rounds and 64 steps per automated run 4369ms
+✓ test/ai/sim/termination.test.ts > TC-BOT-10 — bot vs bot on PROP_SEEDS × 9 difficulty pairs > E:hard/R:hard: all 30 games end within 13 rounds, ≤ 64 (and ≤ 40) steps per AI run 1649ms
+✓ test/ai/sim/termination.test.ts > termination — AI vs scripted human on PROP_SEEDS > human E-PASSIVE (AI = rebels), every difficulty: all 30 games end within 13 rounds and the step limit 1560ms
+✓ test/ai/sim/termination.test.ts > termination — AI vs scripted human on PROP_SEEDS > human E-HUNT (AI = rebels), every difficulty: all 30 games end within 13 rounds and the step limit 1052ms
+✓ test/ai/sim/termination.test.ts > termination — AI vs scripted human on PROP_SEEDS > human R-PASSIVE (AI = empire), every difficulty: all 30 games end within 13 rounds and the step limit 5742ms
+✓ test/ai/sim/termination.test.ts > termination — AI vs scripted human on PROP_SEEDS > human R-ACTIVE (AI = empire), every difficulty: all 30 games end within 13 rounds and the step limit 6089ms
+
+## Per-seed table (TR-9): script, AI side, difficulty, seed, base, winner@final round, reveal round, empty-base states,
+## Rebel moves out of the base, AI-Empire pre-reveal activations / rounds, longest AI run, commands
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d01 base=ilum       winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=9 commands=58
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d02 base=ryloth     winner=empire@3 reason=rebelBaseCaptured reveal=3 emptyStates=5 outOfBase=2 empAct=0/3r maxRun=6 commands=32
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=3 empAct=0/2r maxRun=8 commands=90
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d04 base=utapau     winner=empire@4 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=7 commands=35
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d05 base=tatooine   winner=empire@3 reason=rebelBaseCaptured reveal=3 emptyStates=15 outOfBase=1 empAct=0/3r maxRun=6 commands=28
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d06 base=endor      winner=empire@5 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=8 commands=44
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d07 base=dantooine  winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=9 commands=54
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d08 base=rodia      winner=empire@2 reason=rebelBaseCaptured reveal=2 emptyStates=5 outOfBase=1 empAct=0/2r maxRun=6 commands=18
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d09 base=nal-hutta  winner=empire@2 reason=rebelBaseCaptured reveal=2 emptyStates=5 outOfBase=1 empAct=0/2r maxRun=6 commands=18
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d10 base=dantooine  winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=9 commands=48
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=2 empAct=0/2r maxRun=9 commands=95
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=2 empAct=0/3r maxRun=9 commands=88
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=2 empAct=0/2r maxRun=9 commands=119
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d14 base=rodia      winner=empire@2 reason=rebelBaseCaptured reveal=2 emptyStates=5 outOfBase=1 empAct=0/2r maxRun=3 commands=14
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d15 base=ryloth     winner=empire@3 reason=rebelBaseCaptured reveal=3 emptyStates=5 outOfBase=1 empAct=0/3r maxRun=6 commands=26
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d16 base=ilum       winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=9 commands=56
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d17 base=nal-hutta  winner=empire@2 reason=rebelBaseCaptured reveal=2 emptyStates=5 outOfBase=1 empAct=0/2r maxRun=4 commands=16
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d18 base=ilum       winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=9 commands=58
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d19 base=nal-hutta  winner=empire@2 reason=rebelBaseCaptured reveal=2 emptyStates=5 outOfBase=1 empAct=0/2r maxRun=4 commands=16
+[w8-metrics] E-HUNT    ai=rebels easy   swr006-d20 base=dantooine  winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=2 empAct=0/2r maxRun=7 commands=43
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=38
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=44
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=44
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=38
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels hard   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d05 base=tatooine   winner=empire@3 reason=rebelBaseCaptured reveal=3 emptyStates=5 outOfBase=1 empAct=0/3r maxRun=3 commands=19
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d06 base=endor      winner=empire@5 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=1 empAct=0/2r maxRun=4 commands=28
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=44
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=38
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d13 base=utapau     winner=empire@4 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=1 empAct=0/2r maxRun=3 commands=23
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=0/3r maxRun=3 commands=41
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d16 base=ilum       winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=1 empAct=0/2r maxRun=4 commands=33
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d17 base=nal-hutta  winner=empire@2 reason=rebelBaseCaptured reveal=2 emptyStates=5 outOfBase=1 empAct=0/2r maxRun=3 commands=14
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d18 base=ilum       winner=empire@6 reason=rebelBaseCaptured reveal=2 emptyStates=1 outOfBase=1 empAct=0/2r maxRun=4 commands=33
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=3 commands=35
+[w8-metrics] E-HUNT    ai=rebels normal swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=0/2r maxRun=4 commands=47
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=65 outOfBase=2 empAct=0/13r maxRun=9 commands=116
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=98 outOfBase=2 empAct=0/13r maxRun=9 commands=117
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=2 empAct=0/13r maxRun=8 commands=81
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=66 outOfBase=3 empAct=0/13r maxRun=9 commands=95
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=66 outOfBase=3 empAct=0/13r maxRun=8 commands=90
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=42 outOfBase=2 empAct=0/13r maxRun=9 commands=81
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=67 outOfBase=2 empAct=0/13r maxRun=9 commands=118
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=53 outOfBase=1 empAct=0/13r maxRun=8 commands=63
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=75 outOfBase=1 empAct=0/13r maxRun=9 commands=85
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=54 outOfBase=2 empAct=0/13r maxRun=9 commands=99
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=2 empAct=0/13r maxRun=9 commands=87
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=2 empAct=0/13r maxRun=9 commands=95
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=3 empAct=0/13r maxRun=9 commands=109
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=76 outOfBase=1 empAct=0/13r maxRun=8 commands=84
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=87 outOfBase=2 empAct=0/13r maxRun=9 commands=108
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=67 outOfBase=2 empAct=0/13r maxRun=9 commands=116
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=59 outOfBase=1 empAct=0/13r maxRun=8 commands=69
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=49 outOfBase=2 empAct=0/13r maxRun=9 commands=98
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=61 outOfBase=1 empAct=0/13r maxRun=9 commands=77
+[w8-metrics] E-PASSIVE ai=rebels easy   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=42 outOfBase=2 empAct=0/13r maxRun=9 commands=76
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=32
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=35
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=38
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=38
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=35
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=32
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels hard   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=32
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=35
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=38
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=38
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=35
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=32
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=3 commands=29
+[w8-metrics] E-PASSIVE ai=rebels normal swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=0/13r maxRun=4 commands=41
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=15/6r maxRun=10 commands=145
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=25/13r maxRun=10 commands=135
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=22/13r maxRun=10 commands=128
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=21/9r maxRun=10 commands=139
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=18/7r maxRun=10 commands=150
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=25/13r maxRun=10 commands=138
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=9 commands=123
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=16/6r maxRun=10 commands=140
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=26/8r maxRun=10 commands=163
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=13 emptyStates=0 outOfBase=0 empAct=25/13r maxRun=10 commands=136
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=11/4r maxRun=9 commands=134
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=23/8r maxRun=10 commands=154
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=11 emptyStates=0 outOfBase=0 empAct=26/11r maxRun=10 commands=162
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=10 emptyStates=0 outOfBase=0 empAct=19/10r maxRun=10 commands=145
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=28/13r maxRun=10 commands=146
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=21/6r maxRun=10 commands=152
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=10 commands=133
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=23/13r maxRun=10 commands=132
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=17/5r maxRun=10 commands=153
+[w8-metrics] R-ACTIVE  ai=empire easy   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=10 commands=124
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=13/4r maxRun=10 commands=175
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=15/4r maxRun=10 commands=192
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=14/4r maxRun=10 commands=171
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=8/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=17/5r maxRun=10 commands=186
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=6/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=5/2r maxRun=10 commands=161
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=14/4r maxRun=10 commands=171
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=5/2r maxRun=10 commands=161
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=6/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=17/5r maxRun=10 commands=186
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=8/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=14/4r maxRun=10 commands=171
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=15/4r maxRun=10 commands=192
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=13/4r maxRun=10 commands=175
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=13/4r maxRun=10 commands=175
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=10 commands=165
+[w8-metrics] R-ACTIVE  ai=empire hard   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=5/2r maxRun=10 commands=161
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=18/5r maxRun=10 commands=179
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=33/9r maxRun=10 commands=221
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=30/8r maxRun=10 commands=212
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=27/7r maxRun=10 commands=218
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=34/9r maxRun=10 commands=218
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=10 commands=170
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=10 commands=170
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=30/8r maxRun=10 commands=212
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=22/6r maxRun=10 commands=203
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=10 commands=170
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=10 commands=170
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=34/9r maxRun=10 commands=218
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=27/7r maxRun=10 commands=218
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=30/8r maxRun=10 commands=212
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=33/9r maxRun=10 commands=221
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=18/5r maxRun=10 commands=179
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=22/6r maxRun=10 commands=203
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=18/5r maxRun=10 commands=179
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=22/6r maxRun=10 commands=203
+[w8-metrics] R-ACTIVE  ai=empire normal swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=10 commands=170
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=10 emptyStates=0 outOfBase=0 empAct=26/10r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=13 emptyStates=0 outOfBase=0 empAct=29/13r maxRun=13 commands=114
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=7/4r maxRun=13 commands=83
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=- emptyStates=0 outOfBase=0 empAct=28/13r maxRun=13 commands=105
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=23/9r maxRun=13 commands=110
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=12/4r maxRun=13 commands=99
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=17/7r maxRun=13 commands=109
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=18/8r maxRun=12 commands=95
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=15/6r maxRun=13 commands=100
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=9 emptyStates=0 outOfBase=0 empAct=26/9r maxRun=13 commands=124
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=14/5r maxRun=13 commands=96
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=14/5r maxRun=13 commands=109
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=25/8r maxRun=13 commands=119
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=17/6r maxRun=13 commands=97
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=12 emptyStates=0 outOfBase=0 empAct=26/12r maxRun=13 commands=104
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=12/3r maxRun=13 commands=101
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=13/5r maxRun=12 commands=92
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=21/8r maxRun=13 commands=110
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=20/8r maxRun=13 commands=108
+[w8-metrics] R-PASSIVE ai=empire easy   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=12/3r maxRun=13 commands=106
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=13/4r maxRun=13 commands=136
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=15/4r maxRun=13 commands=153
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=14/4r maxRun=13 commands=132
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=8/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=17/5r maxRun=13 commands=147
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=6/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=5/2r maxRun=13 commands=122
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=14/4r maxRun=13 commands=132
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=5/2r maxRun=13 commands=122
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=6/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=17/5r maxRun=13 commands=147
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=8/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=14/4r maxRun=13 commands=132
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=15/4r maxRun=13 commands=153
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=13/4r maxRun=13 commands=136
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=4 emptyStates=0 outOfBase=0 empAct=13/4r maxRun=13 commands=136
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=13 commands=126
+[w8-metrics] R-PASSIVE ai=empire hard   swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=5/2r maxRun=13 commands=122
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d01 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=18/5r maxRun=13 commands=143
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d02 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=29/8r maxRun=13 commands=179
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d03 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=26/7r maxRun=13 commands=167
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d04 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=24/6r maxRun=13 commands=170
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d05 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=30/8r maxRun=13 commands=170
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d06 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=13 commands=131
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d07 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=13 commands=131
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d08 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=26/7r maxRun=13 commands=167
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d09 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=25/7r maxRun=13 commands=167
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d10 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=13 commands=131
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d11 base=endor      winner=rebels@14 reason=timeReachedReputation reveal=2 emptyStates=0 outOfBase=0 empAct=7/2r maxRun=13 commands=131
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d12 base=tatooine   winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=30/8r maxRun=13 commands=170
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d13 base=utapau     winner=rebels@14 reason=timeReachedReputation reveal=6 emptyStates=0 outOfBase=0 empAct=24/6r maxRun=13 commands=170
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d14 base=rodia      winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=26/7r maxRun=13 commands=167
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d15 base=ryloth     winner=rebels@14 reason=timeReachedReputation reveal=8 emptyStates=0 outOfBase=0 empAct=29/8r maxRun=13 commands=179
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d16 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=18/5r maxRun=13 commands=143
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d17 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=25/7r maxRun=13 commands=167
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d18 base=ilum       winner=rebels@14 reason=timeReachedReputation reveal=5 emptyStates=0 outOfBase=0 empAct=18/5r maxRun=13 commands=143
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d19 base=nal-hutta  winner=rebels@14 reason=timeReachedReputation reveal=7 emptyStates=0 outOfBase=0 empAct=25/7r maxRun=13 commands=167
+[w8-metrics] R-PASSIVE ai=empire normal swr006-d20 base=dantooine  winner=rebels@14 reason=timeReachedReputation reveal=3 emptyStates=0 outOfBase=0 empAct=9/3r maxRun=13 commands=131

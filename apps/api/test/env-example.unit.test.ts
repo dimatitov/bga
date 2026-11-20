@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseEnv as parseDotenv } from 'node:util';
 import { describe, expect, it } from 'vitest';
-import { ENV_KEYS, parseEnv } from '../src/config/env';
+import { DEFAULT_AI_COMMANDER, ENV_KEYS, parseEnv } from '../src/config/env';
 import { API_ROOT } from './global-setup';
 
 const EXAMPLE = readFileSync(join(API_ROOT, '.env.example'), 'utf8');
@@ -39,6 +39,15 @@ describe('.env.example ↔ env schema', () => {
     expect(config.openai).toMatchObject({ enabled: false, apiKeyConfigured: false });
     expect(config.databaseUrl).toBe('file:./dev.db');
     expect(config.nodeEnv).toBe('development');
+  });
+
+  it('SWR-006 TC-ENV-07: AI_COMMANDER_* listed; provider bot; parses to the defaults', () => {
+    const vars = parseDotenv(EXAMPLE);
+    expect(vars.AI_COMMANDER_PROVIDER).toBe('bot');
+    expect(parseEnv(vars).aiCommander).toEqual(DEFAULT_AI_COMMANDER);
+    for (const key of ENV_KEYS.filter((k) => k.startsWith('AI_COMMANDER_'))) {
+      expect(exampleKeys(EXAMPLE)).toContain(key);
+    }
   });
 
   it('TC-ENV-18: the example models / limits are valid when OpenAI is switched on', () => {

@@ -13,7 +13,9 @@
     "waiting": "{{side}} to play. Wait for your turn.",
     "youPassed": "You passed: you take no more turns in this command phase.",
     "noLeaders": "No leader in your pool can activate a system — you can only pass.",
-    "gameOver": "The game is over — no more turns."
+    "gameOver": "The game is over — no more turns.",
+    "aiThinking": "AI is thinking…",
+    "aiStalled": "The AI turn did not finish — press “Continue AI turn”."
   },
   "pool": {
     "label": "Your leader pool",

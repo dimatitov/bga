@@ -1,0 +1,147 @@
+$ pnpm --filter @bga/platform exec vitest run test/rules-kb --reporter=verbose
+Fri Nov 20 10:15:42 UTC 2026
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > has source files 3ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > context.ts: no game names, node:* or @bga/*; imports only zod and relative modules 6ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > index.ts: no game names, node:* or @bga/*; imports only zod and relative modules 5ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > issues.ts: no game names, node:* or @bga/*; imports only zod and relative modules 2ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > parse.ts: no game names, node:* or @bga/*; imports only zod and relative modules 2ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > render.ts: no game names, node:* or @bga/*; imports only zod and relative modules 1ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > schema.ts: no game names, node:* or @bga/*; imports only zod and relative modules 1ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > search.ts: no game names, node:* or @bga/*; imports only zod and relative modules 1ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > text.ts: no game names, node:* or @bga/*; imports only zod and relative modules 1ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > validate-io.ts: no game names, node:* or @bga/*; imports only zod and relative modules 2ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > validate.ts: no game names, node:* or @bga/*; imports only zod and relative modules 1ms
+ ✓ test/rules-kb/boundaries.test.ts > rules-kb boundaries > exports the public API of plan-backend §2 3ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > selects core, then command matches, then phase matches; id asc inside a group 3ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > formats one line per entry with citations and marks needs-review (TC-A-06) 3ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > never includes ai: none; include comes first (TC-A-07) 1ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > drops entries for another side unless included explicitly 2ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > is deterministic, independent of commandTypes order (TC-A-03) 1ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > never exceeds maxChars and drops only whole lines (TC-A-04, TC-A-05) 2ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > keeps core entries when truncating 0ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > maxChars 0 → RangeError 1ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > maxChars -1 → RangeError 0ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > maxChars 1.5 → RangeError 1ms
+ ✓ test/rules-kb/context.test.ts > buildRulesContext (AC-9, TC-F-03) > maxChars NaN → RangeError 0ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renderRulesIndex: header, single trailing newline, deterministic 13ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renderCoverageMatrix: header, single trailing newline, deterministic 3ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renderDiscrepancies: header, single trailing newline, deterministic 5ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renderRulesIndex: title and preamble options 1ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renderCoverageMatrix: title and preamble options 1ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renderDiscrepancies: title and preamble options 1ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renders the coverage matrix (snapshot) 0ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renders the rules index by the category tree 1ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > renders discrepancies with summaries and cards 1ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > handles a knowledge base without coverage and discrepancies 3ms
+ ✓ test/rules-kb/render.test.ts > render* (C-3, Q-BE-3) > escapes table cells and lists entries of unknown categories 2ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "Who takes the first turn?" → star-forge:turn.order first 2ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "Can a forge be built on an asteroid?" → star-forge:build.place-forge first 2ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "How do I win the game?" → star-forge:victory.score first 0ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "How is combat resolved with dice?" → star-forge:combat.resolve first 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "Can I pass after I started building?" → star-forge:turn.pass-timing first 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "строительство" → star-forge:build.place-forge first 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > "очерёдность" → star-forge:turn.order first 0ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > returns citations source + page + label in data order (TC-Q-19) 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > filters by kind, category (with descendants), status and limit (TC-Q-18) 2ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > default limit is 5; scores are positive and sorted 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > meaningless query "" → [] (TC-Q-20) 0ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > meaningless query "   " → [] (TC-Q-20) 0ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > meaningless query "the of and to" → [] (TC-Q-20) 0ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > meaningless query "?!..." → [] (TC-Q-20) 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > meaningless query "xyzzy qwerty" → [] (TC-Q-20) 1ms
+ ✓ test/rules-kb/search.test.ts > createRulesSearch (AC-8, TC-F-02) > is deterministic; equal scores are ordered by id (TC-Q-17) 5ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > exposes the format constants 3ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > parses the fixture and fills defaults 24ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > coverage and discrepancies are optional; excludedProducts/sourceSections default to [] 3ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects formatVersion 2 with SCHEMA_INVALID and a path to the field (TC-V-02) 4ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects unknown entry kind with SCHEMA_INVALID and a path to the field (TC-V-02) 5ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects page of a wrong type with SCHEMA_INVALID and a path to the field (TC-V-02) 2ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects misspelled field (strict objects) with SCHEMA_INVALID and a path to the field (TC-V-02) 3ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects bad sha256 with SCHEMA_INVALID and a path to the field (TC-V-02) 3ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects unknown coverage status with SCHEMA_INVALID and a path to the field (TC-V-02) 2ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > rejects unknown discrepancy decision with SCHEMA_INVALID and a path to the field (TC-V-02) 2ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > collects issues of all parts and puts paths into the message 3ms
+ ✓ test/rules-kb/parse.test.ts > parseKnowledgeBase > entries must be a flat array 1ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > the fixture evidence exists (TC-C-01 analogue) 36ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > FILE_MISSING: implementation file missing 4ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > FILE_MISSING: test file missing 2ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > SYMBOL_NOT_FOUND: symbol absent 5ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > SYMBOL_NOT_FOUND: symbol only as a part of a longer identifier 3ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > TEST_NOT_FOUND: test name absent 3ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > messages name the rule and the file 2ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > without io the file checks are skipped, the rest still runs (TC-V-28) 5ms
+ ✓ test/rules-kb/validate-io.test.ts > validateKnowledgeBase with io (files, symbols, tests) > reads each file at most once per validation 8ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — fixture of another game (AC-2, TC-F-01, TC-V-01) > the star-forge fixture is valid 33ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — fixture of another game (AC-2, TC-F-01, TC-V-01) > is deterministic and does not mutate the knowledge base 5ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > CATEGORY_DUPLICATE: duplicate category id 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > CATEGORY_PARENT_UNKNOWN: unknown parent 6ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > CATEGORY_PARENT_UNKNOWN: parent is itself 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_DUPLICATE: duplicate source id 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > PRODUCT_CONFLICT: product included and excluded 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_ID_FORMAT: upper-case segment 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_ID_FORMAT: single segment 4ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_ID_FORMAT: empty segment 8ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_ID_FORMAT: no game prefix 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_ID_PREFIX: foreign game prefix 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_ID_DUPLICATE: duplicate id (path → second) 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_REF_UNKNOWN: dangling related 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_REF_UNKNOWN: dangling amends 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_REF_UNKNOWN: dangling exception ruleId 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_PRODUCT_UNKNOWN: excluded product 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_CATEGORY_UNKNOWN: unknown category 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_TEXT_TOO_LONG: text of 601 characters 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_SOURCE_MISSING: no sources 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_RATIONALE_MISSING: interpretation without rationale 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_RATIONALE_MISSING: interpretation with blank rationale 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_CLARIFICATION_NOT_FAQ: clarification cites no faq source 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_DISCREPANCY_MISSING: implementation-note without discrepancy 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > ENTRY_DISCREPANCY_UNKNOWN: unknown entry discrepancy 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_UNKNOWN: unknown source 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_PAGE_OUT_OF_RANGE: page 0 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_PAGE_OUT_OF_RANGE: page = pages + 1 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_PAGE_OUT_OF_RANGE: exception source page 4ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_PAGE_OUT_OF_RANGE: excluded page outside the source 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_PAGE_EXCLUDED: excluded page 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SOURCE_PAGE_EXCLUDED: discrepancy ref to an excluded page 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > QUOTE_TOO_LONG: quote of 26 words 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > QUOTE_BUDGET_EXCEEDED: quotes of one source > 400 words 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SECTION_NOT_COVERED: section without entry 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SECTION_SKIP_REASON_MISSING: skip without reason 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > SECTION_SKIP_REASON_MISSING: skip with blank reason 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_RULE_UNKNOWN: coverage of an unknown entry 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_RULE_DUPLICATE: rule covered twice 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_RULE_MISSING: rule without coverage 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_EVIDENCE_MISSING: implemented without implementation 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_EVIDENCE_MISSING: implemented without tests 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_EVIDENCE_MISSING: partial without implementation 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_EVIDENCE_MISSING: deviation without tests 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_DISCREPANCY_MISSING: not-implemented without discrepancy 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_DISCREPANCY_MISSING: partial without discrepancy 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_DISCREPANCY_MISSING: deviation without discrepancy 2ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_DISCREPANCY_UNKNOWN: unknown coverage discrepancy 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > COVERAGE_NOTE_MISSING: not-applicable without note 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > DISCREPANCY_ID_FORMAT: bad discrepancy id 3ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > DISCREPANCY_ID_DUPLICATE: duplicate discrepancy id 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > DISCREPANCY_RULE_UNKNOWN: unknown discrepancy ruleId 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > DISCREPANCY_REF_UNKNOWN: string ref is not an entry id 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > every issue code has a negative test (TC-V-30) 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — one negative test per issue code (AC-10) > messages name the offending entry and value (scenario 4) 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > text of exactly 600 characters is valid 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > quote of exactly 25 words is valid 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > page 1 is valid 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > page = pages is valid 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > quotes of one source of exactly 400 words is valid 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > not-applicable with a note and no discrepancy is valid 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > no coverage at all is valid 0ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > clarification citing a faq and a rules page is valid 1ms
+ ✓ test/rules-kb/validate.test.ts > validateKnowledgeBase — boundaries > collects every issue in a deterministic order (TC-V-29) 1ms
+
+ Test Files  7 passed (7)
+      Tests  135 passed (135)
+   Start at  13:15:43
+   Duration  1.05s (transform 1.79s, setup 0ms, import 3.34s, tests 357ms, environment 1ms)
+
+EXIT=0

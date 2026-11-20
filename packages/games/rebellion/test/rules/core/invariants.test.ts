@@ -62,13 +62,19 @@ function checkStored(state: CoreGameState): void {
   }
 }
 
+/**
+ * SWR-006 review F-2: 10 games × up to 250 commands with full schema checks per state exceed the 5000 ms default on a
+ * loaded machine (full workspace suite next to Playwright); explicit timeout, same coverage.
+ */
+const PROPERTY_TIMEOUT_MS = 30_000;
+
 describe('invariants on seeded random legal play', () => {
   for (const [name, settings] of [
     ['hot-seat', HOT_SEAT],
     ['Rebels vs AI', REBELS_VS_AI],
     ['Empire vs AI', EMPIRE_VS_AI],
   ] as const) {
-    it(`${name}: 10 games × up to 250 commands`, () => {
+    it(`${name}: 10 games × up to 250 commands`, { timeout: PROPERTY_TIMEOUT_MS }, () => {
       let rounds = 0;
       let commands = 0;
       let finished = 0;

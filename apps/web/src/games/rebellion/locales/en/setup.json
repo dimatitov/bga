@@ -18,7 +18,7 @@
     },
     "humanHint": "Take turns: before the opponent moves, the app hides the map.",
     "difficultyStep": "3. AI difficulty",
-    "difficultyHint": "Saved for the AI; in the prototype the AI does not move.",
+    "difficultyHint": "Shapes how AI Commander plays: Easy makes more mistakes, Hard plays more carefully.",
     "rulesetStep": "4. Ruleset",
     "modeStep": "5. Mode",
     "soon": "soon",

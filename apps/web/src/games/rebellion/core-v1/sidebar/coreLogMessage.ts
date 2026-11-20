@@ -7,9 +7,19 @@
  * Side-dependent verbs use the i18next context (`_rebels` / `_empire`): «Повстанцы пасуют» / «Империя пасует».
  * Names of data objects come from `rebellion.data` (Worker M): `systems.<id>`, `leaders.<id>.name`,
  * `pieceTypes.<typeKey>`; until a key exists the id is shown (`defaultValue`), never `undefined`.
+ *
+ * SWR-006 (Q-FE-4): every event of the AI side (the actor = `settings.opponentFaction` of an AI game, or
+ * `payload.auto`) reads «Империя (AI): …» — activations and moves via `log.aiActor`, passes / finished
+ * activations via the existing `*_auto` keys.
  */
-import type { CoreViewEvent, FactionId, PlayerViewCore } from '@bga/game-rebellion/schema';
+import type {
+  CoreViewEvent,
+  FactionId,
+  PlayerViewCore,
+  RebellionSettings,
+} from '@bga/game-rebellion/schema';
 import type { TFunction } from 'i18next';
+import { isAiActor } from '../model/aiCommander';
 import type { Announcement } from '../model/announcements';
 import { announcementI18n } from '../model/announcements';
 
@@ -23,6 +33,11 @@ export type CoreLogEvent = Pick<CoreViewEvent, 'seq' | 'at'> & {
 };
 
 type ViewNames = Pick<PlayerViewCore, 'map' | 'units'>;
+
+/** Names + (optionally) the public settings that tell which side is the AI. */
+type LogView = ViewNames & {
+  settings?: Pick<RebellionSettings, 'opponentType' | 'opponentFaction'>;
+};
 
 function isFaction(actor: string): actor is FactionId {
   return actor === 'rebels' || actor === 'empire';
@@ -67,11 +82,25 @@ export function isAutoEvent(event: CoreLogEvent): boolean {
   );
 }
 
+/**
+ * Whether the event is a move of the AI side (Q-FE-4): its actor is the AI side of the game, or it was
+ * automatic (`payload.auto`). Without settings only `payload.auto` counts.
+ */
+export function isAiEvent(
+  event: CoreLogEvent,
+  settings?: Pick<RebellionSettings, 'opponentType' | 'opponentFaction'>,
+): boolean {
+  return isAutoEvent(event) || (settings !== undefined && isAiActor(event.actor, settings));
+}
+
 /** Localized one-line text of a `core-v1` log event. */
-export function coreLogMessage(event: CoreLogEvent, t: TFunction, view?: ViewNames): string {
+export function coreLogMessage(event: CoreLogEvent, t: TFunction, view?: LogView): string {
   const e = event as CoreViewEvent;
   const actor = isFaction(event.actor) ? coreFactionName(t, event.actor) : event.actor;
   const context = isFaction(event.actor) ? event.actor : undefined;
+  const ai = isAiEvent(event, view?.settings);
+  /** «Империя (AI)» for the AI side's activations and moves. */
+  const mover = ai ? t('rebellion.match:log.aiActor', { actor }) : actor;
   switch (e.type) {
     case 'GAME_CREATED':
       return t('rebellion.match:log.GAME_CREATED');
@@ -84,26 +113,26 @@ export function coreLogMessage(event: CoreLogEvent, t: TFunction, view?: ViewNam
       });
     case 'SYSTEM_ACTIVATED':
       return t('rebellion.match:log.SYSTEM_ACTIVATED', {
-        actor,
+        actor: mover,
         leader: coreLeaderName(t, e.payload.leaderId),
         system: coreSystemName(t, e.payload.systemId, view),
       });
     case 'PIECES_MOVED':
       return t('rebellion.match:log.PIECES_MOVED', {
-        actor,
+        actor: mover,
         pieces: e.payload.pieceIds.map((id) => coreUnitName(t, id, view)).join(', '),
         from: coreSystemName(t, e.payload.fromSystemId, view),
         to: coreSystemName(t, e.payload.toSystemId, view),
       });
     case 'ACTIVATION_FINISHED':
       return t(
-        e.payload.auto
+        ai
           ? 'rebellion.match:log.ACTIVATION_FINISHED_auto'
           : 'rebellion.match:log.ACTIVATION_FINISHED',
         { actor, context },
       );
     case 'PASSED':
-      return t(e.payload.auto ? 'rebellion.match:log.PASSED_auto' : 'rebellion.match:log.PASSED', {
+      return t(ai ? 'rebellion.match:log.PASSED_auto' : 'rebellion.match:log.PASSED', {
         actor,
         context,
       });

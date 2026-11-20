@@ -1,0 +1,215 @@
+[
+  {
+    "id": "rebellion:impl.no-combat",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "combat",
+    "title": "core-v1 has no combat",
+    "text": "The core-v1 engine never resolves combat: units of both sides may stand in one system, which the UI marks as contested. Tactic cards, dice, damage, retreat and battle wins do not exist yet.",
+    "sources": [
+      { "sourceId": "RR", "page": 4, "section": "Combat" },
+      { "sourceId": "RR", "page": 2, "section": "Activating Systems" }
+    ],
+    "discrepancyIds": ["DISC-001"],
+    "related": ["rebellion:combat.trigger", "rebellion:command.move.combat-trigger"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.no-missions",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "core-v1 has no missions and an empty Assignment Phase",
+    "text": "There are no mission cards in core-v1: the Assignment Phase passes automatically and a Command Phase turn can only activate a system or pass. Mission-driven effects (loyalty, capture, new base, Death Star projects) are missing.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Assignment Phase" },
+      { "sourceId": "RR", "page": 8, "section": "Mission Cards" }
+    ],
+    "discrepancyIds": ["DISC-002"],
+    "related": ["rebellion:assignment.order", "rebellion:missions.reveal-steps"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.refresh-partial",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "refresh",
+    "title": "core-v1 Refresh: only retrieve leaders and advance time",
+    "text": "The core-v1 Refresh Phase runs only step 1 (all leaders return) and the time advance of step 5. Drawing missions, probe droids, objectives, recruiting, building and deploying are not implemented.",
+    "sources": [{ "sourceId": "RR", "page": 12, "section": "Refresh Phase" }],
+    "discrepancyIds": ["DISC-003"],
+    "related": ["rebellion:refresh.steps"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.no-objectives",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "core-v1 has no objectives: reputation never moves",
+    "text": "Without objective cards the reputation marker stays on 14, so the Rebels can only win by surviving until the time marker reaches 14.",
+    "sources": [
+      { "sourceId": "RR", "page": 10, "section": "Objective Cards" },
+      { "sourceId": "RR", "page": 12, "section": "Reputation" }
+    ],
+    "discrepancyIds": ["DISC-004"],
+    "related": ["rebellion:victory.rebels", "rebellion:cards.objectives"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.no-loyalty",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "loyalty",
+    "title": "core-v1 does not model loyalty or subjugation",
+    "text": "core-v1 has no loyalty or subjugation markers: activation step 5 (subjugate) is skipped, the first game loyalty markers are not placed, and Imperial loyalty cannot reveal the base.",
+    "sources": [
+      { "sourceId": "RR", "page": 8, "section": "Loyalty" },
+      { "sourceId": "RR", "page": 13, "section": "Subjugation" },
+      { "sourceId": "RR", "page": 2, "section": "Activating Systems" }
+    ],
+    "discrepancyIds": ["DISC-005"],
+    "related": ["rebellion:loyalty.basics", "rebellion:loyalty.subjugation"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.no-voluntary-reveal",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "core-v1 has no voluntary base reveal",
+    "text": "The Rebel side cannot reveal its base voluntarily in core-v1; the base is only revealed by Imperial ground units.",
+    "sources": [
+      { "sourceId": "RR", "page": 11, "section": "Revealing the Rebel Base" },
+      { "sourceId": "FAQ", "page": 1, "section": "Errata" }
+    ],
+    "discrepancyIds": ["DISC-006"],
+    "related": ["rebellion:base.voluntary-reveal", "rebellion:base.voluntary-reveal-timing"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.engine-chooses-base",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "core-v1 chooses the base system itself",
+    "text": "The engine picks the base deterministically from the game id among eligible systems instead of letting the Rebel player choose. Besides the official first game limits it also excludes systems holding starting Rebel units (Bothawui), so that the hidden base is not given away on the first screen.",
+    "sources": [
+      { "sourceId": "RR", "page": 15, "section": "Setup step 9" },
+      { "sourceId": "LTP", "page": 5, "section": "Setup step 9" }
+    ],
+    "discrepancyIds": ["DISC-007"],
+    "related": ["rebellion:setup.base-choice", "rebellion:setup.base-choice-restrictions"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.base-space-merged",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "core-v1 merges the Rebel Base space with the base system",
+    "text": "In core-v1 units \"on the Rebel Base space\" simply stand in the base's system (hidden from the Empire). There is no separate space: no activation of the space, no movement from it to systems adjacent to the base, and a leader in the base system locks all units there.",
+    "sources": [
+      { "sourceId": "RR", "page": 10, "section": "Rebel Base" },
+      { "sourceId": "RR", "page": 9, "section": "Moving Units" }
+    ],
+    "discrepancyIds": ["DISC-008"],
+    "related": ["rebellion:base.space-not-system", "rebellion:base.leader-in-space-locks"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.reveal-only-at-finish",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "core-v1 checks the reveal only at the end of an Imperial activation",
+    "text": "core-v1 reveals the base when the Empire finishes an activation of the base system with an Imperial ground unit in it. Within the slice this equals the official rule, but the official condition is permanent (any time Imperial loyalty or ground units are there) and will need a general check once loyalty, deployment or missions exist.",
+    "sources": [{ "sourceId": "RR", "page": 11, "section": "Revealing the Rebel Base" }],
+    "discrepancyIds": ["DISC-009"],
+    "related": ["rebellion:base.reveal-condition", "rebellion:base.reveal-timing"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.fixed-first-game-setup",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "setup",
+    "title": "core-v1 always uses the first game setup",
+    "text": "Every core-v1 game starts from the fixed first game unit placement; the standard (advanced) setup with random loyalty and free placement is not available, and no decks or action cards are prepared.",
+    "sources": [
+      { "sourceId": "LTP", "page": 16, "section": "First Game Setup" },
+      { "sourceId": "RR", "page": 15, "section": "Setup step 8" }
+    ],
+    "discrepancyIds": ["DISC-010"],
+    "related": ["rebellion:setup.first-game-or-standard"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.starting-leaders-only",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "core-v1 has only the starting leaders",
+    "text": "Only the four starting leaders of each side exist in core-v1; recruitable leaders, action cards and the Super Star Destroyer (which reaches the build queue only through a card ability) never enter play.",
+    "sources": [
+      { "sourceId": "RR", "page": 8, "section": "Leaders" },
+      { "sourceId": "RR", "page": 11, "section": "Recruiting" }
+    ],
+    "discrepancyIds": ["DISC-011"],
+    "related": ["rebellion:leaders.starting", "rebellion:recruit.procedure"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.pass-during-activation",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "core-v1 rejects PASS during an own activation",
+    "text": "core-v1 answers PASS during the actor's running activation with activationInProgress: the activation has to be finished first.",
+    "sources": [{ "sourceId": "RR", "page": 6, "section": "Command Phase" }],
+    "discrepancyIds": ["DISC-012"],
+    "related": ["rebellion:command.pass-not-mid-activation"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.transport-one-source-per-command",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "transport",
+    "title": "core-v1 checks transport per MOVE_PIECES command",
+    "text": "A MOVE_PIECES command moves units from one source system, and transport capacity is counted only among the ships moving in that same command. Units needing transport must therefore move in the same command as their carriers; a ship moved in an earlier command gives no capacity.",
+    "sources": [{ "sourceId": "RR", "page": 9, "section": "Moving Units" }],
+    "discrepancyIds": ["DISC-013"],
+    "related": [
+      "rebellion:command.transport.capacity",
+      "rebellion:command.transport.restriction-icon"
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:impl.component-limits",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "core-v1 does not enforce component limits",
+    "text": "Nothing in core-v1 creates new units, leaders or markers, so component limits are never reached and are not modelled.",
+    "sources": [{ "sourceId": "RR", "page": 6, "section": "Component Limitations" }],
+    "discrepancyIds": ["DISC-015"],
+    "related": ["rebellion:general.component-limits"],
+    "ai": "none"
+  }
+]

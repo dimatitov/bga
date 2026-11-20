@@ -5,7 +5,7 @@ import type {
   PlayerViewCore,
 } from '@bga/game-rebellion/schema';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/shared/i18n';
 import { sessionKeys } from '@/platform';
 import { mockFetch, renderWithProviders, type MockHandler } from '@/shared/test';
@@ -16,6 +16,7 @@ import {
   makeMovedView,
   makeRebellionSession,
   makeView,
+  NO_AUTOMATION_RUN,
   P_E1,
   P_R1,
   S_A,
@@ -29,6 +30,7 @@ import {
   makeCoreSession,
   makeCoreView,
 } from '../test/coreFixtures';
+import { PRELOAD_TIMEOUT_MS, preloadTableScreen } from '../test/preloadTable';
 
 // Konva needs a real <canvas>; the canvas is covered by Playwright (plan-frontend §6.4).
 vi.mock('../board/canvas/BoardStage', () => ({
@@ -56,6 +58,9 @@ async function selectPieceViaList(user: ReturnType<typeof renderTable>['user'], 
     expect(screen.getByTestId(`piece-item-${pieceId}`)).toHaveAttribute('aria-selected', 'true'),
   );
 }
+
+// The first render of a file waits for the lazy table chunk; load it here (SWR-006 final gate, see helper).
+beforeAll(preloadTableScreen, PRELOAD_TIMEOUT_MS);
 
 beforeEach(() => {
   useSelectionStore.setState({ gameId: null, selection: { kind: 'none' }, sidebarTab: 'log' });
@@ -138,7 +143,10 @@ describe('Rebellion TableScreen (via SessionHost)', () => {
     const moved = makeMovedView();
     const { user, api } = renderTable({
       [VIEW_PATH]: session(),
-      [CMD_PATH]: { status: 200, body: { ok: true, view: moved, events: [moved.log.at(-1)] } },
+      [CMD_PATH]: {
+        status: 200,
+        body: { ok: true, view: moved, events: [moved.log.at(-1)], automation: NO_AUTOMATION_RUN },
+      },
     });
     await screen.findByTestId('game-table');
     await selectPieceViaList(user, P_E1);
@@ -241,7 +249,10 @@ describe('Rebellion TableScreen (via SessionHost)', () => {
     const next = makeView({ version: 4, phase: 'command' });
     const { user, api } = renderTable({
       [VIEW_PATH]: session(),
-      [CMD_PATH]: { status: 200, body: { ok: true, view: next, events: [] } },
+      [CMD_PATH]: {
+        status: 200,
+        body: { ok: true, view: next, events: [], automation: NO_AUTOMATION_RUN },
+      },
     });
     await screen.findByTestId('game-table');
     await user.click(screen.getByTestId('advance-phase'));

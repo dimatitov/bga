@@ -363,8 +363,10 @@ export async function keyboardFocus(page: Page, target: Locator, maxSteps = 250)
  *   still exercised, but historical evidence of finished tasks — SWR-002, SWR-003 — is never rewritten by a run).
  * Regenerate old evidence deliberately: `SCREENSHOT_TASK=SWR-003 pnpm e2e` (then SWR-004 shots go to test-results).
  * SWR-005B: current task is SWR-005B (dev-ai.spec.ts); SWR-005 specs pass 'SWR-005' explicitly.
+ * SWR-006: current task is SWR-006 (ai-commander.spec.ts); dev-ai.spec.ts passes 'SWR-005B' explicitly, so the SWR-005B
+ * evidence is rewritten only by a deliberate `SCREENSHOT_TASK=SWR-005B pnpm e2e`.
  */
-export const CURRENT_SCREENSHOT_TASK = 'SWR-005B';
+export const CURRENT_SCREENSHOT_TASK = 'SWR-006';
 
 /** Task whose evidence folder receives screenshots in this run. */
 export function evidenceTask(): string {

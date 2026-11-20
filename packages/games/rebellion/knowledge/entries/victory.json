@@ -1,0 +1,157 @@
+[
+  {
+    "id": "rebellion:victory.empire",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "Imperial victory: conquer the revealed base",
+    "text": "The Empire wins immediately when the Rebel base is revealed and its system holds at least one Imperial unit (any unit) and no Rebel units. While the base is hidden this cannot happen.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Winning the Game"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 11,
+        "section": "Winning the Game"
+      }
+    ],
+    "exceptions": [
+      {
+        "text": "Destroying the base's system with the Death Star wins even if the base is hidden.",
+        "ruleIds": ["rebellion:victory.superlaser-hidden-base"],
+        "sources": [
+          {
+            "sourceId": "LTP",
+            "page": 11,
+            "section": "The Death Star"
+          }
+        ]
+      }
+    ],
+    "related": ["rebellion:base.reveal-condition", "rebellion:victory.rebels"],
+    "ai": "core",
+    "keywords": ["победа империи", "захват базы", "how does the empire win"]
+  },
+  {
+    "id": "rebellion:victory.rebels",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "Rebel victory: reputation meets time",
+    "text": "The Rebels win immediately when the reputation marker and the time marker are on the same space of the time track. Time advances one space per round; reputation moves toward time when the Rebels gain reputation.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Winning the Game"
+      },
+      {
+        "sourceId": "RR",
+        "page": 12,
+        "section": "Reputation"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 11,
+        "section": "Winning the Game"
+      }
+    ],
+    "related": [
+      "rebellion:victory.time-track",
+      "rebellion:victory.reputation",
+      "rebellion:cards.objectives"
+    ],
+    "ai": "core",
+    "keywords": ["победа повстанцев", "репутация", "маркер времени", "how do the rebels win"]
+  },
+  {
+    "id": "rebellion:victory.time-track",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "Time marker",
+    "text": "The time marker starts on space 1 of the time track and advances one space at the end of every game round (Refresh step 5). If it is ever on the same space as the reputation marker, the Rebels win at once.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Time Marker and Time Track"
+      },
+      {
+        "sourceId": "RR",
+        "page": 12,
+        "section": "Refresh Phase"
+      }
+    ],
+    "related": ["rebellion:refresh.advance-time"],
+    "appliesTo": {
+      "phases": ["refresh"]
+    },
+    "keywords": ["трек времени", "маркер времени"]
+  },
+  {
+    "id": "rebellion:victory.reputation",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "Reputation marker",
+    "text": "The reputation marker starts on space 14. Each reputation gained moves it one space toward the time marker; larger gains move it one space at a time and end the game as soon as it enters the time marker's space. Each reputation lost moves it one space away from the time marker.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 12,
+        "section": "Reputation"
+      }
+    ],
+    "related": ["rebellion:victory.rebels"],
+    "keywords": ["репутация"]
+  },
+  {
+    "id": "rebellion:victory.superlaser-hidden-base",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "Destroying the hidden base's system wins for the Empire",
+    "text": "If the Death Star destroys the system holding the Rebel base with the Superlaser Online card, the Empire wins immediately, even if the base was still hidden.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 2,
+        "section": "FAQ: Destroyed Systems"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 11,
+        "section": "The Death Star"
+      }
+    ],
+    "amends": ["rebellion:victory.empire"]
+  },
+  {
+    "id": "rebellion:victory.empire-first-in-same-step",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "victory",
+    "title": "Imperial victory precedes an objective fulfilled in the same step",
+    "text": "If in one combat step the Empire destroys the last Rebel units in the revealed base's system while the Rebels fulfil an objective, the Empire wins: its victory happens before the Rebels can play the objective.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 4,
+        "section": "Mission and Action Cards"
+      }
+    ],
+    "amends": ["rebellion:victory.empire"],
+    "related": ["rebellion:cards.objectives"],
+    "ai": "none"
+  }
+]

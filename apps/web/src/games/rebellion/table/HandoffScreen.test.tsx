@@ -1,7 +1,7 @@
 import type { PlayerView, PlayerViewMock } from '@bga/game-rebellion/schema';
 import { screen, waitFor, within } from '@testing-library/react';
 import { useMemo, useRef } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SessionEnvelope } from '@/platform';
 import { sessionKeys } from '@/platform';
 import { i18n } from '@/shared/i18n';
@@ -13,9 +13,11 @@ import {
   makeHandoffView,
   makeRebellionSession,
   makeView,
+  NO_AUTOMATION_RUN,
   P_R1,
   SESSION_ID,
 } from '../test/fixtures';
+import { PRELOAD_TIMEOUT_MS, preloadTableScreen } from '../test/preloadTable';
 
 /**
  * Konva needs a real <canvas> (covered by Playwright). The stand-in keeps what matters for the handoff: it activates
@@ -83,6 +85,9 @@ function renderTable(routes: Record<string, MockHandler>) {
 const posts = (api: ReturnType<typeof renderTable>['api']) =>
   api.requests.filter((r) => r.method === 'POST').map((r) => r.body);
 
+// The first render of a file waits for the lazy table chunk; load it here (SWR-006 final gate, see helper).
+beforeAll(preloadTableScreen, PRELOAD_TIMEOUT_MS);
+
 beforeEach(() => {
   useSelectionStore.setState({ gameId: null, selection: { kind: 'none' }, sidebarTab: 'log' });
   useDragStore.getState().clear();
@@ -100,7 +105,10 @@ describe('Rebellion hot-seat HandoffScreen (SWR-004 plan-frontend §5.3)', () =>
     });
     const { user, api, queryClient } = renderTable({
       [VIEW_PATH]: envelope(rebelsView()),
-      [CMD_PATH]: { status: 200, body: { ok: true, view: handoff, events: [] } },
+      [CMD_PATH]: {
+        status: 200,
+        body: { ok: true, view: handoff, events: [], automation: NO_AUTOMATION_RUN },
+      },
     });
     await screen.findByTestId('game-table');
     expect(screen.getByTestId('active-side')).toHaveAttribute('data-side', 'rebels');
@@ -170,7 +178,10 @@ describe('Rebellion hot-seat HandoffScreen (SWR-004 plan-frontend §5.3)', () =>
     const handoff = makeHandoffView({ activeSide: 'empire', version: 5 });
     const { user, api } = renderTable({
       [VIEW_PATH]: envelope(handoff),
-      [CMD_PATH]: { status: 200, body: { ok: true, view: empireView(), events: [] } },
+      [CMD_PATH]: {
+        status: 200,
+        body: { ok: true, view: empireView(), events: [], automation: NO_AUTOMATION_RUN },
+      },
     });
     // Stale state of a previous table in this browser tab.
     useSelectionStore.setState({ gameId: SESSION_ID, selection: { kind: 'piece', pieceId: P_R1 } });

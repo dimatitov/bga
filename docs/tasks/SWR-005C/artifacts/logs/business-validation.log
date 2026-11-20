@@ -1,0 +1,31 @@
+issues 0 entries 181
+Can the Empire win if the Rebel base is still hidden? -> [
+  'rebellion:victory.superlaser-hidden-base [FAQ p.2,LTP p.11]',
+  'rebellion:victory.empire [RR p.14,LTP p.11]',
+  'rebellion:base.move-from-space [RR p.10,LTP p.12]'
+]
+How many units can I deploy to one system? -> [
+  'rebellion:deploy.restrictions [RR p.7,RR p.12]',
+  'rebellion:base.deploy-when-revealed [FAQ p.5]',
+  'rebellion:refresh.deploy-step [RR p.12,LTP p.10]'
+]
+Does a Death Star reveal the base? -> [
+  'rebellion:base.death-star-does-not-reveal [FAQ p.1,RR p.11]',
+  'rebellion:base.reveal-condition [RR p.11,LTP p.12]',
+  'rebellion:deathstar.destroy [RR p.6]'
+]
+What happens when a mission is opposed? -> [
+  'rebellion:command.passed-player-still-reacts [RR p.6]',
+  'rebellion:missions.reveal-steps [RR p.8,RR p.9,LTP p.8]',
+  'rebellion:missions.opposition-dice [RR p.9,LTP p.8]'
+]
+Can I retreat to the system my opponent came from? -> [
+  'rebellion:combat.retreat [RR p.5,LTP p.15]',
+  'rebellion:combat.retreat-limits [RR p.5]',
+  'rebellion:combat.retreat-faq [FAQ p.2]'
+]
+5934 false
+[rebellion:base.reveal-condition] When the Rebel base must be revealed: Whenever the Empire has loyalty or ground units in the Rebel base's system, the Rebel player must reveal the base. The condition is checked at any time, not only after movement. (RR p.11; LTP p.12)
+[rebellion:base.reveal-timing] Revealing the base after Imperial ground units move in: When Imperial ground units move into a system, the Rebel player must declare whether his base is there; if so, it is revealed after all movement of the activation and before combat. (RR p.2; RR p.11; LTP p.7)
+[rebellion:command.activate.place-leader] Activate a system by placing a leader: To activate a system the player takes one leader from his own leader pool and places it in any system on the map. Activation is how units move and combats start. (RR p.2; LTP p.7)
+[rebellion:command.activate.steps] Steps of an activation: Five steps: 1 place the leader; 2 move own units in from adjacent systems; 3 reveal the base if Imperial ground units moved into its system; 4 combat if both sides share a theater; 5 subjugate if an Imperial ground unit is in a system without Imperial loyalty. (RR p.2)

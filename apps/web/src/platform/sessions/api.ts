@@ -1,8 +1,11 @@
 import {
+  type AutomationRunSummary,
+  type RunAutomationRequest,
   CommandErrSchema,
   IDEMPOTENCY_KEY_HEADER,
   ListSessionsResponseSchema,
   SessionCommandOkSchema,
+  type SessionAutomation,
   type SessionSettings,
   type SessionStatus,
   type SessionSummary,
@@ -29,6 +32,11 @@ export interface SessionEnvelope {
   status: SessionStatus;
   settings: SessionSettings;
   view: unknown;
+  /**
+   * SWR-006 (required, AM-FE-2): `{ pending, strategy }` of the session's automated participant;
+   * `{ pending: false, strategy: null }` when the session has none.
+   */
+  automation: SessionAutomation;
 }
 
 export interface CreateSessionOptions extends CallOptions {
@@ -36,10 +44,21 @@ export interface CreateSessionOptions extends CallOptions {
   idempotencyKey?: string;
 }
 
+/**
+ * Success frame of `POST /api/sessions/:id/commands` and `POST /api/sessions/:id/automation/run`. The game narrows
+ * `view`/`events` with its own schema (AM-FE-1: only `{ ok, view, events }`); `automation` is the platform's
+ * summary of the automated steps made by this request (SWR-006, required).
+ */
+export interface SessionCommandOk {
+  ok: true;
+  view: unknown;
+  events: unknown[];
+  automation: AutomationRunSummary;
+}
+
 /** Frame of `POST /api/sessions/:id/commands`; the game narrows `view`/`events` with its own schema. */
 export type SessionCommandResult =
-  | { ok: true; view: unknown; events: unknown[] }
-  | { ok: false; error: { code: string; messageKey: string; details?: unknown } };
+  SessionCommandOk | { ok: false; error: { code: string; messageKey: string; details?: unknown } };
 
 export interface CreateSessionInput {
   gameId: string;
@@ -111,4 +130,20 @@ export async function postSessionCommand(
     if (err.success) return err.data;
   }
   throw toApiError(raw);
+}
+
+/**
+ * `POST /api/sessions/:id/automation/run` with `{}` (no `Idempotency-Key`, no `expectedVersion`; the server is
+ * idempotent) → `SessionCommandOk` (`steps: 0, stopReason: 'none'` when there is nothing to do).
+ * Throws `ApiError` for 404 / 422 `GAME_UNAVAILABLE` / 400 / 5xx / network / an unparseable body.
+ */
+export function runSessionAutomation(
+  sessionId: string,
+  options: CallOptions = {},
+): Promise<SessionCommandOk> {
+  return requestJson(
+    `/sessions/${encodeURIComponent(sessionId)}/automation/run`,
+    SessionCommandOkSchema,
+    { method: 'POST', body: {} satisfies RunAutomationRequest, signal: options.signal },
+  );
 }

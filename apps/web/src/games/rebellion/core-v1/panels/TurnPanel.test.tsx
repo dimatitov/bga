@@ -1,15 +1,23 @@
 import type { PlayerEvent } from '@bga/game-rebellion/schema';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { MockReply } from '@/shared/test';
+import { useFeedbackStore } from '@/shared/feedback';
 import { i18n } from '@/shared/i18n';
 import {
+  CORE_HOT_SEAT,
+  CS_SULLUST,
+  L_LEIA,
+  makeAutomationSummary,
   makeCoreActivationView,
   makeCoreEmpireView,
   makeCoreOutcomeView,
   makeCoreView,
+  makeSessionAutomationState,
 } from '../../test/coreFixtures';
 import { factionLabel } from './labels';
-import { renderCore, resetCoreStores } from './test/harness';
+import { CMD_PATH, commandsOf, ok, renderCore, resetCoreStores } from './test/harness';
+import { TurnControls } from './TurnControls';
 import { TurnPanel } from './TurnPanel';
 import { responseAnnouncements } from './useTurnCommands';
 
@@ -97,5 +105,114 @@ describe('responseAnnouncements', () => {
 
   it('skips announcements whose key does not exist yet (no raw keys read out)', () => {
     expect(responseAnnouncements(t, () => false, makeCoreView(), events)).toEqual([]);
+  });
+});
+
+/** A command reply the test releases by hand (to look at the UI while the request is in flight). */
+function deferredReply() {
+  let release: (reply: MockReply) => void = () => {};
+  const promise = new Promise<MockReply>((resolve) => {
+    release = resolve;
+  });
+  return { handler: () => promise, release };
+}
+
+describe('TurnPanel / actions while the AI moves (SWR-006 R-5, plan-frontend §6.2, §6.4)', () => {
+  it('an automation run in flight: «ИИ думает…», pass / leaders disabled', () => {
+    renderCore(
+      <>
+        <TurnControls />
+        <TurnPanel />
+      </>,
+      makeCoreView(),
+      {},
+      { automation: makeSessionAutomationState({ phase: 'running' }) },
+    );
+    expect(screen.getByTestId('turn-status')).toHaveTextContent('ИИ думает…');
+    expect(screen.getByTestId('pass-turn')).toBeDisabled();
+    expect(screen.getByTestId(`leader-${L_LEIA}`)).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it.each(['error', 'stalled'] as const)(
+    'waiting for the AI after a %s run → «Ход AI не завершён — …»',
+    (phase) => {
+      renderCore(
+        <TurnPanel />,
+        makeCoreView({ activeSide: 'empire', legalActions: [] }),
+        {},
+        { automation: makeSessionAutomationState({ phase, pending: true }) },
+      );
+      expect(screen.getByTestId('turn-panel')).toHaveAttribute('data-state', 'waiting');
+      expect(screen.getByTestId('turn-status')).toHaveTextContent(
+        t('rebellion.turn:panel.aiStalled'),
+      );
+    },
+  );
+
+  it('hot-seat ignores the automation (no «ИИ думает…», actions enabled)', () => {
+    renderCore(
+      <>
+        <TurnControls />
+        <TurnPanel />
+      </>,
+      makeCoreView({ settings: { ...CORE_HOT_SEAT } }),
+      {},
+      { automation: makeSessionAutomationState({ strategy: null, phase: 'running' }) },
+    );
+    expect(screen.getByTestId('turn-status')).toHaveTextContent(t('rebellion.turn:panel.yourTurn'));
+    expect(screen.getByTestId('pass-turn')).toBeEnabled();
+  });
+
+  it('FINISH_ACTIVATION in flight → «ИИ думает…»; the AI summary of the response is read out once', async () => {
+    const view = makeCoreActivationView();
+    const reply = deferredReply();
+    const { user, api } = renderCore(
+      <>
+        <TurnControls />
+        <TurnPanel />
+      </>,
+      view,
+      { [CMD_PATH]: reply.handler },
+      { automation: makeSessionAutomationState() },
+    );
+    await user.click(screen.getByTestId('finish-activation'));
+    await waitFor(() => expect(commandsOf(api.requests)).toEqual([{ type: 'FINISH_ACTIVATION' }]));
+    expect(screen.getByTestId('turn-status')).toHaveTextContent('ИИ думает…');
+    expect(screen.getByTestId('pass-turn')).toBeDisabled();
+
+    const next = makeCoreView({ version: view.version + 3 });
+    reply.release({
+      ...ok(next),
+      body: {
+        ...ok(next).body,
+        automation: makeAutomationSummary({ steps: 2, strategy: 'bot', stopReason: 'humanTurn' }),
+      },
+    });
+    await waitFor(() =>
+      expect(screen.getByTestId('turn-status')).toHaveTextContent(
+        t('rebellion.turn:panel.yourTurn'),
+      ),
+    );
+    const live = useFeedbackStore.getState().live?.text ?? '';
+    expect(live).toContain(t('rebellion.turn:finish.done'));
+    expect(live.match(/Ход AI: 2 действия/g)).toHaveLength(1);
+  });
+
+  it('MOVE_PIECES in flight is not an AI turn (Q-FE-3): no «ИИ думает…»', async () => {
+    const view = makeCoreActivationView();
+    const reply = deferredReply();
+    const { user, api } = renderCore(
+      <TurnPanel />,
+      view,
+      { [CMD_PATH]: reply.handler },
+      { automation: makeSessionAutomationState() },
+    );
+    await user.click(screen.getByTestId(`move-select-all-${CS_SULLUST}`));
+    await user.click(screen.getByTestId(`move-submit-${CS_SULLUST}`));
+    await waitFor(() => expect(commandsOf(api.requests)).toHaveLength(1));
+    expect(screen.queryByText('ИИ думает…')).not.toBeInTheDocument();
+    reply.release(ok(makeCoreActivationView({ version: view.version + 1 })));
+    // The move's own feedback is read out once the response is in.
+    await waitFor(() => expect(useFeedbackStore.getState().live).not.toBeNull());
   });
 });

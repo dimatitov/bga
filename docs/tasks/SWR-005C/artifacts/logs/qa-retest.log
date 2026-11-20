@@ -1,0 +1,70 @@
+# QA retest after QA-2 fix — Fri Nov 20 10:32:52 UTC 2026
+
+$ pnpm --filter @bga/game-rebellion exec vitest run test/knowledge
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  8 passed (8)
+      Tests  96 passed (96)
+   Start at  13:32:53
+   Duration  1.32s (transform 2.39s, setup 0ms, import 5.62s, tests 616ms, environment 1ms)
+
+EXIT=0
+
+$ pnpm exec prettier --check packages/games/rebellion
+Checking formatting...
+All matched files use Prettier code style!
+EXIT=0
+
+$ pnpm exec eslint packages/games/rebellion/test/knowledge --max-warnings=0
+EXIT=0
+
+$ manifest LTP vs QA download (qa-sources.log: official sha256 b26b98139d694e9f42cb36060ec82fdc3000ab753d29809be03b7bc44d8598fc, Last-Modified 2016-03-22, 20 pages; mirror e471220f...fe16)
+{
+ "url": "https://images-cdn.fantasyflightgames.com/filer_public/0b/07/0b07601a-6ac3-4333-ac41-b6d1b9a979da/sw03_learn_to_play_web.pdf",
+ "sha256": "b26b98139d694e9f42cb36060ec82fdc3000ab753d29809be03b7bc44d8598fc",
+ "date": "2016-03-22",
+ "version": "web edition (HTTP Last-Modified 2016-03-22)",
+ "pages": 20,
+ "mirror": {
+  "url": "https://cdn.1j1ju.com/medias/e5/7d/d0-star-wars-rebellion-rulebook.pdf",
+  "sha256": "e471220f4130a091c954c7d07696830a281c95bd3dd5f294c552b1a82a29fe16",
+  "reason": "Official CDN returned 503 at first retrieval on 2026-11-20; later the same day it returned 200 and QA verified the text is identical page by page (all 20 pages). Entries were authored from this mirror copy."
+ },
+ "notes": "The RR takes precedence over this booklet (RR p.2). Page 19 (Team Game) is out of scope. sha256 is the hash of the official file (HTTP 200, Last-Modified 2016-03-22, 20 pages); mirror.sha256 is the hash of the mirror copy the entries were authored from (text identical, verified by QA)."
+}
+sha256 matches official: true | mirror sha256 matches: true | date 2016-03-22: true | pages 20: true
+
+$ grep -n "503\|b26b9813\|LTP" packages/games/rebellion/knowledge/audit-summary.md docs/game-rules/rebellion/discrepancies.md | head
+packages/games/rebellion/knowledge/audit-summary.md:4:Learn to Play (записи писались по зеркалу, пока CDN FFG отвечал 503; позже в тот же день официальный файл получен, QA подтвердил постраничную идентичность текста) и FAQ v2.1 (стр. 1–5, базовая игра).
+docs/game-rules/rebellion/discrepancies.md:8:Learn to Play (записи писались по зеркалу, пока CDN FFG отвечал 503; позже в тот же день официальный файл получен, QA подтвердил постраничную идентичность текста) и FAQ v2.1 (стр. 1–5, базовая игра).
+
+$ grep -n "b26b9813" packages/games/rebellion/test/knowledge/validate.test.ts
+87:      'b26b98139d694e9f42cb36060ec82fdc3000ab753d29809be03b7bc44d8598fc',
+
+$ git ls-files "*.pdf" "*.PDF" | wc -l
+       0
+
+$ node scripts/check-task.mjs docs/tasks/SWR-005C
+OK docs/tasks/SWR-005C
+EXIT=0
+---- check-task (current tree) ----
+docs/tasks/SWR-005C/delivery-report.md: [R7] check "check-task" evidence path `artifacts/logs/delivery-check.log` does not exist (line 61)
+docs/tasks/SWR-005C/delivery-report.md: [R7] check "check-task" is passed but evidence has no existing file path in backticks (line 61)
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-2 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-3 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-4 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-5 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-6 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-7 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-8 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-9 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-10 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-11 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-12 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-13 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-1 in acceptance.md is not_run
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but AC-13 in qa-results.md is not_run
+docs/tasks/SWR-005C/delivery-report.md: [R10] accepted but FINAL_ACCEPTANCE in status.md is pending, not passed
+FAIL docs/tasks/SWR-005C (17 problems)
+EXIT=1 (all problems are in delivery-report.md, which the Analyst is editing at the same time; 0 problems in qa-results.md)

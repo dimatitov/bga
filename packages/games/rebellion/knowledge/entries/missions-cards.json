@@ -1,0 +1,418 @@
+[
+  {
+    "id": "rebellion:missions.reveal-requirement",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Skill requirement to reveal a mission",
+    "text": "A mission can be revealed only if the leaders assigned to it together have at least as many matching skill icons as its skill requirement. Otherwise it stays facedown and the player must activate a system, reveal another mission or pass. This also applies to leaders assigned by abilities.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 8,
+        "section": "Mission Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "What are Skills?"
+      }
+    ],
+    "related": ["rebellion:leaders.skills"]
+  },
+  {
+    "id": "rebellion:missions.reveal-steps",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Revealing a mission",
+    "text": "Steps: 1 flip the card and read it; 2 choose a legal system and place the assigned leaders there; 3 an \"attempt\" can be opposed, a \"resolve\" cannot; 4 the opponent may send one leader from his pool to oppose; 5 if opposed, roll dice; 6 on success apply the ability; 7 a starting mission returns to hand, any other mission is discarded.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 8,
+        "section": "Revealing a Mission"
+      },
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Mission Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "Revealing a Mission"
+      }
+    ],
+    "related": ["rebellion:missions.opposition-dice", "rebellion:missions.starting"],
+    "keywords": ["миссия", "раскрыть миссию", "attempt", "resolve"]
+  },
+  {
+    "id": "rebellion:missions.unopposed",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Unopposed missions succeed",
+    "text": "If the opponent has no leader in the mission's system, an attempted mission succeeds automatically.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Mission Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "Revealing a Mission"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:missions.opposition-dice",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Opposed missions",
+    "text": "With leaders of both sides in the system, each player rolls one die per matching skill icon on all his leaders there (any colour, at most 10 dice), current player first. The attempt succeeds only with more successes than the opponent. A matching leader portrait on the card adds two successes. An opponent leader without matching icons still forces a roll needing at least one success.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Mission Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "Opposing a Mission"
+      }
+    ],
+    "related": ["rebellion:general.dice"],
+    "keywords": ["противодействие миссии"]
+  },
+  {
+    "id": "rebellion:missions.against-leader",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Missions attempted against a leader",
+    "text": "A mission \"against a leader\" is attempted in that leader's system and that leader always takes part, even if it is captured; all leaders in the system participate. A leader sent to oppose does not change the target.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Mission Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "Other Mission Rules"
+      }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:missions.leader-removed",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Leader removed from a mission card",
+    "text": "If a leader on a mission card is eliminated, captured or moved off the mission, the card returns to its owner's hand unrevealed.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Mission Cards"
+      }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:missions.rebel-base-space",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Missions on the Rebel Base space",
+    "text": "If a mission is attempted or resolved on the \"Rebel Base\" space, the leader is put on that space, not in the system where the base is hidden.",
+    "sources": [
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "Revealing a Mission"
+      }
+    ],
+    "related": ["rebellion:base.space-not-system"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:missions.starting",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Starting missions",
+    "text": "Each faction has four starting missions (marked by an arrow) in hand from the start. They return to hand after use and can never be discarded.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 13,
+        "section": "Starting Missions"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 8,
+        "section": "Revealing a Mission"
+      }
+    ]
+  },
+  {
+    "id": "rebellion:missions.projects",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Project cards",
+    "text": "The project deck holds Imperial mission cards that the Empire draws with its Research and Development mission. Discarded projects go to the project discard pile.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Projects"
+      }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:missions.no-benefit",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Missions without benefit; attempt versus resolve",
+    "text": "A mission may be revealed and resolved even if it gives no or only partial benefit. Only attempted missions can succeed or fail; resolved missions neither succeed nor fail.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 4,
+        "section": "Mission and Action Cards"
+      }
+    ],
+    "amends": ["rebellion:missions.reveal-steps"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:missions.card-errata",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "missions",
+    "title": "Errata to three base game cards",
+    "text": "The FAQ corrects where the Rebel missions Sabotage (any populous system) and Covert Operation (any system with at least one Imperial unit) are attempted, and forbids the Imperial action card Independent Operation from moving units into a system with Rebel ground units.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "Errata"
+      }
+    ],
+    "amends": ["rebellion:missions.reveal-steps"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:cards.action",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "cards",
+    "title": "Action cards",
+    "text": "Action cards recruit leaders and give one-use abilities; a used card is revealed, resolved and returned to the box. The heading says when it can be used (Assignment, Start of Combat, Immediate, Special). In a mission or combat it needs one of its leaders already in that system. Use is optional; own cards may be checked anytime, the opponent's are hidden; on a tie the current player goes first.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Action Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 18,
+        "section": "Action Cards"
+      }
+    ],
+    "related": ["rebellion:recruit.procedure"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:cards.objectives",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "cards",
+    "title": "Objective cards",
+    "text": "The Rebels start with one objective and draw one each Refresh. An objective is played when its requirement is met at its stated time (Combat, Start of Refresh Phase, ...) and gives the reputation shown, then leaves the game. At most one is played per combat and per Refresh Phase. Objectives are hidden, have no hand limit, and the deck is stacked stage I over II over III.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Objective Cards"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 11,
+        "section": "Objective Cards"
+      }
+    ],
+    "related": ["rebellion:victory.reputation"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    },
+    "keywords": ["карты целей", "цели повстанцев"]
+  },
+  {
+    "id": "rebellion:cards.objectives-timing",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "cards",
+    "title": "Objective timing and open card backs",
+    "text": "An objective must be played as soon as its requirement is fulfilled; one that needs a won battle is played at the end of the combat; after one objective in a combat no other (not even Death Star Plans) can be played there. The combat is initiated by the player whose turn it is, otherwise by the player whose card caused it. Objective card backs are open information.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 2,
+        "section": "FAQ: Objective Cards"
+      }
+    ],
+    "amends": ["rebellion:cards.objectives"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:cards.probe",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "cards",
+    "title": "Probe cards",
+    "text": "The probe deck has one card for every system except Coruscant. It sets starting loyalty during setup and the Rebels secretly take their base card from it. Each Refresh the Empire draws two probe cards and keeps them hidden from the Rebels.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Probe Cards"
+      }
+    ],
+    "related": ["rebellion:refresh.probe-droids", "rebellion:setup.base-choice"],
+    "keywords": ["карты зондов"]
+  },
+  {
+    "id": "rebellion:cards.tactic",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "cards",
+    "title": "Tactic cards",
+    "text": "Tactic cards are drawn in combat according to leaders' tactic values, plus one for each special result spent. They stay hidden until played, and at the end of each combat all space and ground tactic cards are shuffled back into their decks.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Tactic Cards"
+      }
+    ],
+    "related": ["rebellion:combat.steps"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:deathstar.rules",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "death-star",
+    "title": "The Death Star",
+    "text": "The Death Star follows the rules for ships except that it has no health and cannot be damaged, and while a Death Star or Death Star Under Construction is in a combat the Empire cannot retreat any units. Both are space stations, not capital ships or structures.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Death Star"
+      }
+    ],
+    "related": ["rebellion:units.ships"],
+    "keywords": ["звезда смерти"]
+  },
+  {
+    "id": "rebellion:deathstar.build",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "death-star",
+    "title": "Building a second Death Star",
+    "text": "The Construct Death Star project places an immobile Death Star Under Construction in the mission's system and a Death Star on space 3 of the build queue. The new Death Star can only be deployed in that system. If the unfinished station is destroyed, the queued Death Star is destroyed too.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Building a Death Star"
+      }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:deathstar.destroy",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "death-star",
+    "title": "Destroying a Death Star",
+    "text": "In a space battle, after both attacks, the Rebels may reveal a Death Star Plans objective. With at least one fighter in the system they roll three dice; any direct hit destroys the Death Star and gives the card's reputation, otherwise the card is kept. One such card per combat round; it also works on the unfinished station but needs a Death Star in the system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Destroying a Death Star"
+      }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:deathstar.faq",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "death-star",
+    "title": "Death Star Under Construction rulings",
+    "text": "Cards that name the Death Star do not work for the Death Star Under Construction unless they say so. The finished Death Star is placed in the unfinished station's system even if Rebel ground units are there. Destroying the unfinished station without Death Star Plans gives no reputation.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "FAQ: Death Star"
+      }
+    ],
+    "amends": ["rebellion:deathstar.build"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:deathstar.superlaser",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "death-star",
+    "title": "Destroying systems with the Death Star",
+    "text": "To destroy a system the Empire needs the Superlaser Online project, drawn through Research and Development. The destroyed system gets a marker and loses all Rebel ground units. If it is the system of the Rebel base, the Empire wins immediately.",
+    "sources": [
+      {
+        "sourceId": "LTP",
+        "page": 11,
+        "section": "The Death Star"
+      }
+    ],
+    "related": ["rebellion:map.destroyed-systems", "rebellion:victory.superlaser-hidden-base"],
+    "ai": "none"
+  }
+]

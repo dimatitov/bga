@@ -1,8 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { ApiError, isClientError, isNetworkError, isNotFound } from '@/shared/api';
 import { mockFetch } from '@/shared/test';
-import { makeSessionEnvelope, makeSessionSummary } from '../test/fakeGame';
-import { createSession, getSession, listSessions, postSessionCommand } from './api';
+import {
+  makeAutomationSummary,
+  makeCommandOk,
+  makeSessionEnvelope,
+  makeSessionSummary,
+} from '../test/fakeGame';
+import {
+  createSession,
+  getSession,
+  listSessions,
+  postSessionCommand,
+  runSessionAutomation,
+} from './api';
 import { sessionKeys } from './queries';
 
 async function catchError(p: Promise<unknown>): Promise<ApiError> {
@@ -48,6 +59,9 @@ describe('platform/sessions/api', () => {
     ['status', { status: undefined }],
     ['settings', { settings: undefined }],
     ['unknown status', { status: 'paused' }],
+    ['automation (SWR-006, required)', { automation: undefined }],
+    ['automation.strategy', { automation: { pending: false, strategy: 'llm' } }],
+    ['automation extra field', { automation: { pending: true, strategy: 'bot', steps: 1 } }],
   ])('createSession/getSession: envelope without valid %s → INVALID_RESPONSE', async (_, patch) => {
     const body = { ...makeSessionEnvelope(), ...patch };
     mockFetch({
@@ -131,8 +145,26 @@ describe('platform/sessions/api', () => {
     });
   });
 
-  it('postSessionCommand: 200 → ok frame (view/events unknown); sends the envelope as is', async () => {
-    const body = { ok: true, view: { v: 2 }, events: [{ type: 'X' }] };
+  it('getSession: parses automation { pending, strategy } (SWR-006 P-1)', async () => {
+    const body = makeSessionEnvelope({ automation: { pending: true, strategy: 'bot' } });
+    mockFetch({ 'GET /api/sessions/s1': { status: 200, body } });
+    await expect(getSession('s1')).resolves.toMatchObject({
+      automation: { pending: true, strategy: 'bot' },
+    });
+  });
+
+  it('postSessionCommand: 200 → ok frame (view/events unknown, automation summary); sends the envelope as is', async () => {
+    const body = makeCommandOk({
+      view: { v: 2 },
+      events: [{ type: 'X' }],
+      automation: makeAutomationSummary({
+        steps: 4,
+        strategy: 'openai',
+        fallbacks: 2,
+        fallbackReasons: ['AI_TIMEOUT'],
+        stopReason: 'humanTurn',
+      }),
+    });
     const { requests } = mockFetch({ 'POST /api/sessions/s1/commands': { status: 200, body } });
     await expect(postSessionCommand('s1', envelope)).resolves.toEqual(body);
     expect(requests[0]).toMatchObject({ url: '/api/sessions/s1/commands', body: envelope });
@@ -173,6 +205,75 @@ describe('platform/sessions/api', () => {
       status: 422,
       code: 'HTTP_ERROR',
     });
+  });
+
+  it('postSessionCommand: 200 without automation (or with an invalid summary) → INVALID_RESPONSE', async () => {
+    mockFetch({
+      'POST /api/sessions/s1/commands': {
+        status: 200,
+        body: { ok: true, view: {}, events: [] },
+      },
+      'POST /api/sessions/s2/commands': {
+        status: 200,
+        body: makeCommandOk({ automation: makeAutomationSummary({ steps: 1, fallbacks: 2 }) }),
+      },
+    });
+    expect((await catchError(postSessionCommand('s1', envelope))).code).toBe('INVALID_RESPONSE');
+    expect((await catchError(postSessionCommand('s2', envelope))).code).toBe('INVALID_RESPONSE');
+  });
+
+  it('runSessionAutomation: POST /api/sessions/:id/automation/run with {} (no Idempotency-Key) → summary', async () => {
+    const body = makeCommandOk({
+      view: { v: 3 },
+      events: [{ type: 'AI' }],
+      automation: makeAutomationSummary({ steps: 2, strategy: 'bot', stopReason: 'humanTurn' }),
+    });
+    const { requests } = mockFetch({
+      'POST /api/sessions/a%2Fb/automation/run': { status: 200, body },
+    });
+    await expect(runSessionAutomation('a/b')).resolves.toEqual(body);
+    expect(requests[0]).toMatchObject({
+      method: 'POST',
+      url: '/api/sessions/a%2Fb/automation/run',
+      body: {},
+    });
+    expect(requests[0]?.headers).not.toHaveProperty('idempotency-key');
+  });
+
+  it('runSessionAutomation: 404 / 422 GAME_UNAVAILABLE / 500 / network / invalid body → ApiError', async () => {
+    mockFetch({
+      'POST /api/sessions/missing/automation/run': {
+        status: 404,
+        body: { ok: false, error: { code: 'NOT_FOUND', messageKey: 'errors.sessionNotFound' } },
+      },
+      'POST /api/sessions/old/automation/run': {
+        status: 422,
+        body: {
+          ok: false,
+          error: { code: 'GAME_UNAVAILABLE', messageKey: 'errors.gameUnavailable' },
+        },
+      },
+      'POST /api/sessions/boom/automation/run': {
+        status: 500,
+        body: { ok: false, error: { code: 'INTERNAL', messageKey: 'errors.internal' } },
+      },
+      'POST /api/sessions/net/automation/run': 'network',
+      'POST /api/sessions/bad/automation/run': {
+        status: 200,
+        body: { ok: true, view: {}, events: [] },
+      },
+    });
+    expect(isNotFound(await catchError(runSessionAutomation('missing')))).toBe(true);
+    expect(await catchError(runSessionAutomation('old'))).toMatchObject({
+      status: 422,
+      code: 'GAME_UNAVAILABLE',
+    });
+    expect(await catchError(runSessionAutomation('boom'))).toMatchObject({
+      status: 500,
+      code: 'INTERNAL',
+    });
+    expect(isNetworkError(await catchError(runSessionAutomation('net')))).toBe(true);
+    expect((await catchError(runSessionAutomation('bad'))).code).toBe('INVALID_RESPONSE');
   });
 
   it('sessionKeys: lists() is a prefix of every list key; detail is separate', () => {

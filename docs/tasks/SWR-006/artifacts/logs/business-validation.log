@@ -1,0 +1,33 @@
+SWR-006 BUSINESS_VALIDATION — Analyst (main session), 2026-11-20, in-app browser against `pnpm dev` (ports 3000/5173)
+Gate before BV: `pnpm verify` EXIT=0 (artifacts/logs/integration-verify-final.log).
+
+== BV-A: PO scenario in bot mode (default config, AI_COMMANDER_PROVIDER unset → bot) ==
+1. /games/star-wars-rebellion/new — defaults: Повстанцы, AI, Обычная. Finding BV-1 (minor): hint under «Сложность AI» said
+   «Сохраняется для AI; в прототипе AI не ходит.» (false since SWR-006) → fixed by frontend-worker (artifacts/logs/bv-1-fix.log).
+2. First «Начать игру» → «Внутренняя ошибка сервера»: dev log shows `[vite] http proxy error: /api/sessions ECONNREFUSED` while
+   `nest start --watch` was restarting after the packages watcher rebuilt (dev-environment start-up race, not a product defect).
+   Second click → session 720f0f27-18d5-4dc2-a50e-ea7361a024ef created.
+3. Top bar: «AI Commander · бот · Обычная»; data: ai-commander-status strategy=bot difficulty=normal state=idle.
+4. Rebels pass (confirm dialog) → server ran the AI Empire turn in the same request: «Ход AI: 13 действий»; time 1 → 2; turn back to
+   the human. Log (13 entries data-ai=true, «AI» chip): Палпатин активирует Альдераан, Ударный авианосец+Штурмовик Кореллия→Альдераан,
+   завершает; Вейдер активирует Беспин, Ударный авианосец+2 Штурмовика+AT-ST Мустафар→Беспин, завершает; Таркин активирует
+   Като-Неймодию, Звёздный разрушитель+3 наземных Салласт→Като-Неймодия, завершает; Тагге активирует Кореллию, ЗР+3 Штурмовика+AT-AT+AT-ST
+   Корусант→Кореллия, завершает; пасует. → meaningful behaviour: leader activations, ships carrying ground toward possible base systems,
+   finishing activations, pass; round completes.
+5. Reload page → state persisted: time 2, 13 AI entries, session-host automation pending=false strategy=bot state=idle.
+
+== BV-B / AC-12: live OpenAI check (PO approval in chat 2026-11-19: «Да, лимит 0.05 USD») ==
+Config: temporary launch entry `dev-openai-live` = `PORT=3000 OPENAI_ENABLED=true AI_COMMANDER_PROVIDER=openai AI_COMMANDER_MODEL_ROLE=tactical
+OPENAI_MAX_COST_PER_SESSION_USD=0.05 pnpm dev` (process env overrides; key from apps/api/.env — not read or printed by the agent).
+Removed from .claude/launch.json afterwards.
+1. New game (Повстанцы vs AI, Обычная) → session dd78cc01-6a6f-4362-8b40-5675331ef9b3; top bar «AI Commander · OpenAI · Обычная».
+2. Rebels pass → «ИИ думает…» shown, Pass/Finish disabled during the request (~23 s).
+3. Server log: `automation.run sessionId=dd78cc01-… steps=14 fallbacks=0 stopReason=humanTurn durationMs=22867`;
+   steps source=openai except 2 single-candidate steps (source=bot, no call, no fallback — AM-BE-4).
+4. UI: «Ход AI: 14 действий», no fallback notice; time 1 → 2; 14 AI log entries (4 activations by Палпатин/Вейдер/Таркин/Тагге,
+   moves Корусант→Альдераан, Корусант→Кореллия, Мандалор…, Мустафар→Беспин, finishes, pass).
+5. AiUsage (sqlite, budgetKey = sessionId): rows=10, model=gpt-6-luna, status=ok (all), input=9474, cached=0, output=466,
+   reasoning=0, Σ estimatedCostMicroUsd=1184 (≈ 0.001184 USD of the 0.05 limit), Σ durationMs=21027 (1.3–3.8 s per call).
+6. No key/secret in logs (log lines are allow-listed: provider/model/tokens/cost/budgetKey only).
+
+Verdict BV: scenario passes in both modes; defect BV-1 (minor) fixed; no blocking issues.

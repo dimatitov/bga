@@ -1,0 +1,49 @@
+# SWR-006 W7 — AutomationRunner, strategies, run endpoint, API test migration. backend-worker (API), 2026-11-19T15:28:10Z
+# Shared working tree (W6/W8 edit packages/games/rebellion in parallel; FE-1 edits apps/web). api tests run alone.
+
+## Baseline before W7 (same tree, W1 stub in place): pnpm --filter @bga/api test
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  4 failed | 49 passed | 1 skipped (54)
+      Tests  8 failed | 507 passed | 1 skipped (516)
+EXIT=1
+ FAIL  test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-06 / TC-AI-16: Empire vs AI — the AI Rebels pass at creation (version 2); idempotent replay does not repeat it
+ FAIL  test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-03 / TC-AI-04 / TC-AI-05 / TC-AI-10 / TC-AI-11: Rebels vs AI — auto pass in the same response, versions
+ FAIL  test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-07 / TC-AI-07a: Empire vs AI — the AI passed, the Empire acts again; PASS → new round with the AI pass
+ FAIL  test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-15: two parallel player commands with one expectedVersion → one 200, one 409; the auto pass is stored once
+ FAIL  test/core-victory.int.test.ts > core-v1 victories over HTTP (AC-07, AC-13) > TC-AI-08 / TC-P-07 / TC-H-18: Rebels vs AI — 13 player passes → time 14 = reputation → Rebels win
+ FAIL  test/core-victory.int.test.ts > core-v1 victories over HTTP (AC-07, AC-13) > TC-AI-08 / TC-P-07 / TC-H-18: Empire vs AI — 13 player passes → time 14 = reputation → Rebels win
+ FAIL  test/hidden-info-core.int.test.ts > core-v1 hidden base: path-aware scan of every Empire-addressed API response (AC-10) > TC-H-13 / TC-H-15 / TC-H-16: Empire vs AI — POST, GET, list, commands and probes; then the reveal
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted
+
+$ pnpm --filter @bga/api test
+ Test Files  58 passed | 1 skipped (59)
+      Tests  562 passed | 1 skipped (563)
+   Duration  55.12s (transform 6.34s, setup 1.61s, import 46.77s, tests 257.79s, environment 6ms)
+EXIT=0
+(expected ERROR lines of negative tests in stderr omitted)
+
+$ pnpm --filter @bga/api typecheck
+EXIT=0
+
+$ pnpm exec eslint apps/api --max-warnings=0
+EXIT=0
+
+$ pnpm exec prettier --check <W7 changed files>
+Checking formatting...
+All matched files use Prettier code style!
+EXIT=0
+
+$ grep -rn "SWR-006 W1 TEMPORARY STUB" apps/api/src
+EXIT=1 (1 = not found)
+
+## Flakiness check (concurrency tests: TC-CC-01 one process, TC-CC-04 two apps on one SQLite file)
+$ for i in 1..5: pnpm exec vitest run test/automation-runner.int.test.ts test/hidden-info-core.int.test.ts test/core-ai-autopass.int.test.ts   (in apps/api)
+      Tests  24 passed (24)   ×5 runs, all exit 0
+
+## Migrated tests (semantics old → new)
+- core-ai-autopass.int (TC-AI-03..07a, 10, 11, 15, 16): app built with createRebellionServerModule({ automation: { policy: chooseAutoCommand } }) (AM-BE-6); versions/events byte-identical; + automation summary on every command (steps = engine commands − 1, humanTurn/none) and envelope on create; TC-AI-15: the 200 has steps 1, the 409 never runs the runner.
+- core-victory.int (TC-AI-08 ×2): same pass module for the exact 13-pass games (full games vs the real bot: W9).
+- hidden-info-core.int (TC-H-13/15/16 Empire vs AI): same pass module (script unchanged); NEW test: Empire vs the REAL bot (easy, id swr006-hidden-bot-1), 4 Empire passes + run calls, every Empire-addressed body path-scanned (0 leaks), at least one automated Rebel PIECES_MOVED touching the base shown with null, Nest logs (incl. automation.step lines) free of the base id.
+- sessions.int TC-SES-01: real bot — first 3 events fixed, then ≥1 automated Rebel event (actors rebels/system only), activeSide empire, automation {pending:false,strategy:'bot'}, GET equals the 201 body. TC-SES-07: automation strategy null → 'bot' (W1 stub value replaced).
+- routes.int TC-SES-15: + POST /api/sessions/:sessionId/automation/run.
+- architecture.int: + SWR-006 TC-PL-01/02 (sessions/** incl. automation/**: no game words even in comments, no game imports).

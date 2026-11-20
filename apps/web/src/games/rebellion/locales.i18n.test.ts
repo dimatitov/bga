@@ -219,8 +219,8 @@ describe('SWR-005 core-v1 locales (TC-C-08, plan-frontend §8)', () => {
       'log.PASSED_auto',
       'log.ACTIVATION_FINISHED_auto',
       'log.hiddenZone',
-      'log.autoTag',
-      'log.autoHint',
+      'log.aiActor',
+      'log.aiTag',
       'log.unknown',
     ];
     for (const key of keys) {
@@ -266,5 +266,88 @@ describe('SWR-005 core-v1 locales (TC-C-08, plan-frontend §8)', () => {
     expect(i18n.getFixedT('ru')('rebellion.common:phase.command')).toBe('Приказы');
     expect(i18n.getFixedT('ru')('rebellion.common:phase.assignment')).toBe('Назначение');
     expect(i18n.getFixedT('ru')('rebellion.common:phase.refresh')).toBe('Обновление');
+  });
+});
+
+describe('SWR-006 AI Commander locales (R-7, AC-10, plan-frontend §7.2)', () => {
+  it('ai.* / turn panel keys exist in ru and en; the old «авто» chip and hint are gone', () => {
+    const matchKeys = [
+      'ai.name',
+      'ai.label',
+      'ai.labelNoProvider',
+      'ai.labelNoDifficulty',
+      'ai.provider.bot',
+      'ai.provider.openai',
+      'ai.thinking',
+      'ai.summary_one',
+      'ai.summary_other',
+      'ai.summaryGameOver',
+      'ai.fallback',
+      'ai.infoCommander',
+      'ai.infoCommanderBot',
+      'ai.infoCommanderOpenai',
+      'ai.infoCommanderNone',
+      'log.aiActor',
+      'log.aiTag',
+    ];
+    for (const lng of ['ru', 'en'] as const) {
+      for (const key of matchKeys) {
+        expect(typeof stored(lng, 'rebellion.match', key), `${lng} match:${key}`).toBe('string');
+      }
+      for (const key of ['panel.aiThinking', 'panel.aiStalled']) {
+        expect(typeof stored(lng, 'rebellion.turn', key), `${lng} turn:${key}`).toBe('string');
+      }
+      expect(stored(lng, 'rebellion.match', 'log.autoTag'), `${lng} log.autoTag`).toBeUndefined();
+      expect(stored(lng, 'rebellion.match', 'log.autoHint'), `${lng} log.autoHint`).toBeUndefined();
+    }
+    for (const f of ['few', 'many']) {
+      expect(typeof stored('ru', 'rebellion.match', `ai.summary_${f}`), `ru ai.summary_${f}`).toBe(
+        'string',
+      );
+    }
+  });
+
+  /**
+   * AC-10: no locale says the AI Commander is «not implemented». The only allowed match is the platform
+   * game page's «coming soon» text about games without rules/table yet (`gamePage:comingSoon`, not about the AI).
+   */
+  it('no ru/en text contains «ещё не реализован» / «not implemented yet» (except gamePage:comingSoon)', () => {
+    const NOT_IMPLEMENTED = /ещё не реализован|еще не реализован|not implemented yet/i;
+    const ALLOWED = new Set(['gamePage:comingSoon']);
+    const offenders: string[] = [];
+    for (const lng of ['ru', 'en'] as const) {
+      for (const [ns, tree] of Object.entries(resources[lng] ?? {})) {
+        for (const key of flatKeys(tree)) {
+          const v = lookup(ns, lng, key);
+          if (typeof v === 'string' && NOT_IMPLEMENTED.test(v) && !ALLOWED.has(`${ns}:${key}`)) {
+            offenders.push(`${lng} ${ns}:${key}`);
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+    // The scan sees the Rebellion namespaces (guards against an empty `resources`).
+    expect(Object.keys(resources.ru ?? {})).toContain('rebellion.match');
+  });
+
+  /** SWR-006/BV-1: the AI Commander plays, so no locale may still claim the AI does not move. */
+  it('no ru/en text contains «AI не ходит» / «AI does not move»; difficulty hint is about AI Commander', () => {
+    const AI_DOES_NOT_MOVE = /AI не ходит|AI does not move/i;
+    const offenders: string[] = [];
+    for (const lng of ['ru', 'en'] as const) {
+      for (const [ns, tree] of Object.entries(resources[lng] ?? {})) {
+        for (const key of flatKeys(tree)) {
+          const v = lookup(ns, lng, key);
+          if (typeof v === 'string' && AI_DOES_NOT_MOVE.test(v))
+            offenders.push(`${lng} ${ns}:${key}`);
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+    for (const lng of ['ru', 'en'] as const) {
+      expect(stored(lng, 'rebellion.setup', 'newGame.difficultyHint'), `${lng}`).toMatch(
+        /AI Commander/,
+      );
+    }
   });
 });

@@ -1,6 +1,6 @@
 // SWR-005B dev AI diagnostics page `/dev/ai` (test-cases.md §9): TC-E-01, TC-E-02, TC-E-03, TC-E-04 (browser part),
 // TC-E-05, TC-S-09, TC-VA-01/02 + screenshots S-1..S-11 of plan-frontend §12 into docs/tasks/SWR-005B/artifacts/screenshots/
-// (CURRENT_SCREENSHOT_TASK = 'SWR-005B'). S-12 (real OpenAI) is Analyst-only (A-4) and never taken here.
+// (SWR-006: passed explicitly as `SWR005B`, so a regular run writes them to test-results/screenshots/SWR-005B/). S-12 (real OpenAI) is Analyst-only (A-4) and never taken here.
 // Mock mode only: the e2e API runs with OPENAI_ENABLED=false, NODE_ENV=test (apps/api/scripts/e2e-serve.mjs).
 // «real API» cases hit the real dev endpoints; «UI states» cases intercept them with `page.route` (Clarification Q-25)
 // — error codes, 404/500 status and the paid-request warning cannot (and must not) be produced by the e2e server.
@@ -33,6 +33,9 @@ import {
 } from './support/dev-ai';
 import { sessionIds } from './support/setup';
 import { T } from './support/testids';
+
+/** Evidence task of these screenshots (SWR-006: explicit, the current task is SWR-006). */
+const SWR005B = 'SWR-005B';
 
 const D = { width: 1440, height: 900 };
 const M = { width: 375, height: 812 };
@@ -162,10 +165,10 @@ test.describe('SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false)',
     await expect(page.getByTestId(DA.result)).toHaveAttribute('data-state', 'empty');
     await expect(page.getByTestId(DA.paidWarning)).toHaveCount(0);
 
-    await saveScreenshot(page, 'dev-ai-1440-status-mock'); // S-1
+    await saveScreenshot(page, 'dev-ai-1440-status-mock', SWR005B); // S-1
     await page.setViewportSize(M);
     await expectNoHorizontalScroll(page, '375 status');
-    await saveScreenshot(page, 'dev-ai-375-status-mock', undefined, { fullPage: true }); // S-2
+    await saveScreenshot(page, 'dev-ai-375-status-mock', SWR005B, { fullPage: true }); // S-2
   });
 
   test('TC-E-02: «Тестировать AI» with mock → result card; button disabled while pending; one request', async ({
@@ -188,7 +191,7 @@ test.describe('SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false)',
     for (const id of [DA.roleOption('tactical'), DA.providerOption('auto')]) {
       await expect(page.getByTestId(id), `${id} disabled while pending`).toBeDisabled();
     }
-    await saveScreenshot(page, 'dev-ai-1440-pending'); // S-3 (real request, held by the route)
+    await saveScreenshot(page, 'dev-ai-1440-pending', SWR005B); // S-3 (real request, held by the route)
     held.release();
 
     const res = await responseP;
@@ -214,13 +217,13 @@ test.describe('SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false)',
     const sent = posts[0]!.postDataJSON() as Record<string, unknown>;
     expect(sent).toEqual({ scenario: PO_SCENARIO, role: 'tactical', provider: 'mock' });
 
-    await saveScreenshot(page, 'dev-ai-1440-result-mock'); // S-4
+    await saveScreenshot(page, 'dev-ai-1440-result-mock', SWR005B); // S-4
     await page.setViewportSize(M);
     await expectNoHorizontalScroll(page, '375 result');
     for (const id of [DA.resultAction, DA.resultModel, DA.cost, DA.tokens('total')]) {
       await expectNotClipped(page.getByTestId(id), `375 ${id}`);
     }
-    await saveScreenshot(page, 'dev-ai-375-result-mock', undefined, { fullPage: true }); // S-5
+    await saveScreenshot(page, 'dev-ai-375-result-mock', SWR005B, { fullPage: true }); // S-5
   });
 
   test('TC-PS-04 (e2e): provider «auto» with OpenAI disabled → hint, and the server answers with mock', async ({
@@ -298,7 +301,7 @@ test.describe('SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false)',
     await link.scrollIntoViewIfNeeded();
     await expect(link).toBeVisible();
     await expectNoHorizontalScroll(page, '375 settings');
-    await saveScreenshot(page, 'settings-375-dev-link', undefined, { fullPage: true }); // S-10
+    await saveScreenshot(page, 'settings-375-dev-link', SWR005B, { fullPage: true }); // S-10
 
     await page.setViewportSize(D);
     await page.getByTestId(T.settingsLanguage('en')).click();
@@ -311,7 +314,7 @@ test.describe('SWR-005B /dev/ai — real API (mock mode, OPENAI_ENABLED=false)',
     await page.getByTestId(DA.submit).click();
     await expectMockResult(page);
     await expect(page.getByTestId(DA.costNote)).toHaveText(msg(EN, 'result.costNote'));
-    await saveScreenshot(page, 'dev-ai-1440-en-result'); // S-11
+    await saveScreenshot(page, 'dev-ai-1440-en-result', SWR005B); // S-11
 
     await page.getByTestId(DA.back).click();
     await expect(page).toHaveURL(/\/settings$/);
@@ -368,12 +371,12 @@ test.describe('SWR-005B /dev/ai — UI states (page.route, Q-25)', () => {
       );
       await expect(submit).toBeEnabled();
       if (c.code === 'AI_BUDGET_EXCEEDED') {
-        await saveScreenshot(page, 'dev-ai-1440-error-budget'); // S-7
+        await saveScreenshot(page, 'dev-ai-1440-error-budget', SWR005B); // S-7
       }
       if (c.code === 'AI_INVALID_DECISION') {
         await page.setViewportSize(M);
         await expectNoHorizontalScroll(page, '375 invalid decision');
-        await saveScreenshot(page, 'dev-ai-375-error-invalid', undefined, { fullPage: true }); // S-8
+        await saveScreenshot(page, 'dev-ai-375-error-invalid', SWR005B, { fullPage: true }); // S-8
         await page.setViewportSize(D);
       }
     }
@@ -428,7 +431,7 @@ test.describe('SWR-005B /dev/ai — UI states (page.route, Q-25)', () => {
     await expect(page.getByTestId(DA.status)).toContainText(msg(RU, 'status.unavailable'));
     // The button stays usable: status is informational (plan-frontend §5.2).
     await expect(page.getByTestId(DA.submit)).toBeEnabled();
-    await saveScreenshot(page, 'dev-ai-1440-status-unavailable'); // S-9
+    await saveScreenshot(page, 'dev-ai-1440-status-unavailable', SWR005B); // S-9
 
     await routeStatus(page, 500, errorBody('INTERNAL', 'errors.internal'));
     await openDevAi(page, 'error');
@@ -451,7 +454,7 @@ test.describe('SWR-005B /dev/ai — UI states (page.route, Q-25)', () => {
     await page.getByTestId(DA.providerOption('auto')).click();
     await expect(page.getByTestId(DA.paidWarning)).toHaveText(msg(RU, 'run.paidWarning'));
     await expect(page.getByTestId(DA.autoMockHint)).toHaveCount(0);
-    await saveScreenshot(page, 'dev-ai-1440-paid-warning'); // S-6
+    await saveScreenshot(page, 'dev-ai-1440-paid-warning', SWR005B); // S-6
     // Nothing is sent without a click (no request is ever made in this test).
     expect(posts).toHaveLength(0);
   });

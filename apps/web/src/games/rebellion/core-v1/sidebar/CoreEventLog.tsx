@@ -1,18 +1,19 @@
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCoreBoard } from '../model/coreContext';
-import { coreLogMessage, isAutoEvent } from './coreLogMessage';
+import { coreLogMessage, isAiEvent, isAutoEvent } from './coreLogMessage';
 
 /**
  * Event log of the `core-v1` table (SWR-005 plan-frontend §7, D-SW5-13; tab «Журнал» of `CoreSidebar`): newest
- * first; `role="log"` with `aria-live="off"` — announcements go through the table live region. An automatic AI
- * move (`payload.auto`) is marked honestly: chip «авто» + visible hint «AI Commander ещё не реализован…»
- * (also the chip tooltip, linked by `aria-describedby`). `log-entry-<seq>[data-type][data-actor][data-auto]`.
+ * first; `role="log"` with `aria-live="off"` — announcements go through the table live region.
+ * SWR-006 (Q-FE-4): every event of the AI side reads «Империя (AI): …» and carries the chip «AI»
+ * (`log-entry-<seq>-ai`, `aria-hidden` — the line already says «(AI)»). Events arrive redacted by the server:
+ * the AI Rebels' moves to / from the hidden base read «скрытая зона» for the Empire.
+ * `log-entry-<seq>[data-type][data-actor][data-auto][data-ai]`.
  */
 export function CoreEventLog() {
   const { t, i18n } = useTranslation();
@@ -41,8 +42,7 @@ export function CoreEventLog() {
       sx={{ listStyle: 'none', p: 0, m: 0 }}
     >
       {events.map((e) => {
-        const auto = isAutoEvent(e);
-        const hintId = `log-entry-${e.seq}-auto-hint`;
+        const ai = isAiEvent(e, view.settings);
         return (
           <Box
             component="li"
@@ -51,7 +51,8 @@ export function CoreEventLog() {
             data-seq={e.seq}
             data-type={e.type}
             data-actor={e.actor}
-            data-auto={auto ? 'true' : 'false'}
+            data-auto={isAutoEvent(e) ? 'true' : 'false'}
+            data-ai={ai ? 'true' : 'false'}
             sx={{
               py: 0.75,
               borderBottom: 1,
@@ -76,35 +77,22 @@ export function CoreEventLog() {
             </Typography>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="body2">{coreLogMessage(e, t, view)}</Typography>
-              {auto && (
-                <Typography
-                  id={hintId}
-                  variant="caption"
-                  data-testid={`log-entry-${e.seq}-auto-hint`}
-                  sx={{ display: 'block', color: 'text.secondary' }}
-                >
-                  {t('rebellion.match:log.autoHint')}
-                </Typography>
-              )}
             </Box>
-            {auto && (
-              <Tooltip describeChild title={t('rebellion.match:log.autoHint')}>
-                <Chip
-                  data-testid={`log-entry-${e.seq}-auto`}
-                  icon={<SmartToyOutlinedIcon aria-hidden />}
-                  label={t('rebellion.match:log.autoTag')}
-                  size="small"
-                  variant="outlined"
-                  tabIndex={0}
-                  aria-describedby={hintId}
-                  sx={{
-                    color: 'mock.main',
-                    borderColor: 'mock.main',
-                    height: 20,
-                    '& .MuiChip-icon': { color: 'inherit' },
-                  }}
-                />
-              </Tooltip>
+            {ai && (
+              <Chip
+                data-testid={`log-entry-${e.seq}-ai`}
+                icon={<SmartToyOutlinedIcon aria-hidden />}
+                label={t('rebellion.match:log.aiTag')}
+                size="small"
+                variant="outlined"
+                aria-hidden
+                sx={{
+                  color: 'text.secondary',
+                  borderColor: 'divider',
+                  height: 20,
+                  '& .MuiChip-icon': { color: 'inherit' },
+                }}
+              />
             )}
           </Box>
         );

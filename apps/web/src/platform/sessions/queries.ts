@@ -1,10 +1,14 @@
 import { queryOptions } from '@tanstack/react-query';
+import { noteSessionLoaded } from '../automation/automationStore';
 import { getSession, listSessions } from './api';
 
 /**
  * Query keys of sessions (plan-frontend §3, §3.1 cache rules):
  * create → `setQueryData(detail(id))` + `invalidate(lists())`; command ok → `setQueryData(detail(id))` +
  * `invalidate(lists())`; 409/404 → `invalidate(detail(id))`. No optimistic writes.
+ * SWR-006 (plan-frontend §5): command / automation-run 200 → `commitCommandResult` (`setQueryData(detail)` with the
+ * new `view` and `automation: { pending, strategy }` + `invalidate(lists())`; `stopReason` `gameOver` | `conflict` →
+ * also `invalidate(detail)`); run 404 / 422 → `invalidate(detail)`; run network / 5xx → cache untouched.
  */
 export const sessionKeys = {
   all: ['sessions'] as const,
@@ -26,7 +30,12 @@ export function sessionQuery(sessionId: string) {
   return queryOptions({
     queryKey: sessionKeys.detail(sessionId),
     staleTime: SESSION_DETAIL_STALE_TIME,
-    queryFn: ({ signal }) => getSession(sessionId, { signal }),
+    queryFn: async ({ signal }) => {
+      const envelope = await getSession(sessionId, { signal });
+      // Every load allows one automatic run of the automated participant (Q-FE-1; no-op without SessionHost).
+      noteSessionLoaded(sessionId);
+      return envelope;
+    },
   });
 }
 

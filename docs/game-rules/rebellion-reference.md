@@ -1,5 +1,7 @@
 # Star Wars: Rebellion (base game, FFG 2016) — справочник фактов для SWR-005 (factual reference)
 
+> **SWR-005C (2026-11-20):** проверяемая база знаний правил — `packages/games/rebellion/knowledge/` (формат: [`knowledge-base.md`](knowledge-base.md); отчёты: [`rebellion/coverage-matrix.md`](rebellion/coverage-matrix.md), [`rebellion/discrepancies.md`](rebellion/discrepancies.md)). Она сверена по официальным RR (2016), LTP и **FAQ v2.1 (May 2019)**, который заменяет FAQ 18 May 2016, указанный ниже. При расхождении с этим файлом приоритет у базы знаний.
+
 Research date: 2026-11-08. Scope: **base game only** (no Rise of the Empire). Rules are restated in our own words; no rulebook or card text is reproduced verbatim beyond short identifiers (names of systems, units, leaders, phases, steps).
 
 Confidence scale: **high** = official FFG document read directly (Rules Reference, Learn to Play, FAQ) or two independent sources agree; **medium** = one reliable secondary source, or official source read via an illustration only; **low** = single fan source, unverified.

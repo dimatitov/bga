@@ -1,18 +1,25 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import type { PlayerViewCore } from '@bga/game-rebellion/schema';
+import {
+  type PlayerEvent,
+  PlayerEventSchema,
+  type PlayerViewCore,
+} from '@bga/game-rebellion/schema';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TableScreenProps } from '@/games/types';
+import { type AutomationLastRun, useSessionAutomation } from '@/platform';
 import { announce } from '@/shared/feedback';
 import { useDragStore, useGlobalEscape, useSelectionStore } from '../board';
 import { CoreBoardStage } from './canvas/CoreBoardStage';
 import { useSendCommand } from '../table/hooks/useSendCommand';
+import { aiSideOf, aiSummaryText, coreAutomationFlags } from './model/aiCommander';
 import { CoreBoardContext, type CoreBoardContextValue } from './model/coreContext';
 import { useCoreUiStore } from './model/coreUiStore';
 import { BOARD_LIST_ID, focusWhenReady, TURN_TITLE_ID } from './panels/focus';
 import { TurnControls } from './panels/TurnControls';
+import { responseAnnouncements } from './panels/useTurnCommands';
 import { CoreEventLog } from './sidebar/CoreEventLog';
 import { CoreSidebar } from './sidebar/CoreSidebar';
 import { CoreGameInfoPanel, CoreTopBar, OutcomeBanner } from './top-bar';
@@ -55,13 +62,27 @@ const SR_ONLY = {
   whiteSpace: 'nowrap',
 } as const;
 
+/**
+ * Skip links: clipped to nothing until focused, then shown at the top-left of the table. Not hidden by an offset
+ * (`top: -64`): content above the table (e.g. the in-flow automation notice of SessionHost on `xs`, SWR-006 D-1) would
+ * bring an offset link into view.
+ */
 const SKIP_LINK = {
   position: 'absolute',
   left: 8,
-  top: -64,
+  top: 8,
   zIndex: 1500,
   bgcolor: 'background.paper',
-  '&:focus-visible': { top: 8 },
+  // Explicit px: in `sx`, `width: 1` means 100% (that widened the page by `left` on xs).
+  '&:not(:focus-visible)': {
+    width: '1px',
+    height: '1px',
+    minWidth: 0,
+    p: 0,
+    overflow: 'hidden',
+    clipPath: 'inset(50%)',
+    whiteSpace: 'nowrap',
+  },
 } as const;
 
 function focusObjectsList() {
@@ -99,6 +120,40 @@ function useDisarmOnEscape(disarmedText: string) {
   }, [disarmedText]);
 }
 
+/** Events of an automation run that this game understands (unknown ones are skipped, plan-frontend §6.4). */
+function parseRunEvents(events: readonly unknown[]): PlayerEvent[] {
+  return events.flatMap((e) => {
+    const parsed = PlayerEventSchema.safeParse(e);
+    return parsed.success ? [parsed.data] : [];
+  });
+}
+
+/**
+ * Reads out a new automation-run summary once (plan-frontend §6.4): «Ход AI: N действий» + what the AI did that is
+ * announced anyway (its pass, a new round, the base reveal, the end of the game). Summaries of a command response
+ * are announced by `useTurnCommands` with the command's own feedback, and a summary that was already there when
+ * the table mounted is not repeated.
+ */
+function useAnnounceAutomationRuns(lastRun: AutomationLastRun | null, view: PlayerViewCore) {
+  const { t, i18n } = useTranslation();
+  const seenSeq = useRef(lastRun?.seq ?? 0);
+  useEffect(() => {
+    if (!lastRun || lastRun.seq <= seenSeq.current) return;
+    seenSeq.current = lastRun.seq;
+    if (lastRun.source !== 'run') return;
+    const summary = aiSummaryText(t, lastRun.summary);
+    const extra = responseAnnouncements(
+      t,
+      (k) => i18n.exists(k),
+      view,
+      parseRunEvents(lastRun.events),
+    );
+    const text = [summary, ...extra].filter(Boolean).join(' ');
+    if (text) announce(text);
+    // `view` only names things in the text; the `seq` guard reads each summary out once.
+  }, [lastRun, view, t, i18n]);
+}
+
 /**
  * Table of a `core-v1` session (SWR-005 plan-frontend §3.4): context provider, store reconcile against every new
  * view, sr-only heading, skip links («To the turn panel», «To the object list»), the top bar, the map and the
@@ -108,6 +163,10 @@ function useDisarmOnEscape(disarmedText: string) {
  * Composition: `CoreTopBar` (P2) with `controls={<TurnControls />}`, `OutcomeBanner` (P2) over the map,
  * sidebar slots `log` (`CoreEventLog`, P2) and `gameInfo` (`CoreGameInfoPanel`, P2).
  * Map: `<CoreBoardStage />` (M) — the `board-canvas` container with the Konva stage, zoom controls and caption.
+ *
+ * SWR-006 (plan-frontend §6.2): the automation of the session comes from the platform (`useSessionAutomation`,
+ * `null` outside SessionHost). `isPending` = a command in flight or an AI run in flight (every action disabled);
+ * `aiThinking` = AI game and (a run in flight, or the viewer's PASS / FINISH_ACTIVATION in flight, Q-FE-3).
  */
 export function CoreTable({
   sessionId,
@@ -122,7 +181,16 @@ export function CoreTable({
   useEffect(() => {
     if (focusHeading) headingRef.current?.focus();
   }, [focusHeading]);
-  const { send, isPending, saveStatus } = useSendCommand(sessionId);
+  const { send, isPending: sending, pendingCommand, saveStatus } = useSendCommand(sessionId);
+  const automation = useSessionAutomation();
+  const { isPending, aiThinking } = coreAutomationFlags(
+    view.settings,
+    automation?.phase,
+    sending,
+    pendingCommand,
+  );
+  const aiGame = aiSideOf(view.settings) !== null;
+  useAnnounceAutomationRuns(aiGame ? (automation?.lastRun ?? null) : null, view);
   const activateGame = useSelectionStore((s) => s.activateGame);
   const reconcileSelection = useSelectionStore((s) => s.reconcile);
   const reconcileUi = useCoreUiStore((s) => s.reconcile);
@@ -136,8 +204,8 @@ export function CoreTable({
   useGlobalEscape();
 
   const ctx = useMemo<CoreBoardContextValue>(
-    () => ({ sessionId, view, send, isPending }),
-    [sessionId, view, send, isPending],
+    () => ({ sessionId, view, send, isPending, aiThinking }),
+    [sessionId, view, send, isPending, aiThinking],
   );
 
   return (

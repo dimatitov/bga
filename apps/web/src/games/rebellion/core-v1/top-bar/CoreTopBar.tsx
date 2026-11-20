@@ -18,6 +18,7 @@ import { SaveStatus } from '../../table/components/SaveStatus';
 import type { SaveStatus as SaveStatusValue } from '../../table/hooks/useSendCommand';
 import { useCoreBoard } from '../model/coreContext';
 import { isGameOver, markers } from '../model/viewModel';
+import { AiCommanderStatus } from './AiCommanderStatus';
 import { TimeTrack } from './TimeTrack';
 import { PassedIndicator, TurnIndicator } from './TurnIndicator';
 
@@ -26,7 +27,7 @@ const GROUP = { display: 'flex', alignItems: 'center', minWidth: 0 } as const;
 
 /**
  * Top bar of the `core-v1` table (SWR-005 plan-frontend §7, §15.1; Worker P2). DOM order = Tab order:
- * nav («← К игре») → sides (`TurnIndicator`) → state (`TimeTrack`, «Фаза: Приказы», who has passed, `controls`)
+ * nav («← К игре») → sides (`TurnIndicator`, SWR-006 `AiCommanderStatus` in an AI game) → state (`TimeTrack`, «Фаза: Приказы», who has passed, `controls`)
  * → status (slice badge, «Завершена», save status) → ⚙. `controls` is a slot for P1's `TurnControls`
  * («Завершить активацию» / «Пас») so the two workers do not share a file. `table-top-bar`.
  * «Завершена» shows for the platform status `completed` or as soon as the view carries `outcome` (the status
@@ -86,8 +87,9 @@ export function CoreTopBar({
           </Box>
         </Button>
       </Box>
-      <Box sx={{ ...GROUP, order: 2 }}>
+      <Box sx={{ ...GROUP, flexWrap: 'wrap', columnGap: 2, rowGap: 0.5, order: 2 }}>
         <TurnIndicator view={view} />
+        <AiCommanderStatus over={completed} />
       </Box>
       <Box
         data-group="state"

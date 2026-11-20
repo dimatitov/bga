@@ -91,7 +91,7 @@ describe('POST /api/sessions — Idempotency-Key (fake game)', () => {
     expect(again.headers[IDEMPOTENT_REPLAY_HEADER.toLowerCase()]).toBe('true');
     expect(again.body).toEqual(first.body);
     expect(Object.keys(again.body).sort()).toEqual(
-      ['gameId', 'sessionId', 'settings', 'status', 'view'].sort(),
+      ['automation', 'gameId', 'sessionId', 'settings', 'status', 'view'].sort(),
     );
 
     expect(await sessionCount(app)).toBe(1);

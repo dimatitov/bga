@@ -9,15 +9,25 @@
 // every worker) and of `seed.ts`; `seed.ts` also calls `blankOpenAiEnv()` right before its `require`.
 // The list is the single source of `apps/api/scripts/e2e-env.mjs` (same as the Vitest setup and the e2e API child).
 // Values are never read or printed here — only names / blankness.
-import { BLANKED_OPENAI_VARS } from '../../apps/api/scripts/e2e-env.mjs';
+// SWR-006 (TR-7, TC-E-08): the same for AI_COMMANDER_* — the PO's apps/api/.env may hold AI_COMMANDER_PROVIDER=openai;
+// every AI_COMMANDER_* is present and blank (= schema default) and the provider is `bot` (`forcedAiCommanderEnv()`).
+import {
+  AI_COMMANDER_VARS,
+  BLANKED_OPENAI_VARS,
+  forcedAiCommanderEnv,
+} from '../../apps/api/scripts/e2e-env.mjs';
 
-/** Blanks every present OPENAI_* variable plus every name of {@link BLANKED_OPENAI_VARS}; sets OPENAI_ENABLED=false. */
+/**
+ * Blanks every present OPENAI_* variable plus every name of {@link BLANKED_OPENAI_VARS}; sets OPENAI_ENABLED=false.
+ * SWR-006: also blanks every present AI_COMMANDER_* and applies `forcedAiCommanderEnv()` (provider `bot`).
+ */
 export function blankOpenAiEnv(env: NodeJS.ProcessEnv = process.env): void {
   for (const key of Object.keys(env)) {
-    if (/^OPENAI_/.test(key)) env[key] = '';
+    if (/^OPENAI_/.test(key) || /^AI_COMMANDER_/.test(key)) env[key] = '';
   }
   for (const key of BLANKED_OPENAI_VARS) env[key] = '';
   env.OPENAI_ENABLED = 'false';
+  Object.assign(env, forcedAiCommanderEnv());
 }
 
 /** NAMES of OPENAI_* variables (except OPENAI_ENABLED) that hold a non-blank value. Never returns values. */
@@ -27,6 +37,17 @@ export function nonBlankOpenAiVarNames(env: NodeJS.ProcessEnv = process.env): st
   );
 }
 
-export { BLANKED_OPENAI_VARS };
+/**
+ * SWR-006: NAMES of AI_COMMANDER_* variables that differ from the forced test values (provider `bot`, the rest blank).
+ * Never returns values.
+ */
+export function unexpectedAiCommanderVarNames(env: NodeJS.ProcessEnv = process.env): string[] {
+  const forced: Record<string, string> = forcedAiCommanderEnv();
+  return Object.keys(env).filter(
+    (key) => /^AI_COMMANDER_/.test(key) && (env[key] ?? '') !== (forced[key] ?? ''),
+  );
+}
+
+export { AI_COMMANDER_VARS, BLANKED_OPENAI_VARS };
 
 blankOpenAiEnv();

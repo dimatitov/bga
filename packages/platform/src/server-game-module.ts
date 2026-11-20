@@ -6,6 +6,7 @@
  * `ServerGameModule<MyState, MySetup, MyEvent>` is assignable to `ServerGameModule` (unknowns) in the
  * registry without `any`. Do NOT enable `@typescript-eslint/method-signature-style: property` here.
  */
+import type { GameAutomation } from './automation';
 import type { GameModuleError } from './errors';
 import type { GameDefinition } from './game';
 import type { SessionDetails, SessionSettings, SessionStatus } from './sessions';
@@ -77,8 +78,8 @@ export interface ServerGameModule<
   /** Public settings for the session envelope (`SessionResponse.settings`); nothing secret (Q-24). */
   publicSettings(setup: Setup): SessionSettings;
   /**
-   * New session: version ≥ 1 (the game may apply automatic moves on creation, AM-BE-2);
-   * `events` are the initial events (seq ≥ 1) for `SessionEvent`.
+   * New session: version ≥ 1; `events` are the initial events (seq ≥ 1) for `SessionEvent`.
+   * Automated moves belong to `automation`, which the server runs after creation (SWR-006).
    */
   createInitialState(setup: Setup, ctx: CreateSessionContext): { state: State; events: Event[] };
   /**
@@ -103,6 +104,11 @@ export interface ServerGameModule<
   toPlayerEvents(events: readonly Event[], state: State): unknown[];
   /** Flat, NON-secret fields for session lists (`SessionSummary.details`; `null` allowed, Q-20). */
   summarize(state: State): SessionDetails;
+  /**
+   * Automated participant of the game (SWR-006, Contract §1). OPTIONAL: a module without it has no
+   * automation (`strategy: null`, no automated steps).
+   */
+  readonly automation?: GameAutomation<State, Event>;
 }
 
 /** Type-checks a concrete module and widens it for the registry (`readonly ServerGameModule[]`). */

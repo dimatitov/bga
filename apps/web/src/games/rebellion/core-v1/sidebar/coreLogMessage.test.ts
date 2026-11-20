@@ -7,6 +7,7 @@ import type { CoreViewEvent } from '@bga/game-rebellion/schema';
 import { describe, expect, it } from 'vitest';
 import { i18n } from '@/shared/i18n';
 import {
+  CORE_HOT_SEAT,
   CS_CORELLIA,
   CS_SULLUST,
   CS_YAVIN,
@@ -23,6 +24,7 @@ import {
   coreLogMessage,
   coreSystemName,
   coreUnitName,
+  isAiEvent,
   isAutoEvent,
 } from './coreLogMessage';
 
@@ -213,8 +215,9 @@ describe('coreLogMessage (SWR-005 P2, TC-C-09)', () => {
       actor: 'empire',
       payload: { leaderId: L_VADER, systemId: null },
     });
+    // The fixture game is Rebels vs AI Empire: the Empire's activation reads «Империя (AI)» (SWR-006).
     expect(coreLogMessage(activatedZone, ru, view)).toBe(
-      `Империя: ${leader(ru, L_VADER)} активирует систему скрытая зона`,
+      `Империя (AI): ${leader(ru, L_VADER)} активирует систему скрытая зона`,
     );
     expect(coreSystemName(ru, null)).toBe('скрытая зона');
   });
@@ -226,6 +229,72 @@ describe('coreLogMessage (SWR-005 P2, TC-C-09)', () => {
     expect(coreLeaderName(ru, 'no-such-leader')).toBe('no-such-leader');
     expect(coreSystemName(ru, 'no-such-system')).toBe('no-such-system');
     expect(coreUnitName(ru, 'no-such-unit', view)).toBe('юнит');
+  });
+});
+
+describe('SWR-006 L-1: every event of the AI side reads «(AI)» (Q-FE-4)', () => {
+  const empireView = makeCoreView({
+    viewer: 'empire',
+    settings: { ...view.settings, playerFaction: 'empire', opponentFaction: 'rebels' },
+  });
+  const hotSeatView = makeCoreView({ settings: { ...CORE_HOT_SEAT } });
+
+  it('activation and move of the AI Empire (Rebels game) → «Империя (AI): …»; the human side has no «(AI)»', () => {
+    const activated = ev({
+      type: 'SYSTEM_ACTIVATED',
+      actor: 'empire',
+      payload: { leaderId: L_VADER, systemId: CS_CORELLIA },
+    });
+    expect(isAiEvent(activated, view.settings)).toBe(true);
+    expect(coreLogMessage(activated, ru, view)).toBe(
+      `Империя (AI): ${leader(ru, L_VADER)} активирует систему ${sys(ru, CS_CORELLIA)}`,
+    );
+    expect(coreLogMessage(activated, en, view)).toBe(
+      `Empire (AI): ${leader(en, L_VADER)} activates ${sys(en, CS_CORELLIA)}`,
+    );
+    const human = ev({
+      type: 'SYSTEM_ACTIVATED',
+      actor: 'rebels',
+      payload: { leaderId: L_LEIA, systemId: CS_CORELLIA },
+    });
+    expect(isAiEvent(human, view.settings)).toBe(false);
+    expect(coreLogMessage(human, ru, view)).toBe(
+      `Повстанцы: ${leader(ru, L_LEIA)} активирует систему ${sys(ru, CS_CORELLIA)}`,
+    );
+    // System events are never the AI's.
+    expect(
+      isAiEvent(
+        ev({ type: 'TIME_ADVANCED', actor: 'system', payload: { from: 1, to: 2 } }),
+        view.settings,
+      ),
+    ).toBe(false);
+  });
+
+  it('AI Rebels moving out of the hidden base (human Empire) → «Повстанцы (AI): юнит — скрытая зона → …»', () => {
+    const moved = ev({
+      type: 'PIECES_MOVED',
+      actor: 'rebels',
+      payload: { pieceIds: ['u-hidden'], fromSystemId: null, toSystemId: CS_SULLUST },
+    });
+    expect(coreLogMessage(moved, ru, empireView)).toBe(
+      `Повстанцы (AI): юнит — скрытая зона → ${sys(ru, CS_SULLUST)}`,
+    );
+    expect(coreLogMessage(moved, ru, empireView)).not.toContain(sys(ru, CS_YAVIN));
+  });
+
+  it('a pass / finish of the AI side without `payload.auto` still reads «(AI)»; hot-seat — never', () => {
+    const pass = ev({ type: 'PASSED', actor: 'empire', payload: { auto: false } });
+    const finish = ev({ type: 'ACTIVATION_FINISHED', actor: 'empire', payload: { auto: false } });
+    expect(coreLogMessage(pass, ru, view)).toBe('Империя (AI) пасует');
+    expect(coreLogMessage(finish, en, view)).toBe('Empire (AI) finishes the activation');
+    expect(isAiEvent(pass, hotSeatView.settings)).toBe(false);
+    expect(coreLogMessage(pass, ru, hotSeatView)).toBe('Империя пасует');
+    const move = ev({
+      type: 'PIECES_MOVED',
+      actor: 'empire',
+      payload: { pieceIds: ['u-x'], fromSystemId: CS_CORELLIA, toSystemId: CS_SULLUST },
+    });
+    expect(coreLogMessage(move, ru, hotSeatView)).not.toContain('(AI)');
   });
 });
 
@@ -250,7 +319,7 @@ describe('announcementText (FE-0 contract rebellion.match:announce.*)', () => {
         7,
       ),
     ];
-    const list = announcementsFor(events, 'rebels');
+    const list = announcementsFor(events, 'rebels', CORE_HOT_SEAT);
     expect(list.map((a) => a.kind)).toEqual([
       'autoPass',
       'autoFinish',
@@ -262,8 +331,8 @@ describe('announcementText (FE-0 contract rebellion.match:announce.*)', () => {
     ]);
     const ruTexts = list.map((a) => announcementText(a, ru, view));
     expect(ruTexts).toEqual([
-      'Империя (AI) пасует — авто: AI Commander ещё не реализован',
-      'Империя (AI) завершает активацию — авто',
+      'Империя (AI) пасует',
+      'Империя (AI) завершает активацию',
       'Империя пасует',
       'Новый раунд: 2 лидера вернулись в пулы',
       'Раунд 2: маркер времени сдвинут',

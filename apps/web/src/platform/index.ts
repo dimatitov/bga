@@ -3,16 +3,28 @@
  * Must NOT re-export the registry context (`./registry/*`): games are imported by the registry, so that
  * would create an import cycle. Screen prop types are re-exported for convenience (type-only).
  */
+export {
+  automationFallbackReasonText,
+  commitCommandResult,
+  type AutomationLastRun,
+  type AutomationPhase,
+  type AutomationSource,
+  SessionAutomationContext,
+  type SessionAutomationState,
+  useSessionAutomation,
+} from './automation';
 export { paths, routePatterns } from './paths';
 export {
   createSession,
   getSession,
   listSessions,
   postSessionCommand,
+  runSessionAutomation,
   type CallOptions,
   type CreateSessionInput,
   type CreateSessionOptions,
   type ListSessionsParams,
+  type SessionCommandOk,
   type SessionCommandResult,
   type SessionEnvelope,
 } from './sessions/api';

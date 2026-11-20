@@ -1,0 +1,108 @@
+$ pnpm --filter @bga/game-rebellion exec vitest run test/knowledge --reporter=verbose
+Fri Nov 20 10:15:44 UTC 2026
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > rules-index.md is up to date 12ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > coverage-matrix.md is up to date 17ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > discrepancies.md is up to date 6ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > the discrepancies document carries the audit verdict (AC-6) 2ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > have sequential DISC-NNN ids and every field filled (TC-C-08) 14ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > combat (D-1) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > missions and Assignment Phase (D-2) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > incomplete Refresh (D-3) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > objectives and reputation 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > loyalty and subjugation (D-5, step 5) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > voluntary base reveal 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > engine chooses the base (D-4/R-10) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > Rebel Base space (D-6) 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > permanent reveal condition 2ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > fixed first game setup (D-5) 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > starting leaders only (D-7) 3ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > PASS during an activation 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > transport within one command 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > Rebel data / adjacency / leaders 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > component limitations 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > lists the data uncertainties for the box check 2ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > records no implementation bug in the slice (audit verdict) 2ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the rebels > fits in 6000 characters and contains the required rules 11ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the rebels > includes the PASS interpretation and the reveal/victory rules without truncation; no missions 6ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the rebels > formats one line per entry with id and page citations; only short text 5ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the rebels > is deterministic and independent of the command order 3ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the rebels > never exceeds maxChars and drops only whole lines 21ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the rebels > marks needs-review entries as unverified 5ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the empire > fits in 6000 characters and contains the required rules 8ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the empire > includes the PASS interpretation and the reveal/victory rules without truncation; no missions 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the empire > formats one line per entry with id and page citations; only short text 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the empire > is deterministic and independent of the command order 14ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the empire > never exceeds maxChars and drops only whole lines 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context for the empire > marks needs-review entries as unverified 0ms
+ ✓ test/knowledge/context.test.ts > side filtering > keeps side-specific entries out of the other side context 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > is for the core-v1 engine, covers every rule entry and never an implementation-note 20ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > covers every rule, clarification and interpretation of the slice categories (TC-C-02, Q-8) 4ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > records the engine decisions on slice interpretations and clarifications (review F-1) 3ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > does not overstate partially modelled rules (review F-2) 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > marks combat and missions as not-implemented with a discrepancy (TC-C-03) 4ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > links activation to activation.ts and activate.test.ts (TC-C-04, scenario 1) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > cites only tests that SWR-006 does not edit 5ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-3 → rebellion:command.turn-order is partial 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-4 → rebellion:command.activate.place-leader is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-5 → rebellion:command.move.into-activated-from-adjacent is implemented 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-6 → rebellion:command.pass is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-7 → rebellion:refresh.steps is partial 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-8 → rebellion:base.reveal-timing is implemented 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-9 → rebellion:victory.empire is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-10 → rebellion:setup.base-choice is deviation 2ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > D-6 → rebellion:base.space-not-system is deviation 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > every label R-3..R-10 and D-1..D-7 appears in a coverage note or a discrepancy title/engine behaviour 8ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > has at least 80 entries, each with id, category, kind, status and a source page 48ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > lists every RR glossary topic, RR setup, the LTP round/command/refresh/base pages and the first game setup 0ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > skips the Team Game with a reason and never covers it 15ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > records exceptions that point to existing entries (TC-R-05) 4ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > never cites Rise of the Empire (TC-M-03) 13ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > uses all four kinds 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > records the three base game errata as clarifications citing the FAQ and amending an RR rule (TC-K-02) 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > every clarification cites the FAQ and amends an existing entry 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > every interpretation has a rationale and a source; disputed ones are needs-review (TC-K-03) 4ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > every implementation-note references a discrepancy and an official page (TC-K-04) 3ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > marks fan-sourced data as needs-review (TC-K-05) 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > marks the rules every AI decision needs as ai: core 0ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — validation > has zero issues with the repository io checks (files, symbols, test names) 35ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — validation > has zero issues without io as well 3ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — validation > reports a dangling related id with the entry path and code (scenario 4) 56ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > is the base game only 2ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > describes RR, LTP and FAQ v2.1 with the official URLs, hashes, page counts and retrieval date 4ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > records the LTP mirror and why it was used 1ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > excludes the Rise of the Empire pages of the FAQ and ranks RR above LTP 0ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > rejects an entry of an excluded product or citing an excluded FAQ page (TC-S-07, TC-S-08) 11ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > has at least 12 typical questions 2ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can units leave a system that contains my leader? 3ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can I activate a system that already has a leader in it? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can a leader without tactic values activate a system? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > How many ground units can a transport ship carry? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can I move units into a system that was not activated? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > When can I pass during the Command Phase? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Who takes the first turn in the Command Phase? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > When is the Rebel base revealed? 13ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can the Rebel player reveal the base voluntarily? 6ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Do Star Destroyers or the Death Star reveal the Rebel base? 6ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > How does the Empire win the game? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > How do the Rebels win? 10ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > What happens during the Refresh Phase? 5ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can a subjugated system also be neutral? 3ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Where are Rebel starting units placed in standard setup? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > раскрытие базы 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > returns citations with source and page (TC-Q-19) 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > is deterministic across calls and instances (TC-Q-17) 9ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > applies kind, category, status and limit filters (TC-Q-18) 3ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > returns nothing for empty or meaningless queries (TC-Q-20) 1ms
+ ✓ test/knowledge/no-full-texts.test.ts > no full texts (AC-11) > git tracks no PDF files 128ms
+ ✓ test/knowledge/no-full-texts.test.ts > no full texts (AC-11) > keeps texts within 600 characters and quotes within 25 words and the per-source budget 10ms
+ ✓ test/knowledge/no-full-texts.test.ts > no full texts (AC-11) > quotes sparingly: most entries carry no quote 0ms
+
+ Test Files  8 passed (8)
+      Tests  96 passed (96)
+   Start at  13:15:45
+   Duration  1.36s (transform 2.05s, setup 0ms, import 5.85s, tests 641ms, environment 1ms)
+
+EXIT=0

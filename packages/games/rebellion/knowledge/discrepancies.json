@@ -1,0 +1,264 @@
+[
+  {
+    "id": "DISC-001",
+    "title": "No combat (D-1)",
+    "kind": "missing-mechanic",
+    "severity": "high",
+    "ruleIds": [
+      "rebellion:combat.trigger",
+      "rebellion:combat.steps",
+      "rebellion:combat.round",
+      "rebellion:command.move.combat-trigger",
+      "rebellion:command.activate.steps"
+    ],
+    "engineBehaviour": "D-1: MOVE_PIECES into a system with enemy units is accepted and nothing else happens; the system is shown as contested. No tactic cards, dice, damage, retreat or battle results (activation step 4 is skipped).",
+    "officialBehaviour": "Moving units into a system with opposing units in the same theater starts a combat resolved in combat rounds with dice and tactic cards (RR p.2 step 4, RR p.4-5, LTP p.14-15).",
+    "decision": "accepted-for-slice",
+    "followUp": "Combat slice: implement RR p.4-5 including retreat and winning a battle; replace the contested state.",
+    "refs": ["rebellion:impl.no-combat", { "sourceId": "RR", "page": 4 }]
+  },
+  {
+    "id": "DISC-002",
+    "title": "No missions; Assignment Phase is empty (D-2, R-2)",
+    "kind": "missing-mechanic",
+    "severity": "high",
+    "ruleIds": [
+      "rebellion:assignment.order",
+      "rebellion:missions.reveal-steps",
+      "rebellion:missions.reveal-requirement",
+      "rebellion:command.unrevealed-missions-return"
+    ],
+    "engineBehaviour": "D-2: the Assignment Phase passes automatically with an event; a Command Phase turn is only ACTIVATE_SYSTEM or PASS; there is no opposition to missions.",
+    "officialBehaviour": "Leaders are assigned to facedown missions (Rebels first), and a Command Phase turn may reveal a mission that can be opposed with dice (RR p.3, p.8-9, LTP p.6-8).",
+    "decision": "accepted-for-slice",
+    "followUp": "Missions slice: hands, mission decks, starting missions, assignment, reveal and opposition; then mission effects (loyalty, capture, new base, projects).",
+    "refs": ["rebellion:impl.no-missions", { "sourceId": "RR", "page": 8 }]
+  },
+  {
+    "id": "DISC-003",
+    "title": "Incomplete Refresh Phase (D-3, R-7)",
+    "kind": "missing-mechanic",
+    "severity": "high",
+    "ruleIds": [
+      "rebellion:refresh.steps",
+      "rebellion:refresh.draw-missions",
+      "rebellion:refresh.probe-droids",
+      "rebellion:refresh.draw-objective",
+      "rebellion:refresh.advance-time",
+      "rebellion:refresh.deploy-step",
+      "rebellion:build.build-units",
+      "rebellion:deploy.deploy-units",
+      "rebellion:recruit.procedure"
+    ],
+    "engineBehaviour": "R-7 / D-3: Refresh runs only step 1 (all leaders return, LEADERS_RETURNED) and the +1 time advance of step 5 (TIME_ADVANCED). No missions, probe cards, objectives, recruiting, building or deploying.",
+    "officialBehaviour": "Six steps: retrieve leaders, draw missions, launch probe droids, draw objective, advance time with recruit/build icons, deploy from the build queue (RR p.12, LTP p.10).",
+    "decision": "accepted-for-slice",
+    "followUp": "Refresh slice together with missions/objectives; needs the time track icon positions (DISC-018) and resource icon data.",
+    "refs": ["rebellion:impl.refresh-partial", { "sourceId": "RR", "page": 12 }]
+  },
+  {
+    "id": "DISC-004",
+    "title": "No objectives; reputation never changes",
+    "kind": "missing-mechanic",
+    "severity": "medium",
+    "ruleIds": [
+      "rebellion:cards.objectives",
+      "rebellion:victory.reputation",
+      "rebellion:victory.rebels"
+    ],
+    "engineBehaviour": "Reputation stays at 14 for the whole game; the Rebel victory is reached only when time reaches 14.",
+    "officialBehaviour": "The Rebels gain reputation from objective cards, moving the reputation marker toward the time marker (RR p.10, p.12; LTP p.11).",
+    "decision": "accepted-for-slice",
+    "followUp": "Objectives slice (needs combat and Refresh step 4).",
+    "refs": ["rebellion:impl.no-objectives", { "sourceId": "RR", "page": 10 }]
+  },
+  {
+    "id": "DISC-005",
+    "title": "No loyalty or subjugation (D-5, activation step 5)",
+    "kind": "missing-mechanic",
+    "severity": "medium",
+    "ruleIds": [
+      "rebellion:loyalty.basics",
+      "rebellion:loyalty.subjugation",
+      "rebellion:command.activate.steps"
+    ],
+    "engineBehaviour": "D-5: no loyalty or subjugation markers exist; activation step 5 is skipped; first game loyalty markers are not placed.",
+    "officialBehaviour": "Systems carry loyalty markers; an Imperial ground unit in a system without Imperial loyalty subjugates it at the end of an activation (RR p.2 step 5, p.8, p.13; LTP p.13).",
+    "decision": "accepted-for-slice",
+    "followUp": "Loyalty slice; it also feeds building, deployment and the permanent base reveal condition (DISC-009).",
+    "refs": ["rebellion:impl.no-loyalty", { "sourceId": "RR", "page": 13 }]
+  },
+  {
+    "id": "DISC-006",
+    "title": "No voluntary base reveal (D-4)",
+    "kind": "missing-mechanic",
+    "severity": "low",
+    "ruleIds": ["rebellion:base.voluntary-reveal"],
+    "engineBehaviour": "D-4: the Rebel side has no command to reveal its base.",
+    "officialBehaviour": "The Rebel player may reveal his base at the start of one of his Command Phase turns, before using a leader or passing (RR p.11; FAQ p.1 errata; not after passing, FAQ p.5).",
+    "decision": "fix-later",
+    "followUp": "Add a REVEAL_BASE command legal only at the start of a Rebel turn (combat on reveal comes with the combat slice).",
+    "refs": ["rebellion:impl.no-voluntary-reveal", "rebellion:base.voluntary-reveal-timing"]
+  },
+  {
+    "id": "DISC-007",
+    "title": "The engine chooses the Rebel base (D-4, R-10)",
+    "kind": "intentional-deviation",
+    "severity": "medium",
+    "ruleIds": [
+      "rebellion:setup.base-choice",
+      "rebellion:base.secret-location",
+      "rebellion:setup.base-choice-restrictions"
+    ],
+    "engineBehaviour": "R-10 / D-4: the base system is chosen by an FNV-1a hash of the game id among eligible systems: not Coruscant, not the five removed first game probe cards, not in or next to a system with starting Imperial units, and additionally not Bothawui (starting Rebel units).",
+    "officialBehaviour": "The Rebel player secretly chooses the base from the probe deck (RR p.15 step 9); in the first game it must not hold or be adjacent to Imperial units (LTP p.5). A system with starting Rebel units such as Bothawui is allowed.",
+    "decision": "accepted-for-slice",
+    "followUp": "Let a human Rebel player choose the base during game setup; keep the Bothawui exclusion only while D-6 makes the base visible.",
+    "refs": ["rebellion:impl.engine-chooses-base", { "sourceId": "LTP", "page": 5 }]
+  },
+  {
+    "id": "DISC-008",
+    "title": "The \"Rebel Base\" space is merged with the base system (D-6)",
+    "kind": "intentional-deviation",
+    "severity": "medium",
+    "ruleIds": [
+      "rebellion:base.space-not-system",
+      "rebellion:base.move-from-space",
+      "rebellion:base.activate-space",
+      "rebellion:base.leader-in-space-locks"
+    ],
+    "engineBehaviour": "D-6: units placed \"on the base\" stand in the base system (hidden from the Empire). Units there move like any others; a Rebel leader in the base system locks all of them; the space cannot be activated separately.",
+    "officialBehaviour": "The \"Rebel Base\" space is not a system; units on it move to the base system or systems adjacent to it, the space can be activated from the base system or adjacent systems, and a leader on the space locks only the space (RR p.9-11, LTP p.12).",
+    "decision": "accepted-for-slice",
+    "followUp": "Model the space as its own location once deployment and voluntary reveal exist; revisit the Bothawui exclusion of DISC-007.",
+    "refs": ["rebellion:impl.base-space-merged", "rebellion:base.units-on-space"]
+  },
+  {
+    "id": "DISC-009",
+    "title": "Base reveal checked only at the end of an Imperial activation (R-8, latent gap)",
+    "kind": "latent-gap",
+    "severity": "medium",
+    "ruleIds": ["rebellion:base.reveal-condition", "rebellion:base.reveal-timing"],
+    "engineBehaviour": "R-8: the base is revealed at FINISH_ACTIVATION of an Imperial activation of the base system when an Imperial ground unit is there. Within core-v1 this is equivalent, because Imperial ground units can only arrive by such an activation and loyalty does not exist.",
+    "officialBehaviour": "Whenever the Empire has loyalty or ground units in the base system, the base must be revealed (\"ever\", RR p.11; LTP p.12); after movement it happens before combat (RR p.2 step 3).",
+    "decision": "fix-later",
+    "followUp": "Before adding loyalty, missions that move or place units, or deployment: make the reveal a state check run after every state change.",
+    "refs": ["rebellion:impl.reveal-only-at-finish", { "sourceId": "RR", "page": 11 }]
+  },
+  {
+    "id": "DISC-010",
+    "title": "Fixed first game setup instead of standard setup (D-5, R-10)",
+    "kind": "intentional-deviation",
+    "severity": "low",
+    "ruleIds": [
+      "rebellion:setup.standard-loyalty",
+      "rebellion:setup.standard-imperial-units",
+      "rebellion:setup.standard-rebel-units",
+      "rebellion:setup.first-game-or-standard"
+    ],
+    "engineBehaviour": "D-5 / R-10: every game uses the LTP p.16 unit placement; loyalty markers, decks, action cards and the starting hand are not set up.",
+    "officialBehaviour": "After the first game, step 8 uses random starting loyalty and free placement of starting units (RR p.15, LTP p.18).",
+    "decision": "accepted-for-slice",
+    "followUp": "Standard setup as a game option after loyalty and missions exist.",
+    "refs": ["rebellion:impl.fixed-first-game-setup", { "sourceId": "RR", "page": 15 }]
+  },
+  {
+    "id": "DISC-011",
+    "title": "Only starting leaders; no Super Star Destroyer in play (D-7)",
+    "kind": "intentional-deviation",
+    "severity": "low",
+    "ruleIds": ["rebellion:leaders.starting", "rebellion:recruit.procedure"],
+    "engineBehaviour": "D-7: only the four starting leaders per side exist; recruitable leaders, action cards and the Super Star Destroyer never enter play.",
+    "officialBehaviour": "Leaders are recruited at recruit icons of the time track (RR p.11-12); further units come from building (RR p.3).",
+    "decision": "accepted-for-slice",
+    "followUp": "Comes with the Refresh slice (recruiting) and building.",
+    "refs": ["rebellion:impl.starting-leaders-only", { "sourceId": "RR", "page": 11 }]
+  },
+  {
+    "id": "DISC-012",
+    "title": "PASS is rejected during an own activation (interpretation, R-6)",
+    "kind": "intentional-deviation",
+    "severity": "low",
+    "ruleIds": ["rebellion:command.pass"],
+    "engineBehaviour": "R-6: PASS while the actor's activation is running returns activationInProgress; the player must FINISH_ACTIVATION first and may pass on a later turn.",
+    "officialBehaviour": "RR p.6 lets a player pass \"at any time during the Command Phase\"; FAQ p.5 says a player passes instead of taking his turn. The engine follows the reading that a started activation is the turn.",
+    "decision": "accepted-for-slice",
+    "followUp": "Keep unless a ruling says otherwise; the entry is marked needs-review.",
+    "refs": ["rebellion:command.pass-not-mid-activation", "rebellion:impl.pass-during-activation"]
+  },
+  {
+    "id": "DISC-013",
+    "title": "Transport capacity is checked within one MOVE_PIECES command (R-5, UX limit)",
+    "kind": "intentional-deviation",
+    "severity": "low",
+    "ruleIds": [
+      "rebellion:command.transport.capacity",
+      "rebellion:command.transport.restriction-icon"
+    ],
+    "engineBehaviour": "R-5: one MOVE_PIECES moves units from one source system; only ships moving in the same command provide capacity, so carried units must move together with their carriers.",
+    "officialBehaviour": "Each moving ship brings ground units and TIE Fighters from its system up to its capacity; restricted units move only when carriers leave the same system (RR p.9, p.14). The rules do not split movement into commands.",
+    "decision": "accepted-for-slice",
+    "followUp": "UX only, no rules change needed: the UI and the AI must send carriers and their cargo in one command; reconsider if moves from one system are ever split into several steps.",
+    "refs": ["rebellion:impl.transport-one-source-per-command", { "sourceId": "RR", "page": 9 }]
+  },
+  {
+    "id": "DISC-014",
+    "title": "Rebel faction sheet values are unconfirmed",
+    "kind": "data-uncertainty",
+    "severity": "medium",
+    "ruleIds": ["rebellion:command.transport.capacity", "rebellion:units.attack-health"],
+    "engineBehaviour": "core-v1 data uses capacities Corellian Corvette 2, Rebel Transport 4, Mon Calamari Cruiser 4 (and no attack/health) taken from a fan data set; Imperial values were read from the faction sheet illustration.",
+    "officialBehaviour": "Capacity, attack and health are printed on the faction sheets (RR p.3, p.8, p.14); the Rebel sheet values are not in the rules text.",
+    "decision": "verify-with-box",
+    "followUp": "Product owner checks the Rebel faction sheet; correct the data in src/scenario/core/catalog.ts if different (no rules code change).",
+    "refs": ["rebellion:units.faction-sheet-values", { "sourceId": "RR", "page": 14 }]
+  },
+  {
+    "id": "DISC-015",
+    "title": "Component limitations are not modelled (n/a in the slice)",
+    "kind": "missing-mechanic",
+    "severity": "low",
+    "ruleIds": ["rebellion:general.component-limits"],
+    "engineBehaviour": "No unit, leader or marker is ever created, so limits cannot be reached and are not checked.",
+    "officialBehaviour": "Units, leaders and rings are limited to the box contents; dice are capped at five per colour; markers are unlimited (RR p.6).",
+    "decision": "accepted-for-slice",
+    "followUp": "Enforce unit limits together with building (Refresh slice) and dice caps with combat.",
+    "refs": ["rebellion:impl.component-limits", { "sourceId": "RR", "page": 6 }]
+  },
+  {
+    "id": "DISC-016",
+    "title": "Map data: Mustafar–Utapau adjacency and region names unconfirmed",
+    "kind": "data-uncertainty",
+    "severity": "low",
+    "ruleIds": ["rebellion:command.move.adjacency", "rebellion:map.regions"],
+    "engineBehaviour": "core-v1 treats Mustafar and Utapau as not adjacent and uses region ids r1..r8 with unofficial labels; the 69 adjacency edges come from cross-checked fan data.",
+    "officialBehaviour": "Adjacency is defined by shared borders and impassable areas on the board (RR p.9, p.12); the rules give no region names.",
+    "decision": "verify-with-box",
+    "followUp": "Product owner checks the Mustafar–Utapau border and whether the board prints region names; data fix only.",
+    "refs": ["rebellion:map.mustafar-utapau", "rebellion:map.region-names"]
+  },
+  {
+    "id": "DISC-017",
+    "title": "Leader data: which leaders lack tactic values",
+    "kind": "data-uncertainty",
+    "severity": "low",
+    "ruleIds": ["rebellion:command.activate.tactic-values-required"],
+    "engineBehaviour": "core-v1 marks Mon Mothma as the only starting leader that cannot activate (canActivate false), from fan data.",
+    "officialBehaviour": "A leader without tactic values cannot activate a system (RR p.2, p.9); tactic values are printed on the leader tokens.",
+    "decision": "verify-with-box",
+    "followUp": "Product owner checks the starting leader tokens (and later the recruitable ones).",
+    "refs": ["rebellion:leaders.mon-mothma-no-tactics", { "sourceId": "RR", "page": 2 }]
+  },
+  {
+    "id": "DISC-018",
+    "title": "Time track recruit/build icon positions unknown",
+    "kind": "data-uncertainty",
+    "severity": "low",
+    "ruleIds": ["rebellion:refresh.advance-time"],
+    "engineBehaviour": "core-v1 does not use the icons (no recruiting or building); the positions are known only with low confidence.",
+    "officialBehaviour": "Recruit and build happen when the time marker enters a space showing those icons (RR p.12, LTP p.10).",
+    "decision": "verify-with-box",
+    "followUp": "Read the icon positions from the board before the Refresh slice.",
+    "refs": ["rebellion:refresh.time-track-icons", { "sourceId": "LTP", "page": 10 }]
+  }
+]
