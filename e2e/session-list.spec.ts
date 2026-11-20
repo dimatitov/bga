@@ -89,6 +89,8 @@ test.describe('SWR-004 continue from the game page', () => {
 
     await page.goto(gamePath(REBELLION));
     const list = page.getByTestId(T.gameRecentSessions);
+    // evaluateAll does not auto-wait: wait until both rows have rendered (flaky under load, SWR-008 merge run).
+    await expect(list.getByTestId(T.recentSession(older.sessionId))).toBeVisible();
     const ids = await list
       .locator(RECENT_SESSION_ITEM)
       .evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')));

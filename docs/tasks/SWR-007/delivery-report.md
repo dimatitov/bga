@@ -52,7 +52,8 @@ Node 24/26; TypeScript 6/7; Prisma 8 (rc); перевод `apps/api` на ESM; i
 | `apps/web/src/test/setup.ts` | очистка таймеров после файла (flake под нагрузкой) |
 | `apps/api/src/sessions/sessions.repository.ts` | слияние с main (SWR-006): `SQLITE_BUSY` при commit → `VERSION_CONFLICT` (как исход Prisma 6) |
 | `apps/api/test/sqlite-adapter.int.test.ts` (новый) | регрессия: второй клиент на том же файле быстро получает распознаваемый busy |
-| `apps/api/test/automation-double-submit.int.test.ts` (SWR-006) | TC-CC-06: дубль PASS после конца партии → 422 допустим (правила проверяют конец игры раньше версии) |
+| `apps/api/test/automation-double-submit.int.test.ts` (SWR-006) | TC-CC-06: дубль PASS после конца партии → 422 `errors.gameOver` допустим (версия из main) |
+| `e2e/game-setup.spec.ts` (SWR-004) | TC-006 «rapid»: первый клик через локатор (CI flake) |
 
 **Не тронуты:** `apps/api/src/ai/**`, правила Rebellion, `sessions/**`, компоненты web-стола, публичные контракты
 (`packages/platform/src`, `packages/games/*/src`) — пустой diff в `artifacts/logs/qa-diff.log`.
@@ -100,6 +101,15 @@ PR #1 конфликтовал с `main`; `origin/main` (7861bcd) влит merge
   проверок правил не менялся); тест допускал только 409 — допуск расширен для завершённой партии.
 Итоговый прогон — `artifacts/logs/merge-main-verify-2.log` (lint/typecheck/test/build/check:bundle зелёные, api 613 + 1 skipped; e2e
 не стартовал — порт 3100 был занят e2e-сервером другой сессии) и отдельный e2e — `artifacts/logs/merge-main-e2e.log` (136 passed).
+
+### Второе слияние с main (cb2c3ce — SWR-007 уже влит в main другой сессией с собственными правками)
+- `SessionsRepository.commit`: в main любой `P1008` → `VERSION_CONFLICT` при busy-ожидании 5 с; оставлена более узкая проверка
+  `isSqliteBusy` (P1008 именно из-за `SQLITE_BUSY`) + `timeout` 250 мс и регрессионный тест `test/sqlite-adapter.int.test.ts`.
+- `automation-double-submit.int.test.ts` и `e2e/session-list.spec.ts` — взяты версии main (строже: 422 только с `errors.gameOver`).
+- CI на fb0fcf3: 1 из 136 e2e упал — TC-006 «rapid» (`e2e/game-setup.spec.ts`): 5 «сырых» `page.mouse.click` по заранее
+  измеренному box не попали в кнопку (ни одного POST в trace) — flake раскладки под нагрузкой CI. Первый клик теперь через
+  локатор (ожидание стабильности), остальные — как раньше. Прогон после слияния: `artifacts/logs/merge-main-verify-3.log`
+  (exit 0, e2e 136, check-task по всем 9 задачам OK).
 
 ## Known issues / risks
 - **Слияние с SWR-006:** если SWR-006 добавит код/тест с `new PrismaClient({ datasourceUrl })` — после слияния переключить на

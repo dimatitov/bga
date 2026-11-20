@@ -196,7 +196,9 @@ export class SessionsRepository {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         return { ok: false, reason: 'VERSION_CONFLICT' };
       }
-      // SWR-007 (Prisma 7 driver adapter): another connection holds the write lock → this writer lost the race.
+      // SWR-007/SWR-008 (Prisma 7 + better-sqlite3): a write that lost the SQLite lock to another connection fails
+      // with P1008 caused by SQLITE_BUSY (after the short busy timeout of createSqliteAdapter). The transaction is
+      // rolled back, so nothing was written — the same outcome as a lost version race.
       if (isSqliteBusy(error)) return { ok: false, reason: 'VERSION_CONFLICT' };
       throw error;
     }

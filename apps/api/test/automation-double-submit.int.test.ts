@@ -169,10 +169,14 @@ describe('SWR-006 W9: double submit and races with the real bot (AC-02)', () => 
       statuses.push(...replies.map((r) => r.status));
       const commands = [replies[0], replies[2]].map((r) => r?.status);
       expect(commands.filter((s) => s === 200)).toHaveLength(1);
-      // SWR-007: a duplicate that is read after the winning PASS ended the game gets 422 (the rules reject any command
-      // on a finished game before comparing versions); before that it is 409. Timing-dependent (Prisma 7 adapter).
-      const gameOver = (await game.state()).outcome !== null;
-      expect(commands.every((s) => s === 200 || s === 409 || (gameOver && s === 422))).toBe(true);
+      // A duplicate that reads the state after the winning command ended the game gets 422 gameOver (checked before
+      // the version, core apply order) — with the synchronous SQLite driver (SWR-007) this is the usual order on the
+      // last turn. Either way exactly one PASS is applied.
+      const rejectedOk = (r: (typeof replies)[number] | undefined) =>
+        r?.status === 409 ||
+        (r?.status === 422 &&
+          (r.body as { error?: { messageKey?: string } }).error?.messageKey === 'errors.gameOver');
+      expect([replies[0], replies[2]].every((r) => r?.status === 200 || rejectedOk(r))).toBe(true);
       expect(replies[1]?.status).toBe(200);
       expect(replies[3]?.status).toBe(200);
       await expectConsecutiveEvents(app, id);
