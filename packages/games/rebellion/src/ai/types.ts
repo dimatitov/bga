@@ -12,6 +12,7 @@ import type {
   PassCommand,
 } from '../schema';
 import type { BaseIntel } from './intel';
+import type { BotRulesQuery } from './rules-query';
 import type { ViewModel } from './view-model';
 
 /** Commands the bot can produce (never `ACCEPT_HANDOFF`: AI games have no handoff). */
@@ -64,6 +65,11 @@ export interface BotDecisionPoint {
   candidates: BotDecisionCandidate[];
   fallbackCandidateId: string;
   policyId: string;
+  /**
+   * SWR-008 C-3/C-4: what the rules-context selection may use (`rulesQueryFor(view)`) — derived ONLY from
+   * fields public to both sides (QD-7), never from the candidates. Always set (the legacy policy too).
+   */
+  rulesQuery: BotRulesQuery;
 }
 
 export interface BotDecision {

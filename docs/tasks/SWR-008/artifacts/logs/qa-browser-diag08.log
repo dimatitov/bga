@@ -1,0 +1,262 @@
+# 2026-11-20T14:10:07Z node v22.23.5; QA scratch spec outside the repo (/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/pw-diag/swr008-diag-shots.spec.ts, config pw.config.ts: same webServers as playwright.config.ts, bot API, Vite dev web); ports 3100/5174 free. Run 4 (final; adds panel screenshots scrolled to the rows with rule ids). Runs 1-2 failed on bugs of the scratch spec itself (view.systems → view.map.systems; a page-wide '>sessionId<' HTML check that also matched the hidden game-info tab outside the panel — replaced by a panel-only check + a report of the outside occurrence). Run 3: 4 passed. Not product defects.
+$ npx playwright test -c /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/pw-diag/pw.config.ts
+[WebServer] $ node scripts/e2e-serve.mjs
+[WebServer] Loaded Prisma config from prisma.config.ts.
+[WebServer] 
+[WebServer] Prisma schema loaded from prisma/schema.prisma.
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 5 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] Applying migration `20261120120000_ai_usage_rules`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261120120000_ai_usage_rules/
+[WebServer]     └─ migration.sql
+[WebServer] 
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] AppModule dependencies initialized +9ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] RulesContextModule dependencies initialized +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +1ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] AiModule dependencies initialized +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RoutesResolver] HealthController {/api/health}: +3ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +2ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +1ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/automation/run, POST} route +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/sessions/:sessionId/decisions, GET} route +1ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +0ms
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:12 PM     LOG [NestApplication] Nest application successfully started +1ms
+[WebServer] $ vite
+
+Running 4 tests using 1 worker
+
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:14 PM     LOG [Automation] automation.step sessionId=6263966f-a9de-44fe-a7db-761db7878fff gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=8 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:14 PM     LOG [Automation] automation.step sessionId=6263966f-a9de-44fe-a7db-761db7878fff gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:14 PM     LOG [Automation] automation.step sessionId=6263966f-a9de-44fe-a7db-761db7878fff gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:14 PM     LOG [Automation] automation.run sessionId=6263966f-a9de-44fe-a7db-761db7878fff gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=35
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:20 PM     LOG [Automation] automation.step sessionId=6263966f-a9de-44fe-a7db-761db7878fff gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=6 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:20 PM     LOG [Automation] automation.run sessionId=6263966f-a9de-44fe-a7db-761db7878fff gameId=star-wars-rebellion steps=1 fallbacks=0 stopReason=humanTurn durationMs=10
+[qa-diag08] ru 1440 gets=3 panelText="DEV · решений AI: 3\nРешения AI · DEV\nОБНОВИТЬ\nТолько для разработки. Текст промпта и объяснения модели не показываются.\nПоследний ход AI\nшагов: 1, fallback: 1\nfallback: AI_PROMPT_TOO_LARGE запрос к модели слишком большой\nИтоги партии\nС правилами:\nрешений: 2 · 0,000268 $ · в среднем 0,000134 $\nБез правил:\nрешений: 1 · 0,000136 $ · в среднем 0,000136 $\nВсего:\nрешений: 3 · 0,000404 $ · в среднем 0,000135 $\nВызовы модели (новые сверху)\n17:10:06\nopenai\ngpt-6-luna\nпопыток: 1\nПравила: вкл\nправил: 0\nконтекст правил ≈ 0 ток.\nсняты лимитом промпта\nID правил:\n—\nВерсия правил:\nrebellion@1:55b423d7bfef\nбез fallback\nТокены: вход 1 088 · кэш 0 · выход 53\nСтоимость: 0,000136 $\n3 475 мс\n17:10:04\nopenai\ngpt-6-luna\nпопыток: 3\nПравила: вкл\nправил: 19\nконтекст правил ≈ 1 349 ток.\nID правил:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.zero-units, rebellion:command.move.adjacency, rebellion:command.move.immobile, rebellion:base.death-star-does-not-reveal, rebellion:command.pass-is-not-action\nВерсия правил:\nrebellion@1:55b423d7bfef\nfallback: AI_TIMEOUT\nнет ответа вовремя\nТокены: вход 0 · кэш 0 · выход 0\nСтоимость: 0,00 $\n15 000 мс\n17:10:01\nopenai\ngpt-6-luna\nпопыток: 1\nПравила: вкл\nправил: 17\nконтекст правил ≈ 1 268 ток.\nID правил:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.system-with-leader, rebellion:command.activate.tactic-values-required, rebellion:base.death-star-does-not-reveal\nВерсия правил:\nrebellion@1:55b423d7bfef\nбез fallback\nТокены: вход 2 431 · кэш 0 · выход 49\nСтоимость: 0,000268 $\n1 377 мс"
+[qa-diag08] ru 1440 sessionIdTextNodesOutsidePanel=["DD#testid=game-info visible=false"] htmlHasId=true
+[qa-diag08] ru 1440 systemIdsInPanel=[] rebelBaseInEmpireView={"systemId":null,"revealed":false}
+[qa-diag08] ru 1440 row rules=19 attrs={"data-testid":"dev-ai-session-decision-1","data-status":"timeout","data-fallback":"true","data-error-code":"AI_TIMEOUT","data-rules-enabled":"true","data-rules-count":"19","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.zero-units,rebellion:command.move.adjacency,rebellion:command.move.immobile,rebellion:base.death-star-does-not-reveal,rebellion:command.pass-is-not-action","data-rules-tokens":"1349","data-rules-chars":"5393","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"0","data-output-tokens":"0","data-cost-micro-usd":"0"}
+[qa-diag08] ru 1440 row rules=17 attrs={"data-testid":"dev-ai-session-decision-0","data-status":"ok","data-fallback":"false","data-error-code":"","data-rules-enabled":"true","data-rules-count":"17","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.system-with-leader,rebellion:command.activate.tactic-values-required,rebellion:base.death-star-does-not-reveal","data-rules-tokens":"1268","data-rules-chars":"5070","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"2431","data-output-tokens":"49","data-cost-micro-usd":"268"}
+  ✓  1 [chromium] › ../../../../private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/pw-diag/swr008-diag-shots.spec.ts:84:5 › TC-DIAG-08 dev panel ru 1440 (8.9s)
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:22 PM     LOG [Automation] automation.step sessionId=00cbc9ef-9948-4f9b-b2bb-b2b949f9dd4a gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:22 PM     LOG [Automation] automation.step sessionId=00cbc9ef-9948-4f9b-b2bb-b2b949f9dd4a gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:22 PM     LOG [Automation] automation.step sessionId=00cbc9ef-9948-4f9b-b2bb-b2b949f9dd4a gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:22 PM     LOG [Automation] automation.run sessionId=00cbc9ef-9948-4f9b-b2bb-b2b949f9dd4a gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=10
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:23 PM     LOG [Automation] automation.step sessionId=00cbc9ef-9948-4f9b-b2bb-b2b949f9dd4a gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:23 PM     LOG [Automation] automation.run sessionId=00cbc9ef-9948-4f9b-b2bb-b2b949f9dd4a gameId=star-wars-rebellion steps=1 fallbacks=0 stopReason=humanTurn durationMs=4
+[qa-diag08] ru 375 gets=3 panelText="DEV · решений AI: 3\nРешения AI · DEV\nОБНОВИТЬ\nТолько для разработки. Текст промпта и объяснения модели не показываются.\nПоследний ход AI\nшагов: 1, fallback: 1\nfallback: AI_PROMPT_TOO_LARGE запрос к модели слишком большой\nИтоги партии\nС правилами:\nрешений: 2 · 0,000268 $ · в среднем 0,000134 $\nБез правил:\nрешений: 1 · 0,000136 $ · в среднем 0,000136 $\nВсего:\nрешений: 3 · 0,000404 $ · в среднем 0,000135 $\nВызовы модели (новые сверху)\n17:10:06\nopenai\ngpt-6-luna\nпопыток: 1\nПравила: вкл\nправил: 0\nконтекст правил ≈ 0 ток.\nсняты лимитом промпта\nID правил:\n—\nВерсия правил:\nrebellion@1:55b423d7bfef\nбез fallback\nТокены: вход 1 088 · кэш 0 · выход 53\nСтоимость: 0,000136 $\n3 475 мс\n17:10:04\nopenai\ngpt-6-luna\nпопыток: 3\nПравила: вкл\nправил: 19\nконтекст правил ≈ 1 349 ток.\nID правил:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.zero-units, rebellion:command.move.adjacency, rebellion:command.move.immobile, rebellion:base.death-star-does-not-reveal, rebellion:command.pass-is-not-action\nВерсия правил:\nrebellion@1:55b423d7bfef\nfallback: AI_TIMEOUT\nнет ответа вовремя\nТокены: вход 0 · кэш 0 · выход 0\nСтоимость: 0,00 $\n15 000 мс\n17:10:01\nopenai\ngpt-6-luna\nпопыток: 1\nПравила: вкл\nправил: 17\nконтекст правил ≈ 1 268 ток.\nID правил:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.system-with-leader, rebellion:command.activate.tactic-values-required, rebellion:base.death-star-does-not-reveal\nВерсия правил:\nrebellion@1:55b423d7bfef\nбез fallback\nТокены: вход 2 431 · кэш 0 · выход 49\nСтоимость: 0,000268 $\n1 377 мс"
+[qa-diag08] ru 375 sessionIdTextNodesOutsidePanel=["DD#testid=game-info visible=false"] htmlHasId=true
+[qa-diag08] ru 375 systemIdsInPanel=[] rebelBaseInEmpireView={"systemId":null,"revealed":false}
+[qa-diag08] ru 375 row rules=19 attrs={"data-testid":"dev-ai-session-decision-1","data-status":"timeout","data-fallback":"true","data-error-code":"AI_TIMEOUT","data-rules-enabled":"true","data-rules-count":"19","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.zero-units,rebellion:command.move.adjacency,rebellion:command.move.immobile,rebellion:base.death-star-does-not-reveal,rebellion:command.pass-is-not-action","data-rules-tokens":"1349","data-rules-chars":"5393","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"0","data-output-tokens":"0","data-cost-micro-usd":"0"}
+[qa-diag08] ru 375 row rules=17 attrs={"data-testid":"dev-ai-session-decision-0","data-status":"ok","data-fallback":"false","data-error-code":"","data-rules-enabled":"true","data-rules-count":"17","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.system-with-leader,rebellion:command.activate.tactic-values-required,rebellion:base.death-star-does-not-reveal","data-rules-tokens":"1268","data-rules-chars":"5070","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"2431","data-output-tokens":"49","data-cost-micro-usd":"268"}
+  ✓  2 [chromium] › ../../../../private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/pw-diag/swr008-diag-shots.spec.ts:84:5 › TC-DIAG-08 dev panel ru 375 (3.0s)
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:25 PM     LOG [Automation] automation.step sessionId=58ac86f5-e958-4b9a-b438-7142718e453b gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:25 PM     LOG [Automation] automation.step sessionId=58ac86f5-e958-4b9a-b438-7142718e453b gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:25 PM     LOG [Automation] automation.step sessionId=58ac86f5-e958-4b9a-b438-7142718e453b gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:25 PM     LOG [Automation] automation.run sessionId=58ac86f5-e958-4b9a-b438-7142718e453b gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=8
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:27 PM     LOG [Automation] automation.step sessionId=58ac86f5-e958-4b9a-b438-7142718e453b gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:27 PM     LOG [Automation] automation.run sessionId=58ac86f5-e958-4b9a-b438-7142718e453b gameId=star-wars-rebellion steps=1 fallbacks=0 stopReason=humanTurn durationMs=4
+[qa-diag08] en 1440 gets=3 panelText="DEV · AI decisions: 3\nAI decisions · DEV\nREFRESH\nDevelopment only. Prompt text and model explanations are not shown.\nLast AI turn\nsteps: 1, fallbacks: 1\nfallback: AI_PROMPT_TOO_LARGE model request too large\nGame totals\nWith rules:\ndecisions: 2 · $0.000268 · mean $0.000134\nWithout rules:\ndecisions: 1 · $0.000136 · mean $0.000136\nTotal:\ndecisions: 3 · $0.000404 · mean $0.000135\nModel calls (newest first)\n17:10:06\nopenai\ngpt-6-luna\nattempts: 1\nRules: on\nrules: 0\nrules context ≈ 0 tok.\ndropped by the prompt limit\nRule IDs:\n—\nRules version:\nrebellion@1:55b423d7bfef\nno fallback\nTokens: input 1,088 · cached 0 · output 53\nCost: $0.000136\n3,475 ms\n17:10:04\nopenai\ngpt-6-luna\nattempts: 3\nRules: on\nrules: 19\nrules context ≈ 1,349 tok.\nRule IDs:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.zero-units, rebellion:command.move.adjacency, rebellion:command.move.immobile, rebellion:base.death-star-does-not-reveal, rebellion:command.pass-is-not-action\nRules version:\nrebellion@1:55b423d7bfef\nfallback: AI_TIMEOUT\nno answer in time\nTokens: input 0 · cached 0 · output 0\nCost: $0.00\n15,000 ms\n17:10:01\nopenai\ngpt-6-luna\nattempts: 1\nRules: on\nrules: 17\nrules context ≈ 1,268 tok.\nRule IDs:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.system-with-leader, rebellion:command.activate.tactic-values-required, rebellion:base.death-star-does-not-reveal\nRules version:\nrebellion@1:55b423d7bfef\nno fallback\nTokens: input 2,431 · cached 0 · output 49\nCost: $0.000268\n1,377 ms"
+[qa-diag08] en 1440 sessionIdTextNodesOutsidePanel=["DD#testid=game-info visible=false"] htmlHasId=true
+[qa-diag08] en 1440 systemIdsInPanel=[] rebelBaseInEmpireView={"systemId":null,"revealed":false}
+[qa-diag08] en 1440 row rules=19 attrs={"data-testid":"dev-ai-session-decision-1","data-status":"timeout","data-fallback":"true","data-error-code":"AI_TIMEOUT","data-rules-enabled":"true","data-rules-count":"19","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.zero-units,rebellion:command.move.adjacency,rebellion:command.move.immobile,rebellion:base.death-star-does-not-reveal,rebellion:command.pass-is-not-action","data-rules-tokens":"1349","data-rules-chars":"5393","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"0","data-output-tokens":"0","data-cost-micro-usd":"0"}
+[qa-diag08] en 1440 row rules=17 attrs={"data-testid":"dev-ai-session-decision-0","data-status":"ok","data-fallback":"false","data-error-code":"","data-rules-enabled":"true","data-rules-count":"17","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.system-with-leader,rebellion:command.activate.tactic-values-required,rebellion:base.death-star-does-not-reveal","data-rules-tokens":"1268","data-rules-chars":"5070","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"2431","data-output-tokens":"49","data-cost-micro-usd":"268"}
+  ✓  3 [chromium] › ../../../../private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/pw-diag/swr008-diag-shots.spec.ts:84:5 › TC-DIAG-08 dev panel en 1440 (3.3s)
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:28 PM     LOG [Automation] automation.step sessionId=313e8a9e-67ec-4e18-91ac-be4a478d93b5 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:28 PM     LOG [Automation] automation.step sessionId=313e8a9e-67ec-4e18-91ac-be4a478d93b5 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:28 PM     LOG [Automation] automation.step sessionId=313e8a9e-67ec-4e18-91ac-be4a478d93b5 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:28 PM     LOG [Automation] automation.run sessionId=313e8a9e-67ec-4e18-91ac-be4a478d93b5 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=8
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:30 PM     LOG [Automation] automation.step sessionId=313e8a9e-67ec-4e18-91ac-be4a478d93b5 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 5866  - 11/20/2026, 5:10:30 PM     LOG [Automation] automation.run sessionId=313e8a9e-67ec-4e18-91ac-be4a478d93b5 gameId=star-wars-rebellion steps=1 fallbacks=0 stopReason=humanTurn durationMs=3
+[qa-diag08] en 375 gets=3 panelText="DEV · AI decisions: 3\nAI decisions · DEV\nREFRESH\nDevelopment only. Prompt text and model explanations are not shown.\nLast AI turn\nsteps: 1, fallbacks: 1\nfallback: AI_PROMPT_TOO_LARGE model request too large\nGame totals\nWith rules:\ndecisions: 2 · $0.000268 · mean $0.000134\nWithout rules:\ndecisions: 1 · $0.000136 · mean $0.000136\nTotal:\ndecisions: 3 · $0.000404 · mean $0.000135\nModel calls (newest first)\n17:10:06\nopenai\ngpt-6-luna\nattempts: 1\nRules: on\nrules: 0\nrules context ≈ 0 tok.\ndropped by the prompt limit\nRule IDs:\n—\nRules version:\nrebellion@1:55b423d7bfef\nno fallback\nTokens: input 1,088 · cached 0 · output 53\nCost: $0.000136\n3,475 ms\n17:10:04\nopenai\ngpt-6-luna\nattempts: 3\nRules: on\nrules: 19\nrules context ≈ 1,349 tok.\nRule IDs:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.zero-units, rebellion:command.move.adjacency, rebellion:command.move.immobile, rebellion:base.death-star-does-not-reveal, rebellion:command.pass-is-not-action\nRules version:\nrebellion@1:55b423d7bfef\nfallback: AI_TIMEOUT\nno answer in time\nTokens: input 0 · cached 0 · output 0\nCost: $0.00\n15,000 ms\n17:10:01\nopenai\ngpt-6-luna\nattempts: 1\nRules: on\nrules: 17\nrules context ≈ 1,268 tok.\nRule IDs:\nrebellion:impl.engine-scope, rebellion:base.reveal-condition, rebellion:base.reveal-timing, rebellion:command.activate.place-leader, rebellion:command.activate.steps, rebellion:command.move.into-activated-from-adjacent, rebellion:command.move.own-leader-locks, rebellion:command.pass, rebellion:command.transport.capacity, rebellion:command.transport.restriction-icon, rebellion:command.turn-order, rebellion:round.structure, rebellion:victory.empire, rebellion:victory.rebels, rebellion:command.activate.system-with-leader, rebellion:command.activate.tactic-values-required, rebellion:base.death-star-does-not-reveal\nRules version:\nrebellion@1:55b423d7bfef\nno fallback\nTokens: input 2,431 · cached 0 · output 49\nCost: $0.000268\n1,377 ms"
+[qa-diag08] en 375 sessionIdTextNodesOutsidePanel=["DD#testid=game-info visible=false"] htmlHasId=true
+[qa-diag08] en 375 systemIdsInPanel=[] rebelBaseInEmpireView={"systemId":null,"revealed":false}
+[qa-diag08] en 375 row rules=19 attrs={"data-testid":"dev-ai-session-decision-1","data-status":"timeout","data-fallback":"true","data-error-code":"AI_TIMEOUT","data-rules-enabled":"true","data-rules-count":"19","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.zero-units,rebellion:command.move.adjacency,rebellion:command.move.immobile,rebellion:base.death-star-does-not-reveal,rebellion:command.pass-is-not-action","data-rules-tokens":"1349","data-rules-chars":"5393","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"0","data-output-tokens":"0","data-cost-micro-usd":"0"}
+[qa-diag08] en 375 row rules=17 attrs={"data-testid":"dev-ai-session-decision-0","data-status":"ok","data-fallback":"false","data-error-code":"","data-rules-enabled":"true","data-rules-count":"17","data-rules-ids":"rebellion:impl.engine-scope,rebellion:base.reveal-condition,rebellion:base.reveal-timing,rebellion:command.activate.place-leader,rebellion:command.activate.steps,rebellion:command.move.into-activated-from-adjacent,rebellion:command.move.own-leader-locks,rebellion:command.pass,rebellion:command.transport.capacity,rebellion:command.transport.restriction-icon,rebellion:command.turn-order,rebellion:round.structure,rebellion:victory.empire,rebellion:victory.rebels,rebellion:command.activate.system-with-leader,rebellion:command.activate.tactic-values-required,rebellion:base.death-star-does-not-reveal","data-rules-tokens":"1268","data-rules-chars":"5070","data-rules-truncated":"false","data-rules-dropped":"false","data-input-tokens":"2431","data-output-tokens":"49","data-cost-micro-usd":"268"}
+  ✓  4 [chromium] › ../../../../private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/pw-diag/swr008-diag-shots.spec.ts:84:5 › TC-DIAG-08 dev panel en 375 (3.3s)
+
+  4 passed (23.4s)
+exit=0
+# scratch spec used (verbatim):
+// QA scratch spec (SWR-008 TC-DIAG-08, browser QA). NOT part of the repo. Human Empire vs AI Rebels (bot server);
+// switch on via the /dev/ai flag; the decisions endpoint is answered by page.route with a wire-valid fixture (real
+// rule ids of the Rebellion KB, rulesVersion of the real KB); the next command response is patched to an OpenAI run
+// with AI_PROMPT_TOO_LARGE. Screenshots: ru/en × 1440/375 into docs/tasks/SWR-008/artifacts/screenshots/.
+import { expect, test, type Page, type Route } from '@playwright/test';
+import {
+  API,
+  commandOk,
+  createSession,
+  EMPIRE_VS_AI,
+  getCoreView,
+  planActivation,
+  type AutomationRunSummary,
+  type CoreCommandResponse,
+} from '/Users/dimatitov/WebstormProjects/Game automa/e2e/support/api.ts';
+import { openCore } from '/Users/dimatitov/WebstormProjects/Game automa/e2e/support/board.ts';
+import { finishViaUi } from '/Users/dimatitov/WebstormProjects/Game automa/e2e/support/core.ts';
+import { enableTableDiagnostics, isSessionDecisionsGet } from '/Users/dimatitov/WebstormProjects/Game automa/e2e/support/dev-ai.ts';
+import { T } from '/Users/dimatitov/WebstormProjects/Game automa/e2e/support/testids.ts';
+
+const OUT = '/Users/dimatitov/WebstormProjects/Game automa/docs/tasks/SWR-008/artifacts/screenshots';
+const VERSION = 'rebellion@1:55b423d7bfef';
+const IDLE = [
+  'rebellion:impl.engine-scope', 'rebellion:base.reveal-condition', 'rebellion:base.reveal-timing',
+  'rebellion:command.activate.place-leader', 'rebellion:command.activate.steps',
+  'rebellion:command.move.into-activated-from-adjacent', 'rebellion:command.move.own-leader-locks',
+  'rebellion:command.pass', 'rebellion:command.transport.capacity', 'rebellion:command.transport.restriction-icon',
+  'rebellion:command.turn-order', 'rebellion:round.structure', 'rebellion:victory.empire', 'rebellion:victory.rebels',
+  'rebellion:command.activate.system-with-leader', 'rebellion:command.activate.tactic-values-required',
+  'rebellion:base.death-star-does-not-reveal',
+];
+const ACTIVE = [
+  'rebellion:impl.engine-scope', 'rebellion:base.reveal-condition', 'rebellion:base.reveal-timing',
+  'rebellion:command.activate.place-leader', 'rebellion:command.activate.steps',
+  'rebellion:command.move.into-activated-from-adjacent', 'rebellion:command.move.own-leader-locks',
+  'rebellion:command.pass', 'rebellion:command.transport.capacity', 'rebellion:command.transport.restriction-icon',
+  'rebellion:command.turn-order', 'rebellion:round.structure', 'rebellion:victory.empire', 'rebellion:victory.rebels',
+  'rebellion:command.activate.zero-units', 'rebellion:command.move.adjacency', 'rebellion:command.move.immobile',
+  'rebellion:base.death-star-does-not-reveal', 'rebellion:command.pass-is-not-action',
+];
+const rules = (ids: string[], chars: number, extra: Record<string, unknown> = {}) => ({
+  enabled: true, rulesVersion: VERSION, count: ids.length, ids, chars, tokensEstimate: Math.ceil(chars / 4),
+  truncated: false, dropped: false, ...extra,
+});
+const base = { provider: 'openai', model: 'gpt-6-luna', cachedInputTokens: 0 };
+const DECISIONS = [
+  { ...base, at: '2026-11-20T14:10:01.000Z', status: 'ok', fallback: false, errorCode: null, attempts: 1,
+    inputTokens: 2431, outputTokens: 49, costMicroUsd: 268, durationMs: 1377, rules: rules(IDLE, 5070) },
+  { ...base, at: '2026-11-20T14:10:04.000Z', status: 'timeout', fallback: true, errorCode: 'AI_TIMEOUT', attempts: 3,
+    inputTokens: 0, outputTokens: 0, costMicroUsd: 0, durationMs: 15000, rules: rules(ACTIVE, 5393) },
+  { ...base, at: '2026-11-20T14:10:06.000Z', status: 'ok', fallback: false, errorCode: null, attempts: 1,
+    inputTokens: 1088, outputTokens: 53, costMicroUsd: 136, durationMs: 3475,
+    rules: { ...rules([], 0), dropped: true } },
+];
+const group = (rows: typeof DECISIONS) => {
+  const cost = rows.reduce((s, d) => s + d.costMicroUsd, 0);
+  return {
+    decisions: rows.length, costMicroUsd: cost,
+    inputTokens: rows.reduce((s, d) => s + d.inputTokens, 0),
+    outputTokens: rows.reduce((s, d) => s + d.outputTokens, 0),
+    meanCostMicroUsd: rows.length ? cost / rows.length : null,
+  };
+};
+const BODY = {
+  decisions: DECISIONS,
+  totals: {
+    withRules: group(DECISIONS.filter((d) => d.rules.count > 0 && !d.rules.dropped)),
+    withoutRules: group(DECISIONS.filter((d) => !(d.rules.count > 0 && !d.rules.dropped))),
+    total: group(DECISIONS),
+  },
+};
+
+async function patchNextCommand(page: Page, patch: (a: AutomationRunSummary) => AutomationRunSummary) {
+  await page.route((url) => API.commands.test(url.pathname), async (route: Route) => {
+    const res = await route.fetch();
+    const body = (await res.json()) as CoreCommandResponse;
+    if (res.status() === 200) body.automation = patch(body.automation);
+    await route.fulfill({ response: res, json: body });
+  }, { times: 1 });
+}
+
+for (const lang of ['ru', 'en'] as const) {
+  for (const width of [1440, 375] as const) {
+    test(`TC-DIAG-08 dev panel ${lang} ${width}`, async ({ page, request }) => {
+      await page.setViewportSize({ width, height: width === 375 ? 812 : 900 });
+      await enableTableDiagnostics(page);
+      await page.goto('/settings');
+      await page.getByTestId(T.settingsLanguage(lang)).click();
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      let gets = 0;
+      await page.route((url) => /\/api\/dev\/ai\/sessions\/[^/]+\/decisions$/.test(url.pathname), async (route) => {
+        gets += 1;
+        await route.fulfill({ status: 200, json: BODY });
+      });
+      const { sessionId } = await createSession(request, EMPIRE_VS_AI);
+      const view = await getCoreView(request, sessionId);
+      const plan = planActivation(view);
+      await commandOk(request, sessionId, view, { type: 'ACTIVATE_SYSTEM', leaderId: plan.leaderId, systemId: plan.systemId });
+      await openCore(page, sessionId);
+      await patchNextCommand(page, (a) => ({ ...a, strategy: 'openai', fallbacks: 1, fallbackReasons: ['AI_PROMPT_TOO_LARGE'] }));
+      const fin = await finishViaUi(page);
+      expect(fin.body.automation.steps).toBeGreaterThanOrEqual(1);
+      const panel = page.getByTestId(T.devAiSessionDiagnostics);
+      await expect(panel).toHaveAttribute('data-state', 'ready');
+      await expect(panel).toHaveAttribute('data-decisions', '3');
+      await page.getByTestId(T.devAiSessionToggle).click();
+      await expect(panel).toHaveAttribute('data-expanded', 'true');
+      await expect(page.getByTestId(T.devAiSessionLastRun)).toHaveAttribute('data-reasons', /AI_PROMPT_TOO_LARGE/);
+      const d1 = page.getByTestId(T.devAiSessionDecision(0)).or(page.getByTestId(T.devAiSessionDecision(1))).first();
+      await expect(d1).toBeVisible();
+      await page.waitForTimeout(400);
+      const panelText = await panel.innerText();
+      const html = await page.content();
+      // what is visible in the panel
+      console.log(`[qa-diag08] ${lang} ${width} gets=${gets} panelText=${JSON.stringify(panelText)}`);
+      // hidden / internal data: never the session id (budget key), prompt / situation / reason, never a system id
+      const systemIds = (await getCoreView(request, sessionId)).map.systems.map((s) => s.id);
+      expect(panelText).not.toContain(sessionId);
+      expect(await panel.innerHTML()).not.toContain(sessionId);
+      const where = await page.evaluate((id) => {
+        const out: string[] = [];
+        const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        for (let n = w.nextNode(); n; n = w.nextNode()) {
+          if (n.textContent?.includes(id)) {
+            const el = n.parentElement;
+            const tid = el?.closest('[data-testid]')?.getAttribute('data-testid');
+            out.push(`${el?.tagName}#testid=${tid} visible=${el ? el.getClientRects().length > 0 : false}`);
+          }
+        }
+        return out;
+      }, sessionId);
+      console.log(`[qa-diag08] ${lang} ${width} sessionIdTextNodesOutsidePanel=${JSON.stringify(where)} htmlHasId=${html.includes(sessionId)}`);
+      expect(panelText).not.toMatch(/situation|reason|budget|session|Game \(data\)|Rules \(reference data|Your forces|Possible base locations/i);
+      const leakedSystems = systemIds.filter((id) => new RegExp(`(^|[^a-z-])${id}([^a-z-]|$)`).test(panelText));
+      console.log(`[qa-diag08] ${lang} ${width} systemIdsInPanel=${JSON.stringify(leakedSystems)} rebelBaseInEmpireView=${JSON.stringify(fin.view.rebelBase)}`);
+      expect(leakedSystems).toEqual([]);
+      for (const id of IDLE) expect(panelText).toContain(id);
+      await page.screenshot({ path: `${OUT}/swr008-dev-diagnostics-${lang}-${width}.png`, fullPage: false });
+      await panel.screenshot({ path: `${OUT}/swr008-dev-diagnostics-panel-${lang}-${width}.png` });
+      for (const n of ['19', '17']) {
+        const row = page.locator(`[data-testid^="dev-ai-session-decision-"][data-rules-count="${n}"]`);
+        await expect(row).toHaveCount(1);
+        console.log(`[qa-diag08] ${lang} ${width} row rules=${n} attrs=${JSON.stringify(await row.evaluate((el) => Object.fromEntries([...el.attributes].filter((a) => a.name.startsWith('data-')).map((a) => [a.name, a.value]))))}`);
+        await row.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(200);
+        await panel.screenshot({ path: `${OUT}/swr008-dev-diagnostics-panel-rules${n}-${lang}-${width}.png` });
+      }
+    });
+  }
+}

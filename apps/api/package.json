@@ -11,7 +11,8 @@
     "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
     "db:prepare": "node scripts/ensure-env.mjs && prisma generate && prisma migrate deploy",
-    "e2e:serve": "node scripts/e2e-serve.mjs"
+    "e2e:serve": "node scripts/e2e-serve.mjs",
+    "bench:ai": "tsc -b ../../packages && nest build && node dist/bench/cli.js --scenarios ../../packages/games/rebellion/benchmark/scenarios.json"
   },
   "dependencies": {
     "@bga/game-forbidden-stars": "workspace:*",

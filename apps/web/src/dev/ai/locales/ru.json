@@ -132,5 +132,57 @@
   "announce": {
     "success": "AI выбрал действие {{id}}",
     "error": "Ошибка: {{text}}"
+  },
+  "session": {
+    "title": "Решения AI · DEV",
+    "chip": "DEV · решений AI: {{count}}",
+    "chipPending": "DEV · решения AI…",
+    "chipError": "DEV · решения AI: ошибка",
+    "refresh": "Обновить",
+    "note": "Только для разработки. Текст промпта и объяснения модели не показываются.",
+    "none": "—",
+    "lastRun": {
+      "title": "Последний ход AI",
+      "summary": "шагов: {{steps}}, fallback: {{fallbacks}}"
+    },
+    "decisions": {
+      "title": "Вызовы модели (новые сверху)"
+    },
+    "empty": "Вызовов модели в этой партии пока нет (ходы бота не записываются).",
+    "attempts": "попыток: {{count}}",
+    "rules": {
+      "on": "Правила: вкл",
+      "off": "Правила: выкл",
+      "count": "правил: {{count}}",
+      "ids": "ID правил",
+      "tokens": "контекст правил ≈ {{tokens}} ток.",
+      "chars": "{{chars}} симв.",
+      "truncated": "обрезаны",
+      "dropped": "сняты лимитом промпта",
+      "version": "Версия правил"
+    },
+    "fallback": {
+      "code": "fallback: {{code}}",
+      "none": "без fallback"
+    },
+    "tokens": "Токены: вход {{input}} · кэш {{cached}} · выход {{output}}",
+    "cost": "Стоимость: {{cost}}",
+    "duration": "{{value}} мс",
+    "totals": {
+      "title": "Итоги партии",
+      "withRules": "С правилами",
+      "withoutRules": "Без правил",
+      "total": "Всего",
+      "line": "решений: {{decisions}} · {{cost}} · в среднем {{mean}}"
+    },
+    "error": {
+      "unavailable": "Эндпоинт диагностики не найден — API запущен в production-режиме или без модуля диагностики.",
+      "forbidden": "Доступ запрещён: откройте игру на машине, где запущен API (localhost)."
+    }
+  },
+  "tableDiagnostics": {
+    "title": "Диагностика на игровом столе",
+    "label": "Показывать диагностику решений AI на игровом столе",
+    "hint": "Только в этом браузере и только в dev-сборке. По умолчанию выключено."
   }
 }

@@ -5,6 +5,8 @@
  * terminating action (`FINISH_ACTIVATION` / `PASS`) always included when legal, `fallbackCandidateId = 'c1'`
  * (the bot's own choice), `policyId = 'rebellion-bot-v1:<difficulty>'`. Difficulty comes from the public
  * `view.settings.aiDifficulty`. Deterministic: the same view gives the same point.
+ * SWR-008 (C-3/C-4): + `rulesQuery` = `rulesQueryFor(view)` — public fields only (QD-7), never the candidates;
+ * the candidates and the fallback are exactly those of SWR-006.
  */
 import type { CorePlayerView } from '../schema';
 import { AUTO_POLICY_ID, type AutoPolicy } from './auto-pass';
@@ -13,6 +15,7 @@ import { objectiveFor, situationFor, summaryFor } from './describe';
 import { deriveBaseIntel } from './intel';
 import { botSeed } from './random';
 import { rankCandidates } from './rank';
+import { rulesQueryFor } from './rules-query';
 import type {
   BotCandidate,
   BotCommand,
@@ -131,6 +134,8 @@ export function buildDecision(
       candidates,
       fallbackCandidateId: 'c1',
       policyId,
+      // SWR-008 C-4: public fields of the view only (QD-7); the candidates above do not depend on it.
+      rulesQuery: rulesQueryFor(view),
     },
     commands,
   };

@@ -7,6 +7,7 @@ import type {
   AutomationDecisionPoint,
   AutomationFallbackCode,
   AutomationStrategyId,
+  RulesContextProvider,
 } from '@bga/platform';
 
 export interface CommanderChoice {
@@ -26,6 +27,13 @@ export interface CommanderRunContext {
   sessionId: string;
   /** Deadline of the run on the monotonic clock of the AI runtime (ms). */
   deadline: number;
+  /**
+   * SWR-008 C-10: rules provider of the session's game, or `null` (the game has no rules / rules are off / the
+   * provider is not `openai`). Only its selection result may reach a model, never the provider itself.
+   */
+  rules: RulesContextProvider | null;
+  /** SWR-008 (QD-27): game id of the session, for server log lines only (C5); never sent to a model. */
+  gameId?: string;
 }
 
 export interface CommanderStrategy {

@@ -1,0 +1,32 @@
+{
+  "formatVersion": 1,
+  "gameId": "fake",
+  "title": "Fake automation game (SWR-008 test fixture)",
+  "language": "en",
+  "products": ["core"],
+  "categories": [
+    { "id": "general", "title": "General" },
+    { "id": "turn", "title": "Turn" },
+    { "id": "move", "title": "Moving", "parent": "turn" }
+  ],
+  "sources": [
+    {
+      "id": "FR",
+      "kind": "rules",
+      "title": "Fake Rulebook",
+      "publisher": "Example Games",
+      "url": "https://example.com/fake/rules.pdf",
+      "version": "1.0",
+      "date": "2026-01-01",
+      "retrievedAt": "2026-11-20",
+      "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "pages": 4,
+      "precedence": 1,
+      "status": "current"
+    }
+  ],
+  "sourceSections": [
+    { "sourceId": "FR", "page": 2, "title": "Turn" },
+    { "sourceId": "FR", "page": 3, "title": "Moving" }
+  ]
+}

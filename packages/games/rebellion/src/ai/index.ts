@@ -71,6 +71,13 @@ export {
 export { allowEmpire, empireKnowledge, scoreEmpire, type EmpireKnowledge } from './empire-policy';
 export { allowRebels, rebelSituation, scoreRebels, type RebelSituation } from './rebel-policy';
 export { DESCRIBE_LIMITS, clip, objectiveFor, situationFor, summaryFor } from './describe';
+// SWR-008 C-4: the public rules query of a decision point (QD-7: public fields of the view only).
+export {
+  REBELLION_RULE_TAGS,
+  rulesQueryFor,
+  type BotRulesQuery,
+  type RebellionRuleTag,
+} from './rules-query';
 export {
   BOT_POLICY_ID,
   MAX_DECISION_CANDIDATES,

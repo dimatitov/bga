@@ -1,0 +1,303 @@
+bench plan: game=rebellion scenarios=14 variants=bot,openai-no-rules,openai-rules repeats=3 decisions=126 model-calls=84
+bench rules: version=rebellion@1:55b423d7bfef maxChars=6000 maxPromptTokens=16000
+bench prompt upper bound (openai-no-rules): min=2728 max=4313 tokens
+bench prompt upper bound (openai-rules): min=8548 max=9928 tokens
+bench worst case: model=gpt-6-luna role=tactical retries=2: $0.209592 (Σ reservations of 84 calls); hard cap --max-usd $1.000000; the run can spend at most $0.209592
+bench 1/126 emp-01-hunt-adjacent bot r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=3475 in=1088 cached=0 out=53 reasoning=0 costUsd=0.000136 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=3475 in=1088 cached=0 out=53 reasoning=0 costUsd=0.000136 budgetKey=bench-real-20261120-140206
+bench 2/126 emp-01-hunt-adjacent openai-no-rules r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1376 in=2431 cached=0 out=49 reasoning=0 costUsd=0.000268 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1376 in=2431 cached=0 out=49 reasoning=0 costUsd=0.000268 budgetKey=bench-real-20261120-140206
+bench 3/126 emp-01-hunt-adjacent openai-rules r1: ACTIVATE_SYSTEM expected
+bench 4/126 emp-02-ground-strike bot r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=3099 in=767 cached=0 out=44 reasoning=0 costUsd=0.000099 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=3099 in=767 cached=0 out=44 reasoning=0 costUsd=0.000099 budgetKey=bench-real-20261120-140206
+bench 5/126 emp-02-ground-strike openai-no-rules r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1273 in=2228 cached=0 out=44 reasoning=0 costUsd=0.000245 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1274 in=2228 cached=0 out=44 reasoning=0 costUsd=0.000245 budgetKey=bench-real-20261120-140206
+bench 6/126 emp-02-ground-strike openai-rules r1: MOVE_PIECES expected
+bench 7/126 emp-03-death-star-alone bot r1: FINISH_ACTIVATION wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1582 in=802 cached=0 out=46 reasoning=0 costUsd=0.000104 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1582 in=802 cached=0 out=46 reasoning=0 costUsd=0.000104 budgetKey=bench-real-20261120-140206
+bench 8/126 emp-03-death-star-alone openai-no-rules r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1340 in=2263 cached=0 out=48 reasoning=0 costUsd=0.000251 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1341 in=2263 cached=0 out=48 reasoning=0 costUsd=0.000251 budgetKey=bench-real-20261120-140206
+bench 9/126 emp-03-death-star-alone openai-rules r1: MOVE_PIECES expected
+bench 10/126 emp-04-finish-after-strike bot r1: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1256 in=762 cached=0 out=46 reasoning=0 costUsd=0.000100 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1257 in=762 cached=0 out=46 reasoning=0 costUsd=0.000100 budgetKey=bench-real-20261120-140206
+bench 11/126 emp-04-finish-after-strike openai-no-rules r1: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=3874 in=2223 cached=0 out=59 reasoning=0 costUsd=0.000252 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=3874 in=2223 cached=0 out=59 reasoning=0 costUsd=0.000252 budgetKey=bench-real-20261120-140206
+bench 12/126 emp-04-finish-after-strike openai-rules r1: FINISH_ACTIVATION expected
+bench 13/126 emp-05-leader-pin bot r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1426 in=1125 cached=0 out=48 reasoning=0 costUsd=0.000137 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1426 in=1125 cached=0 out=48 reasoning=0 costUsd=0.000137 budgetKey=bench-real-20261120-140206
+bench 14/126 emp-05-leader-pin openai-no-rules r1: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1396 in=2468 cached=0 out=54 reasoning=0 costUsd=0.000274 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1396 in=2468 cached=0 out=54 reasoning=0 costUsd=0.000274 budgetKey=bench-real-20261120-140206
+bench 15/126 emp-05-leader-pin openai-rules r1: ACTIVATE_SYSTEM wrong
+bench 16/126 emp-06-assault-abandoned-base bot r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1537 in=1026 cached=0 out=44 reasoning=0 costUsd=0.000125 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1538 in=1026 cached=0 out=44 reasoning=0 costUsd=0.000125 budgetKey=bench-real-20261120-140206
+bench 17/126 emp-06-assault-abandoned-base openai-no-rules r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1210 in=2370 cached=0 out=47 reasoning=0 costUsd=0.000261 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1210 in=2370 cached=0 out=47 reasoning=0 costUsd=0.000261 budgetKey=bench-real-20261120-140206
+bench 18/126 emp-06-assault-abandoned-base openai-rules r1: ACTIVATE_SYSTEM expected
+bench 19/126 emp-07-capture-empty-base bot r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1352 in=660 cached=0 out=44 reasoning=0 costUsd=0.000088 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1353 in=660 cached=0 out=44 reasoning=0 costUsd=0.000088 budgetKey=bench-real-20261120-140206
+bench 20/126 emp-07-capture-empty-base openai-no-rules r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1294 in=2122 cached=0 out=44 reasoning=0 costUsd=0.000235 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1295 in=2122 cached=0 out=44 reasoning=0 costUsd=0.000235 budgetKey=bench-real-20261120-140206
+bench 21/126 emp-07-capture-empty-base openai-rules r1: MOVE_PIECES expected
+bench 22/126 emp-08-rebels-passed bot r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1348 in=1072 cached=0 out=42 reasoning=0 costUsd=0.000129 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1348 in=1072 cached=0 out=42 reasoning=0 costUsd=0.000129 budgetKey=bench-real-20261120-140206
+bench 23/126 emp-08-rebels-passed openai-no-rules r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1312 in=2452 cached=0 out=45 reasoning=0 costUsd=0.000268 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1312 in=2452 cached=0 out=45 reasoning=0 costUsd=0.000268 budgetKey=bench-real-20261120-140206
+bench 24/126 emp-08-rebels-passed openai-rules r1: ACTIVATE_SYSTEM expected
+bench 25/126 reb-01-hold-revealed-base bot r1: MOVE_PIECES wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1732 in=817 cached=0 out=51 reasoning=0 costUsd=0.000108 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1733 in=817 cached=0 out=51 reasoning=0 costUsd=0.000108 budgetKey=bench-real-20261120-140206
+bench 26/126 reb-01-hold-revealed-base openai-no-rules r1: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1716 in=2219 cached=0 out=51 reasoning=0 costUsd=0.000248 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1717 in=2219 cached=0 out=51 reasoning=0 costUsd=0.000248 budgetKey=bench-real-20261120-140206
+bench 27/126 reb-01-hold-revealed-base openai-rules r1: FINISH_ACTIVATION expected
+bench 28/126 reb-02-keep-last-units-home bot r1: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1315 in=817 cached=0 out=48 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1315 in=817 cached=0 out=48 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206
+bench 29/126 reb-02-keep-last-units-home openai-no-rules r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1608 in=2218 cached=0 out=56 reasoning=0 costUsd=0.000250 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1609 in=2218 cached=0 out=56 reasoning=0 costUsd=0.000250 budgetKey=bench-real-20261120-140206
+bench 30/126 reb-02-keep-last-units-home openai-rules r1: MOVE_PIECES expected
+bench 31/126 reb-03-reoccupy-empty-base bot r1: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1391 in=947 cached=0 out=45 reasoning=0 costUsd=0.000118 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1392 in=947 cached=0 out=45 reasoning=0 costUsd=0.000118 budgetKey=bench-real-20261120-140206
+bench 32/126 reb-03-reoccupy-empty-base openai-no-rules r1: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1336 in=2290 cached=0 out=44 reasoning=0 costUsd=0.000251 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1337 in=2290 cached=0 out=44 reasoning=0 costUsd=0.000251 budgetKey=bench-real-20261120-140206
+bench 33/126 reb-03-reoccupy-empty-base openai-rules r1: ACTIVATE_SYSTEM expected
+bench 34/126 reb-04-move-back-into-base bot r1: FINISH_ACTIVATION wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=2110 in=688 cached=0 out=46 reasoning=0 costUsd=0.000092 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=2111 in=688 cached=0 out=46 reasoning=0 costUsd=0.000092 budgetKey=bench-real-20261120-140206
+bench 35/126 reb-04-move-back-into-base openai-no-rules r1: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1864 in=2089 cached=0 out=50 reasoning=0 costUsd=0.000234 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1864 in=2089 cached=0 out=50 reasoning=0 costUsd=0.000234 budgetKey=bench-real-20261120-140206
+bench 36/126 reb-04-move-back-into-base openai-rules r1: MOVE_PIECES expected
+bench 37/126 reb-05-end-of-time-pass bot r1: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1515 in=941 cached=0 out=45 reasoning=0 costUsd=0.000117 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1516 in=941 cached=0 out=45 reasoning=0 costUsd=0.000117 budgetKey=bench-real-20261120-140206
+bench 38/126 reb-05-end-of-time-pass openai-no-rules r1: PASS expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1175 in=2284 cached=0 out=44 reasoning=0 costUsd=0.000251 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1176 in=2284 cached=0 out=44 reasoning=0 costUsd=0.000251 budgetKey=bench-real-20261120-140206
+bench 39/126 reb-05-end-of-time-pass openai-rules r1: PASS expected
+bench 40/126 reb-06-finish-without-useful-move bot r1: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1714 in=680 cached=0 out=48 reasoning=0 costUsd=0.000092 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1714 in=680 cached=0 out=48 reasoning=0 costUsd=0.000092 budgetKey=bench-real-20261120-140206
+bench 41/126 reb-06-finish-without-useful-move openai-no-rules r1: MOVE_PIECES wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1367 in=2081 cached=0 out=49 reasoning=0 costUsd=0.000233 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1368 in=2081 cached=0 out=49 reasoning=0 costUsd=0.000233 budgetKey=bench-real-20261120-140206
+bench 42/126 reb-06-finish-without-useful-move openai-rules r1: MOVE_PIECES wrong
+bench 43/126 emp-01-hunt-adjacent bot r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=2357 in=1088 cached=1085 out=49 reasoning=0 costUsd=0.000036 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=2358 in=1088 cached=1085 out=49 reasoning=0 costUsd=0.000036 budgetKey=bench-real-20261120-140206
+bench 44/126 emp-01-hunt-adjacent openai-no-rules r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1094 in=2431 cached=2428 out=44 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1095 in=2431 cached=2428 out=44 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206
+bench 45/126 emp-01-hunt-adjacent openai-rules r2: ACTIVATE_SYSTEM expected
+bench 46/126 emp-02-ground-strike bot r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1438 in=767 cached=0 out=55 reasoning=0 costUsd=0.000105 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1439 in=767 cached=0 out=55 reasoning=0 costUsd=0.000105 budgetKey=bench-real-20261120-140206
+bench 47/126 emp-02-ground-strike openai-no-rules r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1641 in=2228 cached=2225 out=45 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1641 in=2228 cached=2225 out=45 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206
+bench 48/126 emp-02-ground-strike openai-rules r2: MOVE_PIECES expected
+bench 49/126 emp-03-death-star-alone bot r2: FINISH_ACTIVATION wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1778 in=802 cached=0 out=46 reasoning=0 costUsd=0.000104 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1779 in=802 cached=0 out=46 reasoning=0 costUsd=0.000104 budgetKey=bench-real-20261120-140206
+bench 50/126 emp-03-death-star-alone openai-no-rules r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1564 in=2263 cached=2260 out=48 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1565 in=2263 cached=2260 out=48 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206
+bench 51/126 emp-03-death-star-alone openai-rules r2: MOVE_PIECES expected
+bench 52/126 emp-04-finish-after-strike bot r2: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1568 in=762 cached=0 out=44 reasoning=0 costUsd=0.000099 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1568 in=762 cached=0 out=44 reasoning=0 costUsd=0.000099 budgetKey=bench-real-20261120-140206
+bench 53/126 emp-04-finish-after-strike openai-no-rules r2: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1653 in=2223 cached=2220 out=48 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1654 in=2223 cached=2220 out=48 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206
+bench 54/126 emp-04-finish-after-strike openai-rules r2: MOVE_PIECES acceptable
+bench 55/126 emp-05-leader-pin bot r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1692 in=1125 cached=1122 out=47 reasoning=0 costUsd=0.000036 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1693 in=1125 cached=1122 out=47 reasoning=0 costUsd=0.000036 budgetKey=bench-real-20261120-140206
+bench 56/126 emp-05-leader-pin openai-no-rules r2: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1232 in=2468 cached=2465 out=50 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1233 in=2468 cached=2465 out=50 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206
+bench 57/126 emp-05-leader-pin openai-rules r2: ACTIVATE_SYSTEM wrong
+bench 58/126 emp-06-assault-abandoned-base bot r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1319 in=1026 cached=0 out=44 reasoning=0 costUsd=0.000125 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1320 in=1026 cached=0 out=44 reasoning=0 costUsd=0.000125 budgetKey=bench-real-20261120-140206
+bench 59/126 emp-06-assault-abandoned-base openai-no-rules r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1509 in=2370 cached=2367 out=44 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1509 in=2370 cached=2367 out=44 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206
+bench 60/126 emp-06-assault-abandoned-base openai-rules r2: ACTIVATE_SYSTEM expected
+bench 61/126 emp-07-capture-empty-base bot r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=4221 in=660 cached=0 out=46 reasoning=0 costUsd=0.000089 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=4222 in=660 cached=0 out=46 reasoning=0 costUsd=0.000089 budgetKey=bench-real-20261120-140206
+bench 62/126 emp-07-capture-empty-base openai-no-rules r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1499 in=2122 cached=2119 out=45 reasoning=0 costUsd=0.000044 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1500 in=2122 cached=2119 out=45 reasoning=0 costUsd=0.000044 budgetKey=bench-real-20261120-140206
+bench 63/126 emp-07-capture-empty-base openai-rules r2: MOVE_PIECES expected
+bench 64/126 emp-08-rebels-passed bot r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1549 in=1072 cached=1069 out=42 reasoning=0 costUsd=0.000032 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1549 in=1072 cached=1069 out=42 reasoning=0 costUsd=0.000032 budgetKey=bench-real-20261120-140206
+bench 65/126 emp-08-rebels-passed openai-no-rules r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1412 in=2452 cached=2449 out=49 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1413 in=2452 cached=2449 out=49 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206
+bench 66/126 emp-08-rebels-passed openai-rules r2: ACTIVATE_SYSTEM expected
+bench 67/126 reb-01-hold-revealed-base bot r2: MOVE_PIECES wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1358 in=817 cached=0 out=48 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1358 in=817 cached=0 out=48 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206
+bench 68/126 reb-01-hold-revealed-base openai-no-rules r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1525 in=2219 cached=2216 out=43 reasoning=0 costUsd=0.000044 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1525 in=2219 cached=2216 out=43 reasoning=0 costUsd=0.000044 budgetKey=bench-real-20261120-140206
+bench 69/126 reb-01-hold-revealed-base openai-rules r2: FINISH_ACTIVATION expected
+bench 70/126 reb-02-keep-last-units-home bot r2: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1514 in=817 cached=0 out=53 reasoning=0 costUsd=0.000109 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1514 in=817 cached=0 out=53 reasoning=0 costUsd=0.000109 budgetKey=bench-real-20261120-140206
+bench 71/126 reb-02-keep-last-units-home openai-no-rules r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=2035 in=2218 cached=2215 out=50 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=2035 in=2218 cached=2215 out=50 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206
+bench 72/126 reb-02-keep-last-units-home openai-rules r2: FINISH_ACTIVATION expected
+bench 73/126 reb-03-reoccupy-empty-base bot r2: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1299 in=947 cached=0 out=42 reasoning=0 costUsd=0.000116 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1299 in=947 cached=0 out=42 reasoning=0 costUsd=0.000116 budgetKey=bench-real-20261120-140206
+bench 74/126 reb-03-reoccupy-empty-base openai-no-rules r2: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=963 in=2290 cached=2287 out=44 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=963 in=2290 cached=2287 out=44 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206
+bench 75/126 reb-03-reoccupy-empty-base openai-rules r2: ACTIVATE_SYSTEM expected
+bench 76/126 reb-04-move-back-into-base bot r2: FINISH_ACTIVATION wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1427 in=688 cached=0 out=45 reasoning=0 costUsd=0.000092 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1428 in=688 cached=0 out=45 reasoning=0 costUsd=0.000092 budgetKey=bench-real-20261120-140206
+bench 77/126 reb-04-move-back-into-base openai-no-rules r2: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1584 in=2089 cached=2086 out=53 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1585 in=2089 cached=2086 out=53 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206
+bench 78/126 reb-04-move-back-into-base openai-rules r2: MOVE_PIECES expected
+bench 79/126 reb-05-end-of-time-pass bot r2: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1421 in=941 cached=0 out=47 reasoning=0 costUsd=0.000118 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1422 in=941 cached=0 out=47 reasoning=0 costUsd=0.000118 budgetKey=bench-real-20261120-140206
+bench 80/126 reb-05-end-of-time-pass openai-no-rules r2: PASS expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1207 in=2284 cached=2281 out=51 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1207 in=2284 cached=2281 out=51 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206
+bench 81/126 reb-05-end-of-time-pass openai-rules r2: ACTIVATE_SYSTEM wrong
+bench 82/126 reb-06-finish-without-useful-move bot r2: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1538 in=680 cached=0 out=51 reasoning=0 costUsd=0.000094 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1538 in=680 cached=0 out=51 reasoning=0 costUsd=0.000094 budgetKey=bench-real-20261120-140206
+bench 83/126 reb-06-finish-without-useful-move openai-no-rules r2: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1613 in=2081 cached=2078 out=52 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1613 in=2081 cached=2078 out=52 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206
+bench 84/126 reb-06-finish-without-useful-move openai-rules r2: MOVE_PIECES acceptable
+bench 85/126 emp-01-hunt-adjacent bot r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1869 in=1088 cached=1085 out=57 reasoning=0 costUsd=0.000040 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1869 in=1088 cached=1085 out=57 reasoning=0 costUsd=0.000040 budgetKey=bench-real-20261120-140206
+bench 86/126 emp-01-hunt-adjacent openai-no-rules r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1504 in=2431 cached=2428 out=60 reasoning=0 costUsd=0.000055 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1504 in=2431 cached=2428 out=60 reasoning=0 costUsd=0.000055 budgetKey=bench-real-20261120-140206
+bench 87/126 emp-01-hunt-adjacent openai-rules r3: ACTIVATE_SYSTEM expected
+bench 88/126 emp-02-ground-strike bot r3: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1603 in=767 cached=0 out=43 reasoning=0 costUsd=0.000099 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1603 in=767 cached=0 out=43 reasoning=0 costUsd=0.000099 budgetKey=bench-real-20261120-140206
+bench 89/126 emp-02-ground-strike openai-no-rules r3: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1602 in=2228 cached=2225 out=51 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1602 in=2228 cached=2225 out=51 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206
+bench 90/126 emp-02-ground-strike openai-rules r3: MOVE_PIECES expected
+bench 91/126 emp-03-death-star-alone bot r3: FINISH_ACTIVATION wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1562 in=802 cached=0 out=51 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1563 in=802 cached=0 out=51 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206
+bench 92/126 emp-03-death-star-alone openai-no-rules r3: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1231 in=2263 cached=2260 out=49 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1231 in=2263 cached=2260 out=49 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206
+bench 93/126 emp-03-death-star-alone openai-rules r3: MOVE_PIECES expected
+bench 94/126 emp-04-finish-after-strike bot r3: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1571 in=762 cached=0 out=50 reasoning=0 costUsd=0.000102 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1571 in=762 cached=0 out=50 reasoning=0 costUsd=0.000102 budgetKey=bench-real-20261120-140206
+bench 95/126 emp-04-finish-after-strike openai-no-rules r3: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1594 in=2223 cached=2220 out=46 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1595 in=2223 cached=2220 out=46 reasoning=0 costUsd=0.000046 budgetKey=bench-real-20261120-140206
+bench 96/126 emp-04-finish-after-strike openai-rules r3: MOVE_PIECES acceptable
+bench 97/126 emp-05-leader-pin bot r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1371 in=1125 cached=1122 out=49 reasoning=0 costUsd=0.000037 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1372 in=1125 cached=1122 out=49 reasoning=0 costUsd=0.000037 budgetKey=bench-real-20261120-140206
+bench 98/126 emp-05-leader-pin openai-no-rules r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1233 in=2468 cached=2465 out=49 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1234 in=2468 cached=2465 out=49 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206
+bench 99/126 emp-05-leader-pin openai-rules r3: ACTIVATE_SYSTEM wrong
+bench 100/126 emp-06-assault-abandoned-base bot r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1430 in=1026 cached=0 out=43 reasoning=0 costUsd=0.000125 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1431 in=1026 cached=0 out=43 reasoning=0 costUsd=0.000125 budgetKey=bench-real-20261120-140206
+bench 101/126 emp-06-assault-abandoned-base openai-no-rules r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1512 in=2370 cached=2367 out=54 reasoning=0 costUsd=0.000051 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1512 in=2370 cached=2367 out=54 reasoning=0 costUsd=0.000051 budgetKey=bench-real-20261120-140206
+bench 102/126 emp-06-assault-abandoned-base openai-rules r3: ACTIVATE_SYSTEM expected
+bench 103/126 emp-07-capture-empty-base bot r3: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1257 in=660 cached=0 out=40 reasoning=0 costUsd=0.000086 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1257 in=660 cached=0 out=40 reasoning=0 costUsd=0.000086 budgetKey=bench-real-20261120-140206
+bench 104/126 emp-07-capture-empty-base openai-no-rules r3: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1563 in=2122 cached=2119 out=57 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1564 in=2122 cached=2119 out=57 reasoning=0 costUsd=0.000050 budgetKey=bench-real-20261120-140206
+bench 105/126 emp-07-capture-empty-base openai-rules r3: MOVE_PIECES expected
+bench 106/126 emp-08-rebels-passed bot r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1330 in=1072 cached=1069 out=52 reasoning=0 costUsd=0.000037 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1331 in=1072 cached=1069 out=52 reasoning=0 costUsd=0.000037 budgetKey=bench-real-20261120-140206
+bench 107/126 emp-08-rebels-passed openai-no-rules r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1367 in=2452 cached=2449 out=47 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1367 in=2452 cached=2449 out=47 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206
+bench 108/126 emp-08-rebels-passed openai-rules r3: ACTIVATE_SYSTEM expected
+bench 109/126 reb-01-hold-revealed-base bot r3: MOVE_PIECES wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1643 in=817 cached=0 out=49 reasoning=0 costUsd=0.000107 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1644 in=817 cached=0 out=49 reasoning=0 costUsd=0.000107 budgetKey=bench-real-20261120-140206
+bench 110/126 reb-01-hold-revealed-base openai-no-rules r3: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1586 in=2219 cached=2216 out=50 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1586 in=2219 cached=2216 out=50 reasoning=0 costUsd=0.000048 budgetKey=bench-real-20261120-140206
+bench 111/126 reb-01-hold-revealed-base openai-rules r3: MOVE_PIECES wrong
+bench 112/126 reb-02-keep-last-units-home bot r3: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1410 in=817 cached=0 out=48 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1410 in=817 cached=0 out=48 reasoning=0 costUsd=0.000106 budgetKey=bench-real-20261120-140206
+bench 113/126 reb-02-keep-last-units-home openai-no-rules r3: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1577 in=2218 cached=2215 out=43 reasoning=0 costUsd=0.000044 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1577 in=2218 cached=2215 out=43 reasoning=0 costUsd=0.000044 budgetKey=bench-real-20261120-140206
+bench 114/126 reb-02-keep-last-units-home openai-rules r3: FINISH_ACTIVATION expected
+bench 115/126 reb-03-reoccupy-empty-base bot r3: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1250 in=947 cached=0 out=40 reasoning=0 costUsd=0.000115 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1250 in=947 cached=0 out=40 reasoning=0 costUsd=0.000115 budgetKey=bench-real-20261120-140206
+bench 116/126 reb-03-reoccupy-empty-base openai-no-rules r3: ACTIVATE_SYSTEM expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1242 in=2290 cached=2287 out=50 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1243 in=2290 cached=2287 out=50 reasoning=0 costUsd=0.000049 budgetKey=bench-real-20261120-140206
+bench 117/126 reb-03-reoccupy-empty-base openai-rules r3: ACTIVATE_SYSTEM expected
+bench 118/126 reb-04-move-back-into-base bot r3: FINISH_ACTIVATION wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1217 in=688 cached=0 out=44 reasoning=0 costUsd=0.000091 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1217 in=688 cached=0 out=44 reasoning=0 costUsd=0.000091 budgetKey=bench-real-20261120-140206
+bench 119/126 reb-04-move-back-into-base openai-no-rules r3: MOVE_PIECES expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1207 in=2089 cached=2086 out=43 reasoning=0 costUsd=0.000043 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1207 in=2089 cached=2086 out=43 reasoning=0 costUsd=0.000043 budgetKey=bench-real-20261120-140206
+bench 120/126 reb-04-move-back-into-base openai-rules r3: MOVE_PIECES expected
+bench 121/126 reb-05-end-of-time-pass bot r3: ACTIVATE_SYSTEM wrong
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1726 in=941 cached=0 out=46 reasoning=0 costUsd=0.000118 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1726 in=941 cached=0 out=46 reasoning=0 costUsd=0.000118 budgetKey=bench-real-20261120-140206
+bench 122/126 reb-05-end-of-time-pass openai-no-rules r3: PASS expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1501 in=2284 cached=2281 out=47 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1502 in=2284 cached=2281 out=47 reasoning=0 costUsd=0.000047 budgetKey=bench-real-20261120-140206
+bench 123/126 reb-05-end-of-time-pass openai-rules r3: ACTIVATE_SYSTEM wrong
+bench 124/126 reb-06-finish-without-useful-move bot r3: FINISH_ACTIVATION expected
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1794 in=680 cached=0 out=41 reasoning=0 costUsd=0.000089 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1795 in=680 cached=0 out=41 reasoning=0 costUsd=0.000089 budgetKey=bench-real-20261120-140206
+bench 125/126 reb-06-finish-without-useful-move openai-no-rules r3: MOVE_PIECES acceptable
+ai.attempt provider=openai model=gpt-6-luna role=tactical attempt=1/3 outcome=ok code=- httpStatus=- sdkError=- durationMs=1288 in=2081 cached=2078 out=61 reasoning=0 costUsd=0.000052 budgetKey=bench-real-20261120-140206 requestId=-
+ai.decision provider=openai model=gpt-6-luna role=tactical attempts=1 outcome=ok code=- durationMs=1289 in=2081 cached=2078 out=61 reasoning=0 costUsd=0.000052 budgetKey=bench-real-20261120-140206
+bench 126/126 reb-06-finish-without-useful-move openai-rules r3: MOVE_PIECES wrong
+bench done: mode=real decisions=126 spent=$0.008932
+bench report: /Users/dimatitov/WebstormProjects/Game automa/docs/tasks/SWR-008/artifacts/benchmark/real-20261120-140206.json
+bench report: /Users/dimatitov/WebstormProjects/Game automa/docs/tasks/SWR-008/artifacts/benchmark/real-20261120-140206.md
+exit=0

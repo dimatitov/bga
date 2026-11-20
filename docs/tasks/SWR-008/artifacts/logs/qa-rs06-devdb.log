@@ -1,0 +1,128 @@
+# 2026-11-20T14:12:10Z node v22.23.5 cwd apps/api — TC-RS-06 opt-in on a COPY of prisma/dev.pre-swr008.db (the test copies it; prisma/dev.db not touched)
+sha before: feccb7808dfcb229388348df6d548d20f84c62147e20ae8aa03bc27d875d8250  dev.db mtime: Nov 20 16:48:04 2026
+$ SWR008_DEV_DB=prisma/dev.pre-swr008.db npx vitest run --reporter=verbose test/migration-swr008.int.test.ts test/dev-db-upgrade.int.test.ts
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ↓ test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > earlier SQL unchanged; the new SQL is 9 × ADD COLUMN on AiUsage, no rebuild, no game words, no text columns 3ms
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > clean DB: SWR-005B columns unchanged + the 9 rules columns with "rules off" defaults; index kept 795ms
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > TC-COST-06: pre-SWR-008 DB → deploy adds only the columns; old rows byte-equal, read with defaults; budget sums unchanged; re-deploy no-op 2126ms
+stdout | test/migration-swr008.int.test.ts > TC-RS-06 (opt-in): copy of a pre-SWR-008 dev DB → deploy; every session and AiUsage row reads > deploy on the copy; sessions GET 200; AiUsage rows read with defaults, costs unchanged
+[swr008-dev-db] copy /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-swr008-73836bb2-29fd-4718-a509-2d8c80a6d0c8.db
+Datasource "db": SQLite database "devcopy-swr008-73836bb2-29fd-4718-a509-2d8c80a6d0c8.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-swr008-73836bb2-29fd-4718-a509-2d8c80a6d0c8.db"
+
+5 migrations found in prisma/migrations
+
+Applying migration `20261120120000_ai_usage_rules`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261120120000_ai_usage_rules/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+
+
+stdout | test/migration-swr008.int.test.ts > TC-RS-06 (opt-in): copy of a pre-SWR-008 dev DB → deploy; every session and AiUsage row reads > deploy on the copy; sessions GET 200; AiUsage rows read with defaults, costs unchanged
+[swr008-dev-db] 11 session(s), 12 AiUsage row(s)
+
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > TC-COST-06: reset-ai-budget.mjs works on a migrated DB (deletes only the given key) 1666ms
+stdout | test/migration-swr008.int.test.ts > TC-RS-06 (opt-in): copy of a pre-SWR-008 dev DB → deploy; every session and AiUsage row reads
+[swr008-dev-db] /Users/dimatitov/WebstormProjects/Game automa/apps/api/prisma/dev.pre-swr008.db sha256 before=feccb7808dfcb229388348df6d548d20f84c62147e20ae8aa03bc27d875d8250 after=feccb7808dfcb229388348df6d548d20f84c62147e20ae8aa03bc27d875d8250
+
+ ✓ test/migration-swr008.int.test.ts > TC-RS-06 (opt-in): copy of a pre-SWR-008 dev DB → deploy; every session and AiUsage row reads > deploy on the copy; sessions GET 200; AiUsage rows read with defaults, costs unchanged 1031ms
+
+ Test Files  1 passed | 1 skipped (2)
+      Tests  5 passed | 1 skipped (6)
+   Start at  17:12:10
+   Duration  7.51s (tests 78%, import 18%, transform 4%)
+
+exit=0
+sha after:  feccb7808dfcb229388348df6d548d20f84c62147e20ae8aa03bc27d875d8250  dev.db mtime: Nov 20 16:48:04 2026
+
+# 2026-11-20T14:12:33Z dev-db-upgrade opt-in on a COPY of prisma/dev.pre-swr005.db
+sha before: de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1
+$ SWR005_DEV_DB=prisma/dev.pre-swr005.db npx vitest run --reporter=verbose test/dev-db-upgrade.int.test.ts
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] source (SWR005_DEV_DB) /Users/dimatitov/WebstormProjects/Game automa/apps/api/prisma/dev.pre-swr005.db sha256=de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1
+[dev-db-upgrade] copy /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-f104157a-f63d-4084-8205-d3192d88f0eb.db
+Datasource "db": SQLite database "devcopy-f104157a-f63d-4084-8205-d3192d88f0eb.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/devcopy-f104157a-f63d-4084-8205-d3192d88f0eb.db"
+
+5 migrations found in prisma/migrations
+
+Applying migration `20261108230000_ai_usage`
+Applying migration `20261120120000_ai_usage_rules`
+
+The following migration(s) have been applied:
+
+migrations/
+  └─ 20261108230000_ai_usage/
+    └─ migration.sql
+  └─ 20261120120000_ai_usage_rules/
+    └─ migration.sql
+
+All migrations have been successfully applied.
+
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] 6 session row(s); stored schemaVersions: 2,none (v1); status: prototype
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] GET a4f0521c-8f6a-48f2-a539-c4365c218c03 → 200 kind=player rulesEngine=mock-v1 v=1
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] GET abf3f8ae-849d-43f9-8212-970c6c7acc07 → 200 kind=player rulesEngine=mock-v1 v=3
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] GET 08e375ea-d69f-47b9-99a7-56e1f46ef0d6 → 200 kind=player rulesEngine=mock-v1 v=2
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] GET ff6adda5-38dc-4d11-a711-1790672e5063 → 200 kind=player rulesEngine=mock-v1 v=7
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] GET 79fcaa89-4020-40a5-8527-7e4426af5e3e → 200 kind=player rulesEngine=mock-v1 v=2
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] GET b15cdc26-6d4e-4912-99a5-5ea115d8bc89 → 200 kind=player rulesEngine=mock-v1 v=1
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE a4f0521c-8f6a-48f2-a539-c4365c218c03 actor=rebels v=1 → 200
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE abf3f8ae-849d-43f9-8212-970c6c7acc07 actor=rebels v=3 → 200
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE 08e375ea-d69f-47b9-99a7-56e1f46ef0d6 actor=empire v=2 → 200
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE ff6adda5-38dc-4d11-a711-1790672e5063 actor=empire v=7 → 200
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE 79fcaa89-4020-40a5-8527-7e4426af5e3e actor=rebels v=2 → 200
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] ADVANCE_PHASE b15cdc26-6d4e-4912-99a5-5ea115d8bc89 actor=empire v=1 → 200
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] after one command: every row stores schemaVersion 3, rulesEngine mock-v1, status prototype
+
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable
+[dev-db-upgrade] restart: 6 GET bodies identical
+
+ ✓ test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3) > TC-M-10: migrate deploy (no-op), every row on mock-v1, one mock command per row, restart-stable 938ms
+stdout | test/dev-db-upgrade.int.test.ts > SWR-005 dev DB on a copy: old sessions stay on mock-v1 (opt-in, §6.3)
+[dev-db-upgrade] /Users/dimatitov/WebstormProjects/Game automa/apps/api/prisma/dev.pre-swr005.db sha256 before=de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1 after=de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:12:34
+   Duration  2.78s (tests 55%, import 34%, transform 10%)
+
+exit=0
+sha after:  de7e1f8690bbe92d4ea0d49d70e0dab927a2b1ce305e87c686904b184efbefd1  dev.db mtime: Nov 20 16:48:04 2026

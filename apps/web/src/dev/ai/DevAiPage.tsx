@@ -15,6 +15,7 @@ import { ResultCard, type ResultState } from './components/ResultCard';
 import { RunControls } from './components/RunControls';
 import { ScenarioList } from './components/ScenarioList';
 import { StatusCard } from './components/StatusCard';
+import { TableDiagnosticsCard } from './components/TableDiagnosticsCard';
 import { aiErrorText } from './errorText';
 import { useDevAiStatus, useTestDecision } from './queries';
 import { DEV_AI_TEST_SCENARIO } from './testScenario';
@@ -128,6 +129,7 @@ export function DevAiPage() {
             response={decision.data}
             scenario={DEV_AI_TEST_SCENARIO}
           />
+          <TableDiagnosticsCard />
         </Stack>
         <ScenarioList
           area="scenario"

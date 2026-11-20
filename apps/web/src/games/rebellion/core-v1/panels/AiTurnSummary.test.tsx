@@ -75,6 +75,36 @@ describe('AiTurnSummary (SWR-006 R-4)', () => {
     );
   });
 
+  it('SWR-008: AI_PROMPT_TOO_LARGE → its own reason in the same fallback sentence (ru, en), no raw code', async () => {
+    renderCore(
+      <AiTurnSummary />,
+      makeCoreView(),
+      {},
+      withRun({
+        steps: 3,
+        strategy: 'openai',
+        fallbacks: 1,
+        fallbackReasons: ['AI_PROMPT_TOO_LARGE'],
+        stopReason: 'humanTurn',
+      }),
+    );
+    const notice = screen.getByTestId('ai-fallback-notice');
+    expect(notice).toHaveAttribute('data-fallbacks', '1');
+    expect(notice).toHaveAttribute('data-reasons', 'AI_PROMPT_TOO_LARGE');
+    expect(notice).toHaveTextContent(
+      'Часть ходов AI (1) сделал бот: OpenAI недоступен — запрос к модели слишком большой.',
+    );
+    expect(notice).not.toHaveTextContent('AI_PROMPT_TOO_LARGE');
+    expect(notice).not.toHaveTextContent('другая причина');
+    await act(() => i18n.changeLanguage('en'));
+    await waitFor(() =>
+      expect(notice).toHaveTextContent(
+        '1 AI move(s) were made by the bot: OpenAI unavailable — model request too large.',
+      ),
+    );
+    expect(notice).not.toHaveTextContent('AI_PROMPT_TOO_LARGE');
+  });
+
   it('an unknown / missing code → the generic reason', () => {
     renderCore(
       <AiTurnSummary />,

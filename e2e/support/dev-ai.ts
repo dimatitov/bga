@@ -259,3 +259,25 @@ export function expectNoSecrets(text: string, label: string): void {
   expect(text, `${label}: no OPENAI_API_KEY`).not.toContain('OPENAI_API_KEY');
   expect(text, `${label}: no Authorization/Bearer`).not.toMatch(/Authorization|Bearer /);
 }
+
+// ---------- SWR-008: dev AI decision panel on the game table (plan-frontend §2.1, §4.3) ----------
+
+/** localStorage key of the `/dev/ai` opt-in switch (frozen by plan-frontend §2.1; off by default). */
+export const DEV_AI_TABLE_DIAGNOSTICS_KEY = 'bga.dev.aiTableDiagnostics.v1';
+
+/** `GET /api/dev/ai/sessions/:sessionId/decisions` (plan-backend §6). */
+export const isSessionDecisionsGet = (r: Request) =>
+  r.method() === 'GET' &&
+  /^\/api\/dev\/ai\/sessions\/[^/]+\/decisions$/.test(new URL(r.url()).pathname);
+
+/** Any request to the session diagnostics endpoints (`/api/dev/ai/sessions/…`). */
+export const isDevAiSessionsRequest = (r: Request) =>
+  new URL(r.url()).pathname.startsWith('/api/dev/ai/sessions/');
+
+/** Turns the table panel on for every page of the context, as the `/dev/ai` switch would (E-2, TC-DIAG-07b). */
+export async function enableTableDiagnostics(page: Page): Promise<void> {
+  await page.addInitScript(([key, value]) => window.localStorage.setItem(key, value), [
+    DEV_AI_TABLE_DIAGNOSTICS_KEY,
+    JSON.stringify({ state: { enabled: true }, version: 1 }),
+  ] as const);
+}

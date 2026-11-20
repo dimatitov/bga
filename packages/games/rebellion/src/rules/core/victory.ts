@@ -1,26 +1,15 @@
 /**
  * R-8 base reveal and R-9 victories (checked immediately, inside the command that causes them).
- * - Reveal: at the end of an Imperial activation (`FINISH_ACTIVATION`) of the base system, if an Imperial
- *   GROUND unit stands there (`unitTypeRevealsRebelBase`); ships, the Death Star and leaders never reveal.
+ * - Reveal: WHEN and IF the base is revealed is decided only by the central state check (`./state-checks`
+ *   `runStateChecks`, SWR-008 DISC-009); this module only performs it (`revealBase`).
  * - Empire wins: the base is revealed, at least one Imperial unit (any) and NO Rebel unit (any, structures
- *   included) in the base system — checked after the reveal and after every `MOVE_PIECES` of either side.
+ *   included) in the base system — checked by `runStateChecks` after every accepted command (in particular after
+ *   the reveal and after every `MOVE_PIECES` of either side).
  * - Rebels win: the time marker reaches the reputation marker (refresh, `./turn-flow`).
  * The end of the game: `outcome` set, no activation, no handoff, event `GAME_OVER` (no system in it).
  */
-import { unitTypeRevealsRebelBase, type CoreGameState, type Outcome } from '../../schema';
-import { typeOf, type Transition } from './helpers';
-
-/** R-8: would the base be revealed now at the end of this Imperial activation? */
-export function revealsBaseNow(state: CoreGameState, activatedSystemId: string): boolean {
-  const baseId = state.rebelBase.systemId;
-  if (state.rebelBase.revealed || activatedSystemId !== baseId) return false;
-  return state.units.some(
-    (u) =>
-      u.systemId === baseId &&
-      u.owner === 'empire' &&
-      unitTypeRevealsRebelBase(typeOf(state, u.typeKey)),
-  );
-}
+import type { CoreGameState, Outcome } from '../../schema';
+import type { Transition } from './helpers';
 
 /** R-9 (Empire): revealed base with ≥1 Imperial unit and no Rebel unit in it. */
 export function empireCapturedBase(state: CoreGameState): boolean {
@@ -29,7 +18,7 @@ export function empireCapturedBase(state: CoreGameState): boolean {
   return here.some((u) => u.owner === 'empire') && !here.some((u) => u.owner === 'rebels');
 }
 
-/** Reveal the base: `revealed = true`, `BASE_REVEALED{systemId}` (public from now on). */
+/** Reveal the base: `revealed = true`, `BASE_REVEALED{systemId}` (public from now on). Called only by `runStateChecks`. */
 export function revealBase(transition: Transition): Transition {
   const { state } = transition;
   return {
@@ -49,7 +38,7 @@ export function endGame(transition: Transition, outcome: Outcome): Transition {
   };
 }
 
-/** After a move or a reveal: end the game if the Empire has captured the base. */
+/** End the game if the Empire has captured the base (called by `runStateChecks`). */
 export function checkEmpireVictory(transition: Transition): Transition {
   return empireCapturedBase(transition.state)
     ? endGame(transition, { winner: 'empire', reason: 'rebelBaseCaptured' })

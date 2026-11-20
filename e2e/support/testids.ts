@@ -229,6 +229,22 @@ export const T = {
   // settings
   settingsLanguage: (l: 'ru' | 'en') => `settings-language-${l}`,
   settingsReduceMotion: 'settings-reduce-motion',
+  // SWR-008 dev AI decision panel of the session host (plan-frontend §2.5): dev build only, opt-in on `/dev/ai`.
+  /** panel root: `data-state` loading|ready|error|unavailable|forbidden, `data-decisions`, `data-expanded` */
+  devAiSessionDiagnostics: 'dev-ai-session-diagnostics',
+  /** chip button: `aria-expanded`, `aria-controls` */
+  devAiSessionToggle: 'dev-ai-session-toggle',
+  /** decision row, `n` = index in the response (0 = oldest); `data-rules-*`, `data-fallback`, … */
+  devAiSessionDecision: (n: number) => `dev-ai-session-decision-${n}`,
+  devAiSessionEmpty: 'dev-ai-session-empty',
+  /** «Last AI turn» block: `data-steps`, `data-fallbacks`, `data-reasons` */
+  devAiSessionLastRun: 'dev-ai-session-last-run',
+  /** totals: `data-with-rules-*`, `data-without-rules-*`, `data-total-cost` (micro-USD) */
+  devAiSessionTotals: 'dev-ai-session-totals',
+  /** `role=alert`, `data-reason` error|unavailable|forbidden */
+  devAiSessionError: 'dev-ai-session-error',
+  /** the switch `<input>` on `/dev/ai` (`toBeChecked()`) */
+  devAiTableDiagnosticsSwitch: 'dev-ai-table-diagnostics-switch',
 } as const;
 
 /**

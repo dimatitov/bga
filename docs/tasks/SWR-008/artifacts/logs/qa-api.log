@@ -1,0 +1,685 @@
+# 2026-11-20T14:04:46Z node v22.23.5 cwd apps/api (no other vitest in apps/api running; real bench CLI running in parallel from dist/, no vitest)
+$ npx vitest run --reporter=verbose test/rules-integration.int.test.ts test/rules-off-golden.int.test.ts test/rules-context-registry.int.test.ts test/automation-rules.int.test.ts test/disc009-restore.int.test.ts test/automation-hidden-info.int.test.ts test/hidden-info-core.int.test.ts test/hidden-info.int.test.ts test/automation-openai.int.test.ts test/automation-f3-coverage.int.test.ts test/automation-runner.int.test.ts test/automation-double-submit.int.test.ts test/automation-restart.int.test.ts test/automation-full-game.int.test.ts test/automation-determinism.int.test.ts test/automation-create-guard.int.test.ts test/automation/ test/ai/ test/dev-ai-diagnostics.int.test.ts test/dev-ai-budget.int.test.ts test/dev-ai-security.int.test.ts test/dev-ai-status.int.test.ts test/dev-ai-decision.int.test.ts test/bench/ test/migration.int.test.ts test/migration-swr004.int.test.ts test/migration-swr005b.int.test.ts test/migration-swr008.int.test.ts test/architecture.int.test.ts test/game-registry.int.test.ts test/env.unit.test.ts test/env-example.unit.test.ts test/env-isolation.int.test.ts test/routes.int.test.ts test/sqlite-adapter.int.test.ts test/package-scripts.unit.test.ts test/no-network.unit.test.ts test/core-victory.int.test.ts
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ✓ test/migration-swr005b.int.test.ts > migration 20261108230000_ai_usage > SQL of earlier migrations is unchanged; the new SQL is CREATE-only, no game words, no prompt/response columns 4ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-CT-06 / TC-INT-02 / TC-INT-04: each request carries the `fake:` block selected for its own point; candidates never change it; the KB is loaded once 720ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-H-03 / TC-H-05 (fake part): two sessions with other ids and another spent budget send byte-identical requests 258ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-03 / TC-OA-25 / TC-H-04 / TC-H-07 / PO 8.2: a valid non-bot choice is applied exactly; one ok AiUsage row with budgetKey = sessionId; nothing of the model reaches the player 1268ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-FB-05: a game WITHOUT rules → no provider, the SWR-006 request form, the decision is taken; accounting enabled / version null / 0 rules 308ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-FB-04: rules off → nothing loaded, no selection, the SWR-006 form; AiUsage.rulesEnabled = false 133ms
+ ✓ test/automation-restart.int.test.ts > SWR-006 W9: restart in the middle of an automated turn (D-PO-6) > TC-RS-01 / TC-RS-04 / TC-LOOP-04 / TC-LOOP-05 / TC-LOOP-11: step limit → pending survives a restart; run on the new instance finishes the turn like an uninterrupted game 1482ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-INT-03: a single candidate → no call and no selection; the bot without a fallback code 168ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-BUD-07: even the prompt without rules is above the limit → AI_PROMPT_TOO_LARGE, 0 fetch, 0 reservation, no AiUsage row; the run goes on 161ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-BUD-05 / TC-BUD-06: L = UB(full) − 1 → a reduced block (prefix, pinned kept); L = UB(base) → rules dropped, the off form, rulesDropped 214ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-FB-09: a throwing selection → the decision WITHOUT rules, one warn line STRATEGY_ERROR with session / game ids and no data (QD-27), no 500 133ms
+ ✓ test/automation-restart.int.test.ts > SWR-006 W9: restart in the middle of an automated turn (D-PO-6) > TC-RS-02: automated steps fail after 2 steps (error, pending) → 2 steps are committed; the new instance continues from the 3rd 629ms
+ ✓ test/rules-integration.int.test.ts > SWR-008 W10: rules context of the real Rebellion knowledge base (AC-3, AC-4) > TC-INT-01: human Rebels vs AI Empire, 3 rounds — every request carries the [rebellion:…] block for its decision point 2217ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 1: rules context of a game-agnostic fake game (tiny KB) > TC-BUD-02 / TC-BUD-03 / QD-11: a budget that covers the request only WITHOUT rules → AI_BUDGET_EXCEEDED (rules are not dropped to save money); one row per run, no more calls 251ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-06 / 07 / 08 / 09 / 10 / 11: hostile answers (ids outside the list, malformed JSON, schema violations with command params, empty reason, incomplete, refusal, injected id) → the bot moves, AI_INVALID_DECISION, the game goes on unchanged 1263ms
+ ✓ test/rules-integration.int.test.ts > SWR-008 W10: rules context of the real Rebellion knowledge base (AC-3, AC-4) > TC-INT-01: human Empire vs AI Rebels, 3 rounds — the same request form for the AI Rebels 501ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-ARB-02 / 03 / 04 / 05: hostile answers with the rules block in the prompt → the bot, AI_INVALID_DECISION; the game equals the pure-bot game 898ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-ARB-01 / TC-ARB-05: a valid id with an injected reason is applied through the engine; the reason is dropped everywhere 198ms
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > earlier SQL unchanged; the new SQL is 9 × ADD COLUMN on AiUsage, no rebuild, no game words, no text columns 5ms
+ ✓ test/automation-restart.int.test.ts > SWR-006 W9: restart in the middle of an automated turn (D-PO-6) > TC-RS-03: a game interrupted by a restart between turns continues identically (Rebels vs AI 3+2 rounds; Empire vs AI 3+2 commands) 1688ms
+stdout | test/rules-integration.int.test.ts > SWR-008 W10: rules context of the real Rebellion knowledge base (AC-3, AC-4) > TC-INT-02: each block = SEL(rulesSelectionInputOf(DP(s), 6000)) of THAT point (independent provider); other candidates, same public query → same input and block
+[swr008-w10-int02] selections=36 groups=9 sameQueryOtherCandidates=27
+
+ ✓ test/rules-integration.int.test.ts > SWR-008 W10: rules context of the real Rebellion knowledge base (AC-3, AC-4) > TC-INT-02: each block = SEL(rulesSelectionInputOf(DP(s), 6000)) of THAT point (independent provider); other candidates, same public query → same input and block 1198ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-FB-01: transport failures with rules on → the SWR-006 codes, the game goes on as the pure bot > network → AI_PROVIDER_ERROR 290ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-FB-01: transport failures with rules on → the SWR-006 codes, the game goes on as the pure bot > 500 → AI_PROVIDER_ERROR 362ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-FB-01: transport failures with rules on → the SWR-006 codes, the game goes on as the pure bot > 429 → AI_RATE_LIMITED 255ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > timeout ×3 → AI_TIMEOUT 1819ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 429 ×3 → AI_RATE_LIMITED 163ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 500 ×3 → AI_PROVIDER_ERROR 235ms
+ ✓ test/rules-integration.int.test.ts > SWR-008 W10: rules context of the real Rebellion knowledge base (AC-3, AC-4) > TC-INT-04: the knowledge base is loaded exactly once per app (2 sessions, ≥ 20 decisions); decisions never load it again 1048ms
+ ✓ test/rules-integration.int.test.ts > SWR-008 W10: rules context of the real Rebellion knowledge base (AC-3, AC-4) > TC-INT-04 / Q-BE-2: the bot commander and openai + rules off load nothing (rules on or off) 22ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 503 → AI_PROVIDER_ERROR 133ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > network → AI_PROVIDER_ERROR 139ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-FB-01: transport failures with rules on → the SWR-006 codes, the game goes on as the pure bot > timeout → AI_TIMEOUT 653ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-FB-01: transport failures with rules on → the SWR-006 codes, the game goes on as the pure bot > insufficient_quota → AI_PROVIDER_ERROR 126ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > insufficient_quota → AI_PROVIDER_ERROR 195ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-FB-02 / TC-FB-03 / QD-8: AI_NOT_CONFIGURED with rules on → the bot; no selection and no call for the rest of the run; the next run tries once again 189ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 401 key rejected → AI_NOT_CONFIGURED 122ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > model without a price → AI_NOT_CONFIGURED 339ms
+ ✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CP-07: the same PASS twice in parallel with one expectedVersion → one 200 (with the AI turn), one 409; the AI turn is stored once 1173ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-24: a mixed run [ok, timeout ×3, ok …] → strategy openai, fallbacks 1, fallbackReasons [AI_TIMEOUT] 661ms
+ ✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-01 / TC-LOOP-07 / PO 8.9: human Rebels (R-PASSIVE) vs AI Empire easy / normal ×2 / hard → Rebels win on time; the AI activates in ≥ 10 of 13 rounds 6505ms
+ ✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CP-08: POST /api/sessions twice with one Idempotency-Key (Empire vs AI) → same session; the AI Rebels' first moves are not repeated 214ms
+ ✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CC-01 (real bot) / Q-5: two parallel runs on a pending AI turn → every step once; one run does all, the other finds nothing 475ms
+ ✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CC-03: a run racing a human command on a pending AI turn → the human gets 409 / 422 notYourTurn, never both applied 438ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-18 / PO 8.8 / PO 8.13: the session budget runs out mid-game → no more calls, the bot finishes the game; ≤ 1 budget_exceeded row per run; Σ cost ≤ limit 1563ms
+ ✓ test/migration-swr005b.int.test.ts > migration 20261108230000_ai_usage > clean DB: AiUsage columns, defaults and (budgetKey, createdAt) index; integer micro-USD sums are exact 2213ms
+ ✓ test/migration-swr005b.int.test.ts > migration 20261108230000_ai_usage > TC-UC-19: SWR-005-shape DB with sessions → deploy adds only AiUsage; Session/SessionEvent rows and schema byte-equal; re-deploy no-op 8193ms
+ ✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-02 / TC-OUT-08 / PO 8.12: PO default scenario — human Rebels R-ACTIVE vs AI Empire normal plays to the end; every answer is humanTurn / gameOver 2616ms
+ ✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-06: WIN_SEED_EASY (swr006-d01) and WIN_SEED_NORMAL (swr006-d05) replayed through HTTP → winner empire, rebelBaseCaptured 1220ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-06: the init migration is unchanged since SWR-002 2ms
+ ✓ test/automation-determinism.int.test.ts > SWR-006 W9: determinism over HTTP (AC-05) > TC-DET-01: Rebels vs AI normal (R-ACTIVE, 3 rounds) and Empire vs AI easy (E-HUNT, 3 rounds) — two apps, byte-identical rows 3638ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-21 / PO 8.13: a hanging model and a 1 s run deadline → the request ends in time, AI_DEADLINE, no more calls in that run; the next run tries again 2781ms
+ ✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CC-06: stress — every human turn of a whole game sent twice in parallel together with two runs → no 500, no duplicates, same game as undisturbed 3403ms
+ ✓ test/automation-rules.int.test.ts > SWR-008 W6b part 2: Rebellion with rules on — the engine stays the only arbiter > TC-ARB-08: seeded random answers (junk, rule ids, random candidate ids) over whole games → only candidates applied, the game ends, never a 500 5640ms
+ ✓ test/automation-determinism.int.test.ts > SWR-006 W9: determinism over HTTP (AC-05) > TC-DET-01 (negative): another session id → another game 621ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-CC-02: two parallel runs in OpenAI mode → no duplicated paid calls (calls = AiUsage rows = steps with a call) 402ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-01: provider bot with OpenAI enabled and a key → no client call at all, strategy bot 165ms
+ ✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-03 / TC-OUT-07 / TC-DIF-01 / TC-LOOP-05 (HTTP): E-HUNT vs AI Rebels hard, one step per request → the base is never empty; the Rebels win 1143ms
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > clean DB: SWR-005B columns unchanged + the 9 rules columns with "rules off" defaults; index kept 3364ms
+ ✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-ENV-09 / PO 8.14: default config (bot, OPENAI_ENABLED=false, no key) — three active rounds against the AI, no AiUsage, no network 412ms
+ ✓ test/hidden-info-core.int.test.ts > core-v1 hidden base: path-aware scan of every Empire-addressed API response (AC-10) > the scanner itself flags Rebel data, the base marker, substrings and non-echoed details 270ms
+ ✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-DIF-10: engine harness ≡ API — the same scripts give equal stored states and event rows (E-HUNT vs easy Rebels; R-PASSIVE vs hard Empire) 1523ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: DISC-009 over HTTP (AC-8) > TC-D-35: human Empire vs AI Rebels — ground units into the hidden base: clean Empire bodies and no BASE_REVEALED until FINISH, then BASE_REVEALED with the system id 569ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-SES-15 / TC-ARCH-03: routes are exactly the spec table; mutating only POST /api/sessions(/:id/commands, /:id/automation/run) (+ dev-only POST /api/dev/ai/test-decision, AiUsage only) 2348ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: put /api/sessions/:id → 404 unified body, state unchanged 140ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: patch /api/sessions/:id → 404 unified body, state unchanged 46ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: delete /api/sessions/:id → 404 unified body, state unchanged 14ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-SES-14: the SWR-002 /api/games* routes are gone → 404 unified body, nothing written 75ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-24: unknown route → 404 unified body 12ms
+ ✓ test/hidden-info-core.int.test.ts > core-v1 hidden base: path-aware scan of every Empire-addressed API response (AC-10) > TC-H-13 / TC-H-15 / TC-H-16: Empire vs AI — POST, GET, list, commands and probes; then the reveal 987ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: DISC-009 over HTTP (AC-8) > TC-D-35 (natural game, E-HUNT): the first BASE_REVEALED arrives with a FINISH_ACTIVATION after ground moved in; earlier Empire bodies are clean 515ms
+[31m[Nest] 601  - [39m11/20/2026, 5:05:03 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 601  - [39m11/20/2026, 5:05:03 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-PL-07 / TC-LOOP-01: a human command → the automated side moves in the same response, one commit per step 623ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-02: creating a session whose automated side starts plays its moves before the 201 50ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-01: saved mid-activation of the base with Imperial ground in it (human Empire vs AI Rebels) → restart → FINISH reveals exactly once, version + 1 170ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-25: 400/404/409/422 bodies carry only the contract error 86ms
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-25 / TC-SES-16: corrupted Session.state → 500 INTERNAL without internals 43ms
+[31m[Nest] 601  - [39m11/20/2026, 5:05:03 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+ ✓ test/routes.int.test.ts > routes and error bodies > TC-API-25: schema-valid JSON but wrong snapshot shape → 500, not 400 180ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-07: earlier migrations are unchanged (SWR-002 init, SWR-003 sessions); SWR-004 SQL is locked too 2ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-01 (hot-seat): saved mid-activation → restart → FINISH → [ACTIVATION_FINISHED, BASE_REVEALED, GAME_OVER] 83ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-04 / TC-LOOP-05 / TC-LOOP-11 / TC-RS-01: step limit → pending; GET reports it; run continues on a new app; run is idempotent 279ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-02: AI Empire, AI_COMMANDER_MAX_STEPS = 1 — the run stops right after the AI moved ground into the base (its prompt knew no base); after a restart the AI finishes the activation and the base is revealed exactly once 407ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-03: old saves load and play > core-v1 v3 seeds (SWR-005): load, GET, play 3 commands; the reveal happens once 175ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-06: an automated turn that never ends stops at the step limit (64) on every request 499ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-08: the engine rejects the strategy pick → the bot pick is applied, counted as AI_INVALID_DECISION 45ms
+ ✓ test/hidden-info-core.int.test.ts > core-v1 hidden base: path-aware scan of every Empire-addressed API response (AC-10) > TC-H-13 / TC-H-16: hot-seat — Rebels into / out of the hidden base, base activation, 2 rounds, reveal 893ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-09 / TC-RS-02: the engine rejects the pick and the bot pick → 200 with the human command, pending, error log; run continues later 70ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-10 / Q-20: a throwing strategy or an id outside the candidates → the bot moves; never a 500 55ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-03: old saves load and play > core-v1 v3 finished games (golden, incl. a revealed base): GET 200, any command → 422 errors.gameOver; nothing is revealed again 202ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > Q-9: an invalid decision point is never given to the strategy → error, pending 60ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-13 / TC-LOOP-14: an automated step ends the game → gameOver, completed in the same response 52ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-OA-02 analogue: a single candidate is played by the bot without a fallback 34ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > OpenAI strategy on the mock provider: every call is an AiUsage row with budgetKey = sessionId; failures fall back to the bot 84ms
+ ✓ test/hidden-info-core.int.test.ts > core-v1 hidden base: path-aware scan of every Empire-addressed API response (AC-10) > SWR-006 AC-04: Empire vs the REAL bot (easy) — every Empire-addressed body with automated Rebel moves is clean 515ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-03: old saves load and play > mock-v1 rows of SWR-003 v1: load, GET, play 3 commands each, survive a restart 281ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > new sessions (engine-independent) > TC-API-11 (creation): an Empire player does not get the stored rebel base in the POST / GET response 686ms
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-03: old saves load and play > mock-v1 rows of SWR-004 v2: load, GET, play 3 commands each, survive a restart 182ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > seeded mock-v1 rows > TC-API-11: empire never sees the rebel base or hidden typeKeys in any response 2436ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > seeded mock-v1 rows > TC-API-12: a rebellion player sees the real base system 17ms
+ ✓ test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > seeded mock-v1 rows > TC-API-13: hidden rebel piece — id/systemId visible, typeKey "unknown" for empire 25ms
+stdout | test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-05: saved AFTER the reveal → restart → a new Imperial activation of the base with ground units → no second BASE_REVEALED
+[swr008-w10-rs05] baseActivationsAfterRestart=2 lines=21
+
+ ✓ test/disc009-restore.int.test.ts > SWR-008 W10: save / restore across a restart (AC-9) > TC-RS-05: saved AFTER the reveal → restart → a new Imperial activation of the base with ground units → no second BASE_REVEALED 151ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-CC-01 (Q-5): two parallel runs in one process — each step once, the strategy called once per step, the second run finds nothing 154ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-CC-04: two apps on one DB run at once → every step applied once; the loser stops quietly with conflict 338ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-LOOP-12 / Q-10: run endpoint — 404, 400 for any non-empty body, 422 for an unavailable game 74ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > TC-PL-06: sessions without an automated participant — strategy null, steps 0 (fake game, not automated fake, hot-seat) 136ms
+ ✓ test/automation-runner.int.test.ts > automation runner over HTTP (SWR-006 W7) > test-only automation overrides are refused in production (like the ai overrides) 1ms
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > TC-COST-06: pre-SWR-008 DB → deploy adds only the columns; old rows byte-equal, read with defaults; budget sums unchanged; re-deploy no-op 8076ms
+ ✓ test/migration-swr008.int.test.ts > migration 20261120120000_ai_usage_rules > TC-COST-06: reset-ai-budget.mjs works on a migrated DB (deletes only the given key) 4044ms
+ ↓ test/migration-swr008.int.test.ts > TC-RS-06 (opt-in): copy of a pre-SWR-008 dev DB → deploy; every session and AiUsage row reads > deploy on the copy; sessions GET 200; AiUsage rows read with defaults, costs unchanged
+ ✓ test/automation-hidden-info.int.test.ts > SWR-006 W9: hidden base in OpenAI mode (AC-04) > TC-H-04 / TC-H-06 / TC-H-07 / Q-BE-9: AI Empire — prompts are byte-identical for two games differing only in the base; no session id; logs and AiUsage never name the base 1262ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-01/05: 3 SWR-002 games → Session rows byte-equal + gameId backfill; events kept; re-deploy is a no-op 10662ms
+ ✓ test/automation-hidden-info.int.test.ts > SWR-006 W9: hidden base in OpenAI mode (AC-04) > TC-H-05 / TC-H-08 (OpenAI mode): human Empire vs AI Rebels — Empire-addressed bodies clean before the reveal; requests without session id; logs and AiUsage never name the base 492ms
+ ✓ test/core-victory.int.test.ts > core-v1 victories over HTTP (AC-07, AC-13) > TC-AI-08 / TC-P-07 / TC-H-18: Rebels vs AI — 13 player passes → time 14 = reputation → Rebels win 966ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no --yes): exit 2, no rows deleted 133ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no --yes (env URL)): exit 2, no rows deleted 69ms
+ ✓ test/core-victory.int.test.ts > core-v1 victories over HTTP (AC-07, AC-13) > TC-AI-08 / TC-P-07 / TC-H-18: Empire vs AI — 13 player passes → time 14 = reputation → Rebels win 364ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no key): exit 2, no rows deleted 93ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (empty key): exit 2, no rows deleted 97ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (no URL): exit 2, no rows deleted 67ms
+ ✓ test/sqlite-adapter.int.test.ts > createSqliteAdapter — lock contention between two clients > the second writer fails fast with an error isSqliteBusy recognises; the lock holder commits 389ms
+ ✓ test/sqlite-adapter.int.test.ts > createSqliteAdapter — lock contention between two clients > review F-3: SessionsRepository.commit that loses the lock → VERSION_CONFLICT and ONE warn line (class + session id, no data) 335ms
+ ✓ test/sqlite-adapter.int.test.ts > createSqliteAdapter — lock contention between two clients > isSqliteBusy is false for other errors and non-errors 0ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (non-file URL): exit 2, no rows deleted 74ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (unknown flag): exit 2, no rows deleted 70ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): Retry-After on the commander path (TC-OA-14, PO 8.7) > 429 with retry-after: 2 → the runtime waits 2000 ms, the retry succeeds, the model pick is applied 543ms
+ ✓ test/core-victory.int.test.ts > core-v1 victories over HTTP (AC-07, AC-13) > TC-HS-11 / TC-P-07: hot-seat — revealing the evacuated base with ground units → Empire wins at once 502ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > production > routes are 404 (not 403), the module is not registered; health and sessions still work 493ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > production > createApp refuses AI test overrides in production 2ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > production > an enabled OpenAI config under NODE_ENV=test without a fake fetch is refused at wiring time 1ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Host: evil.example → 403 AI_DEV_FORBIDDEN on both routes 43ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Host: evil.example:3000 → 403 AI_DEV_FORBIDDEN on both routes 22ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Host: 127.0.0.1.evil.example → 403 AI_DEV_FORBIDDEN on both routes 21ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): Retry-After on the commander path (TC-OA-14, PO 8.7) > 429 with retry-after: 3600 → no wait, one call, the bot moves with AI_RATE_LIMITED 101ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Origin: https://evil.example → 403 AI_DEV_FORBIDDEN on both routes 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Origin: null → 403 AI_DEV_FORBIDDEN on both routes 14ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > refuses (missing file): exit 2, no rows deleted 48ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): budget boundary and isolation (TC-OA-19, TC-OA-20, PO 8.8) > TC-OA-19: spent + reserve = limit → no call, the bot moves with AI_BUDGET_EXCEEDED; one micro-USD less → the call is made 141ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > X-Forwarded-For: 203.0.113.7 → 403 AI_DEV_FORBIDDEN on both routes 115ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > X-Forwarded-For: 127.0.0.1, 203.0.113.7 → 403 AI_DEV_FORBIDDEN on both routes 17ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > Sec-Fetch-Site: cross-site → 403 AI_DEV_FORBIDDEN on both routes 23ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > local browser headers pass (Vite proxy origin, same-origin, loopback X-Forwarded-For) 85ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > 403 comes before body validation (invalid / malformed / oversized body from a non-local Host) 51ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > loopback guard > unit: the TCP peer decides, not client headers (192.168.1.5, 10.0.0.5 + X-Forwarded-For 127.0.0.1) 1ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > extra top-level field → 400 VALIDATION 9ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > extra scenario field → 400 VALIDATION 11ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > extra action field → 400 VALIDATION 9ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): budget boundary and isolation (TC-OA-19, TC-OA-20, PO 8.8) > TC-OA-20: session A exhausted, session B still calls with its own budgetKey; dev-diagnostics budget unchanged; dev endpoint refuses a session budgetKey 203ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-04: production > the route is 404 (module absent); session and run answers carry no diagnostics 570ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-04: production > wire schemas of the session and of the run summary have no diagnostics fields 1ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > bad :sessionId (underscore) → 400 VALIDATION 37ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > bad :sessionId (dot) → 400 VALIDATION 12ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > bad :sessionId (slash (encoded)) → 400 VALIDATION 12ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): a SWR-005B-era stored game on the SWR-006 server (TC-RS-05, PO 8.11) > a game stored by the SWR-005 auto-pass policy (AI passed, human to move mid command phase) continues without migration; the AI plays non-pass moves in a later round 192ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > 1 action → 400 VALIDATION 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > 11 actions → 400 VALIDATION 12ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > duplicate ids → 400 VALIDATION 22ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > bad action id → 400 VALIDATION 11ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > objective 501 chars → 400 VALIDATION 13ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > objective with a control char → 400 VALIDATION 35ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > bad :sessionId (space) → 400 VALIDATION 60ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > bad :sessionId (non-ASCII) → 400 VALIDATION 16ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > bad :sessionId (65 chars) → 400 VALIDATION 10ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > 64-char id and the id alphabet are accepted 23ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > non-loopback request (Host: evil.example) → 403 AI_DEV_FORBIDDEN, before validation 30ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > empty phase → 400 VALIDATION 17ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unknown faction → 400 VALIDATION 22ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unknown role → 400 VALIDATION 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unknown provider → 400 VALIDATION 16ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > other budgetKey → 400 VALIDATION 23ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > missing scenario → 400 VALIDATION 10ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > with --yes deletes only the given key (flag URL) 302ms
+ ✓ test/ai/reset-ai-budget.int.test.ts > reset-ai-budget.mjs (SWR-005B W5) > with --yes uses DATABASE_URL from the environment; --database-url=… inline form works too 457ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > objective of exactly 500 chars and 10 actions are accepted 27ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > malformed JSON, text/plain and an empty body → 400 33ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > Content-Length > 8192 → 413 (unified envelope), nothing is called or recorded 15ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > request body > unit: a chunked body without Content-Length is cut at 8192 bytes → 413 1ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > non-loopback request (Origin: https://evil.example) → 403 AI_DEV_FORBIDDEN, before validation 146ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > non-loopback request (X-Forwarded-For: 203.0.113.7) → 403 AI_DEV_FORBIDDEN, before validation 24ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > TC-FS-03 / TC-ARCH-04: modules = [Rebellion]; definitions = [Rebellion, Forbidden Stars] (catalogue order) 3ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > TC-ARCH-04: registries are static arrays — no runtime registration or computed imports in src 12ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: duplicate definition id 0ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: duplicate module 0ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: module without definition 0ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: module for a coming_soon game 0ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: available game without module 0ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: module definition differs from the catalogue 1ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > validateRegistry throws: invalid definition 2ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > an inconsistent registry fails the app start (createApp throws) 1ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > requireAvailable: unknown → 404 gameNotFound; coming_soon → 422 GAME_UNAVAILABLE 1ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > conformance of server module star-wars-rebellion > definition is valid and available 0ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > conformance of server module star-wars-rebellion > createInitialState → version ≥ 1 (AM-BE-2), events seq ≥ 1; summarize is flat; statusOf is a SessionStatus; parseState(JSON roundtrip) ≡ state 13ms
+ ✓ test/game-registry.int.test.ts > server game registry (unit) > conformance of server module star-wars-rebellion > parseSetup rejects garbage with issues 0ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > rate limits > 11th paid decision in a minute → 429 aiDevRateLimited + Retry-After; mock still allowed 135ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > non-loopback request (Sec-Fetch-Site: cross-site) → 403 AI_DEV_FORBIDDEN, before validation 106ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > unknown session → 200 with no decisions and zero totals (existence not revealed) 16ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > free dev rate limit: 429 with Retry-After; a 400 is answered before the limiter 17ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10: access and validation (dev) > read-only: no AiUsage / Session rows are written 24ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > rate limits > total limit covers status and mock; invalid bodies do not consume the quota 146ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > rate limits > unit: sliding window frees slots after 60 s 1ms
+ ✓ test/dev-ai-security.int.test.ts > dev AI security (SWR-005B W6) > no secrets in logs and responses (AC-10) > Nest logger output, test sink and every body: no key, no objective, no reason 81ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10 / TC-COST-03: last 50 rows ascending, totals over all rows > > 50 rows: the newest 50 in time order; totals = manual calculation over all rows 148ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10 / TC-COST-03: last 50 rows ascending, totals over all rows > TC-COST-03 data set (5 with rules, 5 without, 1 dropped): groups and means 72ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10 / TC-COST-03: last 50 rows ascending, totals over all rows > review F-4: budget refusals and zero-attempt rows are listed but excluded from the totals (means not diluted) 29ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10 / TC-COST-03: last 50 rows ascending, totals over all rows > only budget refusals: zero totals with mean null (never NaN) 14ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-10 / TC-COST-03: last 50 rows ascending, totals over all rows > only rows without rules: withRules is empty with mean null (never NaN) 18ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > QD-19: rules consistency > rows stored past the repository invariants are normalised: count = ids.length, dropped ⇒ count 0 20ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > QD-19: rules consistency > rows written through the repository are always consistent (every shape) 45ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > QD-19: rules consistency > toDecisionDiagnostic is a whitelist: extra row fields never pass through 0ms
+ ✓ test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-EXT-01/02: create, get and list a fake-game session; no secret leaves the server 525ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-05 (API part) / Q-BE-1: no hidden or internal data > real writer (dev test-decision via fake OpenAI) → reader: tokens/cost shown; no key, reason, prompt, pricing 87ms
+ ✓ test/dev-ai-diagnostics.int.test.ts > GET /api/dev/ai/sessions/:sessionId/decisions (SWR-008 W7) > TC-DIAG-05 (API part) / Q-BE-1: no hidden or internal data > seeded rows: the session id, pricing version and upper bound never appear in the answer 21ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > mock defaults: 1 repeat, all three variants, no cap 1ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > real with a cap: 3 repeats by default (QD-10); --flag=value form; canonical variant order 1ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--max-usd","0.5"] (TC-BEN-08 / TC-BEN-09) 1ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","1.01"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","2"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","0"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","0.0"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","-1"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","abc"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","1e-1"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","Infinity"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","0x1"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","--repeats","3"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","0.5","--max-usd","0.1"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real","--max-usd","0.5","--repeats","2"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--repeats","0"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--repeats","11"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--repeats","1.5"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--role","chief"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--variants","bot,bot"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--variants","gpt"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--live"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--scenarios","x","--real=yes","--max-usd","0.5"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > parseBenchArgs > refuses ["--real","--max-usd","0.5"] (TC-BEN-08 / TC-BEN-09) 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > ["--scenarios","../../packages/games/rebellion/benchmark/scenarios.json","--max-usd","0.5"] → exit 2, no config read, no fetch, nothing written 1ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > ["--scenarios","../../packages/games/rebellion/benchmark/scenarios.json","--real"] → exit 2, no config read, no fetch, nothing written 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > ["--scenarios","../../packages/games/rebellion/benchmark/scenarios.json","--real","--max-usd","1.5"] → exit 2, no config read, no fetch, nothing written 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > ["--scenarios","../../packages/games/rebellion/benchmark/scenarios.json","--real","--max-usd","0"] → exit 2, no config read, no fetch, nothing written 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > ["--scenarios","../../packages/games/rebellion/benchmark/scenarios.json","--real","--max-usd","-0.5"] → exit 2, no config read, no fetch, nothing written 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > ["--scenarios","../../packages/games/rebellion/benchmark/scenarios.json","--real","--max-usd","lots"] → exit 2, no config read, no fetch, nothing written 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > --real under NODE_ENV=test → exit 2 before any fetch 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > --real with OpenAI not enabled → exit 2 before any fetch 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > --real with an unpriced model → exit 2 (the cost could not be bounded) 0ms
+ ✓ test/bench/cli.unit.test.ts > refusals before any network access (TC-BEN-08, TC-BEN-09) > an invalid environment: names and reasons only; an unexpected error: a fixed text (no values) 0ms
+ ✓ test/bench/cli.unit.test.ts > mock mode and dry runs > mock run: no configuration read, writes <out>/mock-<ts>.{json,md} 185ms
+ ✓ test/bench/cli.unit.test.ts > mock mode and dry runs > the default report directory is docs/tasks/SWR-008/artifacts/benchmark 67ms
+ ✓ test/bench/cli.unit.test.ts > mock mode and dry runs > mock dry run: prints the plan and informational worst cases, writes nothing 36ms
+ ✓ test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-EXT-03: commands of the fake game — 200, 409, 422 errors.fakeLimit, 400, 404; order 404→400→409→422 237ms
+ ✓ test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-EXT-04: invalid fake setup → 400 from parseSetup (path under setup), nothing saved 19ms
+ ✓ test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-EXT-05 / TC-SES-05 / AC-6: coming_soon games (fake-soon, forbidden-stars) → 422 GAME_UNAVAILABLE; unknown → 404 41ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > exhausted key → 429 AI_BUDGET_EXCEEDED with safe details; /responses never called; budget_exceeded row 417ms
+ ✓ test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-GP-11: the list filter is per game (the newest session of another game does not leak) 120ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > spent + reserve exactly equal to the limit is refused 52ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > the mock answers with an exhausted budget and spends nothing 27ms
+ ✓ test/dev-ai-budget.int.test.ts > dev AI budget (SWR-005B W6) > 3 concurrent strategy requests with room for 2 reserves → 2×200 + 1×429; spent never above the limit 35ms
+ ✓ test/bench/cli.unit.test.ts > mock mode and dry runs > real dry run: the full preflight, the plan and the worst case of the configured model — no fetch 47ms
+ ✓ test/bench/cli.unit.test.ts > real path with a fake fetch (TC-BEN-10, TC-BEN-11, TC-MEAS-04) > the budget reservation stops the run at --max-usd; spent ≤ max; no call after the cap 157ms
+ ✓ test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-SES-17 (Q-7): a stored session of a game without a server module — skipped in lists, GET/command → 422 131ms
+ ✓ test/bench/cli.unit.test.ts > real path with a fake fetch (TC-BEN-10, TC-BEN-11, TC-MEAS-04) > TC-BEN-11: no key and no scenario session id in logs or reports; the key only in the Authorization header 116ms
+ ✓ test/bench/cli.unit.test.ts > real path with a fake fetch (TC-BEN-10, TC-BEN-11, TC-MEAS-04) > a provider failure falls back to the bot with the commander code and the run goes on 69ms
+ ✓ test/bench/cli.unit.test.ts > real path with a fake fetch (TC-BEN-10, TC-BEN-11, TC-MEAS-04) > an unknown scenario file / game → exit 1 8ms
+ ✓ test/bench/harness-mock.int.test.ts > scenario file and decision points > the Rebellion file parses and every scenario yields the decision point of its side 24ms
+ ✓ test/bench/harness-mock.int.test.ts > scenario file and decision points > a file of another game, an unparsable state or another pending actor is refused 20ms
+ ✓ test/bench/harness-mock.int.test.ts > QD-25: the harness classifies candidates exactly like W9 > every candidate of every scenario gets the same rubric class 1ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > TC-BEN-04: two runs give byte-identical JSON and Markdown reports with the three variants 69ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > repeats multiply the decisions; the order is repeat → scenario → variant 39ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > TC-BEN-07: bot = the fallback pick without calls; model variants call the service once per scenario 41ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > TC-BEN-07: rules off sends the commander context with rules disabled; rules on sends the rules block 43ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > TC-MEAS-04 (functions): usageByRules = summarizeCostByRules over the run rows; metrics agree with it 31ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > a run with only some variants reports only them and makes no comparison 10ms
+ ✓ test/bench/harness-mock.int.test.ts > mock run (TC-BEN-04, TC-BEN-07) > invalid run shapes are refused before anything runs 1ms
+ ✓ test/bench/harness-mock.int.test.ts > dry-run plan > counts decisions and model calls; every prompt fits under the limit 11ms
+ ✓ test/bench/harness-mock.int.test.ts > TC-H-09 (b): the mock request of an Imperial scenario does not depend on where the hidden base is > relocating the base gives byte-identical requests in both model variants 50ms
+ ✓ test/bench/harness-mock.int.test.ts > InMemoryAiUsageStore > validates rows like the database repository and sums the cost per budget key 2ms
+ ✓ test/rules-off-golden.int.test.ts > SWR-008 W0: rules-off golden of the SWR-006 commander requests (TR-3, TC-INT-07) > the commander requests of the fixed one-round game are byte-identical to the SWR-006 golden 641ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > 200: strict wire schema, first action, cost 0, one AiUsage row; game tables unchanged 494ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > is deterministic: the same scenario gives the same choice; the order of actions decides 39ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > role / faction / explicit budgetKey are accepted; role is recorded 24ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > OpenAI enabled + provider:"mock" → mock answers, no fetch at all, budget untouched 30ms
+ ✓ test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > logs only allow-listed lines (no objective, no reason text) 61ms
+ ✓ test/automation-create-guard.int.test.ts > review F-1: create path never answers 500 because of automation > pendingActor throws at create → 201, pending:true, the inserted state; the session is stored and continues later 400ms
+ ✓ test/automation-create-guard.int.test.ts > review F-1: create path never answers 500 because of automation > the runner itself rejects at create → 201, pending:true; an idempotent replay answers 200 with the same session 37ms
+ ✓ test/automation-create-guard.int.test.ts > review F-1: create path never answers 500 because of automation > the same guard on the command path: the runner rejects → 200 with stopReason error, the command is kept 35ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-A-01: packages/platform/src has no faction / ruleset / game-mode knowledge 13ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-A-01: apps/api/src (session service, repository, migrationless code) is game-agnostic 16ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > SWR-005 W4: packages/platform/src and apps/api/src never read a game result / engine (statusOf only) 14ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > SWR-006 TC-PL-01 / TC-PL-02: the session service and its automation runner know no game (words, imports) 4ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > SWR-008 TC-CT-02: ai/, sessions/, rules-context/, bench/ import no game package (KB only via ServerGameModule.rules) 18ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > SWR-008 TC-ARB-07: the rules context never applies, builds or reads game commands / states 1ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-A-02 (SWR-005B §8): the openai package is imported only in apps/api/src/ai/** 9ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-A-02 (SWR-005B §8): `new OpenAI(` and `.reveal()` only in ai/providers/openai-client.ts 10ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-A-02: no direct model calls outside apps/api/src/ai/** 10ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > TC-ENV-21 (SWR-005B §2.4): process.env / loadEnvFile only in apps/api/src/config/env.ts 14ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > SWR-005B §8: packages/platform/src and packages/games/*/src never import openai 34ms
+ ✓ test/architecture.int.test.ts > architecture boundaries (SWR-004) > the hand-written SQL migrations contain no game knowledge 1ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert stores every field (integer micro-USD, pricingVersion) and generates a UUID id 143ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > keeps a given id and createdAt 9ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > sumCostMicroUsd is an exact integer sum per key; 0 for an unknown key 19ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > records failed attempts, mock rows (cost 0) and budget refusals; only real cost counts 24ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (fractional micro-USD) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (negative cost) and writes nothing 10ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (cost over Int32) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (mock with a cost) and writes nothing 2ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (budget refusal with attempts) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (budget refusal with a cost) and writes nothing 3ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (cached > input) and writes nothing 4ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — request > tactical: luna, effort none, 400 tokens, strict schema with enum, store false, no temperature 118ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (unknown status) and writes nothing 3ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (unknown provider) and writes nothing 11ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (unknown role) and writes nothing 2ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (empty budget key) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (empty pricingVersion) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > insert rejects an invalid row (negative tokens) and writes nothing 30ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects extra fields (no prompt/response text can be stored) 3ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rules columns default to "rules off" (rows written like SWR-005B/006) 10ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — request > strategy: sol, effort low, 1600 tokens 1ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — request > unknown pricing → AI_NOT_CONFIGURED aiPricingUnknown with zero fetch calls 0ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > happy path: decision as returned, usage with cached/reasoning, cost by configured model, model snapshot 21ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > reasoning tokens are reported but not billed twice (strategy) 14ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > passes the id as returned (membership is the service validator job) 3ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > not JSON → AI_INVALID_DECISION (malformed), not retried, cost counted 13ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > JSON array → AI_INVALID_DECISION (malformed), not retried, cost counted 5ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > missing reason → AI_INVALID_DECISION (malformed), not retried, cost counted 8ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > no output_text → AI_INVALID_DECISION (malformed), not retried, cost counted 130ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > TC-COST-01: stores version, ids (JSON array), count, chars, token estimate, flags and the prompt bound 58ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > TC-COST-02: truncated and dropped rows 42ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (dropped with ids) and writes nothing 27ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (ids without chars) and writes nothing 9ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (chars without ids) and writes nothing 4ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (duplicate ids) and writes nothing 11ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > after importing AND constructing the Prisma client, no OPENAI_* is non-blank and OPENAI_ENABLED is false 7ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > SWR-006 TR-7: the e2e environment drops parent AI_COMMANDER_* and forces the bot 1ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > the e2e environment blanks every config OPENAI_* variable and forces NODE_ENV=test / OPENAI_ENABLED=false 1ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > extra field → AI_INVALID_DECISION (schema), not retried, cost counted 11ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > refusal → AI_INVALID_DECISION (refusal), not retried, cost counted 4ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > incomplete → AI_INVALID_DECISION (incomplete), not retried, cost counted 3ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > status 'failed' → AI_PROVIDER_ERROR upstream, not retried 4ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — response parsing > no usage block → tokens 0, cost = worst case of one attempt 1ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > 500, 429 then ok → 3 attempts, usage/duration/cost summed, backoff via injected sleep 4ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > timeouts until exhausted → AI_TIMEOUT, attempts = maxRetries + 1, each timeout billed as worst case 83ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > network errors until exhausted → each attempt billed as worst case (review F-2: request may have been sent) 3ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > network error, then ok → the failed attempt is billed as worst case on top of the real cost 2ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > maxRetries 0 → a single attempt 1ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > invalid decision after a retry: usage summed over attempts, no further retry 4ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > 429 insufficient_quota → no retry, errors.aiQuota 1ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > 429 with Retry-After > 10 s → no retry, retryAfterSeconds in details 16ms
+ ✓ test/ai/openai-provider.unit.test.ts > OpenAIProvider — retries > 401 → AI_NOT_CONFIGURED aiKeyRejected, no retry; 404 → invalidates availability 23ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (65 ids) and writes nothing 7ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (id over 128) and writes nothing 5ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (ids without version) and writes nothing 6ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (bad version) and writes nothing 8ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (off with ids) and writes nothing 7ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (off with version) and writes nothing 7ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (off but dropped) and writes nothing 9ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (wrong token estimate) and writes nothing 15ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (chars over 12000) and writes nothing 3ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (count given directly) and writes nothing 12ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > rejects inconsistent rules columns (rule text column) and writes nothing 3ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > OpenAI disabled: mock provider, no key, models unchecked, no limit (strict wire schema) 653ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > OpenAI disabled but a key is configured: keyConfigured=true, still mock 48ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > TC-COST-04: the AiUsage table has no column for prompt / instructions / situation / rule text / reason / key 99ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > listByBudgetKey: the LAST n rows of the key in time order; other keys excluded 124ms
+ ✓ test/ai/ai-usage-repository.int.test.ts > AiUsageRepository (SWR-005B W5) > ruleIdsOf tolerates a value that is not a JSON array of strings 5ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > OpenAI enabled (fake fetch): availability via GET /v1/models, cached per process; budget limit 125ms
+ ✓ test/dev-ai-status.int.test.ts > GET /api/dev/ai/status (SWR-005B W6) > models check network failure → available:null (status still 200, not cached) 29ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > a child process with the e2e environment: Prisma loads .env, yet no OPENAI_* becomes non-blank 302ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > INTEGRATION: the `prisma migrate deploy` child of global-setup gets its env from buildE2eEnv (no OPENAI_* values) 1ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > client timeout (APIConnectionTimeoutError) 81ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > HTTP 408 8ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > network failure (APIConnectionError) 1ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 429 rate limit 23ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 429 insufficient_quota (no retry) 3ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 500 2ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 503 5ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 401 2ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 403 3ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 404 11ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 400 3ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 409 1ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 422 1ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > other status (418) 1ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > 429 with retry-after (seconds / ms / HTTP-date) carries retryAfterMs 1ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > request id is kept (safe), AI_NOT_CONFIGURED details carry only role + model 0ms
+ ✓ test/ai/openai-errors.unit.test.ts > classifySdkError (real SDK + fake fetch) > non-SDK errors → AI_PROVIDER_ERROR unknown; AiFailure passes through 0ms
+ ✓ test/no-network.unit.test.ts > no-network guard > fetch to api.openai.com throws before any network access and is recorded 17ms
+ ✓ test/no-network.unit.test.ts > no-network guard > classifies hosts: loopback allowed, everything else external 2ms
+ ✓ test/no-network.unit.test.ts > no-network guard > the guard is installed globally (setupFiles) 0ms
+ ✓ test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > GET /api/dev/ai/status of the test app reports keyConfigured:false (plain app and AI test app) 506ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > sanity: base < base + pinned line < full 1ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > TC-BUD-04: L = upper bound of the full prompt → full block, truncated=false 1ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > full keeps the selector flag: a selection cut by maxChars is accounted truncated 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > TC-BUD-05: L = full − 1 → whole lines dropped by the selector, pinned line kept, truncated=true, ≤ L 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > reduced down to the pinned line alone: L = base + pinned line 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > TC-BUD-06: base ≤ L < base + minimal block → block dropped; prompt = rules-off prompt; dropped accounted 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > TC-BUD-07: L < base prompt → not ok (AI_PROMPT_TOO_LARGE), with rules on, off and without a provider 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > TC-BUD-07 shape: situation 4000 chars + 10 candidates above a 4000-token limit → not ok 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — levels at the limit boundaries (TC-BUD-04..08) > TC-BUD-08: deterministic; levels only degrade as the limit shrinks (full → reduced → dropped → too large) 151ms
+stdout | test/ai/prompt-fit.unit.test.ts > default limit (C-7): the worst SWR-006 prompt + 6000 chars of rules fits 16000 > situation 4000, 10 candidates with 160-char summaries, objective 300, rules block 6000 chars → full
+[swr008-prompt-fit] worst SWR-006 base=8089 with 6000 rule chars=14634 limit=16000
+
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — no rules (rules off / no provider / nothing selected) > off: no block, "off" accounting, prompt byte-identical to the base (SWR-006) 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — no rules (rules off / no provider / nothing selected) > no provider (rules null): enabled, version null, nothing sent 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — no rules (rules off / no provider / nothing selected) > empty selection: enabled, version kept, nothing sent 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — no rules (rules off / no provider / nothing selected) > ignores rules / accounting already present on the base context 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — no rules (rules off / no provider / nothing selected) > a non-commander context is a programming error 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — robustness of the reduced step > multi-byte rule text: fewer chars but not enough bytes → the re-selection repeats until it fits 1ms
+ ✓ test/ai/prompt-fit.unit.test.ts > fitCommanderPrompt — robustness of the reduced step > a throwing re-selection falls back to the prompt without rules (dropped), never throws 0ms
+ ✓ test/ai/prompt-fit.unit.test.ts > default limit (C-7): the worst SWR-006 prompt + 6000 chars of rules fits 16000 > situation 4000, 10 candidates with 160-char summaries, objective 300, rules block 6000 chars → full 1ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > TC-ENV-01: defaults with OpenAI off (PORT 3000, development, 30000 ms, 2 retries) 4ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > TC-ENV-02: OpenAI on → boolean flag, numeric cost, key wrapped in Secret 1ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > the config is deeply frozen 0ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > only ENV_KEYS are read (other variables are ignored) 1ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > TC-ENV-11 / Q-3: OPENAI_ENABLED=false — OpenAI variables are neither required nor checked 0ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > OPENAI_ENABLED=false keeps valid values but never the key itself 1ms
+ ✓ test/env.unit.test.ts > parseEnv — valid environments > blank / whitespace-only values are treated as unset (defaults apply) 0ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-03: DATABASE_URL missing or empty 0ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-04: PORT boundaries 1ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-05: NODE_ENV only development|test|production; missing → development 0ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-06 / Q-1: OPENAI_ENABLED required, only "true" | "false" 1ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-07 / Q-2: OPENAI_API_KEY required when enabled; whitespace-only = missing 12ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-08/09: OPENAI_STRATEGY_MODEL required when enabled; must be a model id 3ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-08/09: OPENAI_TACTICAL_MODEL required when enabled; must be a model id 0ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-10: OPENAI_MAX_COST_PER_SESSION_USD > 0 and <= 5 when enabled 1ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-13 / Q-4: OPENAI_TIMEOUT_MS 1000..120000, OPENAI_MAX_RETRIES 0..5 (checked when enabled) 1ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > AM-BE-3: NODE_ENV=test rejects OPENAI_ENABLED=true 0ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-07..10: all four conditional variables are reported at once 0ms
+ ✓ test/env.unit.test.ts > parseEnv — invalid variables > TC-ENV-14: one error lists every problem, in ENV_KEYS order 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > SWR-006 TC-ENV-01: defaults without AI_COMMANDER_* (bot, tactical, 64, 45000) = DEFAULT_AI_COMMANDER 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > valid values are parsed (openai with OpenAI on, strategy, numbers) 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > SWR-006 TC-ENV-02: openai without OPENAI_ENABLED=true fails, naming the variable, no values 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > plan-backend §7: NODE_ENV=test + openai → two errors (OpenAI is never usable in a test process) 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > OPENAI_ENABLED=true with missing OpenAI variables reports those, not the provider 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > SWR-006 TC-ENV-03 / Q-22: exact "bot" | "openai"; blank = unset = bot 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > SWR-006 TC-ENV-04: AI_COMMANDER_MAX_STEPS integer 1..256 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > SWR-006 TC-ENV-05: AI_COMMANDER_RUN_DEADLINE_MS integer 1000..120000 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > SWR-006 TC-ENV-06: AI_COMMANDER_MODEL_ROLE tactical | strategy 0ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > AI_COMMANDER_* are checked even with OPENAI_ENABLED=false; all problems at once, ENV_KEYS order, no values 10ms
+ ✓ test/env.unit.test.ts > parseEnv — AI_COMMANDER_* (SWR-006) > loadAppConfig reads AI_COMMANDER_* from the environment like the other keys 0ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > the three variables are schema keys, in this order, after the SWR-006 ones 0ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > TC-INT-09: AI_COMMANDER_RULES_CONTEXT on | off; unset / blank → on (A-4) 0ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > TC-INT-09: invalid AI_COMMANDER_RULES_CONTEXT (case-sensitive) → named error, no value 0ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > TC-BUD-09 / TC-SEL-09: AI_COMMANDER_RULES_MAX_CHARS integer 1000..12000, default 6000 0ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > TC-BUD-09: AI_COMMANDER_MAX_PROMPT_TOKENS integer 4000..64000, default 16000 0ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > checked always (OpenAI off too); all problems at once, ENV_KEYS order, never the values 1ms
+ ✓ test/env.unit.test.ts > parseEnv — SWR-008 rules context and prompt limit > knowledgeBaseRoot never comes from the environment: parseEnv / loadAppConfig return null 1ms
+ ✓ test/env.unit.test.ts > no values in errors or serialised config (AC-10) > TC-ENV-15: sentinel values never appear in message / JSON / inspect / variables 3ms
+ ✓ test/env.unit.test.ts > no values in errors or serialised config (AC-10) > Secret is redacted in String / template / JSON / inspect 0ms
+ ✓ test/env.unit.test.ts > no values in errors or serialised config (AC-10) > an enabled config does not leak the key through JSON or inspect 0ms
+ ✓ test/env.unit.test.ts > loadAppConfig (.env handling, AM-BE-3) > NODE_ENV=test never reads the .env file 0ms
+ ✓ test/env.unit.test.ts > loadAppConfig (.env handling, AM-BE-3) > outside test: reads the file; variables already set win; process.env is not modified 1ms
+ ✓ test/env.unit.test.ts > loadAppConfig (.env handling, AM-BE-3) > a missing .env file is fine when the environment is complete 0ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > reserves while spent + reserve < limit 104ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > refuses at exact equality spent + reserve = limit and above it 8ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > counts active holds: spent + held + reserve ≥ limit → refuse 51ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > release after the AiUsage insert: the actual cost replaces the hold (no undercount meanwhile) 6ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > release is idempotent and releases only its own hold 7ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > 5 parallel reserves of $0.04 at limit $0.10 → exactly 2 succeed 7ms
+ ✓ test/rules-context-registry.int.test.ts > readKnowledgeBaseDir (node:fs loader) > reads manifest, entries/*.json in sorted file order (concatenated) and the optional files 2ms
+ ✓ test/rules-context-registry.int.test.ts > readKnowledgeBaseDir (node:fs loader) > missing / wrong files → KnowledgeBaseLoadError with directory, file and a fixed reason 47ms
+ ✓ test/rules-context-registry.int.test.ts > readKnowledgeBaseDir (node:fs loader) > broken JSON → "invalid JSON", the file content is never quoted 7ms
+ ✓ test/rules-context-registry.int.test.ts > readKnowledgeBaseDir (node:fs loader) > non-.json files in entries/ are ignored 2ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — when knowledge bases are loaded (Q-BE-2) > TC-INT-10: provider bot → nothing is read, no provider (rules on or off) 0ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — when knowledge bases are loaded (Q-BE-2) > provider openai + rules off → nothing is read (the off form of SWR-006) 0ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — when knowledge bases are loaded (Q-BE-2) > TC-CT-05: openai + on, a game without `rules` → no provider, nothing read, no error 0ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — when knowledge bases are loaded (Q-BE-2) > TC-INT-04 (registry part): openai + on → exactly one load per game with rules; decisions read no files 18ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — when knowledge bases are loaded (Q-BE-2) > a repository-relative directory is resolved against knowledgeBaseRoot 5ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — when knowledge bases are loaded (Q-BE-2) > knowledgeBaseRoot null: a relative directory fails; an absolute one does not need it 12ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — fail fast (TC-INT-05, QD-3, TC-SEL-09) > broken knowledge bases → RulesContextStartupError naming the game, the error and the rule/issue 42ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > a valid model pick → source openai; the context is the commander context with budgetKey = sessionId 3ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > TC-OA-02: fewer than 2 candidates → the bot without a call and without a fallback code 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > an id outside the candidates (defence in depth) → the bot, AI_INVALID_DECISION 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7: timeout → the bot with its code; the NEXT step calls the model again 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7: rate limit → the bot with its code; the NEXT step calls the model again 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7: 5xx → the bot with its code; the NEXT step calls the model again 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7: invalid answer → the bot with its code; the NEXT step calls the model again 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7 / Q-BE-7: not configured → the bot; the rest of the run is the bot without calls (same code) 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7 / Q-BE-7: key rejected → the bot; the rest of the run is the bot without calls (same code) 1ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7 / Q-BE-7: pricing unknown → the bot; the rest of the run is the bot without calls (same code) 1ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7 / Q-BE-7: budget exceeded → the bot; the rest of the run is the bot without calls (same code) 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-7 / Q-BE-7: insufficient quota → the bot; the rest of the run is the bot without calls (same code) 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-20: an unexpected error → the bot, AI_PROVIDER_ERROR; only the class name is reported 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > review F-5: the STRATEGY_ERROR line of the configured OpenAI strategy carries the sessionId 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > Q-BE-2 / AM-BE-5: the deadline wins the race → AI_DEADLINE, the rest of the run is the bot without calls 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > a decision before the deadline cancels the timer 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > fallbackCodeOf keeps the D-PO-3 codes and maps anything else to AI_PROVIDER_ERROR 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy (SWR-006 W7) > BotCommanderStrategy returns the bot pick without a code 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-INT-02 (unit): the rules block of the run provider is selected from rulesSelectionInputOf(point) only and sent before the Game block 3ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > AM-BE-1: other candidates / situation with the same actor, phase and rulesQuery → the same input and the same block 1ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-FB-04 (unit): rules off → no selection at all, the SWR-006 prompt, accounting "off" 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-INT-03 / TC-FB-03 / QD-8: no selection without a call (< 2 candidates, after a run-stopping code, past the deadline) 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-FB-09 (unit): the selection throws → the decision WITHOUT rules, the error class name reported, the next step selects again 0ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-FB-09 (unit): the result breaks the contract → the decision WITHOUT rules, the error class name reported, the next step selects again 1ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-BUD-07 (unit): even the prompt without rules is above the limit → the bot with AI_PROMPT_TOO_LARGE, no call; the run goes on 37ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > TC-BUD-04 / 05 (unit): L = UB(full) → full; L = UB(full) − 1 → reduced (whole lines, pinned kept, truncated) 13ms
+ ✓ test/automation/openai-commander-strategy.unit.test.ts > OpenAiCommanderStrategy — SWR-008 rules context (W6b, C-10) > createCommanderStrategy maps aiCommander.rulesContext / limits; a selection error is one warn line with session / game ids and the class name only (QD-27) 1ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > serializes check-and-reserve per key even when the SUM query is slow 127ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > a failing SUM does not deadlock the key 5ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > keys are isolated (spent and holds) 10ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > snapshot: remaining = max(0, limit − spent); holds are not subtracted; null limit → null remaining 9ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > mock rows (cost 0) and budget refusal rows never reduce the remaining budget 14ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > the budget accumulates across service instances (persisted, not in memory) 6ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (fractional amount) 1ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (negative amount) 1ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (fractional limit) 1ms
+ ✓ test/ai/budget.int.test.ts > BudgetService (SWR-005B W5) > rejects non-integer micro-USD input (NaN limit) 1ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > 200 → available, cached for 10 min (one fetch), then re-checked 17ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > 404 → not_found (cached 60 s); requireAvailable → 503 aiModelUnavailable 29ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > 401 / 403 → key_rejected; requireAvailable → aiKeyRejected 5ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > network / 5xx → unknown, not cached; requireAvailable → 502 AI_PROVIDER_ERROR network 14ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > concurrent checks of one model share one request 6ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > invalidate drops the cache entry 1ms
+ ✓ test/ai/model-availability.unit.test.ts > ModelAvailabilityService > availabilityFlag for the status endpoint 0ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-02: the migrated sessions work through the API (order, views, next command) 5609ms
+ ✓ test/bench/metrics.unit.test.ts > computeVariantMetrics (TC-BEN-05) > equals the hand calculation 2ms
+ ✓ test/bench/metrics.unit.test.ts > computeVariantMetrics (TC-BEN-05) > micro-USD sums stay exact where floats would drift 1ms
+ ✓ test/bench/metrics.unit.test.ts > percentileNearestRank (QD-10) > takes the value at rank ceil(p/100 · n) of the ascending sample 0ms
+ ✓ test/bench/metrics.unit.test.ts > percentileNearestRank (QD-10) > empty → null; p outside (0, 100] → RangeError; the input is not mutated 0ms
+ ✓ test/bench/metrics.unit.test.ts > boundaries (TC-BEN-06) > 0 decisions: every rate / mean / percentile is null, sums are 0 0ms
+ ✓ test/bench/metrics.unit.test.ts > boundaries (TC-BEN-06) > 1 decision: p50 = p95; all fallback: validRate 0; equal latencies: p50 = p95 0ms
+ ✓ test/bench/metrics.unit.test.ts > boundaries (TC-BEN-06) > repeats of one scenario are separate decisions 0ms
+ ✓ test/bench/metrics.unit.test.ts > boundaries (TC-BEN-06) > empty and partial reports: null → `null` in JSON and `n/a` in Markdown, never NaN 1ms
+ ✓ test/bench/metrics.unit.test.ts > boundaries (TC-BEN-06) > report file stem is <mode>-<YYYYMMDD-HHmmss> in UTC 0ms
+ ✓ test/bench/metrics.unit.test.ts > BenchComparison (TC-BEN-13) > (a) a stable difference: an effect only because the 95% CI excludes 0, in the right direction 1ms
+ ✓ test/bench/metrics.unit.test.ts > BenchComparison (TC-BEN-13) > (b) a difference within the noise: no measurable effect (CI contains 0) 0ms
+ ✓ test/bench/metrics.unit.test.ts > BenchComparison (TC-BEN-13) > (c) one common scenario: n/a without an interval; none: delta null; never NaN 0ms
+ ✓ test/bench/metrics.unit.test.ts > BenchComparison (TC-BEN-13) > per-scenario means are paired: repeats of a scenario are averaged first 0ms
+ ✓ test/bench/metrics.unit.test.ts > rubric classification (QD-25 rule) > first hit in the order expected → acceptable → wrong; unmatched otherwise 0ms
+ ✓ test/bench/metrics.unit.test.ts > rubric classification (QD-25 rule) > matchers compare type, target (if given) and a summary substring (if given) 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > a commander context with a session budget key is decided and recorded under that key 6ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > missing situation → VALIDATION before any call or row 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > empty situation → VALIDATION before any call or row 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > situation over the limit → VALIDATION before any call or row 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > summary over the limit → VALIDATION before any call or row 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > one action only → VALIDATION before any call or row 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > boundary values are accepted (situation 4000, summary 160) 0ms
+ ✓ test/automation/commander-context.unit.test.ts > AiDecisionService — commander contexts (SWR-006 W7) > the dev context (no purpose) ignores situation / summary as before 0ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > TC-CT-06 (unit): the tiny KB block — engine scope first, only `fake:` ids, never needs-review / ai:none 19ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > TC-BUD-08 (unit): deterministic — the same point gives the same level and the same prompt bytes 5ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > QD-7: the selection input comes from actor / phase / rulesQuery only — candidates, situation, objective never matter 2ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > TC-FB-04 / TC-FB-05 (unit): rules off → no selection; no provider → no rules block (form = off), accounting enabled 7ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > TC-FB-09 (unit): a throwing / contract-breaking selection → no rules, only the error class name is reported 5ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > TC-BUD-04..07 (unit, shared builder): full at L = UB, reduced at UB − 1, dropped between UB(base) and the pinned-only block, too large below UB(base) 2ms
+ ✓ test/automation/commander-context.unit.test.ts > buildCommanderContext (SWR-008 W6b, C-10) > the fitted commander context is accepted by AiDecisionService and its row carries the rules accounting 3ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > AiDecisionService — reservation vs AiUsage write (INTEGRATION seam) > releases the hold after the row is stored 3ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > AiDecisionService — reservation vs AiUsage write (INTEGRATION seam) > keeps the worst-case hold when the row cannot be stored (no undercount) 1ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > usageStatusFor (review F-6) > maps every decision-path code to its usage status 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > usageStatusFor (review F-6) > AI_DEV_FORBIDDEN (dev guard only) is never silently written as a usage status 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: budget reservation with the rules block (TC-BUD-01, §4.3) > reserve = worst case of the FULL prompt (rules included); with rules > without 1ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: budget reservation with the rules block (TC-BUD-01, §4.3) > QD-11: budget covers the prompt without rules but not with them → AI_BUDGET_EXCEEDED, rules not removed 3ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: AiUsage rows carry the rules accounting (TC-COST-01/02/05 unit part) > ok row: rules columns + promptTokensUpperBound + actual usage/cost 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: AiUsage rows carry the rules accounting (TC-COST-01/02/05 unit part) > rules off: off columns; dropped by the prompt limit: enabled, 0 ids, dropped=true, version kept 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: AiUsage rows carry the rules accounting (TC-COST-01/02/05 unit part) > TC-COST-05: failed calls (invalid id, timeout) keep the rules metadata and their cost 1ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: AiUsage rows carry the rules accounting (TC-COST-01/02/05 unit part) > mock provider: cost 0, rules columns kept; dev-test context: always rules off 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: AiUsage rows carry the rules accounting (TC-COST-01/02/05 unit part) > a rules block without accounting is recorded as sent 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > empty text 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > text over 12000 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > no ids 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > duplicate ids 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > 65 ids 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > id over 128 0ms
+ ✓ test/ai/ai-decision-service.unit.test.ts > SWR-008: malformed rules block → VALIDATION before any call (§4.3) > bad version 0ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — fail fast (TC-INT-05, QD-3, TC-SEL-09) > a loader error (broken JSON on disk) is wrapped with its file 4ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — fail fast (TC-INT-05, QD-3, TC-SEL-09) > QD-3: rulesMaxChars below the mandatory engine-scope line fails at start; equal is fine 4ms
+ ✓ test/rules-context-registry.int.test.ts > createRulesContextRegistry — fail fast (TC-INT-05, QD-3, TC-SEL-09) > TC-SEL-09: rulesMaxChars 0, -1, 1.5, NaN, above 12000 → start-up error, not an empty block 18ms
+ ✓ test/rules-context-registry.int.test.ts > createApp with the rules context (TC-INT-04, TC-INT-05) > TC-INT-05: every broken knowledge base rejects createApp before the app exists; no key in the error 8ms
+ ✓ test/rules-context-registry.int.test.ts > createApp with the rules context (TC-INT-04, TC-INT-05) > TC-INT-04: the app loads the knowledge base exactly once and exposes the registry 218ms
+ ✓ test/rules-context-registry.int.test.ts > createApp with the rules context (TC-INT-04, TC-INT-05) > default modules with the bot commander: the registry is empty and nothing is read 27ms
+ ✓ test/rules-context-registry.int.test.ts > createApp with the rules context (TC-INT-04, TC-INT-05) > the rules override is test-only: refused in production 4ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt > snapshot: fixed instructions + one data message in context order 1ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt > contains ids and objective, never the budget key 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt > takes only the context (no config / key parameter) 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt > token upper bound = UTF-8 bytes + overhead (review F-3: ≥ 1 byte per token), any script 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: dev-test purpose is the default (SWR-006 §8.1) > purpose 'dev-test' and extra commander fields leave the SWR-005B prompt byte-identical 2ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > TC-OA-05 snapshot: commander instructions + one Game data block in context order 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > instructions cover role, goal, visibility, one id, engine validation, data-not-instructions 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > instructions contain no game-specific / banned words (architecture test) 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > Q-BE-1: no budget key / session id / role / purpose / extra fields in the prompt 1ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > missing situation is sent as an empty string (field always present) 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > TC-OA-11: injection text in summaries/situation/objective stays inside the data block; instructions byte-identical 1ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > dev-test prompt: injection in objective also stays inside the data block 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander purpose (SWR-006 §8.1, TC-OA-05/11) > upperBoundInputTokens stays a strict byte-based upper bound for the commander variant 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > TC-INT-06: without rules (absent, empty text, accounting only) the SWR-006 prompt is byte-identical 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > TC-INT-08 snapshot: rules instructions appended, rules block before the Game block, Game block unchanged 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > TC-ST-04: rules instructions subordinate the rules to the legal actions of the engine 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > sends only the rules text: never the version, accounting, budget key or role 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > dev-test purpose ignores a rules block (SWR-005B prompt unchanged) 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > TC-BUD-01 (unit): the upper bound grows by exactly the bytes of the rules block + instructions 0ms
+ ✓ test/ai/prompt.unit.test.ts > buildPrompt: commander rules block (SWR-008 §4.1; TC-INT-06/08, TC-ST-04) > rulesTokensEstimate = ceil(chars / 4) 0ms
+ ✓ test/ai/prompt.unit.test.ts > decision schema > enum = ids in context order, required, additionalProperties false, no maxLength 0ms
+ ✓ test/ai/prompt.unit.test.ts > decision schema > text.format is strict json_schema named ai_decision 0ms
+ ✓ test/ai/prompt.unit.test.ts > decision schema > copies the id list (mutating the input does not change the schema) 0ms
+ ✓ test/ai/prompt.unit.test.ts > model roles > tactical 400 / none on luna, strategy 1600 / low on sol 0ms
+ ✓ test/ai/prompt.unit.test.ts > model roles > tactical on a model without 'none' support falls back to 'low' 0ms
+ ✓ test/ai/prompt.unit.test.ts > model roles > model by role from config 0ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > deterministic: always the first action, zero usage and cost 4ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > invalid-action → an id outside the list (the validator rejects it) 0ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > malformed → AI_INVALID_DECISION malformed, one attempt 1ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > timeout repeated → AI_TIMEOUT after maxRetries + 1 attempts 2ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > rate-limit repeated → AI_RATE_LIMITED after maxRetries + 1 attempts 1ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > network repeated → AI_PROVIDER_ERROR after maxRetries + 1 attempts 0ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > server-error repeated → AI_PROVIDER_ERROR after maxRetries + 1 attempts 0ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > timeout, ok → success on attempt 2; the last step repeats 0ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > maxRetries 0 → single attempt 1ms
+ ✓ test/ai/mock-provider.unit.test.ts > MockAIProvider > every step is covered 0ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > TC-ENV-18: the key set equals ENV_KEYS 2ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > TC-ENV-18: parses with parseEnv; key empty; OPENAI_ENABLED=false 2ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > SWR-006 TC-ENV-07: AI_COMMANDER_* listed; provider bot; parses to the defaults 1ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > SWR-008 TC-INT-09 / C-7: rules context and prompt limit listed with their defaults (on, 6000, 16000) 1ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > TC-ENV-18: the example models / limits are valid when OpenAI is switched on 0ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > TC-ENV-19: the comparison catches drift in both directions 0ms
+ ✓ test/env-example.unit.test.ts > .env.example ↔ env schema > contains no real-looking key (AC-10) 0ms
+ ✓ test/ai/decision-validator.unit.test.ts > validateDecision > accepts an id from the list 4ms
+ ✓ test/ai/decision-validator.unit.test.ts > validateDecision > id outside the list → not_in_actions 0ms
+ ✓ test/ai/decision-validator.unit.test.ts > validateDecision > extra fields / wrong types / empty id / not an object → schema 2ms
+ ✓ test/ai/decision-validator.unit.test.ts > validateDecision > empty reason after trim → schema (invalid) 0ms
+ ✓ test/ai/decision-validator.unit.test.ts > validateDecision > long reason is trimmed and cut to 300 characters 0ms
+ ✓ test/ai/decision-validator.unit.test.ts > normalizeReason > does not split a surrogate pair and drops trailing space after the cut 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > has both configured models and a version 3ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > gpt-6-luna: $0.10 in / $0.50 out per 1M → micro-USD 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > gpt-6.1-sol: $2 in / $10 out per 1M 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > cached input is a part of input and billed at the cached price 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > long context: 272 000 is short, 272 001 doubles input and ×1.5 output for the whole request 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > reasoning tokens are inside output tokens and are not added a second time 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > rounds up to whole micro-USD (conservative) and is exact for integers 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > unknown model (exact id only, no prefix match) → null 0ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > rejects negative / fractional token counts 1ms
+ ✓ test/ai/pricing.unit.test.ts > pricing > reserve example of plan §5.2 (inUpper 1500, defaults: 2 retries) 0ms
+ ✓ test/ai/cost-by-rules.unit.test.ts > summarizeCostByRules (TC-COST-03) > groups 5 + 5 synthetic rows; sums and means match a hand calculation 2ms
+ ✓ test/ai/cost-by-rules.unit.test.ts > summarizeCostByRules (TC-COST-03) > a group without rows has null means (never NaN); empty input → all groups empty 0ms
+ ✓ test/ai/cost-by-rules.unit.test.ts > summarizeCostByRules (TC-COST-03) > non-integer means are kept exact (no rounding) 0ms
+ ✓ test/ai/cost-by-rules.unit.test.ts > summarizeCostByRules (TC-COST-03) > sentRules: enabled, not dropped and at least one rule 0ms
+ ✓ test/ai/ai-log.unit.test.ts > ai-log > attempt line: fixed field order, numbers and ids only 1ms
+ ✓ test/ai/ai-log.unit.test.ts > ai-log > unsafe values (spaces, key-like text, newlines) are replaced by ? 1ms
+ ✓ test/ai/ai-log.unit.test.ts > ai-log > summary line 0ms
+ ✓ test/ai/ai-log.unit.test.ts > ai-log > the formatter has no field for prompt, objective, reason or key 0ms
+ ✓ test/ai/ai-log.unit.test.ts > ai-log > a throwing sink never breaks the caller 0ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > retryable failure → exactly maxRetries + 1 attempts for 0..5, attempts reported 7ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > maxRetries is clamped (no endless loop even for huge / invalid values) 3ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > non-retryable failures run once (invalid decision, quota, key rejected, bad request) 1ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > backoff: min(8000, 500·2^(n−1)) × (0.5 + random·0.5) with seeded random 0ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > Retry-After ≤ 10 s is honoured as the delay 0ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > Retry-After > 10 s → no retry, immediate AI_RATE_LIMITED, non-retryable 0ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > success after failures returns the value and the attempt count 0ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > a non-AiFailure error becomes a non-retryable AI_PROVIDER_ERROR (unknown) 0ms
+ ✓ test/ai/retry.unit.test.ts > runWithRetries > willRetry 0ms
+ ✓ test/ai/retry.unit.test.ts > parseRetryAfterMs > retry-after-ms, seconds and HTTP-date; invalid → undefined 0ms
+ ✓ test/automation/keyed-mutex.unit.test.ts > KeyedMutex (SWR-006 W7) > serialises callers of one key in arrival order; other keys run in parallel 2ms
+ ✓ test/automation/keyed-mutex.unit.test.ts > KeyedMutex (SWR-006 W7) > a failing holder releases the key; its error reaches only its caller 1ms
+ ✓ test/package-scripts.unit.test.ts > apps/api package scripts > start runs dist/main.js with NODE_ENV=production 1ms
+ ✓ test/package-scripts.unit.test.ts > apps/api package scripts > dev does not force production 0ms
+ ✓ test/ai/openai-client.unit.test.ts > createOpenAIClient > nodeEnv test without a fake fetch → throws (never the global fetch) 1ms
+ ✓ test/ai/openai-client.unit.test.ts > createOpenAIClient > explicit options: base URL, SDK maxRetries 0, timeout from config 2ms
+ ✓ test/ai/openai-client.unit.test.ts > createOpenAIClient > lazy: no client (and no throw) until first use; then one instance 1ms
+ ✓ test/ai/openai-client.unit.test.ts > toApiError / safeDetails > HTTP statuses from the platform table and allow-listed details 1ms
+ ✓ test/ai/openai-client.unit.test.ts > toApiError / safeDetails > message is the code only 0ms
+ ✓ test/automation/automation-log.unit.test.ts > automation log lines (SWR-006 W7) > step / run / error lines carry only ids, counters, fixed codes 1ms
+ ✓ test/automation/automation-log.unit.test.ts > automation log lines (SWR-006 W7) > unexpected ids and error names are masked; messages never appear 0ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-01: SWR-003 DB (3 v1 sessions) → deploy: status = prototype, key/hash NULL, unique index; data and events unchanged; re-deploy no-op 14131ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-03: NOT NULL gameId, (gameId, updatedAt) index, (sessionId, seq) unique, cascade delete 5430ms
+ ✓ test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-04: an empty SWR-002 DB migrates to empty Session / SessionEvent 2517ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > unique index: a second row with the same key fails, NULL keys may repeat 8287ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-02/03/05: migrated sessions through the API — status prototype, no legacy faction, a command works, rereads are stable 3767ms
+ ✓ test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-06: SWR-002 → SWR-003 → SWR-004 in one deploy; every row prototype and readable 1884ms
+
+ Test Files  58 passed (58)
+      Tests  660 passed | 1 skipped (661)
+   Start at  17:04:46
+   Duration  31.12s (tests 76%, import 18%, transform 5%)
+
+exit=0

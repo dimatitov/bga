@@ -1,0 +1,14 @@
+[
+  {
+    "id": "DISC-001",
+    "title": "Only moving and waiting",
+    "kind": "missing-mechanic",
+    "severity": "low",
+    "ruleIds": ["fake:turn.order"],
+    "engineBehaviour": "The fake engine knows only MOVE and WAIT.",
+    "officialBehaviour": "The fake rulebook describes nothing else either.",
+    "decision": "accepted-for-slice",
+    "followUp": "None: test fixture.",
+    "refs": ["fake:impl.engine-scope"]
+  }
+]

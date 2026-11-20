@@ -10,6 +10,9 @@
  * In an AI game with AI Rebels the result is a transient state (Rebels active): the server's auto-play
  * (W5) applies their move before storing it. Deterministic: same input → same state (Q-24).
  * Invalid settings/data is a programming error → throws (Zod).
+ * The built state passes the central state checks once (`runStateChecks`, SWR-008 QD-2). With valid data they
+ * change nothing (eligible bases exclude systems with Imperial start units and their neighbours); any event they
+ * produced would follow the creation log (`seq` = last `seq` + 1…, `at = ctx.now`; see `checkCreatedState`).
  */
 import {
   CoreDataSchema,
@@ -17,6 +20,7 @@ import {
   RebellionSettingsSchema,
   eligibleRebelBaseSystemIds,
   type CoreData,
+  type CoreEvent,
   type CoreGameState,
   type CoreLeader,
   type CoreUnit,
@@ -24,6 +28,7 @@ import {
 } from '../../schema';
 import type { CreateContext } from '../context';
 import { chooseRebelBase } from './base';
+import { runStateChecks } from './state-checks';
 
 export function createCoreGame(
   settings: RebellionSettings,
@@ -54,7 +59,7 @@ export function createCoreGame(
   });
   const round = parsed.startSetup.startingTime;
 
-  return {
+  const created: CoreGameState = {
     schemaVersion: REBELLION_STATE_SCHEMA_VERSION,
     rulesEngine: 'core-v1',
     id: ctx.gameId,
@@ -96,6 +101,27 @@ export function createCoreGame(
         payload: { round, phase: 'command' },
         at: ctx.now,
       },
+    ],
+  };
+  return checkCreatedState(created, ctx.now);
+}
+
+/**
+ * The central state checks on a just-built state (SWR-008 QD-2). Events they produce are appended to the log numbered
+ * from the LAST `seq` (as `finalize` does, review F-6 — not from the log length), with `at = now`; the version stays
+ * (creation is version 1). No drafts → the checked state as is. Exported for the unit test on an artificial state.
+ */
+export function checkCreatedState(created: CoreGameState, now: string): CoreGameState {
+  const checked = runStateChecks({ state: created, drafts: [] });
+  if (checked.drafts.length === 0) return checked.state;
+  const lastSeq = created.log[created.log.length - 1]?.seq ?? 0;
+  return {
+    ...checked.state,
+    log: [
+      ...created.log,
+      ...checked.drafts.map(
+        (draft, i) => ({ ...draft, seq: lastSeq + i + 1, at: now }) as CoreEvent,
+      ),
     ],
   };
 }

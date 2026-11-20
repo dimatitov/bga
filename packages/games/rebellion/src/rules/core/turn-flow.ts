@@ -12,10 +12,13 @@
  */
 import { opponentOf, type CoreGameState, type Faction } from '../../schema';
 import { isHotSeat, type Transition } from './helpers';
-import { checkEmpireVictory, endGame, revealBase, revealsBaseNow } from './victory';
+import { endGame } from './victory';
 
-/** Give the turn to the other side unless it has passed (R-3/R-6). */
-function handOver(transition: Transition, actor: Faction): Transition {
+/**
+ * Give the turn to the other side unless it has passed (R-3/R-6). Exported for `./apply`: after
+ * `FINISH_ACTIVATION` the turn is handed over only AFTER the state checks, and only if the game goes on.
+ */
+export function handOver(transition: Transition, actor: Faction): Transition {
   const { state } = transition;
   const other = opponentOf(actor);
   if (state.passed[other]) return transition;
@@ -25,23 +28,22 @@ function handOver(transition: Transition, actor: Faction): Transition {
   };
 }
 
-/** `FINISH_ACTIVATION` (validated: an own activation is running). Order: ACTIVATION_FINISHED → BASE_REVEALED → GAME_OVER (Q-41). */
+/**
+ * `FINISH_ACTIVATION` (validated: an own activation is running): only ends the activation. The base reveal, the
+ * Empire victory (`runStateChecks`, SWR-008 DISC-009) and then the hand-over (`handOver`, unless the game ended)
+ * follow in `./apply`, so the order stays ACTIVATION_FINISHED → BASE_REVEALED → GAME_OVER (Q-41).
+ */
 export function applyFinishActivation(
   state: CoreGameState,
   actor: Faction,
   auto: boolean,
 ): Transition {
-  const activation = state.activation;
-  if (activation === null) throw new Error('core-v1: FINISH_ACTIVATION without an activation');
-  let transition: Transition = {
+  if (state.activation === null)
+    throw new Error('core-v1: FINISH_ACTIVATION without an activation');
+  return {
     state: { ...state, activation: null },
     drafts: [{ type: 'ACTIVATION_FINISHED', actor, payload: { auto } }],
   };
-  if (actor === 'empire' && revealsBaseNow(transition.state, activation.systemId)) {
-    transition = checkEmpireVictory(revealBase(transition));
-    if (transition.state.outcome !== null) return transition;
-  }
-  return handOver(transition, actor);
 }
 
 /** `PASS` (validated: no activation running). */

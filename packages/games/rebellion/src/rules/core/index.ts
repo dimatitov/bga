@@ -4,6 +4,8 @@
  * - `./create` — `createCoreGame` (R-1, R-2, R-10), `./base` — `chooseRebelBase` (FNV-1a, D-4);
  * - `./apply` — command pipeline and check order; `./activation` (R-4), `./movement` (R-5 + capacity),
  *   `./turn-flow` (R-3, R-6, R-7, hot-seat), `./victory` (R-8, R-9);
+ * - `./state-checks` — `runStateChecks`, THE single base-reveal / Empire-victory check (SWR-008 DISC-009),
+ *   exported here for tests only (not re-exported by `../index`);
  * - `./legal` — legal actions; `./redact` — THE single redaction point (views and events).
  */
 export { applyCoreCommand } from './apply';
@@ -11,3 +13,4 @@ export { chooseRebelBase, fnv1a32 } from './base';
 export { createCoreGame } from './create';
 export { coreLegalActions } from './legal';
 export { corePlayerEvents, coreSideView, hiddenBaseFor } from './redact';
+export { baseRevealConditionMet, revealTimingAllows, runStateChecks } from './state-checks';

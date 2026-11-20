@@ -67,7 +67,16 @@ describe('parseEnv — valid environments', () => {
         timeoutMs: 30000,
         maxRetries: 2,
       },
-      aiCommander: { provider: 'bot', modelRole: 'tactical', maxSteps: 64, runDeadlineMs: 45000 },
+      aiCommander: {
+        provider: 'bot',
+        modelRole: 'tactical',
+        maxSteps: 64,
+        runDeadlineMs: 45000,
+        rulesContext: 'on',
+        rulesMaxChars: 6000,
+        maxPromptTokens: 16000,
+      },
+      knowledgeBaseRoot: null,
     });
   });
 
@@ -299,6 +308,10 @@ describe('parseEnv — AI_COMMANDER_* (SWR-006)', () => {
       modelRole: 'tactical',
       maxSteps: 64,
       runDeadlineMs: 45000,
+      // SWR-008 C-7 defaults
+      rulesContext: 'on',
+      rulesMaxChars: 6000,
+      maxPromptTokens: 16000,
     });
     expect(config.aiCommander).toEqual(DEFAULT_AI_COMMANDER);
     expect(parseEnv(ENV1).aiCommander).toEqual(DEFAULT_AI_COMMANDER);
@@ -313,6 +326,7 @@ describe('parseEnv — AI_COMMANDER_* (SWR-006)', () => {
       AI_COMMANDER_RUN_DEADLINE_MS: '5000',
     });
     expect(config.aiCommander).toEqual({
+      ...DEFAULT_AI_COMMANDER,
       provider: 'openai',
       modelRole: 'strategy',
       maxSteps: 10,
@@ -435,6 +449,110 @@ describe('parseEnv — AI_COMMANDER_* (SWR-006)', () => {
       env: { ...ENV0, NODE_ENV: 'production', AI_COMMANDER_MAX_STEPS: '7' },
     });
     expect(config.aiCommander.maxSteps).toBe(7);
+  });
+});
+
+/** SWR-008 plan-backend C-7: TC-INT-09, TC-BUD-09 (+ TC-SEL-09 env part). */
+describe('parseEnv — SWR-008 rules context and prompt limit', () => {
+  const rules = (v: string | undefined) =>
+    parseEnv({ ...ENV0, AI_COMMANDER_RULES_CONTEXT: v }).aiCommander.rulesContext;
+  const maxChars = (v: string) =>
+    parseEnv({ ...ENV0, AI_COMMANDER_RULES_MAX_CHARS: v }).aiCommander.rulesMaxChars;
+  const promptTokens = (v: string) =>
+    parseEnv({ ...ENV0, AI_COMMANDER_MAX_PROMPT_TOKENS: v }).aiCommander.maxPromptTokens;
+
+  it('the three variables are schema keys, in this order, after the SWR-006 ones', () => {
+    expect(ENV_KEYS.slice(-4)).toEqual([
+      'AI_COMMANDER_RUN_DEADLINE_MS',
+      'AI_COMMANDER_RULES_CONTEXT',
+      'AI_COMMANDER_RULES_MAX_CHARS',
+      'AI_COMMANDER_MAX_PROMPT_TOKENS',
+    ]);
+  });
+
+  it('TC-INT-09: AI_COMMANDER_RULES_CONTEXT on | off; unset / blank → on (A-4)', () => {
+    expect(rules('on')).toBe('on');
+    expect(rules('off')).toBe('off');
+    expect(rules(undefined)).toBe('on');
+    expect(rules('')).toBe('on');
+    expect(rules('   ')).toBe('on');
+    // Also with OpenAI on and the openai commander.
+    expect(
+      parseEnv({ ...ENV1, AI_COMMANDER_PROVIDER: 'openai', AI_COMMANDER_RULES_CONTEXT: 'off' })
+        .aiCommander,
+    ).toMatchObject({ provider: 'openai', rulesContext: 'off' });
+  });
+
+  it('TC-INT-09: invalid AI_COMMANDER_RULES_CONTEXT (case-sensitive) → named error, no value', () => {
+    for (const bad of ['ON', 'Off', 'true', '1', 'of', 'yes', ' on', 'on ']) {
+      const error = envError({ ...ENV0, AI_COMMANDER_RULES_CONTEXT: bad });
+      expect(error.message, bad).toBe(
+        'Invalid environment: AI_COMMANDER_RULES_CONTEXT: must be "on" or "off"',
+      );
+    }
+  });
+
+  it('TC-BUD-09 / TC-SEL-09: AI_COMMANDER_RULES_MAX_CHARS integer 1000..12000, default 6000', () => {
+    expect(parseEnv(ENV0).aiCommander.rulesMaxChars).toBe(6000);
+    expect(maxChars('1000')).toBe(1000);
+    expect(maxChars('12000')).toBe(12000);
+    expect(maxChars('6000')).toBe(6000);
+    for (const bad of ['999', '12001', '0', '-1', '1.5', 'NaN', 'abc', 'Infinity', '6000chars']) {
+      expect(envError({ ...ENV0, AI_COMMANDER_RULES_MAX_CHARS: bad }).message, bad).toBe(
+        'Invalid environment: AI_COMMANDER_RULES_MAX_CHARS: must be an integer 1000..12000',
+      );
+    }
+  });
+
+  it('TC-BUD-09: AI_COMMANDER_MAX_PROMPT_TOKENS integer 4000..64000, default 16000', () => {
+    expect(parseEnv(ENV0).aiCommander.maxPromptTokens).toBe(16000);
+    expect(promptTokens('4000')).toBe(4000);
+    expect(promptTokens('64000')).toBe(64000);
+    for (const bad of ['3999', '64001', '0', '-16000', '16000.5', 'NaN', 'abc', 'Infinity']) {
+      expect(envError({ ...ENV0, AI_COMMANDER_MAX_PROMPT_TOKENS: bad }).message, bad).toBe(
+        'Invalid environment: AI_COMMANDER_MAX_PROMPT_TOKENS: must be an integer 4000..64000',
+      );
+    }
+  });
+
+  it('checked always (OpenAI off too); all problems at once, ENV_KEYS order, never the values', () => {
+    const error = envError({
+      ...ENV0,
+      AI_COMMANDER_MAX_PROMPT_TOKENS: 'sentinel-tokens',
+      AI_COMMANDER_RULES_CONTEXT: 'sentinel-rules',
+      AI_COMMANDER_RULES_MAX_CHARS: 'sentinel-chars',
+      AI_COMMANDER_MAX_STEPS: 'sentinel-steps',
+    });
+    expect(error.variables.map((v) => v.name)).toEqual([
+      'AI_COMMANDER_MAX_STEPS',
+      'AI_COMMANDER_RULES_CONTEXT',
+      'AI_COMMANDER_RULES_MAX_CHARS',
+      'AI_COMMANDER_MAX_PROMPT_TOKENS',
+    ]);
+    for (const text of [error.message, JSON.stringify(error.variables), inspect(error)]) {
+      expect(text).not.toMatch(/sentinel/);
+    }
+  });
+
+  it('knowledgeBaseRoot never comes from the environment: parseEnv / loadAppConfig return null', () => {
+    expect(parseEnv(ENV1).knowledgeBaseRoot).toBeNull();
+    const config = loadAppConfig({
+      dotenvPath: join(tmpdir(), 'swr008-missing.env'),
+      env: {
+        ...ENV0,
+        NODE_ENV: 'production',
+        KNOWLEDGE_BASE_ROOT: '/sentinel',
+        AI_COMMANDER_RULES_MAX_CHARS: '7000',
+        AI_COMMANDER_MAX_PROMPT_TOKENS: '20000',
+        AI_COMMANDER_RULES_CONTEXT: 'off',
+      },
+    });
+    expect(config.knowledgeBaseRoot).toBeNull();
+    expect(config.aiCommander).toMatchObject({
+      rulesContext: 'off',
+      rulesMaxChars: 7000,
+      maxPromptTokens: 20000,
+    });
   });
 });
 

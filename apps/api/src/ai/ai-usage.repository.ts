@@ -1,5 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import { AIModelRoleSchema, AIProviderIdSchema } from '@bga/platform';
+import {
+  AIModelRoleSchema,
+  AIProviderIdSchema,
+  RULES_CONTEXT_LIMITS,
+  RULES_VERSION_PATTERN,
+} from '@bga/platform';
 import type { AiUsage, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 
@@ -7,6 +12,10 @@ import { z } from 'zod';
  * `AiUsage` accounting (SWR-005B, plan-backend §5.3/§7, Q-15, AM-BE-7): one row per AI decision request — successful,
  * failed, mock (cost 0) and budget refusals. Money is integer micro-USD only; never stores prompt or response text.
  * Framework-free: `AiModule` (W6) builds it with `PrismaService` (a `PrismaClient`).
+ *
+ * SWR-008 (AC-12, plan-backend §5): + the rules context of the request — on/off, version, the PUBLIC rule ids (JSON
+ * array, AM-BE-2), size (chars + token estimate), truncated / dropped by the prompt limit (QD-9) and the prompt's
+ * upper bound of input tokens. All new fields are optional with the "rules off" defaults; never rule text.
  */
 
 /** Row statuses (mirrors the `AiUsage.status` doc comment in schema.prisma). */
@@ -28,6 +37,43 @@ const BUDGET_KEY_MAX = 128;
 
 const count = z.number().int().nonnegative().max(2_147_483_647);
 
+/** `<gameId>@<formatVersion>:<hash12>`; same bound as the dev diagnostics wire (`rulesVersion` ≤ 96). */
+const RULES_VERSION_MAX = 96;
+
+/** `ceil(chars / 4)` — the stored token estimate of a rules block (same as `rulesTokensEstimate` of prompt.ts). */
+function tokensEstimateOf(chars: number): number {
+  return Math.ceil(chars / 4);
+}
+
+interface RulesColumnsInput {
+  rulesEnabled: boolean;
+  rulesVersion: string | null;
+  rulesIds: readonly string[];
+  rulesChars: number;
+  rulesTokensEstimate?: number | undefined;
+  rulesTruncated: boolean;
+  rulesDropped: boolean;
+}
+
+/** Consistency of the rules columns (plan §5); `null` when consistent. */
+function rulesInvariantIssue(row: RulesColumnsInput): string | null {
+  const n = row.rulesIds.length;
+  if (new Set(row.rulesIds).size !== n) return 'rulesIds must be unique';
+  if ((n === 0) !== (row.rulesChars === 0)) return 'rulesChars > 0 exactly when rule ids were sent';
+  if (
+    row.rulesTokensEstimate !== undefined &&
+    row.rulesTokensEstimate !== tokensEstimateOf(row.rulesChars)
+  )
+    return 'rulesTokensEstimate must be ceil(rulesChars / 4)';
+  if (row.rulesDropped && n !== 0) return 'rulesDropped rows send no rules';
+  if (!row.rulesEnabled) {
+    if (n !== 0 || row.rulesVersion !== null || row.rulesTruncated || row.rulesDropped)
+      return 'rules-off rows carry no rules data';
+  }
+  if (n > 0 && row.rulesVersion === null) return 'rules sent without a rulesVersion';
+  return null;
+}
+
 /** Shape accepted by `insert` (local row type; W6 reconciles it with `ai.types.ts`). */
 const NewAiUsageRowSchema = z
   .strictObject({
@@ -47,8 +93,30 @@ const NewAiUsageRowSchema = z
     durationMs: count,
     errorCode: z.string().min(1).max(64).nullable(),
     createdAt: z.date().optional(),
+    // SWR-008 (§5): rules context of the request; defaults = rules off.
+    rulesEnabled: z.boolean().default(false),
+    rulesVersion: z
+      .string()
+      .regex(RULES_VERSION_PATTERN)
+      .max(RULES_VERSION_MAX)
+      .nullable()
+      .default(null),
+    /** Public rule ids sent, in prompt order (stored as a JSON array; `[]` → NULL). */
+    rulesIds: z
+      .array(z.string().min(1).max(RULES_CONTEXT_LIMITS.ruleIdMax))
+      .max(RULES_CONTEXT_LIMITS.maxRuleIds)
+      .readonly()
+      .default([]),
+    rulesChars: count.max(RULES_CONTEXT_LIMITS.maxCharsMax).default(0),
+    /** Omitted → `ceil(rulesChars / 4)`; given → must equal it. */
+    rulesTokensEstimate: count.optional(),
+    rulesTruncated: z.boolean().default(false),
+    rulesDropped: z.boolean().default(false),
+    promptTokensUpperBound: count.nullable().default(null),
   })
   .superRefine((row, ctx) => {
+    const rulesIssue = rulesInvariantIssue(row);
+    if (rulesIssue !== null) ctx.addIssue({ code: 'custom', message: rulesIssue });
     if (row.cachedInputTokens > row.inputTokens)
       ctx.addIssue({ code: 'custom', message: 'cachedInputTokens > inputTokens' });
     if (row.provider === 'mock' && row.estimatedCostMicroUsd !== 0)
@@ -76,6 +144,20 @@ export class InvalidAiUsageRowError extends Error {
   }
 }
 
+/**
+ * The rule ids of a stored row (`rulesIds` JSON array; NULL → `[]`). A value that is not a JSON array of strings
+ * (never written by `insert`) → `[]`.
+ */
+export function ruleIdsOf(record: Pick<AiUsageRecord, 'rulesIds'>): string[] {
+  if (record.rulesIds === null) return [];
+  try {
+    const parsed: unknown = JSON.parse(record.rulesIds);
+    return Array.isArray(parsed) && parsed.every((id) => typeof id === 'string') ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 export class AiUsageRepository {
   constructor(private readonly prisma: Pick<PrismaClient, 'aiUsage'>) {}
 
@@ -86,10 +168,32 @@ export class AiUsageRepository {
       throw new InvalidAiUsageRowError(
         parsed.error.issues.map((i) => `${i.path.join('.') || 'row'}: ${i.message}`),
       );
-    const { id, createdAt, ...data } = parsed.data;
+    const { id, createdAt, rulesIds, rulesTokensEstimate, ...data } = parsed.data;
     return this.prisma.aiUsage.create({
-      data: { ...data, id: id ?? randomUUID(), ...(createdAt ? { createdAt } : {}) },
+      data: {
+        ...data,
+        rulesCount: rulesIds.length,
+        rulesIds: rulesIds.length === 0 ? null : JSON.stringify(rulesIds),
+        rulesTokensEstimate: rulesTokensEstimate ?? tokensEstimateOf(data.rulesChars),
+        id: id ?? randomUUID(),
+        ...(createdAt ? { createdAt } : {}),
+      },
     });
+  }
+
+  /**
+   * The LAST `limit` rows of the key, returned in time order (createdAt ascending; ties by id). SWR-008 C-9: the dev
+   * diagnostics read (W7). `limit` is a positive integer.
+   */
+  async listByBudgetKey(budgetKey: string, limit: number): Promise<AiUsageRecord[]> {
+    if (!Number.isInteger(limit) || limit < 1)
+      throw new RangeError('limit must be a positive integer');
+    const rows = await this.prisma.aiUsage.findMany({
+      where: { budgetKey },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit,
+    });
+    return rows.reverse();
   }
 
   /** Σ `estimatedCostMicroUsd` of all rows of the key (budget accumulates forever; Q-BE-1). */

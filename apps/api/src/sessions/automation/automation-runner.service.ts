@@ -30,6 +30,8 @@ import { APP_CONFIG } from '../../config/app-config.tokens';
 import type { AppConfig } from '../../config/env';
 import type { GameRegistry } from '../../game-registry/game-registry';
 import { GAME_REGISTRY } from '../../game-registry/game-registry.tokens';
+import type { RulesContextRegistry } from '../../rules-context/rules-context.registry';
+import { RULES_CONTEXT_REGISTRY } from '../../rules-context/rules-context.tokens';
 import { commitState, statusAfter } from '../session-writer';
 import { SessionsRepository } from '../sessions.repository';
 import {
@@ -95,6 +97,7 @@ export class AutomationRunner {
     @Inject(COMMANDER_STRATEGY) private readonly strategy: CommanderStrategy,
     @Inject(AI_RUNTIME) private readonly runtime: AiRuntime,
     @Inject(AUTOMATION_TEST_OVERRIDES) overrides: AutomationTestOverrides,
+    @Inject(RULES_CONTEXT_REGISTRY) private readonly rules: RulesContextRegistry,
   ) {
     this.sink = overrides.logSink ?? nestAutomationLogSink();
   }
@@ -142,6 +145,9 @@ export class AutomationRunner {
         run ??= this.strategy.startRun({
           sessionId,
           deadline: t.startedAt + this.config.aiCommander.runDeadlineMs,
+          // SWR-008 C-10: the game's rules (built once at start); `null` for a game without rules / rules off.
+          rules: this.rules.forGame(t.gameId),
+          gameId: t.gameId,
         });
         const stop = await this.step(t, module, automation, run);
         if (stop !== null) return this.finish(t, stop);

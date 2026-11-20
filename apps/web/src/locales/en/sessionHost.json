@@ -24,6 +24,7 @@
       "AI_NOT_CONFIGURED": "not configured",
       "AI_BUDGET_EXCEEDED": "game budget exhausted",
       "AI_DEADLINE": "turn time exceeded",
+      "AI_PROMPT_TOO_LARGE": "model request too large",
       "unknown": "other reason"
     }
   }

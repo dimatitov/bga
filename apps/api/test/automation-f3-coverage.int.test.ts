@@ -85,7 +85,8 @@ async function openaiApp(options: {
     ids: options.ids,
     fake: options.fake,
     openai: enabledOpenAI({ maxRetries: 0, ...options.openai }),
-    aiCommander: { provider: 'openai', ...options.aiCommander },
+    // SWR-006 baseline: the commander without the SWR-008 rules context (rules on: automation-rules.int.test.ts).
+    aiCommander: { provider: 'openai', rulesContext: 'off', ...options.aiCommander },
     ...(options.ai ? { ai: options.ai } : {}),
   });
 }
@@ -113,7 +114,8 @@ async function seedSpent(app: INestApplication, budgetKey: string, microUsd: num
 
 /**
  * The worst-case reserve of the FIRST automated step after the human's PASS at the start of a Rebels-vs-AI game
- * (the same decision point the server computes; the context built exactly like `OpenAiCommanderStrategy.contextOf`).
+ * (the same decision point the server computes; the context built exactly like `commanderBaseContext` of
+ * `commander-context.ts`, i.e. the commander without rules — this file runs with `rulesContext: 'off'`).
  */
 async function firstStepReserve(game: AutomatedGame, maxRetries: number): Promise<number> {
   const automation = rebellionServerModule.automation;

@@ -1,0 +1,4 @@
+# 2026-11-20T14:18:57Z node v22.23.5 — after writing qa-results.md
+$ node scripts/check-task.mjs docs/tasks/SWR-008
+OK docs/tasks/SWR-008
+exit=0

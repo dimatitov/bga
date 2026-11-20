@@ -20,6 +20,7 @@ import {
   type StoredRebellionSetup,
 } from '../schema';
 import { createRebellionAutomation, type RebellionAutomationOptions } from './automation';
+import { rebellionRules } from './rules-context';
 import { upcastState, upcastStoredSetup } from './upcast';
 
 /**
@@ -166,6 +167,12 @@ export function createRebellionServerModule(
 
     /** SWR-006: the AI side of `core-v1` AI games (`strategy: null` for hot-seat and `mock-v1`). */
     automation: createRebellionAutomation(options.automation),
+
+    /**
+     * SWR-008 C-6: the rules knowledge base for the AI rules context (pinned engine scope + public decision tags).
+     * Loaded by the server only when it is used (openai strategy with rules on, Q-BE-2).
+     */
+    rules: rebellionRules,
   });
 }
 

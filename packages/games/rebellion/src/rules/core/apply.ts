@@ -7,6 +7,8 @@
  * `notYourSide`: with `origin: 'player'` (default) the actor must be a human side; with `origin: 'auto'`
  * it must be the AI side of an AI game (the auto-play loop itself is the server's, W5).
  * The first failure is returned; `state` is never mutated; every accepted command is `version + 1` once.
+ * After the command's own transition the central state checks run (`runStateChecks`: base reveal + Empire
+ * victory, SWR-008 DISC-009); after `FINISH_ACTIVATION` the turn is handed over only then, if the game goes on.
  */
 import { ERROR_MESSAGE_KEYS } from '@bga/platform';
 import {
@@ -25,7 +27,8 @@ import { participants } from '../turn';
 import { applyActivate, validateActivate } from './activation';
 import { finalize, illegal, type Transition } from './helpers';
 import { applyMove, validateMove } from './movement';
-import { applyAcceptHandoff, applyFinishActivation, applyPass } from './turn-flow';
+import { runStateChecks } from './state-checks';
+import { applyAcceptHandoff, applyFinishActivation, applyPass, handOver } from './turn-flow';
 
 function fail(error: CoreError): ApplyResult<CoreGameState> {
   return { ok: false, error };
@@ -106,5 +109,9 @@ export function applyCoreCommand(
       return unreachable;
     }
   }
-  return { ok: true, ...finalize(state, transition, ctx.now) };
+  let checked = runStateChecks(transition);
+  if (command.type === 'FINISH_ACTIVATION' && checked.state.outcome === null) {
+    checked = handOver(checked, actor);
+  }
+  return { ok: true, ...finalize(state, checked, ctx.now) };
 }

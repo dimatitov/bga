@@ -57,6 +57,27 @@ export const AutomationCandidateSchema = z.strictObject({
 });
 export type AutomationCandidate = z.infer<typeof AutomationCandidateSchema>;
 
+/** Decision tag of `AutomationRulesQuery`: lowercase kebab, ≤ 32 chars (same as the Rules Context contract). */
+const RULES_QUERY_TAG_PATTERN = /^[a-z0-9][a-z0-9-]{0,31}$/;
+
+/**
+ * SWR-008 (QD-7): what the rules selection may use. MUST be derived only from information public to BOTH sides
+ * (never from candidates or the actor's private state). Unknown → omit (selection then uses phase + side only).
+ */
+export const AutomationRulesQuerySchema = z
+  .strictObject({
+    commandTypes: z.array(text(AUTOMATION_LIMITS.typeMax)).max(16),
+    tags: z.array(z.string().regex(RULES_QUERY_TAG_PATTERN)).max(8),
+  })
+  .superRefine((query, ctx) => {
+    for (const key of ['commandTypes', 'tags'] as const) {
+      if (new Set(query[key]).size !== query[key].length) {
+        ctx.addIssue({ code: 'custom', path: [key], message: `${key} must be unique` });
+      }
+    }
+  });
+export type AutomationRulesQuery = z.infer<typeof AutomationRulesQuerySchema>;
+
 /**
  * Everything a strategy may see at one automated step (Q-9: validated by the server before use; an
  * invalid decision point is a program error and is never sent to a model).
@@ -75,6 +96,8 @@ export const AutomationDecisionPointSchema = z
     /** The bot's choice; must be one of `candidates`. */
     fallbackCandidateId: candidateId,
     policyId: z.string().regex(AUTOMATION_POLICY_ID_PATTERN),
+    /** SWR-008: public input of the rules selection (optional; see `AutomationRulesQuerySchema`). */
+    rulesQuery: AutomationRulesQuerySchema.optional(),
   })
   .superRefine((point, ctx) => {
     const ids = point.candidates.map((c) => c.id);
@@ -147,8 +170,9 @@ export const AutomationStopReasonSchema = z.enum([
 export type AutomationStopReason = z.infer<typeof AutomationStopReasonSchema>;
 
 /**
- * D-PO-3: why a step fell back to the bot. Codes are not secret. `AI_DEADLINE` exists only here (it is not an
- * AI-layer error code); any other failure is reported as `AI_PROVIDER_ERROR` (Q-23).
+ * D-PO-3: why a step fell back to the bot. Codes are not secret. `AI_DEADLINE` and `AI_PROMPT_TOO_LARGE` exist only
+ * here (they are not AI-layer error codes); any other failure is reported as `AI_PROVIDER_ERROR` (Q-23).
+ * New codes are appended last (SWR-008: `AI_PROMPT_TOO_LARGE`).
  */
 export const AutomationFallbackCodeSchema = z.enum([
   'AI_TIMEOUT',
@@ -158,6 +182,8 @@ export const AutomationFallbackCodeSchema = z.enum([
   'AI_NOT_CONFIGURED',
   'AI_BUDGET_EXCEEDED',
   'AI_DEADLINE',
+  /** SWR-008: the prompt exceeds the size limit even without the rules block (no model call, no reservation). */
+  'AI_PROMPT_TOO_LARGE',
 ]);
 export type AutomationFallbackCode = z.infer<typeof AutomationFallbackCodeSchema>;
 

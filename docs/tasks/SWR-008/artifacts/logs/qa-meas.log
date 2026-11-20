@@ -1,0 +1,24 @@
+# 2026-11-20T14:13:24Z QA review of the real benchmark (TC-MEAS-01..04). QA made NO OpenAI call; the run was made by the Analyst (bench-real.log).
+## exit / summary lines of bench-real.log
+bench plan: game=rebellion scenarios=14 variants=bot,openai-no-rules,openai-rules repeats=3 decisions=126 model-calls=84
+bench rules: version=rebellion@1:55b423d7bfef maxChars=6000 maxPromptTokens=16000
+bench worst case: model=gpt-6-luna role=tactical retries=2: $0.209592 (Σ reservations of 84 calls); hard cap --max-usd $1.000000; the run can spend at most $0.209592
+bench done: mode=real decisions=126 spent=$0.008932
+bench report: /Users/dimatitov/WebstormProjects/Game automa/docs/tasks/SWR-008/artifacts/benchmark/real-20261120-140206.json
+bench report: /Users/dimatitov/WebstormProjects/Game automa/docs/tasks/SWR-008/artifacts/benchmark/real-20261120-140206.md
+exit=0
+## provider / model in the attempt lines
+  84 ai.attempt provider=openai model=gpt-6-luna
+## secret scan (sk-, Bearer, api_key, authorization, OPENAI_API_KEY) in bench-real.log + real-*.{json,md}
+logs/bench-real.log:0
+benchmark/real-20261120-140206.md:0
+benchmark/real-20261120-140206.json:0
+## report header {"mode":"real","model":"gpt-6-luna","modelRole":"tactical","rulesVersion":"rebellion@1:55b423d7bfef","repeats":3,"scenarios":14,"variants":["bot","openai-no-rules","openai-rules"],"stopped":null,"spentMicroUsd":8932,"maxUsd":1,"generatedAt":"2026-11-20T14:04:21.182Z"}
+decisions 126 cells 42 min repeats/cell 3 max 3
+model decisions 84 sources ["model"] nonzero inputTokens 84 distinct durationMs 79
+TC-MEAS-04 decisions Σ openai-no-rules cost 4070 in 36576 out 1962
+TC-MEAS-04 decisions Σ openai-rules cost 4862 in 95214 out 2057
+TC-MEAS-04 usageByRules {"withRules":{"decisions":42,"costMicroUsd":4862,"inputTokens":95214,"cachedInputTokens":63392,"outputTokens":2057,"meanCostMicroUsd":115.76190476190476,"meanInputTokens":2267,"meanDurationMs":1492.857142857143},"withoutRules":{"decisions":42,"costMicroUsd":4070,"inputTokens":36576,"cachedInputTokens":6552,"outputTokens":1962,"meanCostMicroUsd":96.9047619047619,"meanInputTokens":870.8571428571429,"meanDurationMs":1675.8333333333333},"total":{"decisions":84,"costMicroUsd":8932,"inputTokens":131790,"cachedInputTokens":69944,"outputTokens":4019,"meanCostMicroUsd":106.33333333333333,"meanInputTokens":1568.9285714285713,"meanDurationMs":1584.345238095238}}
+TC-MEAS-04 metrics {"bot":{"costMicroUsd":0,"inputTokens":0,"outputTokens":0},"openai-no-rules":{"costMicroUsd":4070,"inputTokens":36576,"outputTokens":1962},"openai-rules":{"costMicroUsd":4862,"inputTokens":95214,"outputTokens":2057}}
+spent == Σ cost of model rows: true 8932 <= 1e6: true
+comparisons [["goalScore",-0.07142857142857144,null,"no-measurable-effect"],["expectedHitRate",-0.023809523809523815,null,"no-measurable-effect"],["unjustifiedPassRate",0,null,"no-measurable-effect"],["validRate",0,null,"no-measurable-effect"],["costPerDecisionMicroUsd",18.857142857142854,null,"rules-worse"],["inputTokens",1396.142857142857,null,"rules-worse"],["latencyP50Ms",-106.57142857142857,null,"no-measurable-effect"]]

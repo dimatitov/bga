@@ -1,7 +1,7 @@
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import { useQuery } from '@tanstack/react-query';
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { isApiError, isNotFound } from '@/shared/api/errors';
@@ -18,6 +18,13 @@ import { SessionNotFound } from './SessionNotFound';
 import { SessionUnsupported } from './SessionUnsupported';
 
 const GAME_UNAVAILABLE = 'GAME_UNAVAILABLE';
+
+// SWR-008 AC-13 (plan-frontend §2.1–§2.2): literal guard, as in `app/router.tsx` — folded in `vite build`, so the dev
+// chunk of the AI decision panel, its strings, testids and endpoint path vanish from production. The panel itself is
+// further gated by the opt-in switch of `/dev/ai` (off by default) and an automated participant.
+const DevAiSessionDiagnostics = import.meta.env.DEV
+  ? lazy(() => import('@/dev/ai/session/entry'))
+  : null;
 
 function SessionView({ sessionId }: { sessionId: string }) {
   const { t } = useTranslation();
@@ -95,6 +102,11 @@ function SessionView({ sessionId }: { sessionId: string }) {
         </Alert>
       ) : null}
       <AutomationNotice automation={automation} stacked={refetchFailed} />
+      {DevAiSessionDiagnostics ? (
+        <Suspense fallback={null}>
+          <DevAiSessionDiagnostics sessionId={sessionId} automation={automation} />
+        </Suspense>
+      ) : null}
       <SessionAutomationContext value={automation}>
         <Suspense fallback={<SessionLoading />}>
           <TableScreen

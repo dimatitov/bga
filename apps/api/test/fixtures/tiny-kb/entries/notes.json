@@ -1,0 +1,14 @@
+[
+  {
+    "id": "fake:impl.engine-scope",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "core",
+    "category": "general",
+    "title": "What the fake engine plays",
+    "text": "The fake engine implements only moving one step and waiting; every other rule is out of scope.",
+    "sources": [{ "sourceId": "FR", "page": 2, "section": "Turn" }],
+    "ai": "core",
+    "discrepancyIds": ["DISC-001"]
+  }
+]

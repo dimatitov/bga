@@ -50,6 +50,27 @@ describe('.env.example ↔ env schema', () => {
     }
   });
 
+  it('SWR-008 TC-INT-09 / C-7: rules context and prompt limit listed with their defaults (on, 6000, 16000)', () => {
+    const vars = parseDotenv(EXAMPLE);
+    expect(vars.AI_COMMANDER_RULES_CONTEXT).toBe('on');
+    expect(vars.AI_COMMANDER_RULES_MAX_CHARS).toBe('6000');
+    expect(vars.AI_COMMANDER_MAX_PROMPT_TOKENS).toBe('16000');
+    expect(parseEnv(vars).aiCommander).toMatchObject({
+      rulesContext: 'on',
+      rulesMaxChars: 6000,
+      maxPromptTokens: 16000,
+    });
+    expect(parseEnv(vars).knowledgeBaseRoot).toBeNull();
+    // Each variable has a comment line right above it (what it does, values, default).
+    for (const key of [
+      'AI_COMMANDER_RULES_CONTEXT',
+      'AI_COMMANDER_RULES_MAX_CHARS',
+      'AI_COMMANDER_MAX_PROMPT_TOKENS',
+    ]) {
+      expect(EXAMPLE).toMatch(new RegExp(`^#[^\\n]*\\n${key}=`, 'm'));
+    }
+  });
+
   it('TC-ENV-18: the example models / limits are valid when OpenAI is switched on', () => {
     const vars = parseDotenv(EXAMPLE);
     const config = parseEnv({

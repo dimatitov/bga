@@ -1,0 +1,18 @@
+# 2026-11-20T14:03:26Z gh run list --repo dimatitov/bga --branch main --limit 3; local HEAD 3fe4a66499ea2cfbd37fb07960b98581c02b7556
+completed	success	Merge PR #1: SWR-007 Node 22, pnpm 12, openai 7, CI (+ SQLite busy ti…	CI	main	push	44742036738	14m14s	2026-11-20T13:10:52Z
+completed	success	e2e TC-006: scroll the Start button into view before raw mouse clicks	CI	main	push	44737770513	10m33s	2026-11-20T12:56:10Z
+completed	failure	e2e TC-006: wait for a stable button box before raw mouse clicks	CI	main	push	44735517974	14m39s	2026-11-20T12:24:26Z
+
+# gh run view 44742036738
+
+✓ main CI · 44742036738
+Triggered via push about 52 minutes ago
+
+JOBS
+✓ pnpm verify + check-task in 14m11s (ID 136307833278)
+
+For more information about the job, try: gh run view --job=136307833278
+View this run on GitHub: https://github.com/dimatitov/bga/actions/runs/44742036738
+
+# headSha
+{"conclusion":"success","event":"push","headSha":"3fe4a66499ea2cfbd37fb07960b98581c02b7556","status":"completed","url":"https://github.com/dimatitov/bga/actions/runs/44742036738"}

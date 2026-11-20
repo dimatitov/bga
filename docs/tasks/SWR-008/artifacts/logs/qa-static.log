@@ -1,0 +1,111 @@
+# 2026-11-20T14:11:00Z QA static checks, HEAD 3fe4a66 + uncommitted SWR-008
+
+## TC-D-31: rg revealBase(|runStateChecks(|revealsBaseNow|checkEmpireVictory( in packages/games/rebellion/src/rules/core
+packages/games/rebellion/src/rules/core/apply.ts:112:  let checked = runStateChecks(transition);
+packages/games/rebellion/src/rules/core/state-checks.ts:54:export function runStateChecks(transition: Transition): Transition {
+packages/games/rebellion/src/rules/core/state-checks.ts:59:    checked = revealBase(checked);
+packages/games/rebellion/src/rules/core/state-checks.ts:61:  return checkEmpireVictory(checked);
+packages/games/rebellion/src/rules/core/victory.ts:22:export function revealBase(transition: Transition): Transition {
+packages/games/rebellion/src/rules/core/victory.ts:42:export function checkEmpireVictory(transition: Transition): Transition {
+packages/games/rebellion/src/rules/core/create.ts:115:  const checked = runStateChecks({ state: created, drafts: [] });
+
+## TC-D-31/TC-D-37: revealsBaseNow anywhere (src, knowledge, docs/game-rules)
+0 matches
+
+## TC-CT-08: network/RAG/node: in platform rules-context + rules-kb
+0 matches
+
+## TC-CT-01: Rebellion words in packages/platform/src (new SWR-008 files)
+0 matches
+
+## TC-CT-02/TC-ARB-07: game imports / engine calls in apps/api/src/{ai,sessions,rules-context,bench}
+apps/api/src/sessions/session-commands.service.ts:55:    const result = module.applyCommand(state, body, { now });
+
+## TC-RS-04: state schema version / schema diff
+packages/games/rebellion/src/schema/settings.ts:16:export const REBELLION_STATE_SCHEMA_VERSION = 3;
+
+## TC-INT-06: TC-OA-05 snapshot files changed vs HEAD?
+(no __snapshots__ dir: inline snapshot)
+(removed lines above, if any)
+
+## TC-INT-07: golden swr006-commander-requests.json tracked? mtime
+?? apps/api/test/fixtures/swr006-commander-requests.json
+Nov 20 14:55:19 2026 apps/api/test/fixtures/swr006-commander-requests.json
+Nov 20 15:08:51 2026 apps/api/src/ai/prompt.ts
+Nov 20 15:40:55 2026 apps/api/src/sessions/automation/openai-commander.strategy.ts
+
+## TC-COST-04: migration + schema AiUsage columns
+-- SWR-008 (AC-12, plan-backend §5): rules-context accounting columns of AiUsage (hand-written, data-preserving:
+-- ADD COLUMN only, no table rebuild; the generated RedefineTables variant was replaced). Existing rows get the
+-- "rules off" defaults; promptTokensUpperBound stays NULL for rows written before SWR-008.
+-- Rule ids only (public KB ids as a JSON array) — never rule text, prompt text or the model's reason.
+-- No down migration: roll back = restore a DB copy.
+ALTER TABLE "AiUsage" ADD COLUMN "rulesEnabled" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesVersion" TEXT;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesCount" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesIds" TEXT;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesChars" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesTokensEstimate" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesTruncated" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "AiUsage" ADD COLUMN "rulesDropped" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "AiUsage" ADD COLUMN "promptTokensUpperBound" INTEGER;
+model AiUsage {
+  id                    String   @id // UUID
+  budgetKey             String
+  provider              String // 'openai' | 'mock'
+  model                 String // configured model id ('mock-deterministic-v1' for mock)
+  role                  String // 'strategy' | 'tactical'
+  /// 'ok' | 'invalid_decision' | 'timeout' | 'rate_limited' | 'provider_error' | 'not_configured' | 'budget_exceeded'
+  status                String
+  attempts              Int
+  inputTokens           Int      @default(0)
+  cachedInputTokens     Int      @default(0)
+  outputTokens          Int      @default(0)
+  reasoningTokens       Int?
+  /// Estimated cost in integer micro-USD (1 USD = 1 000 000), Q-15: summed without float error.
+  estimatedCostMicroUsd Int      @default(0)
+  /// Version of the pricing table the estimate was computed with (AM-BE-7).
+  pricingVersion        String
+  durationMs            Int
+  errorCode             String? // platform ErrorCode
+  createdAt             DateTime @default(now())
+
+  // SWR-008 (AC-12, plan-backend §5): rules context of the request. Never rule text, prompt text or the model's reason.
+  /// SWR-008: rules context switched on for this request (AI_COMMANDER_RULES_CONTEXT=on, commander only).
+  rulesEnabled           Boolean @default(false)
+  /// Rules set version (`<gameId>@<formatVersion>:<hash12>`); null = off / the game has no rules / dev-test.
+  rulesVersion           String?
+  rulesCount             Int     @default(0)
+  /// JSON array of the PUBLIC rule ids sent (never rule text); null when none.
+  rulesIds               String?
+  rulesChars             Int     @default(0)
+  /// ceil(rulesChars / 4) — estimate; the real delta is measured by the benchmark.
+  rulesTokensEstimate    Int     @default(0)
+  rulesTruncated         Boolean @default(false)
+  /// Removed by the prompt-size limit (QD-9).
+  rulesDropped           Boolean @default(false)
+  /// upperBoundInputTokens of the sent prompt (the reservation basis); null = before SWR-008.
+  promptTokensUpperBound Int?
+
+  @@index([budgetKey, createdAt])
+}
+
+## TC-H-10: diff of existing hidden-info tests (removed lines)
+### apps/api/test/automation-hidden-info.int.test.ts: 24	0	apps/api/test/automation-hidden-info.int.test.ts
+### packages/games/rebellion/test/server/automation-hidden-base.test.ts: 26	3	packages/games/rebellion/test/server/automation-hidden-base.test.ts
+-import type { AutomationDecisionPoint, GameAutomation } from '@bga/platform';
+-import { deriveBaseIntel, situationFor } from '../../src/ai';
+-    expect(automation.decisionPoint(b), to).toEqual(pointA);
+### apps/api/test/hidden-info-core.int.test.ts: 
+### packages/games/rebellion/test/rules/core/hidden-info.test.ts: 13	0	packages/games/rebellion/test/rules/core/hidden-info.test.ts
+### e2e/core-hidden-base.spec.ts: 
+
+## TC-DIAG-03: dist scan (apps/web/dist from the last build)
+Nov 20 16:55:29 2026 apps/web/dist/index.html
+0 files
+
+## TC-WF-03: test-cases.md mtime vs first SWR-008 code
+Nov 20 15:08:01 2026 docs/tasks/SWR-008/test-cases.md
+Nov 20 15:02:40 2026 packages/games/rebellion/src/rules/core/state-checks.ts
+Nov 20 14:56:27 2026 packages/platform/src/rules-context.ts
+Nov 20 15:29:08 2026 apps/api/test/rules-off-golden.int.test.ts

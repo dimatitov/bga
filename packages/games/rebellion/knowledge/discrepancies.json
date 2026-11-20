@@ -135,14 +135,14 @@
   },
   {
     "id": "DISC-009",
-    "title": "Base reveal checked only at the end of an Imperial activation (R-8, latent gap)",
+    "title": "Base reveal as a central state check (fixed in SWR-008; loyalty part waits for DISC-005)",
     "kind": "latent-gap",
     "severity": "medium",
     "ruleIds": ["rebellion:base.reveal-condition", "rebellion:base.reveal-timing"],
-    "engineBehaviour": "R-8: the base is revealed at FINISH_ACTIVATION of an Imperial activation of the base system when an Imperial ground unit is there. Within core-v1 this is equivalent, because Imperial ground units can only arrive by such an activation and loyalty does not exist.",
+    "engineBehaviour": "R-8, SWR-008: one state check (runStateChecks) runs after every accepted core-v1 command and at game creation; it reveals the base once when an Imperial ground unit stands in the base system; during an Imperial activation the reveal waits for the end of its movement (FINISH_ACTIVATION). Imperial loyalty does not exist (DISC-005).",
     "officialBehaviour": "Whenever the Empire has loyalty or ground units in the base system, the base must be revealed (\"ever\", RR p.11; LTP p.12); after movement it happens before combat (RR p.2 step 3).",
-    "decision": "fix-later",
-    "followUp": "Before adding loyalty, missions that move or place units, or deployment: make the reveal a state check run after every state change.",
+    "decision": "fixed",
+    "followUp": "Loyalty slice: add Imperial loyalty to baseRevealConditionMet. Combat slice: keep the reveal after movement and before combat (activation step 3).",
     "refs": ["rebellion:impl.reveal-only-at-finish", { "sourceId": "RR", "page": 11 }]
   },
   {

@@ -1,5 +1,26 @@
 [
   {
+    "id": "rebellion:impl.engine-scope",
+    "kind": "implementation-note",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "What the core-v1 engine can do",
+    "text": "The engine plays only the Command Phase: on a turn a side activates a system with a leader from its pool, moves its own units into it, finishes the activation, or passes. Combat, missions, production, deployment, recruiting, probe droids, objectives, loyalty and subjugation are not implemented: rules about them do not apply, and only the actions listed by the engine exist.",
+    "sources": [
+      { "sourceId": "RR", "page": 2, "section": "Activating Systems" },
+      { "sourceId": "RR", "page": 3, "section": "Assignment Phase" }
+    ],
+    "discrepancyIds": ["DISC-001", "DISC-002", "DISC-003", "DISC-005"],
+    "related": [
+      "rebellion:impl.no-combat",
+      "rebellion:impl.no-missions",
+      "rebellion:impl.refresh-partial",
+      "rebellion:impl.no-loyalty"
+    ],
+    "ai": "core"
+  },
+  {
     "id": "rebellion:impl.no-combat",
     "kind": "implementation-note",
     "status": "verified",
@@ -131,10 +152,10 @@
     "status": "verified",
     "product": "base",
     "category": "rebel-base",
-    "title": "core-v1 checks the reveal only at the end of an Imperial activation",
-    "text": "core-v1 reveals the base when the Empire finishes an activation of the base system with an Imperial ground unit in it. Within the slice this equals the official rule, but the official condition is permanent (any time Imperial loyalty or ground units are there) and will need a general check once loyalty, deployment or missions exist.",
+    "title": "core-v1 reveals the base by a central state check",
+    "text": "After every accepted command and at game creation core-v1 reveals the base once if an Imperial ground unit stands in its system; during an Imperial activation the reveal waits until the activation's movement ends (FINISH_ACTIVATION). Imperial loyalty does not exist, so it cannot reveal the base.",
     "sources": [{ "sourceId": "RR", "page": 11, "section": "Revealing the Rebel Base" }],
-    "discrepancyIds": ["DISC-009"],
+    "discrepancyIds": ["DISC-009", "DISC-005"],
     "related": ["rebellion:base.reveal-condition", "rebellion:base.reveal-timing"],
     "ai": "none"
   },

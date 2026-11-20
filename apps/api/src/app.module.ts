@@ -16,6 +16,8 @@ import { DevAiModule } from './dev/ai/dev-ai.module';
 import { GameRegistryModule } from './game-registry/game-registry.module';
 import { HealthModule } from './health/health.module';
 import { PersistenceModule } from './persistence/persistence.module';
+import { RulesContextModule } from './rules-context/rules-context.module';
+import type { RulesContextTestOverrides } from './rules-context/rules-context.registry';
 import {
   AUTOMATION_TEST_OVERRIDES,
   type AutomationTestOverrides,
@@ -33,6 +35,8 @@ export interface AppModuleOptions {
   ai?: AiTestOverrides;
   /** Test-only automation overrides (SWR-006 §6.3); never set in production (createApp refuses). */
   automation?: AutomationTestOverrides;
+  /** Test-only rules context overrides (SWR-008 TR-1: knowledge base loader); never set in production. */
+  rules?: RulesContextTestOverrides;
 }
 
 /** Dev-only modules exist only outside production (SWR-005B BD-8): in production their routes are 404. */
@@ -51,6 +55,12 @@ export class AppModule {
         GameRegistryModule.forRoot({
           modules: options.gameModules,
           definitions: options.gameDefinitions,
+        }),
+        // SWR-008 C-8: after the game registry (validated modules); loads knowledge bases once, fail fast.
+        RulesContextModule.forRoot({
+          config: options.config,
+          modules: options.gameModules,
+          loader: options.rules?.loader,
         }),
         HealthModule,
         SessionsModule,

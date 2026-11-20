@@ -10,6 +10,7 @@ import type { AppConfig } from './config/env';
 import { DEV_AI_PATH, devAiBodyGate } from './dev/ai/dev-ai-body.middleware';
 import { GAME_DEFINITIONS } from './game-registry/definitions';
 import { SERVER_GAME_MODULES } from './game-registry/registry';
+import type { RulesContextTestOverrides } from './rules-context/rules-context.registry';
 import type { AutomationTestOverrides } from './sessions/automation/automation.tokens';
 
 export interface CreateAppOptions {
@@ -37,6 +38,11 @@ export interface CreateAppOptions {
    * `nodeEnv: 'production'`.
    */
   automation?: AutomationTestOverrides;
+  /**
+   * Test-only rules context overrides (SWR-008 C-8, TR-1: knowledge base loader — broken bases, load counter).
+   * Refused with `nodeEnv: 'production'`.
+   */
+  rules?: RulesContextTestOverrides;
 }
 
 /** `createApp` was given test-only options under `nodeEnv: 'production'`. */
@@ -51,12 +57,13 @@ export class ProductionOverridesError extends Error {
  * Single app factory for `main.ts` and integration tests. Returns the app WITHOUT `listen`
  * (tests call `init()`). Global prefix `/api`; global ApiExceptionFilter gives every non-2xx
  * response the unified body `{ ok: false, error }` (R-8). Several apps may be created in turn
- * on the same DB file (TC-API-21). An inconsistent game registry makes it throw (validateRegistry).
+ * on the same DB file (TC-API-21). An inconsistent game registry makes it throw (validateRegistry), and so does a
+ * broken rules knowledge base when the openai commander uses rules (SWR-008 C-8: loaded once, before the app exists).
  */
 export async function createApp(options: CreateAppOptions): Promise<INestApplication> {
   if (
     options.config.nodeEnv === 'production' &&
-    (options.ai !== undefined || options.automation !== undefined)
+    (options.ai !== undefined || options.automation !== undefined || options.rules !== undefined)
   ) {
     throw new ProductionOverridesError();
   }
@@ -69,6 +76,7 @@ export async function createApp(options: CreateAppOptions): Promise<INestApplica
       gameDefinitions: options.gameDefinitions ?? GAME_DEFINITIONS,
       ai: options.ai,
       automation: options.automation,
+      rules: options.rules,
     }),
     { logger: options.logger ?? ['error', 'warn', 'log'] },
   );

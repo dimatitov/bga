@@ -10,8 +10,18 @@
  *   7. one `AiUsage` row for every outcome (insert, one retry on failure), THEN release of the reservation;
  *   8. `{ decision, budget }`.
  * Nothing is executed: the layer never sees or changes game state.
+ *
+ * SWR-008 (C-9, §4.3, §5): unchanged order and budget mechanism. A commander context may carry a rules block (fitted
+ * under the prompt limit by `fitCommanderPrompt` BEFORE this service); the reservation is computed from the full
+ * prompt (with the rules block), and every row records the rules accounting + the prompt's upper bound of tokens.
  */
-import { ERROR_MESSAGE_KEYS, usdToMicroUsd, type AiErrorCode } from '@bga/platform';
+import {
+  ERROR_MESSAGE_KEYS,
+  RULES_CONTEXT_LIMITS,
+  RULES_VERSION_PATTERN,
+  usdToMicroUsd,
+  type AiErrorCode,
+} from '@bga/platform';
 import { ApiError } from '../common/api-error';
 import type { OpenAIConfig } from '../config/env';
 import { emitAiLog, formatAiSummaryLine } from './ai-log';
@@ -37,7 +47,8 @@ import { validateDecision } from './decision-validator';
 import type { ModelAvailabilityService } from './model-availability.service';
 import { modelForRole, ROLE_DEFAULTS } from './model-roles';
 import { pricingFor, PRICING_VERSION, worstCaseReserveMicroUsd } from './pricing';
-import { buildPrompt, upperBoundInputTokens } from './prompt';
+import { promptUpperBound } from './prompt-fit';
+import { rulesTokensEstimate } from './prompt';
 import { MOCK_MODEL_ID } from './providers/mock.provider';
 import { clampMaxRetries } from './retry';
 
@@ -245,10 +256,10 @@ export class AiDecisionService {
   }
 
   private reserveFor(ctx: AIDecisionContext, model: string): number {
-    const ids = ctx.availableActions.map((a) => a.id);
     const reserve = worstCaseReserveMicroUsd(
       model,
-      upperBoundInputTokens(buildPrompt(ctx), ids),
+      // Full prompt of the request, rules block included (SWR-008 §4.3, TC-BUD-01).
+      promptUpperBound(ctx),
       ROLE_DEFAULTS[ctx.role].maxOutputTokens,
       clampMaxRetries(this.deps.openai.maxRetries),
     );
@@ -387,6 +398,76 @@ function assertContext(ctx: AIDecisionContext): void {
       );
     }
   }
+  if (ctx.rules !== undefined) assertRules(ctx.rules);
+}
+
+/** SWR-008 §4.3: a rules block that reaches the service is well-formed (a violation is a programming error). */
+function assertRules(rules: NonNullable<AIDecisionContext['rules']>): void {
+  const ids = rules.ruleIds;
+  if (
+    rules.text.length === 0 ||
+    rules.text.length > RULES_CONTEXT_LIMITS.maxCharsMax ||
+    ids.length === 0 ||
+    ids.length > RULES_CONTEXT_LIMITS.maxRuleIds ||
+    new Set(ids).size !== ids.length ||
+    ids.some((id) => id.length === 0 || id.length > RULES_CONTEXT_LIMITS.ruleIdMax) ||
+    !RULES_VERSION_PATTERN.test(rules.rulesVersion)
+  ) {
+    throw invalidContext(
+      ['rules'],
+      'invalid_rules',
+      `rules must hold 1..${RULES_CONTEXT_LIMITS.maxCharsMax} characters, 1..${RULES_CONTEXT_LIMITS.maxRuleIds} unique ids and a valid version`,
+    );
+  }
+}
+
+/** Rules columns of a row (AC-12). Only a commander context has rules; anything else is "rules off". */
+function rulesColumnsOf(
+  ctx: AIDecisionContext,
+): Pick<
+  NewAiUsageRow,
+  | 'rulesEnabled'
+  | 'rulesVersion'
+  | 'rulesIds'
+  | 'rulesChars'
+  | 'rulesTokensEstimate'
+  | 'rulesTruncated'
+  | 'rulesDropped'
+> {
+  const off = {
+    rulesEnabled: false,
+    rulesVersion: null,
+    rulesIds: [],
+    rulesChars: 0,
+    rulesTokensEstimate: 0,
+    rulesTruncated: false,
+    rulesDropped: false,
+  };
+  if (ctx.purpose !== 'commander') return off;
+  const a = ctx.rulesAccounting;
+  if (a !== undefined) {
+    return {
+      rulesEnabled: a.enabled,
+      rulesVersion: a.rulesVersion,
+      rulesIds: [...a.ruleIds],
+      rulesChars: a.chars,
+      rulesTokensEstimate: rulesTokensEstimate(a.chars),
+      rulesTruncated: a.truncated,
+      rulesDropped: a.dropped,
+    };
+  }
+  // A rules block without accounting (not produced by fitCommanderPrompt): record what was sent.
+  const r = ctx.rules;
+  if (r === undefined || r.text === '') return off;
+  return {
+    rulesEnabled: true,
+    rulesVersion: r.rulesVersion,
+    rulesIds: [...r.ruleIds],
+    rulesChars: r.text.length,
+    rulesTokensEstimate: rulesTokensEstimate(r.text.length),
+    rulesTruncated: r.truncated,
+    rulesDropped: false,
+  };
 }
 
 function rowFor(
@@ -419,5 +500,8 @@ function rowFor(
     pricingVersion: PRICING_VERSION,
     durationMs: Math.max(0, Math.round(v.durationMs)),
     errorCode: v.errorCode,
+    ...rulesColumnsOf(ctx),
+    // The reservation basis (same estimate as reserveFor), also on mock / failure rows.
+    promptTokensUpperBound: promptUpperBound(ctx),
   };
 }

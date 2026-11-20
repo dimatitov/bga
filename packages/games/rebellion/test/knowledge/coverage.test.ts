@@ -101,11 +101,12 @@ describe('core-v1 coverage (AC-5)', () => {
     );
   });
 
-  it('cites only tests that SWR-006 does not edit', () => {
+  // SWR-008 (QD-21): + the DISC-009 central state check tests (state-checks, reveal-invariant) — stable engine tests.
+  it('cites only stable engine tests (not edited by SWR-006 / SWR-008 workers of other zones)', () => {
     for (const i of coverage.items) {
       for (const t of i.tests ?? []) {
         expect(t.path, i.ruleId).toMatch(
-          /^packages\/games\/rebellion\/test\/(rules\/core\/(activate|move|legal|reveal|base|create|turn-flow|victory)|scenario\/core-data)\.test\.ts$/,
+          /^packages\/games\/rebellion\/test\/(rules\/core\/(activate|move|legal|reveal|base|create|turn-flow|victory|state-checks|reveal-invariant)|scenario\/core-data)\.test\.ts$/,
         );
       }
     }

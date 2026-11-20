@@ -2,6 +2,8 @@
  * Decision point of the bot (SWR-006 Contract §5, D-PO-1, D-PO-2, plan-backend §4.1; TC-BOT-02, TC-BOT-07,
  * TC-BOT-08, TC-BOT-09, TC-H-01, TC-H-03): top-10, opaque ids, terminating action, fallback, policy id;
  * every command engine-legal with origin 'auto'; invariant to the hidden base for the Empire.
+ * SWR-008 W4 (C-3/C-4, TC-ARB-06, TC-H-02): every point carries `rulesQuery = rulesQueryFor(view)`; the
+ * candidates and the fallback are those of SWR-006 (the query never feeds the ranking).
  */
 import { describe, expect, it } from 'vitest';
 import {
@@ -9,11 +11,13 @@ import {
   DESCRIBE_LIMITS,
   MAX_DECISION_CANDIDATES,
   basePolicy,
+  botSeed,
   buildDecision,
   chooseAutoCommand,
   policyContext,
   rankCandidates,
   rankWith,
+  rulesQueryFor,
   selectTop,
   type BotCandidate,
   type BotDecision,
@@ -64,6 +68,8 @@ function checkDecision(state: CoreGameState, decision: BotDecision): void {
   expect(point.policyId).toBe(`${BOT_POLICY_ID}:${state.settings.aiDifficulty}`);
   expect(point.actor).toBe(state.activeSide);
   expect(point.phase).toBe(view.phase);
+  // SWR-008 C-4: the public rules query of the actor's own view.
+  expect(point.rulesQuery).toEqual(rulesQueryFor(view));
   expect([...commands.keys()]).toEqual(ids);
   const legalTypes = new Set(view.legalActions.map((a) => a.type));
   const terminating = legalTypes.has('PASS') ? 'PASS' : 'FINISH_ACTIVATION';
@@ -148,6 +154,11 @@ describe('buildDecision — fixed states', () => {
     ]);
     expect(decision?.point.policyId).toBe('auto-pass-v1');
     expect(decision?.point.fallbackCandidateId).toBe('c1');
+    // SWR-008 C-4: the legacy policy carries the rules query too.
+    expect(decision?.point.rulesQuery).toEqual({
+      commandTypes: ['ACTIVATE_SYSTEM', 'PASS'],
+      tags: ['base-hidden'],
+    });
     expect(buildDecision(toSideView(state, 'rebels'), { policy: () => null })).toBeNull();
   });
 
@@ -183,6 +194,63 @@ describe('buildDecision — fixed states', () => {
     expect(basePolicy(ranked, {} as never)).toEqual(ranked.map((c) => (c.key === 'P' ? 1 : 0)));
     // @ts-expect-error TC-BOT-05: a full game state is not a CorePlayerView
     expect(() => rankCandidates(state, 'normal', 'seed')).toThrow();
+  });
+});
+
+describe('SWR-008 rulesQuery on the decision point (C-3/C-4, TC-ARB-06)', () => {
+  const SWR006_KEYS = [
+    'actor',
+    'candidates',
+    'fallbackCandidateId',
+    'objective',
+    'phase',
+    'policyId',
+    'situation',
+  ];
+
+  it('the query is the only addition: candidates / fallback equal an independent SWR-006 recomputation', () => {
+    let points = 0;
+    for (const aiSide of ['empire', 'rebels'] as Faction[]) {
+      for (const difficulty of ['easy', 'hard'] as Difficulty[]) {
+        for (const state of walk(aiGameSettings(aiSide, difficulty), `swr008-arb06-${aiSide}`)) {
+          if (state.outcome !== null || state.activeSide !== aiSide) continue;
+          const view = toSideView(state, aiSide);
+          const decision = buildDecision(view);
+          if (!decision) throw new Error('the AI side has legal actions');
+          const { rulesQuery, ...rest } = decision.point;
+          expect(Object.keys(rest).sort()).toEqual(SWR006_KEYS);
+          expect(rulesQuery).toEqual(rulesQueryFor(view));
+          // The ranking never sees the query: the candidates are the SWR-006 top-10 of the same view.
+          const top = selectTop(rankCandidates(view, difficulty, botSeed(view)));
+          expect(rest.candidates.map((c) => [c.id, c.type, c.target])).toEqual(
+            top.map((c, i) => [`c${i + 1}`, c.command.type, c.systemId ?? undefined]),
+          );
+          expect([...decision.commands.values()]).toEqual(top.map((c) => c.command));
+          expect(rest.fallbackCandidateId).toBe('c1');
+          points += 1;
+        }
+      }
+    }
+    console.info(`[bot-decision] rulesQuery points checked=${points}`);
+    expect(points).toBeGreaterThan(50);
+  }, 120_000);
+
+  it('inside an activation: FINISH_ACTIVATION + MOVE_PIECES; outside: ACTIVATE_SYSTEM + PASS', () => {
+    let state = newGame(aiGameSettings('rebels', 'normal'), 'dec-rq');
+    expect(aiDecision(state)?.point.rulesQuery).toEqual({
+      commandTypes: ['ACTIVATE_SYSTEM', 'PASS'],
+      tags: ['base-hidden'],
+    });
+    state = step(state, {
+      key: 'A|leia|kessel',
+      kind: 'activate',
+      command: { type: 'ACTIVATE_SYSTEM', leaderId: 'leia', systemId: 'kessel' },
+      systemId: 'kessel',
+    });
+    expect(aiDecision(state)?.point.rulesQuery).toEqual({
+      commandTypes: ['FINISH_ACTIVATION', 'MOVE_PIECES'],
+      tags: ['base-hidden'],
+    });
   });
 });
 
@@ -229,7 +297,10 @@ describe('Empire decisions are invariant to the hidden base (AC-04, TC-H-01)', (
             const movedView = toSideView(moved, 'empire');
             // Precondition (SWR-005 redaction): the Empire cannot tell the two states apart.
             expect(movedView).toEqual(view);
-            expect(buildDecision(movedView)).toEqual(expected);
+            const movedDecision = buildDecision(movedView);
+            expect(movedDecision).toEqual(expected);
+            // SWR-008 TC-H-02: the rules query is part of the equal point.
+            expect(movedDecision?.point.rulesQuery).toEqual(expected.point.rulesQuery);
             compared += 1;
           }
         }

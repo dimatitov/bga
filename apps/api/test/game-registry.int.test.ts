@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 import type { INestApplication } from '@nestjs/common';
 import {
   GameDefinitionSchema,
@@ -75,11 +75,18 @@ describe('server game registry (unit)', () => {
   });
 
   it('TC-ARCH-04: registries are static arrays — no runtime registration or computed imports in src', () => {
-    for (const file of sourceFiles(join(API_ROOT, 'src'))) {
+    // SWR-008 QD-22: the rules knowledge base loader lists `entries/*.json` of a directory the game names
+    // (`GameRulesSupport.knowledgeBaseDir`) — data, not code. It is the ONLY file allowed to call readdirSync.
+    const readdirAllowed = [join(API_ROOT, 'src', 'rules-context', 'knowledge-base.loader.ts')];
+    expect(readdirAllowed.map((f) => relative(API_ROOT, f).split(sep).join('/'))).toEqual([
+      'src/rules-context/knowledge-base.loader.ts',
+    ]);
+    const files = sourceFiles(join(API_ROOT, 'src'));
+    for (const allowed of readdirAllowed) expect(files).toContain(allowed);
+    for (const file of files) {
       const text = readFileSync(file, 'utf8');
-      expect(text).not.toMatch(
-        /\bregister\(|\.push\(\s*\w*Module|require\(|createRequire|readdirSync/,
-      );
+      expect(text).not.toMatch(/\bregister\(|\.push\(\s*\w*Module|require\(|createRequire/);
+      if (!readdirAllowed.includes(file)) expect(text, file).not.toMatch(/readdirSync/);
       expect(text).not.toMatch(/import\(\s*[^'"\s]/);
     }
   });

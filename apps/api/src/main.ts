@@ -13,7 +13,10 @@ void runBootstrap({
     const config = loadAppConfig({ dotenvPath: join(__dirname, '..', '.env') });
     // SWR-007 (Prisma 7 driver adapter): a relative SQLite path keeps meaning "relative to prisma/" (`.env.example`).
     const databaseUrl = resolveSqliteUrl(config.databaseUrl, join(__dirname, '..', 'prisma'));
-    return Object.freeze({ ...config, databaseUrl });
+    // SWR-008 C-7: repository root for repository-relative game knowledge bases (`GameRulesSupport.knowledgeBaseDir`).
+    // From this file's location (apps/api/dist[-e2e]/main.js → ../../..), never from the environment.
+    const knowledgeBaseRoot = join(__dirname, '..', '..', '..');
+    return Object.freeze({ ...config, databaseUrl, knowledgeBaseRoot });
   },
   createApp: async (options) => (await import('./app.factory.js')).createApp(options),
   stderr: (line) => console.error(line),

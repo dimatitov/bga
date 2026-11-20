@@ -766,8 +766,12 @@
       "status": "partial",
       "implementation": [
         {
-          "path": "packages/games/rebellion/src/rules/core/victory.ts",
-          "symbol": "revealsBaseNow"
+          "path": "packages/games/rebellion/src/rules/core/state-checks.ts",
+          "symbol": "baseRevealConditionMet"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/state-checks.ts",
+          "symbol": "runStateChecks"
         },
         {
           "path": "packages/games/rebellion/src/schema/data.ts",
@@ -782,22 +786,34 @@
         {
           "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
           "name": "a leader alone does not reveal"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/state-checks.test.ts",
+          "name": "TC-D-09: FINISH with Rebel units in the base → exactly [ACTIVATION_FINISHED, BASE_REVEALED], turn handed over"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal-invariant.test.ts",
+          "name": "bot vs bot %s on SEEDS_P (30 games)"
         }
       ],
-      "discrepancyIds": ["DISC-009", "DISC-005"],
-      "note": "R-8: checked at the end of Imperial activations only (latent gap DISC-009); Imperial loyalty does not exist (DISC-005)."
+      "discrepancyIds": ["DISC-005"],
+      "note": "R-8: Imperial ground units in the base system reveal it; one central state check (runStateChecks) after every accepted command and at game creation (DISC-009 fixed in SWR-008). Imperial loyalty does not exist (DISC-005)."
     },
     {
       "ruleId": "rebellion:base.reveal-timing",
       "status": "implemented",
       "implementation": [
         {
-          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
-          "symbol": "applyFinishActivation"
+          "path": "packages/games/rebellion/src/rules/core/state-checks.ts",
+          "symbol": "revealTimingAllows"
         },
         {
-          "path": "packages/games/rebellion/src/rules/core/victory.ts",
-          "symbol": "revealsBaseNow"
+          "path": "packages/games/rebellion/src/rules/core/state-checks.ts",
+          "symbol": "runStateChecks"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/apply.ts",
+          "symbol": "applyCoreCommand"
         }
       ],
       "tests": [
@@ -808,9 +824,17 @@
         {
           "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
           "name": "only when the activated system is the base"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/state-checks.test.ts",
+          "name": "TC-D-03: ground units moved into the base do not reveal it in the middle of the activation"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/state-checks.test.ts",
+          "name": "TC-D-27 [art]: during an Imperial activation the reveal waits — then FINISH of a NON-base system reveals"
         }
       ],
-      "note": "R-8: reveal after all movement of the Imperial activation (no combat exists yet, D-1)."
+      "note": "R-8: during an Imperial activation the reveal waits until all its movement is over (FINISH_ACTIVATION; no combat exists yet, D-1); outside it the state check reveals at once (runStateChecks in applyCoreCommand)."
     },
     {
       "ruleId": "rebellion:base.ships-do-not-reveal",
@@ -1147,6 +1171,10 @@
         {
           "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
           "symbol": "applyFinishActivation"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/state-checks.ts",
+          "symbol": "runStateChecks"
         }
       ],
       "tests": [
@@ -1160,7 +1188,7 @@
         }
       ],
       "discrepancyIds": ["DISC-001", "DISC-005"],
-      "note": "R-4/R-5/R-8: steps 1-3 (place leader, move, reveal at FINISH_ACTIVATION); step 4 combat (D-1) and step 5 subjugation (D-5) missing."
+      "note": "R-4/R-5/R-8: steps 1-3 (place leader, move, reveal after the movement: FINISH_ACTIVATION ends the activation, then the central state check runStateChecks reveals the base); step 4 combat (D-1) and step 5 subjugation (D-5) missing."
     },
     {
       "ruleId": "rebellion:command.activate.tactic-values-required",
@@ -1405,6 +1433,10 @@
         {
           "path": "packages/games/rebellion/src/rules/core/victory.ts",
           "symbol": "checkEmpireVictory"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/state-checks.ts",
+          "symbol": "runStateChecks"
         }
       ],
       "tests": [
@@ -1423,9 +1455,13 @@
         {
           "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
           "name": "any Imperial unit suffices"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/state-checks.test.ts",
+          "name": "TC-D-10: FINISH with no Rebel unit in the base → ACTIVATION_FINISHED → BASE_REVEALED → GAME_OVER, activeSide unchanged"
         }
       ],
-      "note": "R-9: revealed base, at least one Imperial unit, no Rebel unit; checked immediately. The Death Star route needs missions (DISC-002)."
+      "note": "R-9: revealed base, at least one Imperial unit, no Rebel unit; checked immediately after every accepted command by the central state check (runStateChecks). The Death Star route needs missions (DISC-002)."
     },
     {
       "ruleId": "rebellion:victory.rebels",

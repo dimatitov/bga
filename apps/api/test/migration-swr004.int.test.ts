@@ -128,6 +128,8 @@ describe(`migration ${SWR004_MIGRATION}`, { timeout: 60_000 }, () => {
       SESSIONS_MIGRATION,
       SWR004_MIGRATION,
       SWR005B_MIGRATION,
+      // SWR-008: AiUsage rules columns (checked in migration-swr008.int.test.ts)
+      '20261120120000_ai_usage_rules',
     ]);
 
     expect(prisma(db.url, ['migrate', 'deploy'])).toMatch(/No pending migrations/);

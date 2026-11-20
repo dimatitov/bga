@@ -11,3 +11,5 @@ export * from './validation';
 export * from './server-game-module';
 export * from './ai-dev';
 export * from './automation';
+export * from './rules-context';
+export * from './ai-diagnostics';

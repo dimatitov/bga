@@ -20,7 +20,6 @@ import {
 } from '../../schema';
 import type { CoreError } from '../result';
 import { hasOwnLeaderIn, illegal, systemById, typeOf, unitById, type Transition } from './helpers';
-import { checkEmpireVictory } from './victory';
 
 /**
  * Transport capacity of one command (plan-backend §3.3): `available` = Σ capacity of the moving units that
@@ -78,7 +77,11 @@ export function validateMove(
   return null;
 }
 
-/** Apply a validated move: all listed units at once, `PIECES_MOVED`, then the Empire victory check (R-9). */
+/**
+ * Apply a validated move: all listed units at once, `PIECES_MOVED`. The Empire victory check (R-9) and the base
+ * reveal are NOT done here: `runStateChecks` runs after the command (`./apply`, SWR-008), so the order stays
+ * `PIECES_MOVED → GAME_OVER`; during an Imperial activation the reveal waits for `FINISH_ACTIVATION`.
+ */
 export function applyMove(
   state: CoreGameState,
   actor: Faction,
@@ -86,7 +89,7 @@ export function applyMove(
 ): Transition {
   const { pieceIds, fromSystemId, toSystemId } = command;
   const moving = new Set(pieceIds);
-  return checkEmpireVictory({
+  return {
     state: {
       ...state,
       units: state.units.map((u) => (moving.has(u.id) ? { ...u, systemId: toSystemId } : u)),
@@ -98,5 +101,5 @@ export function applyMove(
         payload: { pieceIds: [...pieceIds], fromSystemId, toSystemId },
       },
     ],
-  });
+  };
 }

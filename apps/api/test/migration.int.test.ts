@@ -102,6 +102,8 @@ describe('migration 20261108120000_sessions (AC-7, TR-6)', () => {
         '20261108200000_session_status_idempotency',
         // SWR-005B: AiUsage (CREATE only; checked in migration-swr005b).
         '20261108230000_ai_usage',
+        // SWR-008: AiUsage rules columns (ADD COLUMN only; checked in migration-swr008).
+        '20261120120000_ai_usage_rules',
       ]);
       expect(await raw(db.url, 'PRAGMA foreign_key_check')).toEqual([]);
       expect(await raw(db.url, 'PRAGMA integrity_check')).toEqual([{ integrity_check: 'ok' }]);

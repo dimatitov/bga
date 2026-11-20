@@ -86,6 +86,7 @@ describe('routes and error bodies', () => {
     // SWR-005B W6: dev-only AI diagnostics exist outside production (nodeEnv 'test' here); in production they are
     // absent (dev-ai-security.int.test.ts). They write only AiUsage, never Session / SessionEvent.
     expect(routes).toEqual([
+      'GET /api/dev/ai/sessions/:sessionId/decisions',
       'GET /api/dev/ai/status',
       'GET /api/health',
       'GET /api/sessions',

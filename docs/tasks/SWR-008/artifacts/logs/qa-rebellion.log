@@ -1,0 +1,603 @@
+# 2026-11-20T14:03:39Z node v22.23.5 cwd packages/games/rebellion
+$ npx vitest run --reporter=verbose test/rules/core test/knowledge test/ai/rules-query.test.ts test/ai/decision.test.ts test/server test/benchmark
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+ ✓ test/server/automation.test.ts > isAutomated / pendingActor > hot-seat core-v1 and mock-v1: not automated, never pending 30ms
+ ✓ test/server/automation.test.ts > isAutomated / pendingActor > core-v1 AI game: automated; pending only on the AI turn, without handoff, before the outcome 105ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > base units in the zone, rebelBase.systemId null, no base id outside the static map (TC-H-01) 7ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > a Rebel activation of the base: activation and leader in the zone, event system null (TC-H-03) 12ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > Rebel moves into and out of the base: base system → null for the Empire (TC-H-04, Q-15) 4ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > contestedSystemIds is computed after the redaction (TC-H-05) 4ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > LEADERS_RETURNED carries ids only, also for a leader coming back from the base (TC-H-06) 3ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > probing Rebel units from every source: always notOwner, request-only details (TC-H-08, TC-H-09) 2ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire view before the reveal > handoff: strict 8-key view, no events, nothing about the base (TC-H-12) 2ms
+ ✓ test/rules/core/hidden-info.test.ts > after the reveal > base visible to the Empire; past events shown unredacted (TC-H-10, Q-16) 2ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > scripted hot-seat game: Rebel moves into / out of the base, base activation, two refreshes 236ms
+stdout | test/knowledge/rules-provider.test.ts > public decision sets (idle / own activation × side × tags) — sizes vs 6000 > every set fits without truncation, engine scope first (log line with the measured sizes)
+[swr008-rules-selection] maxChars=6000
+  empire/idle/base-hidden: rules=17 chars=5070 truncated=false
+  empire/idle/base-hidden+opponent-passed: rules=18 chars=5214 truncated=false
+  empire/idle/base-revealed: rules=17 chars=5048 truncated=false
+  empire/idle/base-revealed+opponent-passed: rules=18 chars=5192 truncated=false
+  empire/active/base-hidden: rules=19 chars=5498 truncated=false
+  empire/active/base-hidden+opponent-passed: rules=20 chars=5642 truncated=false
+  empire/active/base-revealed: rules=19 chars=5476 truncated=false
+  empire/active/base-revealed+opponent-passed: rules=20 chars=5620 truncated=false
+  rebels/idle/base-hidden: rules=17 chars=5070 truncated=false
+  rebels/idle/base-hidden+opponent-passed: rules=18 chars=5214 truncated=false
+  rebels/idle/base-revealed: rules=17 chars=5048 truncated=false
+  rebels/idle/base-revealed+opponent-passed: rules=18 chars=5192 truncated=false
+  rebels/active/base-hidden: rules=18 chars=5249 truncated=false
+  rebels/active/base-hidden+opponent-passed: rules=19 chars=5393 truncated=false
+  rebels/active/base-revealed: rules=18 chars=5227 truncated=false
+  rebels/active/base-revealed+opponent-passed: rules=19 chars=5371 truncated=false
+
+ ✓ test/knowledge/rules-provider.test.ts > rebellionRules (C-6): configuration on the real knowledge base > the server module registers it; the knowledge base dir exists 1ms
+ ✓ test/knowledge/rules-provider.test.ts > rebellionRules (C-6): configuration on the real knowledge base > pinned engine scope and every tag rule exist, are verified and may reach the AI 2ms
+ ✓ test/knowledge/rules-provider.test.ts > rebellionRules (C-6): configuration on the real knowledge base > rulesVersion is the content hash; requiredChars is the engine-scope line 0ms
+ ✓ test/knowledge/rules-provider.test.ts > rebellionRules (C-6): configuration on the real knowledge base > TC-CT-03: the version does not depend on the order of entries / files 47ms
+ ✓ test/knowledge/rules-provider.test.ts > rebellionRules (C-6): configuration on the real knowledge base > TC-CT-04: changing one field of one entry changes the version 10ms
+ ✓ test/knowledge/rules-provider.test.ts > public decision sets (idle / own activation × side × tags) — sizes vs 6000 > every set fits without truncation, engine scope first (log line with the measured sizes) 19ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-01: {PASS}, {ACTIVATE_SYSTEM,PASS}, {FINISH_ACTIVATION,MOVE_PIECES} for the Empire differ; MOVE rules only with MOVE_PIECES 10ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-02: same types, Empire vs Rebels differ by appliesTo.sides 1ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-03: phase command vs refresh vs setup (no types) differ by appliesTo.phases 7ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-05: order and repetitions of the query do not matter (rulesSelectionInputOf) 2ms
+ ✓ test/server/automation.test.ts > decisionPoint > ≡ buildDecision(toSideView(state, aiSide)).point; parses with the platform schema; deterministic 91ms
+ ✓ test/server/automation.test.ts > decisionPoint > the policy receives exactly toSideView(state, aiSide) — the AI Empire never sees the hidden base 6ms
+ ✓ test/server/automation.test.ts > applyCandidate > every candidate is legal: origin auto, version + 1, actor = AI side, input not mutated 50ms
+ ✓ test/rules/core/legal.test.ts > legal actions during an activation (TC-U-54) > one MOVE_PIECES per adjacent source without an own leader with movable units, + FINISH_ACTIVATION 7ms
+ ✓ test/rules/core/legal.test.ts > legal actions during an activation (TC-U-54) > only FINISH_ACTIVATION when nothing can move 1ms
+ ✓ test/rules/core/legal.test.ts > legal actions during an activation (TC-U-54) > nothing while a handoff is pending, for the passive side, outside the command phase 3ms
+ ✓ test/rules/core/legal.test.ts > legal actions ⇔ accepted commands on seeded random games > hot-seat: 6 games × 60 steps 512ms
+stdout | test/ai/rules-query.test.ts > rulesQueryFor reads only public fields (§3.4 metamorphic, QD-7) > the sample covers every combination of the three inputs for both viewers
+[rules-query] sample views=1758 combos=8
+
+stdout | test/ai/decision.test.ts > SWR-008 rulesQuery on the decision point (C-3/C-4, TC-ARB-06) > the query is the only addition: candidates / fallback equal an independent SWR-006 recomputation
+[bot-decision] rulesQuery points checked=294
+
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > AI Rebels at creation: the fleet moves first (W6 policy), PASS kept, c1..c10, targets for activations 17ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > null when the view has no legal actions (not the side to move) 1ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > inside an activation FINISH is always offered (TC-BOT-09) 5ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > legacy AutoPolicy (auto-pass-v1): one candidate c1 with its command 1ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > selectTop keeps the terminating action: replaces the 10th, or appends when there is room 0ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > rankCandidates: score desc then key asc; basePolicy (legacy) puts the terminating action first; accepts only a view 6ms
+ ✓ test/ai/decision.test.ts > SWR-008 rulesQuery on the decision point (C-3/C-4, TC-ARB-06) > the query is the only addition: candidates / fallback equal an independent SWR-006 recomputation 516ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > 9 eligible bases; Bothawui neighbours exist for the "entered the base" variant 2ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > easy: the Rebels did not touch the base (pass / public activation) — every base gives the same decisions 670ms
+stdout | test/ai/rules-query.test.ts > rulesQueryFor reads only public fields (§3.4 metamorphic, QD-7) > changing any other field of the view (or all of them) never changes the query
+[rules-query] metamorphic mutations compared=37732
+
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=false revealed=false opponentPassed=false 2ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=false revealed=false opponentPassed=true 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=false revealed=true opponentPassed=false 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=false revealed=true opponentPassed=true 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=true revealed=false opponentPassed=false 0ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=true revealed=false opponentPassed=true 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=true revealed=true opponentPassed=false 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > empire: activation=true revealed=true opponentPassed=true 2ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=false revealed=false opponentPassed=false 5ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=false revealed=false opponentPassed=true 3ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=false revealed=true opponentPassed=false 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=false revealed=true opponentPassed=true 0ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=true revealed=false opponentPassed=false 0ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=true revealed=false opponentPassed=true 0ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=true revealed=true opponentPassed=false 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > rebels: activation=true revealed=true opponentPassed=true 3ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > the own pass does not add a tag; fresh arrays on every call 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor — C-4 table > inside an activation MOVE_PIECES is listed even when no move is legal now (QD-7) 1ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor reads only public fields (§3.4 metamorphic, QD-7) > the sample covers every combination of the three inputs for both viewers 4ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor reads only public fields (§3.4 metamorphic, QD-7) > property-access tracking: only viewer, activation (null-ness), rebelBase.revealed, passed[opponent] 62ms
+ ✓ test/ai/rules-query.test.ts > rulesQueryFor reads only public fields (§3.4 metamorphic, QD-7) > changing any other field of the view (or all of them) never changes the query 425ms
+ ✓ test/rules/core/legal.test.ts > legal actions ⇔ accepted commands on seeded random games > Rebels vs AI: 6 games × 60 steps 636ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > normal: the Rebels did not touch the base (pass / public activation) — every base gives the same decisions 487ms
+stdout | test/ai/decision.test.ts > buildDecision — property on random-walk games (TC-BOT-02) > every decision point of the AI side is valid and every command is engine-legal (origin auto)
+[bot-decision] decision points checked=393
+
+ ✓ test/ai/decision.test.ts > SWR-008 rulesQuery on the decision point (C-3/C-4, TC-ARB-06) > inside an activation: FINISH_ACTIVATION + MOVE_PIECES; outside: ACTIVATE_SYSTEM + PASS 1ms
+ ✓ test/ai/decision.test.ts > buildDecision — property on random-walk games (TC-BOT-02) > every decision point of the AI side is valid and every command is engine-legal (origin auto) 1192ms
+ ✓ test/rules/core/legal.test.ts > legal actions ⇔ accepted commands on seeded random games > Empire vs AI: 6 games × 60 steps 598ms
+ ✓ test/server/automation.test.ts > applyCandidate > unknown candidate id → ILLEGAL_COMMAND commandUnavailable, only the id in details, nothing changes 5ms
+ ✓ test/server/automation.test.ts > applyCandidate > PO test 5: never acts for the human side — the human turn, hot-seat, mock-v1 and a finished game → notYourTurn 50ms
+ ✓ test/server/automation.test.ts > applyCandidate > TC-AI-11: a player command for the AI side → 422 notYourSide, also while the AI is to move 1ms
+ ✓ test/server/automation.test.ts > drain with the real bot (runner stand-in) > AI Rebels at creation: the bot plays until the Empire is to move; every step + 1 version, auto, actor rebels 41ms
+ ✓ test/server/automation.test.ts > drain with the real bot (runner stand-in) > the auto-pass test policy reproduces SWR-005: AI Rebels pass once at creation (version 2) 1ms
+ ✓ test/server/automation.test.ts > drain with the real bot (runner stand-in) > TC-AI-17: random legal human play vs the bot — every stored state passes the schema, no handoff, player view 1376ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > hard: the Rebels did not touch the base (pass / public activation) — every base gives the same decisions 636ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > easy: the Rebels activated the base and moved in from Bothawui (adjacent to both bases of the pair) 57ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > normal: the Rebels activated the base and moved in from Bothawui (adjacent to both bases of the pair) 60ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > hard: the Rebels activated the base and moved in from Bothawui (adjacent to both bases of the pair) 60ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > all scripted sessions put the base in Rodia (deterministic by sessionId, R-10) 2ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > TC-G-01/02: hot-seat, 2 rounds, reveal on FINISH_ACTIVATION, Empire wins after the Rebel evacuation 125ms
+stdout | test/knowledge/rules-provider.test.ts > every combination (TC-SEL-06, TC-ST-01, TC-ST-03, TC-ST-05) > stays within 6000 characters, far below 181 rules, never ai:none / needs-review, engine scope first, only engine actions
+[swr008-rules-selection] TC-SEL-06 combos=1600 maxChars=5999 maxRules=21 truncated=744 entries=182
+
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-07: limit L = full length → all lines; L-1 drops exactly the whole last line; L+1 as L 1ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-08: a small limit keeps a prefix in R-2 order: engine scope → core → commands → phase → tags (id asc inside) 1ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-09: maxChars 0 / -1 / 1.5 / NaN / below the engine-scope line → an error, never a silent empty block 1ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-10: one line per rule, `[<id>] ` prefix, ruleIds in line order 1ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-SEL-12: a tag adds its rules only as the last group; without tags the set is phase/types/side 53ms
+ ✓ test/knowledge/rules-provider.test.ts > selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; TC-FB-06) > TC-FB-06: nothing but mandatory rules fits (phase unknown, no types) → engine scope + ai:core only 1ms
+ ✓ test/knowledge/rules-provider.test.ts > every combination (TC-SEL-06, TC-ST-01, TC-ST-03, TC-ST-05) > stays within 6000 characters, far below 181 rules, never ai:none / needs-review, engine scope first, only engine actions 1815ms
+ ✓ test/rules/core/invariants.test.ts > invariants on seeded random legal play > hot-seat: 10 games × up to 250 commands 2298ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > TC-G-04: an illegal command in the middle is rejected (unchanged state) and the result equals the golden 70ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > TC-G-03 / TC-AI-08: Rebels vs AI Empire, 13 passes → time 14 = reputation → Rebels win 168ms
+ ✓ test/knowledge/rules-provider.test.ts > every combination (TC-SEL-06, TC-ST-01, TC-ST-03, TC-ST-05) > TC-ST-03: the engine scope names all five missing mechanics and survives the minimal limit 0ms
+ ✓ test/knowledge/rules-provider.test.ts > every combination (TC-SEL-06, TC-ST-01, TC-ST-03, TC-ST-05) > TC-ST-02: a core rule moved to needs-review leaves the AI context (status beats priority) 40ms
+ ✓ test/knowledge/rules-provider.test.ts > hidden information guard (plan-backend §9) > no entry that may reach the AI has a system id in its rule id (ids are shown in dev diagnostics) 34ms
+ ✓ test/knowledge/rules-provider.test.ts > hidden information guard (plan-backend §9) > no rule selectable in the Command Phase names a system in its title or text 173ms
+ ✓ test/knowledge/rules-provider.test.ts > DISC-009 in the knowledge base (TC-D-36, §7.6) > DISC-009 is closed and describes the central check; the implementation note keeps its id 1ms
+ ✓ test/knowledge/rules-provider.test.ts > DISC-009 in the knowledge base (TC-D-36, §7.6) > coverage evidence points to the central check (no revealsBaseNow) 1ms
+ ✓ test/knowledge/rules-provider.test.ts > selection golden (TC-SEL-04) > is deterministic within a process (twice, fresh provider) 20ms
+ ✓ test/knowledge/rules-provider.test.ts > selection golden (TC-SEL-04) > equals the stored golden byte for byte (text, ruleIds, truncated, rulesVersion) 3ms
+ ✓ test/server/golden.test.ts > reference views for FE/QA (test/fixtures/core/views) > rebels-command / handoff / empire-prereveal / empire-revealed / game-over 32ms
+ ✓ test/server/golden.test.ts > seedable core-v1 states for e2e (Q-35, scenarios 4 / 5b) > scenario 4: AI game (player Empire), one activation before the reveal 9ms
+ ✓ test/server/golden.test.ts > seedable core-v1 states for e2e (Q-35, scenarios 4 / 5b) > scenario 5b: hot-seat, Empire to move, the Rebels evacuated the hidden base — one activation before the win 10ms
+ ✓ test/server/golden.test.ts > seedable core-v1 states for e2e (Q-35, scenarios 4 / 5b) > TC-G-07: golden files are only rewritten with UPDATE_GOLDEN=1 0ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > at creation, mini data: relocating to every eligible base changes no Empire observation 5ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > at creation, real base-game data: relocating to every eligible base changes no Empire view / legal actions 10ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > seeded random games before the reveal: hot-seat 2268ms
+ ✓ test/benchmark/scenarios.test.ts > benchmark scenario file (TC-BEN-01) > the committed file exists and equals the builders 32ms
+ ✓ test/benchmark/scenarios.test.ts > benchmark scenario file (TC-BEN-01) > the builders are deterministic (same file twice) 139ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-01: an Imperial activation of the base without units in it does not reveal 17ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-02: an Imperial activation of another system does not reveal 3ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-03: ground units moved into the base do not reveal it in the middle of the activation 14ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-04: a ship alone (Star Destroyer) in the base does not reveal — neither after MOVE nor after FINISH 6ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-05: TIE fighters (carried, not ground) do not reveal 10ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-06: the Death Star does not reveal 16ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-07: a leader alone does not reveal 12ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-08: ground units in ANOTHER system do not reveal 9ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-09: FINISH with Rebel units in the base → exactly [ACTIVATION_FINISHED, BASE_REVEALED], turn handed over 2ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-10: FINISH with no Rebel unit in the base → ACTIVATION_FINISHED → BASE_REVEALED → GAME_OVER, activeSide unchanged 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-11: several moves into the base → exactly one BASE_REVEALED, only in the FINISH events 8ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-12: AI Empire, origin 'auto' → [ACTIVATION_FINISHED{auto:true}, BASE_REVEALED{actor:'system'}], no handoff 2ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-13: the Rebels activating / moving into / finishing their own base never reveal it 4ms
+ ✓ test/benchmark/scenarios.test.ts > benchmark scenario file (TC-BEN-01) > has >= 12 scenarios, >= 6 per side, unique ids, every rubric field present 1ms
+ ✓ test/benchmark/scenarios.test.ts > benchmark scenario file (TC-BEN-01) > the README documents the rubric and every scenario 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-01-hunt-adjacent (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-01-hunt-adjacent (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-01-hunt-adjacent (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-01-hunt-adjacent (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-01-hunt-adjacent (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 2ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-02-ground-strike (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-02-ground-strike (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-02-ground-strike (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-02-ground-strike (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-02-ground-strike (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-03-death-star-alone (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-03-death-star-alone (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-03-death-star-alone (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-03-death-star-alone (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-03-death-star-alone (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-04-finish-after-strike (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-04-finish-after-strike (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-04-finish-after-strike (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-04-finish-after-strike (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-04-finish-after-strike (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-05-leader-pin (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-05-leader-pin (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-05-leader-pin (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-05-leader-pin (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-05-leader-pin (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-06-assault-abandoned-base (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-06-assault-abandoned-base (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-06-assault-abandoned-base (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-06-assault-abandoned-base (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-06-assault-abandoned-base (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-07-capture-empty-base (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-07-capture-empty-base (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-07-capture-empty-base (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-07-capture-empty-base (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-07-capture-empty-base (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-08-rebels-passed (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-08-rebels-passed (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-08-rebels-passed (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-08-rebels-passed (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario emp-08-rebels-passed (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-01-hold-revealed-base (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 10ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-01-hold-revealed-base (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 17ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-01-hold-revealed-base (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-01-hold-revealed-base (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-01-hold-revealed-base (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-02-keep-last-units-home (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-02-keep-last-units-home (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-02-keep-last-units-home (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-02-keep-last-units-home (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-02-keep-last-units-home (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-03-reoccupy-empty-base (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-03-reoccupy-empty-base (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 25ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-03-reoccupy-empty-base (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 3ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-03-reoccupy-empty-base (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-03-reoccupy-empty-base (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-04-move-back-into-base (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-04-move-back-into-base (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 4ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-04-move-back-into-base (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-04-move-back-into-base (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-04-move-back-into-base (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-05-end-of-time-pass (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-05-end-of-time-pass (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 2ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-05-end-of-time-pass (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-05-end-of-time-pass (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-05-end-of-time-pass (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-06-finish-without-useful-move (TC-BEN-02) > is a stored core-v1 state of a running AI game with the AI side to move 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-06-finish-without-useful-move (TC-BEN-02) > the decision point is built from the AI side view only (bot builder + public rulesQuery) 1ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-06-finish-without-useful-move (TC-BEN-02) > every matcher matches at least one candidate; no candidate falls in two classes 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-06-finish-without-useful-move (TC-BEN-02) > PASS is "unjustified" exactly when PASS is legal, wrong and a non-PASS candidate is expected 0ms
+ ✓ test/benchmark/scenarios.test.ts > scenario reb-06-finish-without-useful-move (TC-BEN-02) > the rubric is consistent with the public rules query (activation state, base revealed) 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-01-hunt-adjacent cites existing, verified KB entries that may reach the AI context 2ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-02-ground-strike cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-03-death-star-alone cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-04-finish-after-strike cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-05-leader-pin cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-06-assault-abandoned-base cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-07-capture-empty-base cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > emp-08-rebels-passed cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > reb-01-hold-revealed-base cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > reb-02-keep-last-units-home cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > reb-03-reoccupy-empty-base cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > reb-04-move-back-into-base cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > reb-05-end-of-time-pass cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > justification rule ids (TC-BEN-02) > reb-06-finish-without-useful-move cites existing, verified KB entries that may reach the AI context 0ms
+ ✓ test/benchmark/scenarios.test.ts > slice coverage (TC-BEN-03) > covers the core-v1 slice: activation, transport, leader pin, hunt, defence/evacuation, PASS/FINISH 0ms
+ ✓ test/benchmark/scenarios.test.ts > slice coverage (TC-BEN-03) > no scenario is about combat or missions (not in core-v1) 1ms
+ ✓ test/benchmark/scenarios.test.ts > slice coverage (TC-BEN-03) > every spec is in the file in the same order 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-01-hunt-adjacent: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-02-ground-strike: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-03-death-star-alone: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-04-finish-after-strike: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-05-leader-pin: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-06-assault-abandoned-base: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-07-capture-empty-base: no base id in the title, goal or matchers 6ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-08-rebels-passed: no base id in the title, goal or matchers 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > most Empire scenarios are about the hidden base 0ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-01-hunt-adjacent: the decision point (hence the rubric outcome) does not depend on where the hidden base is 14ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — ACTIVATE_SYSTEM / MOVE_PIECES / FINISH_ACTIVATION (AC-8) > TC-D-14: the Rebels activating / moving / finishing elsewhere never reveal 3ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-15: a single PASS of either side does not reveal 2ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-16: the second PASS ends the round — round-end events in the old order, no BASE_REVEALED 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-17: the Rebel victory by time adds no BASE_REVEALED (also [art] with Imperial ground in the base) 3ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-18: ACCEPT_HANDOFF after the reveal → [HANDOFF_ACCEPTED], no second BASE_REVEALED 2ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-19: ACCEPT_HANDOFF by the Empire before the reveal does not reveal 3ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-20: after the reveal no later command reveals again (exactly one BASE_REVEALED in the log) 4ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-21: after the game is over every command is 422 gameOver — state and log unchanged, no BASE_REVEALED 6ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-22: after the reveal a Rebel MOVE out of the base → [PIECES_MOVED, GAME_OVER{empire}], no BASE_REVEALED 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-23: only a Rebel structure left in the base → the reveal happens, the victory does not 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 transition matrix — PASS / end of round / ACCEPT_HANDOFF / game over (AC-8) > TC-D-24: every accepted command of the matrix is version + 1 exactly once with a continuous seq 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — creation (TC-D-25, QD-2) > TC-D-25: every eligible base (real data) and 20 random ids — hidden base, creation log unchanged, the check is a no-op 59ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — creation (TC-D-25, QD-2) > review F-6 [art]: creation-time events are numbered from the LAST seq, not the log length 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — [art] the reveal outside an Imperial activation (TC-D-26..TC-D-28, QD-1) > TC-D-26 [art]: any accepted Rebel command reveals at once — ACTIVATE / PASS / MOVE 4ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — [art] the reveal outside an Imperial activation (TC-D-26..TC-D-28, QD-1) > TC-D-26 [art]: … then the Empire victory is checked in the same command (no Rebel unit in the base) 2ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — [art] the reveal outside an Imperial activation (TC-D-26..TC-D-28, QD-1) > TC-D-27 [art]: during an Imperial activation the reveal waits — then FINISH of a NON-base system reveals 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — [art] the reveal outside an Imperial activation (TC-D-26..TC-D-28, QD-1) > TC-D-28 [art]: activating the base with ground already in it → one reveal on FINISH 0ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > (a) condition false → the same transition object 0ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > (b) already revealed → the same object (no second BASE_REVEALED) 0ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > (c) game over → the same object, even when the condition holds 0ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > (d) an Imperial activation is running → deferred (same object); a Rebel activation does not defer 0ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > (e) condition true outside an Imperial activation → revealed + BASE_REVEALED after the given drafts, then the victory check; idempotent 2ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > the condition: only Imperial GROUND units in the base system (not ships, TIE, Death Star, leaders, Rebels, other systems) 1ms
+ ✓ test/rules/core/state-checks.test.ts > runStateChecks — direct unit tests (TC-D-29, TC-D-30, TR-4) > TC-D-30 [art] loyalty: no Imperial unit in the base → no reveal; loyalty is documented as not applicable in core-v1 (DISC-005) 1ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — one central check point (TC-D-31) > revealBase is called only from runStateChecks; runStateChecks only from applyCoreCommand and createCoreGame 4ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — the Empire cannot tell the base before the legal reveal (TC-D-34) > base = zeta (Imperial ground in it, activation running) vs base = epsilon / eta: view, legal actions, errors and probe results are equal 4ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — save / restore (AC-9) > TC-RS-04: the state schema version is unchanged (3, no upcast needed) 0ms
+ ✓ test/rules/core/state-checks.test.ts > DISC-009 — save / restore (AC-9) > TC-RS-01 (engine half): a game stored mid-activation with ground in the base reveals once on FINISH after a reload 2ms
+stdout | test/benchmark/scenarios.test.ts > bot reference (informational) > logs the rubric class of the bot fallback per scenario
+[swr008-bench] scenarios=14 bot: emp-01-hunt-adjacent=expected emp-02-ground-strike=expected emp-03-death-star-alone=wrong emp-04-finish-after-strike=expected emp-05-leader-pin=expected emp-06-assault-abandoned-base=expected emp-07-capture-empty-base=expected emp-08-rebels-passed=expected reb-01-hold-revealed-base=wrong reb-02-keep-last-units-home=expected reb-03-reoccupy-empty-base=wrong reb-04-move-back-into-base=wrong reb-05-end-of-time-pass=wrong reb-06-finish-without-useful-move=expected
+
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-02-ground-strike: the decision point (hence the rubric outcome) does not depend on where the hidden base is 4ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-03-death-star-alone: the decision point (hence the rubric outcome) does not depend on where the hidden base is 11ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-04-finish-after-strike: the decision point (hence the rubric outcome) does not depend on where the hidden base is 4ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-05-leader-pin: the decision point (hence the rubric outcome) does not depend on where the hidden base is 4ms
+ ✓ test/benchmark/scenarios.test.ts > hidden information (TC-H-09, data part) > emp-08-rebels-passed: the decision point (hence the rubric outcome) does not depend on where the hidden base is 12ms
+ ✓ test/benchmark/scenarios.test.ts > decisive rubric claims are confirmed by the engine > emp-07: every expected move (ships only included) captures the empty revealed base; FINISH does not 4ms
+ ✓ test/benchmark/scenarios.test.ts > decisive rubric claims are confirmed by the engine > reb-01-hold-revealed-base: only the wrong (emptying) move can lose; expected / acceptable keep the game going 19ms
+ ✓ test/benchmark/scenarios.test.ts > decisive rubric claims are confirmed by the engine > reb-02-keep-last-units-home: only the wrong (emptying) move can lose; expected / acceptable keep the game going 16ms
+ ✓ test/benchmark/scenarios.test.ts > decisive rubric claims are confirmed by the engine > reb-06-finish-without-useful-move: only the wrong (emptying) move can lose; expected / acceptable keep the game going 5ms
+ ✓ test/benchmark/scenarios.test.ts > bot reference (informational) > logs the rubric class of the bot fallback per scenario 1ms
+ ✓ test/knowledge/no-full-texts.test.ts > no full texts (AC-11) > git tracks no PDF files 93ms
+ ✓ test/knowledge/no-full-texts.test.ts > no full texts (AC-11) > keeps texts within 600 characters and quotes within 25 words and the per-source budget 7ms
+ ✓ test/knowledge/no-full-texts.test.ts > no full texts (AC-11) > quotes sparingly: most entries carry no quote 0ms
+ ✓ test/rules/core/invariants.test.ts > invariants on seeded random legal play > Rebels vs AI: 10 games × up to 250 commands 634ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > uses the Rebellion definition (available) 3ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > parseSetup: new input → stored v2 setup (opponentFaction derived, default difficulty normal) 2ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > parseSetup: invalid (400) with paths relative to setup; legacy SWR-003 input is rejected 1ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > parseSetup: unsupported ruleset / mode → kind unsupported (422) with details.unsupported (Q-8) 2ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > TC-U-15: initialStatus → prototype; TC-U-13: publicSettings = exactly the six settings 3ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > invariant: publicSettings(parseStoredSetup(row.setup)) ≡ state.settings for new and v1 rows 14ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > review #1: setupOf(state) is the v2 stored setup of the state; round-trips through parseStoredSetup 4ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > createInitialState: core-v1 on the base-game data; same sessionId + now → byte-identical (Q-24) 26ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > SWR-006 createInitialState (AI Rebels): no automatic move inside — version 1, the AI side to move (pending) 18ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > SWR-006: the module exposes automation; rebellionServerModule uses the bot, hot-seat is not automated 12ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > parseState: JSON roundtrip; mismatching id or version → throw; schema-invalid → throw 15ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > applyCommand (core-v1): 400 → 409 → 422 order, ONLY the player command (no AI move inside), input not mutated 12ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > 400 schema first: empty strings, extra fields, unknown types (TC-U-25, TC-U-51) 15ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > ADVANCE_PHASE / END_TURN → commandUnavailable {actor, type} after 409 (TC-U-03, Q-2) 9ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > 409 VERSION_CONFLICT with the current version, before notYourTurn 1ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > notYourSide: the AI side for player commands, any non-AI side for auto commands 7ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > notYourTurn: commands of the non-active human side (TC-U-15, TC-U-22) 63ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > hot-seat: handoffPending blocks everything but ACCEPT_HANDOFF; ACCEPT without handoff (TC-U-29) 25ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > toPlayerView (AI game): the player board, also while the AI is to move; the Empire does not see the base 16ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > hot-seat (core-v1): PASS → handoff view (8 keys) and no events; ACCEPT_HANDOFF → Empire board 3ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > mock-v1 (stored v2 rows): commands keep working on mock rules, no auto-play; mock board view 62ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > statusOf: running core-v1 → prototype; a real core-v1 victory → completed (AC-13) 64ms
+ ✓ test/rules/core/activate.test.ts > core-v1 pipeline: check order > wrongPhase on a synthetic state outside the command phase (TC-U-19, Q-6) 4ms
+ ✓ test/rules/core/activate.test.ts > ACTIVATE_SYSTEM (R-4) > places an own pool leader in any system: plain, remote, with enemy units / leaders (TC-U-21, TC-U-27) 15ms
+ ✓ test/rules/core/activate.test.ts > ACTIVATE_SYSTEM (R-4) > a system with an own leader may be activated again: two own leaders there (TC-U-26b, Q-BE-3) 1ms
+ ✓ test/rules/core/activate.test.ts > ACTIVATE_SYSTEM (R-4) > rejections with keys and request-only details (TC-U-23..U-28, U-26a) 3ms
+ ✓ test/rules/core/activate.test.ts > ACTIVATE_SYSTEM (R-4) > check order: activationInProgress → unknownLeader → leaderNotInPool → leaderCannotActivate → unknownSystem (TC-U-30a) 1ms
+ ✓ test/rules/core/activate.test.ts > ACTIVATE_SYSTEM (R-4) > legal actions: ACTIVATE_SYSTEM = own pool leaders that can activate × all systems, + PASS (TC-U-31, Q-40) 27ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > TC-U-14 summarize: settings + round/phase + rulesEngine/winner/reputation, flat, null difficulty for a human opponent, no secrets 2ms
+ ✓ test/server/server-module.test.ts > rebellionServerModule > no AI profile fields in any public output (§4.4) 14ms
+ ✓ test/server/base-invariance.test.ts > Empire view at creation is invariant to the base choice (CODE_REVIEW #1) > 9 candidates on the first-game setup; none holds a starting Rebel unit placed in a system 5ms
+ ✓ test/server/base-invariance.test.ts > Empire view at creation is invariant to the base choice (CODE_REVIEW #1) > rules level (hot-seat): toSideView(createCoreGame(...), "empire") is identical for every base 14ms
+ ✓ test/server/base-invariance.test.ts > Empire view at creation is invariant to the base choice (CODE_REVIEW #1) > rules level (Rebels vs AI Empire): toSideView(createCoreGame(...), "empire") is identical for every base 17ms
+ ✓ test/server/base-invariance.test.ts > Empire view at creation is invariant to the base choice (CODE_REVIEW #1) > rules level (Empire vs AI Rebels): toSideView(createCoreGame(...), "empire") is identical for every base 3ms
+ ✓ test/server/base-invariance.test.ts > Empire view at creation is invariant to the base choice (CODE_REVIEW #1) > server module create path (Empire vs AI Rebels): player view and initial events identical for every base 27ms
+ ✓ test/rules/core/victory.test.ts > Empire victory (rebel base captured) > reveal with no Rebel unit in the base → BASE_REVEALED then GAME_OVER in one response (TC-U-60, Q-41) 14ms
+ ✓ test/rules/core/victory.test.ts > Empire victory (rebel base captured) > any remaining Rebel unit (ship, structure, ground) prevents it (TC-U-62) 9ms
+ ✓ test/rules/core/victory.test.ts > Empire victory (rebel base captured) > checked after a Rebel move: the last Rebel units leave the revealed base (TC-U-63, Q-12) 1ms
+ ✓ test/rules/core/victory.test.ts > Empire victory (rebel base captured) > any Imperial unit suffices — a lone ship (TC-U-64); none at all → no victory (TC-U-64a) 2ms
+ ✓ test/rules/core/victory.test.ts > Rebel victory (time reaches reputation) > round 13 → 14 = reputation: TIME_ADVANCED then GAME_OVER, phase refresh, no new round (TC-U-65) 2ms
+ ✓ test/rules/core/victory.test.ts > Rebel victory (time reaches reputation) > round 12 → 13: the game goes on (TC-U-66) 2ms
+ ✓ test/rules/core/victory.test.ts > after the end of the game > every command of either side → gameOver {actor}, before 409; schema errors stay 400 (TC-U-67) 17ms
+ ✓ test/rules/core/victory.test.ts > after the end of the game > no handoff and the base is visible to the Empire on the final screen, both reasons (TC-U-69, Q-14) 12ms
+ ✓ test/rules/core/victory.test.ts > after the end of the game > AI game: the game may end on the AI turn; no handoff, legal actions empty for both 2ms
+ ✓ test/rules/core/invariants.test.ts > invariants on seeded random legal play > Empire vs AI: 10 games × up to 250 commands 550ms
+ ✓ test/server/upcast.test.ts > fixtures v1 (TR-4b) > are real SWR-003 data: v1 schema, legacy faction present, < 50 KB 15ms
+ ✓ test/server/upcast.test.ts > upcastStoredSetup / upcastSettings > TC-U-26: {rebellion, ai/hard} → rebels vs empire, hard, base, digital 1ms
+ ✓ test/server/upcast.test.ts > upcastStoredSetup / upcastSettings > TC-U-27: human → aiDifficulty null, opponent rebels; AI without difficulty → normal 1ms
+ ✓ test/server/upcast.test.ts > upcastStoredSetup / upcastSettings > TC-U-30: idempotent on v2 1ms
+ ✓ test/server/upcast.test.ts > upcastStoredSetup / upcastSettings > TC-U-31: garbage and unknown versions throw 8ms
+ ✓ test/server/upcast.test.ts > upcastState > TC-U-28: no legacy faction left; counts, positions, version/round/phase kept; hot-seat fields added 8ms
+ ✓ test/server/upcast.test.ts > upcastState > TC-U-28: AI game of the Empire → activeSide empire, no handoff, difficulty kept 1ms
+ ✓ test/server/upcast.test.ts > upcastState > TC-U-30: idempotent (v2 → v2 unchanged), works on frozen input 2ms
+ ✓ test/server/upcast.test.ts > upcastState > TC-U-31: garbage and unknown versions throw 26ms
+ ✓ test/server/upcast.test.ts > upcastEvent > TC-U-29: actor rebellion → rebels; empire/system unchanged; seq, at, payload unchanged 7ms
+ ✓ test/server/upcast.test.ts > rebellionServerModule on v1 rows (lazy upcast, Q-16) > parseState reads v1 and keeps the row version; the next command writes v3 mock-v1 16ms
+ ✓ test/server/upcast.test.ts > rebellionServerModule on v1 rows (lazy upcast, Q-16) > TC-M-04 (unit): a migrated human game (Q-17) can pass the turn and accept the handoff 2ms
+ ✓ test/server/upcast.test.ts > rebellionServerModule on v1 rows (lazy upcast, Q-16) > a legacy setup / faction on the wire is rejected (400), not upcast 1ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: legal moves > moves own units into the activated system; the activation continues (TC-U-32, TC-U-33) 14ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: legal moves > an enemy leader in the source system does not pin (TC-U-39) 1ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: legal moves > into a system with enemy units: allowed, contested, no combat (TC-U-52, D-1) 4ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: legal moves > from the base system by the same rules (TC-U-53, D-6) 2ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > SD (6) + exactly 6 units needing a place → legal (TC-U-42) 8ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > SD + 7 → insufficientCapacity {fromSystemId, required 7, available 6}; nothing moved (TC-U-43) 12ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > a ship staying behind gives no capacity (TC-U-44) 2ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > capacities of the ships of one command add up: SD + AC + 10 legal, + 11 not (TC-U-45) 47ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > ground units and TIE fighters share the places: AC + 2 ST + 2 TIE legal, AC + 3 ST + 2 TIE not (TC-U-46) 1ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > Rebel catalogue: CC (2) + 2 RT legal; CC + 2 RT + AS not; TR (4) + 3 RT + AS legal (TC-U-46a) 1ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > X-wing / Y-wing need no place; a lone TIE does (TC-U-46b, TC-U-46c) 1ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > the Death Star is mobile with capacity 8 (TC-U-46d); ships alone always move (TC-U-47) 0ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: transport capacity (one shared limit per command) > a ship that arrived earlier gives no capacity to a later move (TC-U-47a) 2ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: rejections (state unchanged) > noActivation (TC-U-34) 1ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: rejections (state unchanged) > unknownSystem (from, then to), notActivatedSystem, sameSystem, notAdjacent (TC-U-35..U-37, U-50) 11ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden > fits in 6000 characters without truncation and contains the required rules 2ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden > formats one line per entry with id and page citations; only short text 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden > is deterministic and carries the rules version 2ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-hidden+opponent-passed > is deterministic and carries the rules version 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed > fits in 6000 characters without truncation and contains the required rules 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, idle, base-revealed+opponent-passed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-hidden+opponent-passed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: rebels, own activation, base-revealed+opponent-passed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-hidden+opponent-passed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, idle, base-revealed+opponent-passed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-hidden+opponent-passed > is deterministic and carries the rules version 7ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed > formats one line per entry with id and page citations; only short text 1ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed+opponent-passed > fits in 6000 characters without truncation and contains the required rules 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed+opponent-passed > starts with the engine scope; no needs-review entry, no "(unverified)", no missions or combat 11ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed+opponent-passed > formats one line per entry with id and page citations; only short text 0ms
+ ✓ test/knowledge/context.test.ts > Command Phase context: empire, own activation, base-revealed+opponent-passed > is deterministic and carries the rules version 0ms
+ ✓ test/knowledge/context.test.ts > side filtering > keeps side-specific entries out of the other side context 6ms
+ ✓ test/knowledge/context.test.ts > tags (public decision tags, plan-backend §3.4) > base-hidden / base-revealed / opponent-passed add their rules 7ms
+ ✓ test/knowledge/context.test.ts > buildRulesContext defaults are unchanged (C-5 backward compatibility, real KB) > without excludeStatuses needs-review entries are still only marked "(unverified)" 6ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: rejections (state unchanged) > pinnedByLeader: own leader in the source system, also from a previous activation (TC-U-38, TC-U-40) 15ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: rejections (state unchanged) > unknownPiece, notOwner, notInFromSystem, immobileUnit with request-only details (TC-U-41, U-49, U-50) 2ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: rejections (state unchanged) > all or nothing: legal units + one illegal → rejected, nothing moved (TC-U-48) 4ms
+ ✓ test/rules/core/move.test.ts > MOVE_PIECES: rejections (state unchanged) > check order (TC-U-56) 5ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — validation > has zero issues with the repository io checks (files, symbols, test names) 9ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — validation > has zero issues without io as well 7ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — validation > reports a dangling related id with the entry path and code (scenario 4) 43ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > is the base game only 1ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > describes RR, LTP and FAQ v2.1 with the official URLs, hashes, page counts and retrieval date 1ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > records the LTP mirror and why it was used 0ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > excludes the Rise of the Empire pages of the FAQ and ranks RR above LTP 0ms
+ ✓ test/knowledge/validate.test.ts > Rebellion knowledge base — manifest and sources (AC-1) > rejects an entry of an excluded product or citing an excluded FAQ page (TC-S-07, TC-S-08) 7ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > activation + finish → the other side, hot-seat handoff (TC-U-05, TC-U-18) 17ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > PASS → passed.rebels, the other side, handoff; the phase continues (TC-U-06) 24ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > AI game: no handoff when the turn goes to the AI side; the AI auto move is marked auto 2ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > both passed → refresh and a new round in the same command, version + 1 once (TC-U-07) 1ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > Rebels passed: the Empire acts in consecutive turns without handoff; the phase ends on its pass (TC-U-08, TC-HS-05a) 5ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > Empire passed: the Rebels act consecutively; with only Mon Mothma left they can only pass (TC-U-09, TC-U-11, TC-HS-05) 4ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > a side that passed has no turn and no legal actions (TC-U-10) 4ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > pools without activating leaders: both only pass, the phase ends after 2 passes (TC-U-12) 2ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > longest phase: 3 Rebel + 4 Imperial activations + 2 passes, then the next round (TC-U-12a) 4ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > PASS when the other side already passed ends the phase at once (TC-U-12b) 1ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > refresh: all leaders back in state.leaders order, units untouched, time + 1 (TC-U-13, TC-U-14) 1ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > PASS during an activation → activationInProgress; FINISH without one → noActivation (TC-U-16, TC-U-17) 2ms
+ ✓ test/rules/core/turn-flow.test.ts > turn passing after FINISH_ACTIVATION / PASS > a full hot-seat round with all transitions in the log (TC-HS-07) 1ms
+ ✓ test/server/upcast-v3.test.ts > fixtures v2 (SWR-005 step 0) > are real SWR-004 data: frozen v2 schema, provenance, hot-seat in handoff / AI game, < 50 KB 6ms
+ ✓ test/server/upcast-v3.test.ts > upcastState v2 → v3 > adds schemaVersion 3 + rulesEngine mock-v1; everything else is byte-equal; input not mutated 5ms
+ ✓ test/server/upcast-v3.test.ts > upcastState v2 → v3 > keeps id and version (optimistic concurrency unaffected) and the hot-seat handoff 2ms
+ ✓ test/server/upcast-v3.test.ts > upcastState v2 → v3 > is idempotent: upcast(upcast(x)) ≡ upcast(x), also through JSON (a written row) 39ms
+ ✓ test/server/upcast-v3.test.ts > upcastState v2 → v3 > a v3 core-v1 state passes unchanged 21ms
+ ✓ test/server/upcast-v3.test.ts > upcastState v2 → v3 > unknown / invalid versions and corrupt v2 throw 2ms
+ ✓ test/server/upcast-v3.test.ts > upcastState v1 → v2 → v3 > v1 rows become mock-v1 v3 with the same id/version/round/phase and the SWR-004 v2 mapping 2ms
+ ✓ test/server/upcast-v3.test.ts > mock-v1 keeps working after the upcast (AC-11) > v2 hot-seat row: ACCEPT_HANDOFF, then a move; the written state stays mock-v1 v3 3ms
+ ✓ test/server/upcast-v3.test.ts > mock-v1 keeps working after the upcast (AC-11) > stored events of v1/v2 are still read by upcastEvent 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > has at least 12 typical questions 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can units leave a system that contains my leader? 16ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can I activate a system that already has a leader in it? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can a leader without tactic values activate a system? 5ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > How many ground units can a transport ship carry? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can I move units into a system that was not activated? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > When can I pass during the Command Phase? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Who takes the first turn in the Command Phase? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > When is the Rebel base revealed? 1ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can the Rebel player reveal the base voluntarily? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Do Star Destroyers or the Death Star reveal the Rebel base? 2ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > How does the Empire win the game? 8ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > How do the Rebels win? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > What happens during the Refresh Phase? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Can a subjugated system also be neutral? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > Where are Rebel starting units placed in standard setup? 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > раскрытие базы 0ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > returns citations with source and page (TC-Q-19) 10ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > is deterministic across calls and instances (TC-Q-17) 21ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > applies kind, category, status and limit filters (TC-Q-18) 3ms
+ ✓ test/knowledge/search.test.ts > rules search (AC-8) > returns nothing for empty or meaningless queries (TC-Q-20) 0ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > starts in the command phase of round 1 with the Rebels to act (TC-U-01) 39ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > the assignment phase passes automatically: GAME_CREATED → PHASE_STARTED ×2 (TC-U-02) 1ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > copies the static data and only the starting leaders (BD-2, D-7) 1ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > unit ids follow the data order and never depend on the base; base units stand in the base (D-6) 4ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > base = chooseRebelBase(gameId, eligible) among eligible systems; no Imperial unit in or next to it 17ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > is deterministic: same gameId and now → identical state and JSON (Q-24) 1ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > never mutates or shares its inputs 1ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > Rebels act first also when the AI plays the Rebels (transient, the server auto-plays them) 0ms
+ ✓ test/rules/core/create.test.ts > createCoreGame > invalid data or settings throw (programming error) 6ms
+ ✓ test/rules/core/base.test.ts > fnv1a32 > matches the published FNV-1a 32-bit test vectors (ASCII) 2ms
+ ✓ test/rules/core/base.test.ts > chooseRebelBase > golden: sessionId → system pairs (changing the hash changes saved games: do not) 1ms
+ ✓ test/rules/core/base.test.ts > chooseRebelBase > is deterministic, independent of the input order and always returns a candidate 37ms
+ ✓ test/rules/core/base.test.ts > chooseRebelBase > handles long, unicode and near-identical ids (TC-D-16); an empty list throws 1ms
+ ✓ test/rules/core/view.test.ts > core-v1 player view > public data, markers, pools, passed, legal actions; strict schema 20ms
+ ✓ test/rules/core/view.test.ts > core-v1 player view > the view never shares objects with the state 3ms
+ ✓ test/rules/core/view.test.ts > core-v1 player view > session view: the active side, handoff screen while pending; AI game always the player 2ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > has at least 80 entries, each with id, category, kind, status and a source page 13ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > lists every RR glossary topic, RR setup, the LTP round/command/refresh/base pages and the first game setup 0ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > skips the Team Game with a reason and never covers it 2ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > records exceptions that point to existing entries (TC-R-05) 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — size and shape (AC-3) > never cites Rise of the Empire (TC-M-03) 2ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > uses all four kinds 0ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > records the three base game errata as clarifications citing the FAQ and amending an RR rule (TC-K-02) 3ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > every clarification cites the FAQ and amends an existing entry 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > every interpretation has a rationale and a source; disputed ones are needs-review (TC-K-03) 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > every implementation-note references a discrepancy and an official page (TC-K-04) 1ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > marks fan-sourced data as needs-review (TC-K-05) 0ms
+ ✓ test/knowledge/content.test.ts > Rebellion knowledge base — kinds (AC-4) > marks the rules every AI decision needs as ai: core 2ms
+ ✓ test/rules/core/reveal.test.ts > base reveal (R-8) > ground units moved into the base reveal it only at FINISH_ACTIVATION (TC-U-57, TC-U-61) 14ms
+ ✓ test/rules/core/reveal.test.ts > base reveal (R-8) > only when the activated system is the base (TC-U-57a) 1ms
+ ✓ test/rules/core/reveal.test.ts > base reveal (R-8) > the Rebels finishing an activation of their own base never reveal it (TC-U-57b, D-4) 1ms
+ ✓ test/rules/core/reveal.test.ts > base reveal (R-8) > ships, TIE fighters and the Death Star do not reveal (TC-U-58) 1ms
+ ✓ test/rules/core/reveal.test.ts > base reveal (R-8) > a leader alone does not reveal (TC-U-59, Q-11) 1ms
+ ✓ test/rules/core/reveal.test.ts > base reveal (R-8) > an Imperial ground unit already standing in the base reveals it when the base is activated 1ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > rules-index.md is up to date 11ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > coverage-matrix.md is up to date 4ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > discrepancies.md is up to date 3ms
+ ✓ test/knowledge/generated-docs.test.ts > generated rules documents > the discrepancies document carries the audit verdict (AC-6) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > is for the core-v1 engine, covers every rule entry and never an implementation-note 10ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > covers every rule, clarification and interpretation of the slice categories (TC-C-02, Q-8) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > records the engine decisions on slice interpretations and clarifications (review F-1) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > does not overstate partially modelled rules (review F-2) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > marks combat and missions as not-implemented with a discrepancy (TC-C-03) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > links activation to activation.ts and activate.test.ts (TC-C-04, scenario 1) 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 coverage (AC-5) > cites only stable engine tests (not edited by SWR-006 / SWR-008 workers of other zones) 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-3 → rebellion:command.turn-order is partial 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-4 → rebellion:command.activate.place-leader is implemented 1ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-5 → rebellion:command.move.into-activated-from-adjacent is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-6 → rebellion:command.pass is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-7 → rebellion:refresh.steps is partial 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-8 → rebellion:base.reveal-timing is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-9 → rebellion:victory.empire is implemented 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > R-10 → rebellion:setup.base-choice is deviation 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > D-6 → rebellion:base.space-not-system is deviation 0ms
+ ✓ test/knowledge/coverage.test.ts > core-v1 audit mapping (AC-6, TC-C-05) > every label R-3..R-10 and D-1..D-7 appears in a coverage note or a discrepancy title/engine behaviour 1ms
+stdout | test/ai/rules-query.test.ts > TC-H-02 — the rules query is invariant to the hidden base (SEEDS_P bot-vs-bot) > AI Empire before the reveal: query and selection input equal for every relocation; AI Rebels likewise; either AI side’s query is computable from the opponent’s view
+[rules-query] TC-H-02 SEEDS_P games=30 empire states=602 relocations=4213 rebels states=253 relocations=1719 empire pairs=9
+
+ ✓ test/ai/rules-query.test.ts > TC-H-02 — the rules query is invariant to the hidden base (SEEDS_P bot-vs-bot) > AI Empire before the reveal: query and selection input equal for every relocation; AI Rebels likewise; either AI side’s query is computable from the opponent’s view 3397ms
+stdout | test/ai/rules-query.test.ts > AI Rebels: the query does not depend on the units on the hidden base (QD-7, TC-H-06 unit part) > activation next to the base with / without movable Rebel units in it → equal query
+[rules-query] rebels near-base activations checked=42
+
+ ✓ test/ai/rules-query.test.ts > AI Rebels: the query does not depend on the units on the hidden base (QD-7, TC-H-06 unit part) > activation next to the base with / without movable Rebel units in it → equal query 3ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:easy/R:easy on SEEDS_P (30 games) 4352ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > have sequential DISC-NNN ids and every field filled (TC-C-08) 5ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > combat (D-1) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > missions and Assignment Phase (D-2) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > incomplete Refresh (D-3) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > objectives and reputation 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > loyalty and subjugation (D-5, step 5) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > voluntary base reveal 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > engine chooses the base (D-4/R-10) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > Rebel Base space (D-6) 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > permanent reveal condition 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > fixed first game setup (D-5) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > starting leaders only (D-7) 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > PASS during an activation 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > transport within one command 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > Rebel data / adjacency / leaders 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > component limitations 0ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > lists the data uncertainties for the box check 1ms
+ ✓ test/knowledge/discrepancies.test.ts > discrepancies (AC-7) > records no implementation bug in the slice (audit verdict) 0ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > seeded random games before the reveal: Rebels vs AI 2033ms
+stdout | test/ai/decision.test.ts > Empire decisions are invariant to the hidden base (AC-04, TC-H-01) > states differing only in the base before the reveal → identical decision points (incl. situation)
+[bot-invariance] empire states=123 relocations compared=2449
+
+ ✓ test/ai/decision.test.ts > Empire decisions are invariant to the hidden base (AC-04, TC-H-01) > states differing only in the base before the reveal → identical decision points (incl. situation) 3025ms
+ ✓ test/rules/core/hidden-info.test.ts > Empire observations are invariant to relocating the hidden base (TC-H-02) > seeded random games before the reveal: Empire vs AI 914ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:easy/R:normal on SEEDS_P (30 games) 1243ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:easy/R:hard on SEEDS_P (30 games) 1429ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:normal/R:easy on SEEDS_P (30 games) 1030ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:normal/R:normal on SEEDS_P (30 games) 1411ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:normal/R:hard on SEEDS_P (30 games) 2355ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:hard/R:easy on SEEDS_P (30 games) 818ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:hard/R:normal on SEEDS_P (30 games) 1376ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > bot vs bot E:hard/R:hard on SEEDS_P (30 games) 2077ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > E-HUNT (human Empire) vs AI Rebels easy on 5 seeds 82ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > E-HUNT (human Empire) vs AI Rebels normal on 5 seeds 52ms
+stdout | test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > summary: every game checked; the reveal and both victories were exercised
+[swr008-disc009] games=285 commands=29846 reveals=252 empireWins=104 rebelWins=181
+
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > E-HUNT (human Empire) vs AI Rebels hard on 5 seeds 67ms
+ ✓ test/rules/core/reveal-invariant.test.ts > DISC-009 on seeded games: property (TC-D-32) + differential vs the pre-SWR-008 logic (TC-D-33) > summary: every game checked; the reveal and both victories were exercised 1ms
+
+ Test Files  32 passed (32)
+      Tests  542 passed (542)
+   Start at  17:03:39
+   Duration  16.97s (tests 84%, import 12%, transform 4%)
+
+exit=0

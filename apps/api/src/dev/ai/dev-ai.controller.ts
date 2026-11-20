@@ -3,12 +3,26 @@
  * Check order (AM-BE-11): 404 (production: no module) → 403 guard → 400/413 body → 429 dev rate limit →
  * 503 pricing / model → 429 budget → model call. Responses are parsed with the strict platform schemas; errors use
  * the unified envelope with the allow-listed `details` (plan §6.2); 429 responses carry `Retry-After` when known.
+ *
+ * SWR-008 (AC-13, plan-backend §6): `GET sessions/:sessionId/decisions` — AI decision diagnostics of one session
+ * (`dev-ai-diagnostics.ts`): 404 production → 403 guard → 400 bad id → 429 dev rate limit (free hit) → read.
  */
-import { Body, Controller, Get, HttpCode, Inject, Post, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import {
   AI_DEV_BUDGET_KEY,
   ERROR_MESSAGE_KEYS,
   type AiDevStatus,
+  type AiSessionDecisionsResponse,
   type AiTestDecisionResponse,
 } from '@bga/platform';
 import type { Response } from 'express';
@@ -17,6 +31,9 @@ import { ZodValidationPipe } from '../../common/zod-validation.pipe';
 import { AiDecisionService, AiUsageWriteError } from '../../ai/ai-decision.service';
 import { AiFailure, retryAfterSeconds, toApiError } from '../../ai/ai.errors';
 import { AiStatusService } from '../../ai/ai-status.service';
+import { AiUsageRepository } from '../../ai/ai-usage.repository';
+import { PrismaService } from '../../persistence/prisma.service';
+import { DevAiSessionDiagnostics, DevAiSessionIdSchema } from './dev-ai-diagnostics';
 import {
   DevAiTestDecisionRequestSchema,
   toDecisionContext,
@@ -39,17 +56,33 @@ function devRateLimited(res: Response, seconds: number): ApiError {
 @Controller('dev/ai')
 @UseGuards(LoopbackGuard)
 export class DevAiController {
+  private readonly sessionDiagnostics: DevAiSessionDiagnostics;
+
   constructor(
     @Inject(AiDecisionService) private readonly decisions: AiDecisionService,
     @Inject(AiStatusService) private readonly statusService: AiStatusService,
     @Inject(DEV_RATE_LIMITER) private readonly limiter: DevRateLimiter,
-  ) {}
+    @Inject(AiUsageRepository) usage: AiUsageRepository,
+    @Inject(PrismaService) prisma: PrismaService,
+  ) {
+    this.sessionDiagnostics = new DevAiSessionDiagnostics(usage, prisma);
+  }
 
   @Get('status')
   async status(@Res({ passthrough: true }) res: Response): Promise<AiDevStatus> {
     const rate = this.limiter.hit(false);
     if (!rate.ok) throw devRateLimited(res, rate.retryAfterSeconds);
     return toWireStatus(await this.statusService.status(AI_DEV_BUDGET_KEY));
+  }
+
+  @Get('sessions/:sessionId/decisions')
+  async sessionDecisions(
+    @Param('sessionId', new ZodValidationPipe(DevAiSessionIdSchema)) sessionId: string,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AiSessionDecisionsResponse> {
+    const rate = this.limiter.hit(false);
+    if (!rate.ok) throw devRateLimited(res, rate.retryAfterSeconds);
+    return this.sessionDiagnostics.decisions(sessionId);
   }
 
   @Post('test-decision')

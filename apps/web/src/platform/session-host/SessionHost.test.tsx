@@ -2,8 +2,13 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { lazy, StrictMode } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppProviders } from '@/app/providers/AppProviders';
+import {
+  DEV_AI_TABLE_DIAGNOSTICS_KEY,
+  resetDevAiTableDiagnostics,
+  useDevAiTableDiagnostics,
+} from '@/dev/ai/session/diagnosticsFlag';
 import { routes } from '@/app/router';
 import type { TableScreenProps, WebGameEntry } from '@/games/registry';
 import {
@@ -549,5 +554,118 @@ describe('SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7)
       ),
     });
     expect(screen.getByTestId('probe-automation')).toHaveTextContent('null');
+  });
+});
+
+// SWR-008 plan-frontend §2.1–§2.2, §4.2 (D-2..D-4): the dev AI decision panel slot of the session host.
+describe('SessionHost: dev AI decision panel slot (SWR-008 AC-13, QD-15)', () => {
+  const DECISIONS = 'GET /api/dev/ai/sessions/s1/decisions';
+  const emptyDecisions = {
+    decisions: [],
+    totals: Object.fromEntries(
+      ['withRules', 'withoutRules', 'total'].map((g) => [
+        g,
+        { decisions: 0, costMicroUsd: 0, inputTokens: 0, outputTokens: 0, meanCostMicroUsd: null },
+      ]),
+    ),
+  };
+  const aiSession = (strategy: 'bot' | 'openai' | null = 'openai') =>
+    makeSessionEnvelope({ gameId: 'game-a', automation: { pending: false, strategy } });
+  const devAiNodes = () => document.querySelectorAll('[data-testid^="dev-ai-"]');
+  const devAiRequests = (requests: { path: string }[]) =>
+    requests.filter((r) => r.path.startsWith('/api/dev/ai/'));
+  const settle = () => act(() => new Promise((r) => setTimeout(r, 50)));
+
+  beforeEach(() => {
+    resetAutomationStore();
+    resetAutomationRuns();
+    resetDevAiTableDiagnostics();
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('gate open (DEV + switch on + automated participant) → the panel, one GET of the decisions; the table unchanged', async () => {
+    useDevAiTableDiagnostics.setState({ enabled: true });
+    const { requests } = mockFetch({
+      [GET]: { status: 200, body: aiSession('bot') },
+      [DECISIONS]: { status: 200, body: emptyDecisions },
+    });
+    renderWithProviders({ path: '/sessions/s1', registry });
+    expect(await screen.findByTestId('fake-table')).toBeInTheDocument();
+    const panel = await screen.findByTestId('dev-ai-session-diagnostics');
+    await waitFor(() => expect(panel).toHaveAttribute('data-state', 'ready'));
+    expect(
+      within(screen.getByTestId('session-host')).getByTestId('dev-ai-session-diagnostics'),
+    ).toBe(panel);
+    expect(devAiRequests(requests).map((r) => r.path)).toEqual([
+      '/api/dev/ai/sessions/s1/decisions',
+    ]);
+  });
+
+  it('D-3: DEV, switch off (default) → no dev-ai-* node, no /api/dev/ai request; switching on later shows it (the gate, not timing)', async () => {
+    const { requests } = mockFetch({
+      [GET]: { status: 200, body: aiSession('openai') },
+      [DECISIONS]: { status: 200, body: emptyDecisions },
+    });
+    renderWithProviders({ path: '/sessions/s1', registry });
+    expect(await screen.findByTestId('fake-table')).toBeInTheDocument();
+    await settle();
+    expect(devAiNodes()).toHaveLength(0);
+    expect(devAiRequests(requests)).toHaveLength(0);
+    expect(localStorage.getItem(DEV_AI_TABLE_DIAGNOSTICS_KEY)).not.toContain('"enabled":true');
+
+    act(() => useDevAiTableDiagnostics.getState().setEnabled(true));
+    expect(await screen.findByTestId('dev-ai-session-diagnostics')).toBeInTheDocument();
+  });
+
+  it('D-4: DEV, switch on, strategy null → no panel, no request; an automated participant appears → panel', async () => {
+    useDevAiTableDiagnostics.setState({ enabled: true });
+    const { requests } = mockFetch({
+      [GET]: { status: 200, body: aiSession(null) },
+      [DECISIONS]: { status: 200, body: emptyDecisions },
+    });
+    const { queryClient } = renderWithProviders({ path: '/sessions/s1', registry });
+    expect(await screen.findByTestId('fake-table')).toBeInTheDocument();
+    await settle();
+    expect(devAiNodes()).toHaveLength(0);
+    expect(devAiRequests(requests)).toHaveLength(0);
+
+    act(() => {
+      queryClient.setQueryData(sessionKeys.detail('s1'), aiSession('bot'));
+    });
+    expect(await screen.findByTestId('dev-ai-session-diagnostics')).toBeInTheDocument();
+  });
+
+  it('D-2: production build (DEV=false) with the switch stored on and an AI session → no dev-ai-* node, no /api/dev/ai request', async () => {
+    localStorage.setItem(DEV_AI_TABLE_DIAGNOSTICS_KEY, '{"state":{"enabled":true},"version":1}');
+    vi.stubEnv('DEV', false);
+    vi.resetModules();
+    try {
+      // A fresh module graph: the literal guard of SessionHost is evaluated with DEV=false.
+      const { SessionHost: ProdSessionHost } = await import('./SessionHost');
+      const fresh = await import('@/shared/test');
+      const { requests } = fresh.mockFetch({
+        [GET]: { status: 200, body: aiSession('openai') },
+        [DECISIONS]: { status: 200, body: emptyDecisions },
+      });
+      fresh.renderWithProviders({
+        element: <ProdSessionHost />,
+        routePattern: '/sessions/:sessionId',
+        path: '/sessions/s1',
+        registry,
+      });
+      expect(await screen.findByTestId('fake-table')).toBeInTheDocument();
+      expect(screen.getByTestId('session-host')).toHaveAttribute(
+        'data-automation-strategy',
+        'openai',
+      );
+      await settle();
+      expect(devAiNodes()).toHaveLength(0);
+      expect(devAiRequests(requests)).toHaveLength(0);
+    } finally {
+      vi.unstubAllEnvs();
+      vi.resetModules();
+    }
   });
 });

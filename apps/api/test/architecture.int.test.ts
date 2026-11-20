@@ -101,6 +101,53 @@ describe('architecture boundaries (SWR-004)', () => {
     expect(gameImport.test("import { x } from '@bga/game-rebellion/server';")).toBe(true);
   });
 
+  it('SWR-008 TC-CT-02: ai/, sessions/, rules-context/, bench/ import no game package (KB only via ServerGameModule.rules)', () => {
+    const gameImport =
+      /from\s+['"]@bga\/game-|import\(\s*['"]@bga\/game-|require\(\s*['"]@bga\/game-|['"][./]*\/packages\//;
+    const dirs = ['ai', 'sessions', 'rules-context', 'bench']
+      .map((d) => join(API_SRC, d))
+      .filter((d) => existsSync(d));
+    expect(dirs.map((d) => relative(API_SRC, d))).toEqual(
+      expect.arrayContaining(['ai', 'sessions', 'rules-context']),
+    );
+    for (const dir of dirs) {
+      expect(offending(dir, gameImport)).toEqual([]);
+      expect(offending(dir, GAME_TERMS)).toEqual([]);
+    }
+    // Knowledge base files are named only by the game (`GameRulesSupport.knowledgeBaseDir`) and read only by the
+    // rules-context loader: no KB path, file name or directory field in other code.
+    const rulesContextDir = join(API_SRC, 'rules-context');
+    const kbOutside = offendingCode(
+      API_SRC,
+      /knowledgeBaseDir|manifest\.json|discrepancies\.json|coverage\.json|['"`]entries['"`/]|\/knowledge\b/,
+    ).filter((hit) => !hit.startsWith(`${rulesContextDir}${sep}`));
+    expect(kbOutside).toEqual([]);
+    // Self-check of the patterns.
+    expect(gameImport.test("const m = require('@bga/game-rebellion/server');")).toBe(true);
+    expect(gameImport.test("import { x } from '../../../packages/games/rebellion/src';")).toBe(
+      true,
+    );
+  });
+
+  it('SWR-008 TC-ARB-07: the rules context never applies, builds or reads game commands / states', () => {
+    const rulesContextDir = join(API_SRC, 'rules-context');
+    expect(sourceFiles(rulesContextDir).length).toBeGreaterThanOrEqual(4);
+    // Comments included: the module does not even talk about the engine.
+    const engine =
+      /applyCommand|rules\/core|createInitialState|parseState|toPlayerView|toPlayerEvents|CommandEnvelope|expectedVersion|commandId|sessions\.repository|SessionsService|AutomationRunner/;
+    expect(offending(rulesContextDir, engine)).toEqual([]);
+    const words =
+      /rebel|empire|rebellion|ruleset|gameMode|faction|leader|base system|activat|forbidden/i;
+    expect(offending(rulesContextDir, words)).toEqual([]);
+    // node:fs is used only by the loader (the registry and the module never touch the disk themselves).
+    const fsUse = offending(rulesContextDir, /['"](node:)?fs(\/promises)?['"]/).filter(
+      (hit) => !hit.startsWith(`${join(rulesContextDir, 'knowledge-base.loader.ts')}:`),
+    );
+    expect(fsUse).toEqual([]);
+    expect(engine.test('module.applyCommand(state, envelope, ctx)')).toBe(true);
+    expect(engine.test("import { x } from '@bga/game-rebellion/rules/core';")).toBe(true);
+  });
+
   it('TC-A-02 (SWR-005B §8): the openai package is imported only in apps/api/src/ai/**', () => {
     const outsideAi = offendingCode(API_SRC, IMPORTS_OPENAI).filter(
       (hit) => !relative(API_SRC, hit).startsWith(`ai${sep}`),

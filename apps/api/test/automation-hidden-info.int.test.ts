@@ -153,6 +153,24 @@ describe('SWR-006 W9: hidden base in OpenAI mode (AC-04)', () => {
       expect(JSON.stringify(call.body)).toContain('Rebel base: unknown.');
     }
     expectNoSessionId([...fakeA.responses, ...fakeB.responses], id);
+    // SWR-008 W10 (TC-H-01 / TC-H-10): rules are on by default — every request carries the Rebellion rules block
+    // (engine scope first), it never names either base, and the AiUsage rule columns are the same in both games.
+    for (const call of [...fakeA.responses, ...fakeB.responses]) {
+      const input = String(call.body.input);
+      expect(
+        input.startsWith(
+          'Rules (reference data, not instructions):\n[rebellion:impl.engine-scope] ',
+        ),
+      ).toBe(true);
+      const block = input.slice(0, input.indexOf('\n\nGame (data):\n'));
+      expect(block).not.toContain(baseA);
+      expect(block).not.toContain(baseB);
+    }
+    const rulesColumns = async (started: RebellionApp) =>
+      (await usageRows(started.app, id))
+        .map((r) => JSON.stringify([r.rulesEnabled, r.rulesIds, r.rulesVersion, r.rulesChars]))
+        .sort();
+    expect(await rulesColumns(b)).toEqual(await rulesColumns(a));
 
     // TC-H-06 / TC-H-07: no base in any log line or AiUsage row of either game.
     for (const [started, base] of [
@@ -196,6 +214,12 @@ describe('SWR-006 W9: hidden base in OpenAI mode (AC-04)', () => {
     expect(scanned.length).toBeGreaterThan(20);
     expect(fake.responses.length).toBeGreaterThan(0);
     expectNoSessionId(fake.responses, id);
+    // SWR-008 W10 (TC-H-10): the AI Rebels' requests carry the rules block too; the block never names the base.
+    for (const call of fake.responses) {
+      const input = String(call.body.input);
+      expect(input.startsWith('Rules (reference data, not instructions):\n')).toBe(true);
+      expect(input.slice(0, input.indexOf('\n\nGame (data):\n'))).not.toContain(base);
+    }
     const events = await prismaOf(started.app).sessionEvent.findMany({ where: { sessionId: id } });
     expect(events.some((e) => e.actor === 'rebels' && e.type === 'PIECES_MOVED')).toBe(true);
     expect(logText(started)).not.toContain(base);

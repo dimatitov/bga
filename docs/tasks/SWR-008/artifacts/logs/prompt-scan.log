@@ -1,0 +1,33 @@
+# 2026-11-20T14:04:15Z node v22.23.5 cwd apps/api — TC-H-04 prompt scan (QD-29), TC-H-01/03/05/06/07/08
+$ npx vitest run --reporter=verbose test/rules-hidden-info.int.test.ts
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-PASSIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal
+[swr008-w10-h01] R-PASSIVE commands=8 identicalRequests=50 requestsA=51 requestsB=55 bases=ryloth/tatooine diverged=false
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-PASSIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal 1131ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-ACTIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal
+[swr008-w10-h01] R-ACTIVE commands=31 identicalRequests=49 requestsA=49 requestsB=49 bases=ryloth/tatooine diverged=false
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-ACTIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal 1122ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-03 / TC-H-05 (QD-6): AI Rebels — another session id / budget key, spent budget and clock outside the Rebels view → byte-identical raw requests
+[swr008-w10-h03] commands=19 identicalRequests=13 base=endor idB=swr008-w10-h03-b-4
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-03 / TC-H-05 (QD-6): AI Rebels — another session id / budget key, spent budget and clock outside the Rebels view → byte-identical raw requests 397ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-04 / TC-H-05 / TC-H-08: AI Empire games to the end (2 ids × R-ACTIVE / R-PASSIVE) — no request names the base outside the Empire’s own public context before the reveal
+[swr008-w10-h04] scannedBeforeReveal=196 swr008-w10-h04-a:R-ACTIVE:requests=105:beforeReveal=13:outcome=rebels swr008-w10-h04-a2:R-PASSIVE:requests=81:beforeReveal=50:outcome=rebels swr008-w10-h04-b:R-PASSIVE:requests=69:beforeReveal=69:outcome=rebels swr008-w10-h04-b2:R-ACTIVE:requests=64:beforeReveal=64:outcome=rebels
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-04 / TC-H-05 / TC-H-08: AI Empire games to the end (2 ids × R-ACTIVE / R-PASSIVE) — no request names the base outside the Empire’s own public context before the reveal 2915ms
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-06: AI Empire inside its activation of X — base = X vs base = Y: equal decision points, rules query and request; the reveal happens only on FINISH and only where X is the base 75ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-07 (QD-7, Q-BE-1): AI Rebels, human Empire, two copies with the base elsewhere — Empire-addressed bodies and dev diagnostics clean; diagnostics rules / fallbacks / tokens / cost equal
+[swr008-w10-h07] decisions=13 scannedEmpireBodies=72 bases=rodia/ryloth
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-07 (QD-7, Q-BE-1): AI Rebels, human Empire, two copies with the base elsewhere — Empire-addressed bodies and dev diagnostics clean; diagnostics rules / fallbacks / tokens / cost equal 461ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  17:04:16
+   Duration  8.32s (tests 87%, import 10%, transform 3%)
+
+exit=0

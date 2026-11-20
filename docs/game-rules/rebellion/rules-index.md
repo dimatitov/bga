@@ -17,8 +17,8 @@
 | rule | 126 |
 | clarification | 30 |
 | interpretation | 11 |
-| implementation-note | 14 |
-| **total** | 181 |
+| implementation-note | 15 |
+| **total** | 182 |
 
 ## General rules and components (`general`)
 
@@ -34,6 +34,7 @@
 - `rebellion:general.notes-allowed` Taking notes is allowed — clarification, verified (FAQ p.5)
 - `rebellion:general.simultaneous-timing` Abilities with the same timing — clarification, verified (FAQ p.4)
 - `rebellion:impl.component-limits` core-v1 does not enforce component limits — implementation-note, verified (RR p.6)
+- `rebellion:impl.engine-scope` What the core-v1 engine can do — implementation-note, verified (RR p.2; RR p.3)
 
 ## Game round (`round`)
 
@@ -171,7 +172,7 @@
 - `rebellion:base.voluntary-reveal-timing` Voluntary reveal only at the start of a Rebel turn (errata) — clarification, verified (FAQ p.1)
 - `rebellion:impl.base-space-merged` core-v1 merges the Rebel Base space with the base system — implementation-note, verified (RR p.10; RR p.9)
 - `rebellion:impl.no-voluntary-reveal` core-v1 has no voluntary base reveal — implementation-note, verified (RR p.11; FAQ p.1)
-- `rebellion:impl.reveal-only-at-finish` core-v1 checks the reveal only at the end of an Imperial activation — implementation-note, verified (RR p.11)
+- `rebellion:impl.reveal-only-at-finish` core-v1 reveals the base by a central state check — implementation-note, verified (RR p.11)
 
 ## Winning the game, time and reputation (`victory`)
 

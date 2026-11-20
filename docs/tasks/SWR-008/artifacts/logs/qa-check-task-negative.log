@@ -1,0 +1,14 @@
+# 2026-11-20T14:11:25Z TC-WF-02: check-task catches violations on COPIES of docs/tasks/SWR-008 in the scratchpad (originals untouched)
+| DELIVERY | passed | analyst | `no-such-file.md` | |
+$ node scripts/check-task.mjs <copy a: DELIVERY passed after pending, missing artifact>
+/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/a/status.md: [R3] stage DELIVERY is passed but earlier stage QA_EXECUTION is in_progress (line 15)
+/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/a/status.md: [R3] stage DELIVERY is passed but earlier stage FINAL_ACCEPTANCE is pending (line 15)
+/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/a/status.md: [R4] stage DELIVERY artifact path `no-such-file.md` does not exist (line 15)
+/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/a/status.md: [R4] stage DELIVERY is passed but Artifact has no existing file in backticks (line 15)
+FAIL /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/a (4 problems)
+exit=1
+$ node scripts/check-task.mjs <copy b: acceptance.md AC-1 passed with empty evidence>
+/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/b/acceptance.md: [R5] AC-1 is passed but evidence is empty or a placeholder (line 5)
+/private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/b/acceptance.md: [R9] section "## Final decision" not found
+FAIL /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/ce75b802-f938-4313-a9fa-c43d0b5fac02/scratchpad/wf02/b (2 problems)
+exit=1

@@ -68,5 +68,22 @@ model AiUsage {
   errorCode             String? // platform ErrorCode
   createdAt             DateTime @default(now())
 
+  // SWR-008 (AC-12, plan-backend §5): rules context of the request. Never rule text, prompt text or the model's reason.
+  /// SWR-008: rules context switched on for this request (AI_COMMANDER_RULES_CONTEXT=on, commander only).
+  rulesEnabled           Boolean @default(false)
+  /// Rules set version (`<gameId>@<formatVersion>:<hash12>`); null = off / the game has no rules / dev-test.
+  rulesVersion           String?
+  rulesCount             Int     @default(0)
+  /// JSON array of the PUBLIC rule ids sent (never rule text); null when none.
+  rulesIds               String?
+  rulesChars             Int     @default(0)
+  /// ceil(rulesChars / 4) — estimate; the real delta is measured by the benchmark.
+  rulesTokensEstimate    Int     @default(0)
+  rulesTruncated         Boolean @default(false)
+  /// Removed by the prompt-size limit (QD-9).
+  rulesDropped           Boolean @default(false)
+  /// upperBoundInputTokens of the sent prompt (the reservation basis); null = before SWR-008.
+  promptTokensUpperBound Int?
+
   @@index([budgetKey, createdAt])
 }

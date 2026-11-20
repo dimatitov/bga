@@ -10,16 +10,27 @@
  *   pick = `control.fallbackId` (default `c1`); each applied candidate → `pending - 1` (unless `pendingForever`),
  *   `count + 1`, version + 1, one `BOT_MOVED` event whose payload holds a secret that `toPlayerEvents` removes.
  * `control` switches failures on/off at run time (rejected ids, invalid / throwing decision point, endless turn).
+ *
+ * SWR-008 (W6b, TC-CT-06 / TC-FB-05): the decision point carries a public `rulesQuery` (`control.rulesQuery`, default
+ * `{ commandTypes: ['MOVE', 'WAIT'], tags: [] }`; `null` → absent), and `createFakeAutoGame(control, { rules })`
+ * optionally registers `GameRulesSupport` on the tiny knowledge base `test/fixtures/tiny-kb` (game `fake`, ids
+ * `fake:*`, pinned `fake:impl.engine-scope`, tag `quiet` → `fake:move.wait`) — see `tinyKbRules`. Only the generic
+ * platform rules-kb provider is used: no Rebellion code.
  */
+import { fileURLToPath } from 'node:url';
 import {
   CommandEnvelopeFrameSchema,
   ERROR_MESSAGE_KEYS,
   defineServerGameModule,
   toValidationIssues,
   type AutomationDecisionPoint,
+  type AutomationRulesQuery,
   type GameDefinition,
+  type GameRulesSupport,
+  type RulesContextProvider,
   type ServerGameModule,
 } from '@bga/platform';
+import { createKnowledgeBaseRulesProvider } from '@bga/platform/rules-kb';
 import { z } from 'zod';
 import type {
   CommanderChoice,
@@ -92,10 +103,20 @@ export interface FakeAutoControl {
   singleCandidate: boolean;
   /** The platform-facing `automation.pendingActor` throws (review F-1: programming error of a game). */
   throwPendingActor: boolean;
+  /** A fourth candidate `c4` (MOVE east) is offered: other candidates, same public `rulesQuery` (TC-INT-02). */
+  extraCandidate: boolean;
+  /** SWR-008: public `rulesQuery` of the decision point; `null` → the point has none. */
+  rulesQuery: Readonly<AutomationRulesQuery> | null;
   /** Ids passed to `applyCandidate`, in order. */
   applied: string[];
   decisionPoints: number;
 }
+
+/** Default public `rulesQuery` of the fake decision point (the public command types of an automated move). */
+export const FAKE_RULES_QUERY: Readonly<AutomationRulesQuery> = Object.freeze({
+  commandTypes: ['MOVE', 'WAIT'],
+  tags: [],
+});
 
 export function fakeAutoControl(): FakeAutoControl {
   return {
@@ -106,6 +127,8 @@ export function fakeAutoControl(): FakeAutoControl {
     throwPoint: false,
     singleCandidate: false,
     throwPendingActor: false,
+    extraCandidate: false,
+    rulesQuery: FAKE_RULES_QUERY,
     applied: [],
     decisionPoints: 0,
   };
@@ -115,12 +138,17 @@ const CANDIDATES = [
   { id: 'c1', type: 'MOVE', target: 'north', summary: 'Move one step north.' },
   { id: 'c2', type: 'MOVE', target: 'south', summary: 'Move one step south.' },
   { id: 'c3', type: 'WAIT', summary: 'Wait and end this move.' },
+  { id: 'c4', type: 'MOVE', target: 'east', summary: 'Move one step east.' },
 ] as const;
 
+/** Candidates offered by default (`c4` only with `control.extraCandidate`). */
+const BASE_CANDIDATES = CANDIDATES.slice(0, 3);
+
 function decisionPointOf(state: FakeAutoState, control: FakeAutoControl): AutomationDecisionPoint {
+  const offered = control.extraCandidate ? [...CANDIDATES] : [...BASE_CANDIDATES];
   const candidates = control.singleCandidate
     ? [CANDIDATES.find((c) => c.id === control.fallbackId) ?? CANDIDATES[0]]
-    : [...CANDIDATES];
+    : offered;
   return {
     actor: 'p2',
     phase: 'bot-turn',
@@ -129,10 +157,77 @@ function decisionPointOf(state: FakeAutoState, control: FakeAutoControl): Automa
     candidates,
     fallbackCandidateId: control.fallbackId,
     policyId: 'fake-bot-v1',
+    ...(control.rulesQuery === null
+      ? {}
+      : {
+          rulesQuery: {
+            commandTypes: [...control.rulesQuery.commandTypes],
+            tags: [...control.rulesQuery.tags],
+          },
+        }),
   };
 }
 
-export function createFakeAutoGame(control: FakeAutoControl = fakeAutoControl()): {
+// ---------------------------------------------------------------------------------------------------------
+// SWR-008: rules of the fake game (tiny knowledge base, generic platform provider)
+// ---------------------------------------------------------------------------------------------------------
+
+/** Absolute directory of the tiny knowledge base (game `fake`). */
+export const TINY_KB_DIR = fileURLToPath(new URL('../fixtures/tiny-kb', import.meta.url));
+export const TINY_KB_ENGINE_SCOPE = 'fake:impl.engine-scope';
+/** Tag → entries of the fake game (`quiet` → the waiting rule). */
+export const TINY_KB_TAG_RULES: Readonly<Record<string, readonly string[]>> = Object.freeze({
+  quiet: Object.freeze(['fake:move.wait']),
+});
+
+export interface TinyKbRulesSpy {
+  /** Every provider built from this support (one per server start). */
+  providers: RulesContextProvider[];
+  /** Number of `selectRules` calls over all providers. */
+  selections: number;
+  /** When set, `selectRules` throws this error (TC-FB-09). */
+  throwOnSelect: Error | null;
+  /** When set, `selectRules` results are rewritten (a provider that breaks its contract). */
+  rewrite: ((result: ReturnType<RulesContextProvider['selectRules']>) => unknown) | null;
+}
+
+/**
+ * `GameRulesSupport` on the tiny knowledge base through the generic `createKnowledgeBaseRulesProvider` (the same path
+ * a real game uses), with a spy that counts selections and can make them fail.
+ */
+export function tinyKbRules(knowledgeBaseDir: string = TINY_KB_DIR): {
+  rules: GameRulesSupport;
+  spy: TinyKbRulesSpy;
+} {
+  const spy: TinyKbRulesSpy = { providers: [], selections: 0, throwOnSelect: null, rewrite: null };
+  const rules: GameRulesSupport = {
+    knowledgeBaseDir,
+    createRulesContextProvider(source) {
+      const inner = createKnowledgeBaseRulesProvider(source, {
+        pinnedRuleIds: [TINY_KB_ENGINE_SCOPE],
+        tagRules: TINY_KB_TAG_RULES,
+      });
+      const provider: RulesContextProvider = {
+        rulesVersion: inner.rulesVersion,
+        requiredChars: inner.requiredChars,
+        selectRules(input) {
+          spy.selections += 1;
+          if (spy.throwOnSelect) throw spy.throwOnSelect;
+          const result = inner.selectRules(input);
+          return spy.rewrite ? (spy.rewrite(result) as typeof result) : result;
+        },
+      };
+      spy.providers.push(provider);
+      return provider;
+    },
+  };
+  return { rules, spy };
+}
+
+export function createFakeAutoGame(
+  control: FakeAutoControl = fakeAutoControl(),
+  options: { rules?: GameRulesSupport } = {},
+): {
   module: ServerGameModule;
   control: FakeAutoControl;
 } {
@@ -254,7 +349,8 @@ export function createFakeAutoGame(control: FakeAutoControl = fakeAutoControl())
         if (
           pendingActor(state) === null ||
           control.reject.has(candidateId) ||
-          !CANDIDATES.some((c) => c.id === candidateId)
+          !CANDIDATES.some((c) => c.id === candidateId) ||
+          (candidateId === 'c4' && !control.extraCandidate)
         ) {
           return {
             ok: false,
@@ -285,6 +381,7 @@ export function createFakeAutoGame(control: FakeAutoControl = fakeAutoControl())
         };
       },
     },
+    ...(options.rules === undefined ? {} : { rules: options.rules }),
   };
   return { module: defineServerGameModule(typed), control };
 }
@@ -303,12 +400,24 @@ export type FakePick = (
   call: number,
 ) => CommanderChoice | Promise<CommanderChoice>;
 
-/** A scripted `CommanderStrategy` that counts runs and calls; `gate` holds every call until it resolves. */
+/**
+ * A scripted `CommanderStrategy` that counts runs and calls; `gate` holds every call until it resolves.
+ * `atGate` counts the calls that have reached the gate (SWR-008 review F-1): `reachedGate(n)` resolves once `n` calls
+ * are waiting there, so a concurrency test can release the gate only after every run has really loaded its state.
+ */
 export class FakeStrategy implements CommanderStrategy {
   readonly id: 'bot' | 'openai';
   calls = 0;
   runs: CommanderRunContext[] = [];
   gate: Promise<void> | null = null;
+  atGate = 0;
+  private readonly gateWaiters: { n: number; resolve: () => void }[] = [];
+
+  /** Resolves when at least `n` calls (over all runs of this strategy) have reached `gate`. */
+  reachedGate(n = 1): Promise<void> {
+    if (this.atGate >= n) return Promise.resolve();
+    return new Promise((resolve) => this.gateWaiters.push({ n, resolve }));
+  }
 
   constructor(
     private readonly pick: FakePick = (point) => ({
@@ -326,7 +435,14 @@ export class FakeStrategy implements CommanderStrategy {
       choose: async (point) => {
         this.calls += 1;
         const call = this.calls;
-        if (this.gate) await this.gate;
+        if (this.gate) {
+          this.atGate += 1;
+          for (const w of this.gateWaiters.filter((x) => x.n <= this.atGate)) {
+            this.gateWaiters.splice(this.gateWaiters.indexOf(w), 1);
+            w.resolve();
+          }
+          await this.gate;
+        }
         return this.pick(point, call);
       },
     };

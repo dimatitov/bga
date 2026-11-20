@@ -1,8 +1,12 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/shared/i18n';
 import { type MockReply, mockFetch, renderWithProviders } from '@/shared/test';
 import { errorBody, makeDecisionResponse, makeMockStatus, makeStatus } from './testFixtures';
+import {
+  DEV_AI_TABLE_DIAGNOSTICS_KEY,
+  resetDevAiTableDiagnostics,
+} from './session/diagnosticsFlag';
 import { DEV_AI_TEST_SCENARIO } from './testScenario';
 
 const STATUS = 'GET /api/dev/ai/status';
@@ -499,7 +503,7 @@ describe('DevAiPage (SWR-005B plan-frontend §11)', () => {
     expect(screen.getByTestId('dev-ai-page').textContent).not.toMatch(/[А-Яа-яЁё]/);
   });
 
-  it('T-12: a11y by roles — 2 radiogroups, button, 4 h2, ordered action list', async () => {
+  it('T-12: a11y by roles — 2 radiogroups, button, 5 h2 (SWR-008: + table diagnostics), ordered action list', async () => {
     await openPage({ [STATUS]: { status: 200, body: makeStatus() } });
     expect(screen.getByRole('radiogroup', { name: 'Роль модели' })).toBeInTheDocument();
     expect(screen.getByRole('radiogroup', { name: 'Провайдер' })).toBeInTheDocument();
@@ -508,6 +512,7 @@ describe('DevAiPage (SWR-005B plan-frontend §11)', () => {
       'Подключение',
       'Запуск',
       'Результат',
+      'Диагностика на игровом столе',
       'Тестовый сценарий',
     ]);
     const list = within(screen.getByTestId('dev-ai-scenario')).getByRole('list');
@@ -519,5 +524,57 @@ describe('DevAiPage (SWR-005B plan-frontend §11)', () => {
     expect(screen.getByTestId('dev-ai-scenario-note')).toHaveTextContent(
       'Тестовые данные, не правила Rebellion',
     );
+  });
+});
+
+describe('DevAiPage: table diagnostics switch (SWR-008 plan-frontend §2.1 G-2, D-11)', () => {
+  beforeEach(() => {
+    resetDevAiTableDiagnostics();
+    localStorage.clear();
+  });
+
+  it('D-11: off by default; a click stores {"state":{"enabled":true},"version":1}; a remount shows it on; off again', async () => {
+    const { unmount, user, requests } = await openPage({
+      [STATUS]: { status: 200, body: makeStatus() },
+    });
+    const card = screen.getByTestId('dev-ai-table-diagnostics');
+    expect(within(card).getByRole('heading', { level: 2 })).toHaveTextContent(
+      'Диагностика на игровом столе',
+    );
+    const toggle = screen.getByTestId('dev-ai-table-diagnostics-switch');
+    expect(toggle).not.toBeChecked();
+    expect(
+      screen.getByRole('switch', { name: 'Показывать диагностику решений AI на игровом столе' }),
+    ).toBe(toggle);
+    expect(toggle).toHaveAccessibleDescription(
+      'Только в этом браузере и только в dev-сборке. По умолчанию выключено.',
+    );
+    await user.click(toggle);
+    expect(toggle).toBeChecked();
+    expect(localStorage.getItem(DEV_AI_TABLE_DIAGNOSTICS_KEY)).toBe(
+      '{"state":{"enabled":true},"version":1}',
+    );
+    // the switch is a local preference: it never sends a request
+    expect(requests.map((r) => `${r.method} ${r.path}`)).toEqual([STATUS]);
+    unmount();
+
+    await openPage({ [STATUS]: { status: 200, body: makeStatus() } });
+    const again = screen.getByTestId('dev-ai-table-diagnostics-switch');
+    expect(again).toBeChecked();
+    fireEvent.click(again);
+    expect(again).not.toBeChecked();
+    expect(localStorage.getItem(DEV_AI_TABLE_DIAGNOSTICS_KEY)).toBe(
+      '{"state":{"enabled":false},"version":1}',
+    );
+  });
+
+  it('D-11: en texts of the card', async () => {
+    await i18n.changeLanguage('en');
+    await openPage({ [STATUS]: { status: 200, body: makeStatus() } });
+    await i18n.changeLanguage('en');
+    const card = screen.getByTestId('dev-ai-table-diagnostics');
+    await waitFor(() => expect(card).toHaveTextContent('Game table diagnostics'));
+    expect(card).toHaveTextContent('Show AI decision diagnostics on the game table');
+    expect(card.textContent).not.toMatch(/[А-Яа-яЁё]/);
   });
 });

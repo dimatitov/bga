@@ -1,0 +1,105 @@
+# 2026-11-20T14:12:44Z TC-R-03: tracked test files changed vs HEAD 3fe4a66 (numstat: added removed path)
+344	1	apps/api/test/ai/ai-decision-service.unit.test.ts
+151	0	apps/api/test/ai/ai-usage-repository.int.test.ts
+113	0	apps/api/test/ai/prompt.unit.test.ts
+47	0	apps/api/test/architecture.int.test.ts
+4	2	apps/api/test/automation-f3-coverage.int.test.ts
+24	0	apps/api/test/automation-hidden-info.int.test.ts
+2	1	apps/api/test/automation-openai.int.test.ts
+4	1	apps/api/test/automation-runner.int.test.ts
+282	5	apps/api/test/automation/commander-context.unit.test.ts
+376	15	apps/api/test/automation/openai-commander-strategy.unit.test.ts
+21	0	apps/api/test/env-example.unit.test.ts
+119	1	apps/api/test/env.unit.test.ts
+12	5	apps/api/test/game-registry.int.test.ts
+2	0	apps/api/test/migration-swr004.int.test.ts
+14	3	apps/api/test/migration-swr005b.int.test.ts
+2	0	apps/api/test/migration.int.test.ts
+1	0	apps/api/test/routes.int.test.ts
+85	1	apps/api/test/sqlite-adapter.int.test.ts
+271	0	apps/api/test/support/automation-helpers.ts
+121	5	apps/api/test/support/fake-automation.ts
+19	1	apps/api/test/support/test-config.ts
+59	2	apps/web/src/dev/ai/DevAiPage.test.tsx
+30	0	apps/web/src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx
+19	0	apps/web/src/platform/automation/automation.test.tsx
+119	1	apps/web/src/platform/session-host/SessionHost.test.tsx
+22	0	e2e/support/dev-ai.ts
+16	0	e2e/support/testids.ts
+72	1	packages/games/rebellion/test/ai/decision.test.ts
+84	55	packages/games/rebellion/test/knowledge/context.test.ts
+3	2	packages/games/rebellion/test/knowledge/coverage.test.ts
+13	0	packages/games/rebellion/test/rules/core/hidden-info.test.ts
+26	3	packages/games/rebellion/test/server/automation-hidden-base.test.ts
+63	0	packages/platform/test/automation.test.ts
+71	0	packages/platform/test/rules-kb/context.test.ts
+
+# removed test declarations (lines starting with - and containing it(/test(/describe()
++++ b/apps/api/test/ai/ai-decision-service.unit.test.ts
++++ b/apps/api/test/ai/ai-usage-repository.int.test.ts
++++ b/apps/api/test/ai/prompt.unit.test.ts
++++ b/apps/api/test/architecture.int.test.ts
++++ b/apps/api/test/automation-f3-coverage.int.test.ts
++++ b/apps/api/test/automation-hidden-info.int.test.ts
++++ b/apps/api/test/automation-openai.int.test.ts
++++ b/apps/api/test/automation-runner.int.test.ts
++++ b/apps/api/test/automation/commander-context.unit.test.ts
++++ b/apps/api/test/automation/openai-commander-strategy.unit.test.ts
++++ b/apps/api/test/env-example.unit.test.ts
++++ b/apps/api/test/env.unit.test.ts
++++ b/apps/api/test/game-registry.int.test.ts
++++ b/apps/api/test/migration-swr004.int.test.ts
++++ b/apps/api/test/migration-swr005b.int.test.ts
++++ b/apps/api/test/migration.int.test.ts
++++ b/apps/api/test/routes.int.test.ts
++++ b/apps/api/test/sqlite-adapter.int.test.ts
++++ b/apps/web/src/dev/ai/DevAiPage.test.tsx
+-  it('T-12: a11y by roles — 2 radiogroups, button, 4 h2, ordered action list', async () => {
++++ b/apps/web/src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx
++++ b/apps/web/src/platform/automation/automation.test.tsx
++++ b/apps/web/src/platform/session-host/SessionHost.test.tsx
++++ b/packages/games/rebellion/test/ai/decision.test.ts
++++ b/packages/games/rebellion/test/knowledge/context.test.ts
+-describe.each(['rebels', 'empire'])('Command Phase context for the %s', (side) => {
+-  it(`fits in ${MAX_CHARS} characters and contains the required rules`, () => {
+-  it('includes the PASS interpretation and the reveal/victory rules without truncation; no missions', () => {
+-  it('is deterministic and independent of the command order', () => {
+-  it('never exceeds maxChars and drops only whole lines', () => {
+-  it('marks needs-review entries as unverified', () => {
+-describe('side filtering', () => {
+-  it('keeps side-specific entries out of the other side context', () => {
++++ b/packages/games/rebellion/test/knowledge/coverage.test.ts
+-  it('cites only tests that SWR-006 does not edit', () => {
++++ b/packages/games/rebellion/test/rules/core/hidden-info.test.ts
++++ b/packages/games/rebellion/test/server/automation-hidden-base.test.ts
++++ b/packages/platform/test/automation.test.ts
++++ b/packages/platform/test/rules-kb/context.test.ts
+
+# untracked (new) test files
+?? apps/api/test/ai/cost-by-rules.unit.test.ts
+?? apps/api/test/ai/prompt-fit.unit.test.ts
+?? apps/api/test/automation-rules.int.test.ts
+?? apps/api/test/bench/cli.unit.test.ts
+?? apps/api/test/bench/harness-mock.int.test.ts
+?? apps/api/test/bench/metrics.unit.test.ts
+?? apps/api/test/dev-ai-diagnostics.int.test.ts
+?? apps/api/test/disc009-restore.int.test.ts
+?? apps/api/test/migration-swr008.int.test.ts
+?? apps/api/test/rules-context-registry.int.test.ts
+?? apps/api/test/rules-hidden-info.int.test.ts
+?? apps/api/test/rules-integration.int.test.ts
+?? apps/api/test/rules-off-golden.int.test.ts
+?? apps/web/src/dev/ai/session/DevAiSessionDiagnostics.test.tsx
+?? apps/web/src/dev/ai/session/api.test.ts
+?? apps/web/src/dev/ai/session/diagnosticsFlag.test.ts
+?? apps/web/src/dev/ai/session/model.test.ts
+?? e2e/ai-diagnostics.spec.ts
+?? packages/games/rebellion/test/ai/rules-query.test.ts
+?? packages/games/rebellion/test/benchmark/scenarios.test.ts
+?? packages/games/rebellion/test/knowledge/rules-provider.test.ts
+?? packages/games/rebellion/test/rules/core/reveal-invariant.test.ts
+?? packages/games/rebellion/test/rules/core/state-checks.test.ts
+?? packages/platform/test/ai-diagnostics.test.ts
+?? packages/platform/test/rules-context.test.ts
+?? packages/platform/test/rules-kb/provider.test.ts
+?? packages/platform/test/rules-kb/sha256.test.ts

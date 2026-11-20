@@ -68,7 +68,8 @@ async function openaiApp(options: {
     ids: [options.id],
     fake: options.fake,
     openai: enabledOpenAI({ maxRetries: 0, ...options.openai }),
-    aiCommander: { provider: 'openai', ...options.aiCommander },
+    // SWR-006 baseline: the commander without the SWR-008 rules context (rules on: automation-rules.int.test.ts).
+    aiCommander: { provider: 'openai', rulesContext: 'off', ...options.aiCommander },
   });
   apps.push(started.app);
   return started;

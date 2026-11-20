@@ -15,6 +15,8 @@ import { v2Sessions, type V2SessionFixture } from './support/swr004-db';
 
 const SWR004_MIGRATION = '20261108200000_session_status_idempotency';
 const SWR005B_MIGRATION = '20261108230000_ai_usage';
+/** SWR-008: AiUsage rules columns (ADD COLUMN only; checked in migration-swr008.int.test.ts). */
+const SWR008_MIGRATION = '20261120120000_ai_usage_rules';
 const MIGRATIONS_DIR = join(API_ROOT, 'prisma', 'migrations');
 
 type RawRow = Record<string, unknown>;
@@ -75,7 +77,8 @@ async function createSwr005ShapeDb(): Promise<Swr005ShapeDb> {
   mkdirSync(join(dir, 'migrations'), { recursive: true });
   cpSync(join(API_ROOT, 'prisma', 'schema.prisma'), join(dir, 'schema.prisma'));
   for (const entry of readdirSync(MIGRATIONS_DIR)) {
-    if (entry === SWR005B_MIGRATION) continue;
+    // SWR-005 shape = only the migrations before SWR-005B (later ones, e.g. SWR-008, need the AiUsage table)
+    if (/^\d{14}_/.test(entry) && entry >= SWR005B_MIGRATION) continue;
     cpSync(join(MIGRATIONS_DIR, entry), join(dir, 'migrations', entry), { recursive: true });
   }
   prisma(url, ['migrate', 'deploy', '--schema', join(dir, 'schema.prisma')]);
@@ -151,7 +154,13 @@ describe(`migration ${SWR005B_MIGRATION}`, { timeout: 60_000 }, () => {
       readdirSync(MIGRATIONS_DIR)
         .filter((e) => e !== 'migration_lock.toml')
         .sort(),
-    ).toEqual([INIT_MIGRATION, SESSIONS_MIGRATION, SWR004_MIGRATION, SWR005B_MIGRATION]);
+    ).toEqual([
+      INIT_MIGRATION,
+      SESSIONS_MIGRATION,
+      SWR004_MIGRATION,
+      SWR005B_MIGRATION,
+      SWR008_MIGRATION,
+    ]);
 
     const sql = migrationSql(SWR005B_MIGRATION).toString('utf8');
     const statements = sql
@@ -175,8 +184,9 @@ describe(`migration ${SWR005B_MIGRATION}`, { timeout: 60_000 }, () => {
   it('clean DB: AiUsage columns, defaults and (budgetKey, createdAt) index; integer micro-USD sums are exact', async () => {
     db = createCleanDb();
     const columns = await raw(db.url, `PRAGMA table_info('AiUsage')`);
+    // SWR-008 appends its columns after these 16 (checked in migration-swr008.int.test.ts)
     expect(
-      columns.map((c) => ({
+      columns.slice(0, AI_USAGE_COLUMNS.length).map((c) => ({
         name: c.name,
         type: c.type,
         notnull: Number(c.notnull),
@@ -320,6 +330,7 @@ describe(`migration ${SWR005B_MIGRATION}`, { timeout: 60_000 }, () => {
       SESSIONS_MIGRATION,
       SWR004_MIGRATION,
       SWR005B_MIGRATION,
+      SWR008_MIGRATION,
     ]);
     expect(await raw(shaped.url, 'PRAGMA foreign_key_check')).toEqual([]);
     expect(await raw(shaped.url, 'PRAGMA integrity_check')).toEqual([{ integrity_check: 'ok' }]);

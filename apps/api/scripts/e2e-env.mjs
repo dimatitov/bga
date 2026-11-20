@@ -30,6 +30,10 @@ export const AI_COMMANDER_VARS = Object.freeze([
   'AI_COMMANDER_MODEL_ROLE',
   'AI_COMMANDER_MAX_STEPS',
   'AI_COMMANDER_RUN_DEADLINE_MS',
+  // SWR-008 C-7 (QD-22): blank = schema default (rules on, 6000 chars, 16000 prompt tokens; the bot ignores them).
+  'AI_COMMANDER_RULES_CONTEXT',
+  'AI_COMMANDER_RULES_MAX_CHARS',
+  'AI_COMMANDER_MAX_PROMPT_TOKENS',
 ]);
 
 /**

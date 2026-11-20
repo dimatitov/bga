@@ -1,0 +1,155 @@
+# 2026-11-20T14:05:23Z node v22.23.5 cwd apps/web
+$ npx vitest run --reporter=verbose src/dev/ai src/platform/automation src/platform/session-host src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx src/shared/i18n/locales.test.ts
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > micro-dollars → USD by language; 0 → $0.00; null / NaN → null 28ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > integers with group separators; null / NaN → null 1ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > time HH:mm:ss (24 h); unparsable → null 4ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > rows newest first, `index` = the response index (0 = oldest) 3ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > fallback code: errorCode, else status; none without fallback 0ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > rule ids: joined, empty → null 0ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > data-* of a decision row and of the totals (plan-frontend §2.5) 4ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > cost group: mean null → null (shown as «—»), empty group → 0 / $0.00 1ms
+ ✓ src/dev/ai/session/model.test.ts > decision panel view model (SWR-008 plan-frontend §2.4–§2.5, D-12) > error reason: 404 → unavailable, 403 → forbidden, else error 2ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > path: /dev/ai/sessions/<encoded id>/decisions 2ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > GET without body; a valid answer is parsed by the strict platform schema 9ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (decision.reason) → ApiError INVALID_RESPONSE 2ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (decision.prompt) → ApiError INVALID_RESPONSE 1ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (top-level budgetKey) → ApiError INVALID_RESPONSE 1ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (top-level sessionId) → ApiError INVALID_RESPONSE 1ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (rules.text) → ApiError INVALID_RESPONSE 1ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (negative cost) → ApiError INVALID_RESPONSE 1ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > extra / invalid field (> 50 decisions) → ApiError INVALID_RESPONSE 1ms
+ ✓ src/dev/ai/session/api.test.ts > dev decisions API client (SWR-008 plan-frontend §2.3, D-6) > 404 / 403 → ApiError with the status 2ms
+ ✓ src/platform/automation/automation.test.tsx > automation store (SWR-006 plan-frontend §3.2) > reset arms one run; consume is atomic (second call false); another session is ignored 2ms
+ ✓ src/platform/automation/automation.test.tsx > automation store (SWR-006 plan-frontend §3.2) > a load arms only when its data reached the cache (noteSessionLoaded → promoteLoadArm) 1ms
+ ✓ src/platform/automation/automation.test.tsx > commitCommandResult (plan-frontend §4.2) > writes view + automation { pending, strategy } into detail, keeps the rest, invalidates lists 2ms
+ ✓ src/platform/automation/automation.test.tsx > commitCommandResult (plan-frontend §4.2) > stopReason gameOver → detail invalidated 1ms
+ ✓ src/platform/automation/automation.test.tsx > commitCommandResult (plan-frontend §4.2) > stopReason conflict → detail invalidated 0ms
+ ✓ src/platform/automation/automation.test.tsx > commitCommandResult (plan-frontend §4.2) > store: command arms and clears error/stalled; run never arms (pending → stalled); lastRun rules (Q-FE-5) 1ms
+ ✓ src/platform/automation/automation.test.tsx > commitCommandResult (plan-frontend §4.2) > a response of another session updates the cache but not the store 0ms
+ ✓ src/platform/automation/automation.test.tsx > commitCommandResult (plan-frontend §4.2) > without a cached session the cache stays empty (no partial envelope) 0ms
+ ✓ src/platform/automation/automation.test.tsx > automationFallbackReasonText (P-8, D-PO-3) > ru: every enum code has its own locale key (no generic defaultValue fallback) — SWR-008 FE-1 2ms
+ ✓ src/platform/automation/automation.test.tsx > automationFallbackReasonText (P-8, D-PO-3) > en: every enum code has its own locale key (no generic defaultValue fallback) — SWR-008 FE-1 1ms
+ ✓ src/platform/automation/automation.test.tsx > automationFallbackReasonText (P-8, D-PO-3) > ru: AI_PROMPT_TOO_LARGE (SWR-008) → «запрос к модели слишком большой» 1ms
+ ✓ src/platform/automation/automation.test.tsx > automationFallbackReasonText (P-8, D-PO-3) > en: AI_PROMPT_TOO_LARGE (SWR-008) → «model request too large» 0ms
+ ✓ src/platform/automation/automation.test.tsx > automationFallbackReasonText (P-8, D-PO-3) > ru: a distinct non-empty text for every code; unknown → generic 1ms
+ ✓ src/platform/automation/automation.test.tsx > automationFallbackReasonText (P-8, D-PO-3) > en: a distinct non-empty text for every code; unknown → generic 1ms
+ ✓ src/platform/automation/automation.test.tsx > P-9: the automation host is game-agnostic > platform/automation/** names no game and imports no game package 0ms
+stderr | src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-1: h1, DEV chip, one status GET and no POST on mount
+No `HydrateFallback` element provided to render during initial hydration
+
+ ✓ src/platform/automation/AutomationNotice.test.tsx > AutomationNotice placement (SWR-006 QA defect D-1) > layout: in flow full-width on xs–sm; fixed bottom-left with a bounded width on md+; never the 50%/translate centring 4ms
+ ✓ src/platform/automation/AutomationNotice.test.tsx > AutomationNotice placement (SWR-006 QA defect D-1) > renders with that layout: static below md, fixed bottom-left from md, no translateX 111ms
+ ✓ src/platform/automation/AutomationNotice.test.tsx > AutomationNotice placement (SWR-006 QA defect D-1) > nothing is rendered while the automation is idle 7ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > ru plural: 1 → «Ход AI: 1 действие» 65ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > ru plural: 3 → «Ход AI: 3 действия» 11ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > ru plural: 5 → «Ход AI: 5 действий» 7ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > ru plural: 21 → «Ход AI: 21 действие» 11ms
+ ✓ src/dev/ai/locales.test.ts > devAi namespace (T-16) > ru and en have identical keys and non-empty strings 7ms
+ ✓ src/dev/ai/locales.test.ts > devAi namespace (T-16) > en has no Cyrillic 2ms
+ ✓ src/dev/ai/locales.test.ts > devAi namespace (T-16) > every AI_* code has a title and a hint 1ms
+ ✓ src/dev/ai/locales.test.ts > devAi namespace (T-16) > the cost note is exactly the spec wording 0ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > en; command source; the game-over suffix 19ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > OpenAI with fallbacks → notice with the reasons by code (D-PO-3), no model details 33ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > SWR-008: AI_PROMPT_TOO_LARGE → its own reason in the same fallback sentence (ru, en), no raw code 22ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > an unknown / missing code → the generic reason 6ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > bot with fallbacks 0 → no notice; OpenAI with 0 fallbacks → no notice 22ms
+ ✓ src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx > AiTurnSummary (SWR-006 R-4) > nothing: steps 0, no lastRun, outside SessionHost, hot-seat 22ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-1: rules on/count/ids/tokens/cost, fallback code, «dropped by the prompt limit», data-*, last AI turn 325ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-5: 0 rules, fallback with a code, cost 0, mean null, no ids → «правил: 0», «fallback: …», 0,00, «—»; no NaN/undefined/null 59ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost (plan-frontend §2.1, TR-5) > dispatches by the server gameId and passes { sessionId, gameId, status, view: unknown, backHref } 411ms
+ ✓ src/dev/ai/devAiRoute.test.tsx > /dev/ai route registration (plan-frontend §3.1) > T-13: in DEV the route tree has /dev/ai (before the 404) and Settings links to the page 447ms
+ ✓ src/dev/ai/devAiRoute.test.tsx > /dev/ai route registration (plan-frontend §3.1) > T-14: with DEV=false the route module has no /dev/ai 38ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-1: h1, DEV chip, one status GET and no POST on mount 481ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-2: ready status — OpenAI, provider, key boolean, models availability, budget 78ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-5: empty list → «no model calls yet», totals of zero 41ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-6: a body with a field outside the wire (reason / budgetKey) → data-state=error, the values never reach the DOM 38ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-7: the session id is nowhere in the DOM; no prompt / situation / reason / budget labels 54ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-2b: mock status — OpenAI off, model not set / unchecked, no limit 61ms
+ ✓ src/dev/ai/format.test.ts > format (T-15) > formatUsd: 2..6 fraction digits in ru and en 15ms
+ ✓ src/dev/ai/format.test.ts > format (T-15) > formatDurationMs: integer with group separators 1ms
+ ✓ src/dev/ai/format.test.ts > format (T-15) > formatTokens: integers, null stays null 1ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost (plan-frontend §2.1, TR-5) > pending → session-loading; setQueryData on detail re-renders the table with the new view 325ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost (plan-frontend §2.1, TR-5) > 422 GAME_UNAVAILABLE (Q-7) and a game without TableScreen → session-unsupported 48ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-3: 404 → unavailable; 500 → error with role=alert and Retry → second GET 189ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > common: ru and en have identical keys and no empty strings 4ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > settings: ru and en have identical keys and no empty strings 1ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > errors: ru and en have identical keys and no empty strings 1ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > catalog: ru and en have identical keys and no empty strings 0ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > gamePage: ru and en have identical keys and no empty strings 1ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > sessionHost: ru and en have identical keys and no empty strings 0ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > forbidden-stars.meta: ru and en have identical keys and no empty strings 0ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > every ERROR_MESSAGE_KEYS entry and every ErrorCode has ru and en text (PA-2) 1ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > every SessionStatus has a ru and en word (common:sessionStatus.*, Q-9, SWR-004 plan-frontend §8) 1ms
+ ✓ src/shared/i18n/locales.test.ts > TC-WEB-12 (FE-SHELL namespaces): ru and en key sets > en texts of FE-SHELL namespaces contain no Cyrillic (TC-E2E-26) 1ms
+ ✓ src/dev/ai/session/diagnosticsFlag.test.ts > table diagnostics opt-in flag (SWR-008 plan-frontend §2.1 G-2, D-11) > the key is frozen by the plan 2ms
+ ✓ src/dev/ai/session/diagnosticsFlag.test.ts > table diagnostics opt-in flag (SWR-008 plan-frontend §2.1 G-2, D-11) > off by default; setEnabled persists {"state":{"enabled":…},"version":1} 1ms
+ ✓ src/dev/ai/session/diagnosticsFlag.test.ts > table diagnostics opt-in flag (SWR-008 plan-frontend §2.1 G-2, D-11) > a stored value is read back on hydration (a new page load) 0ms
+ ✓ src/dev/ai/session/diagnosticsFlag.test.ts > table diagnostics opt-in flag (SWR-008 plan-frontend §2.1 G-2, D-11) > not JSON in storage → off 0ms
+ ✓ src/dev/ai/session/diagnosticsFlag.test.ts > table diagnostics opt-in flag (SWR-008 plan-frontend §2.1 G-2, D-11) > a non-boolean in storage → off 0ms
+ ✓ src/dev/ai/session/diagnosticsFlag.test.ts > table diagnostics opt-in flag (SWR-008 plan-frontend §2.1 G-2, D-11) > no state in storage → off 1ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-8: one GET on mount, one per new lastRun.seq, one per end of a run; a run ending with steps → one; no loop 190ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-8: «Refresh» refetches once 81ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-3b: network failure → error state with the network text 52ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-4: defaults mock + tactical; auto shows the paid warning (OpenAI on) or the mock hint (OpenAI off) 67ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost (plan-frontend §2.1, TR-5) > network error → session-error with Retry that refetches 80ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: failed refetch with cached data (Analyst decision, SWR-002 behaviour) > keeps the table, shows a non-blocking warning with Retry; Retry success removes it 45ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: failed refetch with cached data (Analyst decision, SWR-002 behaviour) > 404 on refetch still wins over cached data → session-not-found 20ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-9: 404 → data-state=unavailable with dev-ai-session-error[data-reason] 62ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-9: 403 → data-state=forbidden with dev-ai-session-error[data-reason] 58ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-4b: auto with OpenAI off → mock hint, no paid warning 55ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-9: 500 → data-state=error with dev-ai-session-error[data-reason] 56ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > D-10: keyboard — Tab to the chip, Enter expands, Esc collapses and returns focus (also from inside) 66ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > gate: switch off or no automated participant → nothing rendered, nothing requested 41ms
+ ✓ src/dev/ai/session/DevAiSessionDiagnostics.test.tsx > DevAiSessionDiagnostics (SWR-008 plan-frontend §2, §4.2) > en: chip and labels in English 34ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-5: click → one POST with the PO scenario, role and provider (no budgetKey); pending blocks the UI 95ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-6: success → all result fields, selected action marked, reasoning null → «—» 74ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-6b: reasoningTokens null → «—» and «нет данных»; mock cost 0 65ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_NOT_CONFIGURED → dev-ai-error role=alert with the localized text 58ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-2: strategy null + pending false → no run request; data-automation-* on session-host; context given to the game 343ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-3: pending on load → exactly one run under StrictMode; the response updates the cache and the game 48ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-3: a session seeded by create (no GET) with pending → exactly one run under StrictMode 35ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_BUDGET_EXCEEDED → dev-ai-error role=alert with the localized text 61ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_RATE_LIMITED → dev-ai-error role=alert with the localized text 45ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-4: run 500 → notice[data-reason=error] with the reason; retry → second run; a double click → one request 40ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-4: network error → error notice with the network reason (cache untouched) 20ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-5: run answers pending:true → stalled, no automatic repeat; retry → one more run 59ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_TIMEOUT → dev-ai-error role=alert with the localized text 42ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_PROVIDER_ERROR → dev-ai-error role=alert with the localized text 42ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_INVALID_DECISION → dev-ai-error role=alert with the localized text 44ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-6: run 404 → session-not-found (detail refetched) 25ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-6: run 422 GAME_UNAVAILABLE → session-unsupported 22ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-7: commitCommandResult(command, pending) → one run; steps 0 command clears lastRun; gameOver → detail refetched 43ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-7: run with stopReason conflict → detail refetched (W-7, AM-FE-3) 20ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: automation host (SWR-006 plan-frontend §3, §9 P-2..P-7) > P-8: useSessionAutomation() outside SessionHost → null 4ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7: AI_DEV_FORBIDDEN → dev-ai-error role=alert with the localized text 44ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-7b: AI error without details → text without numbers (fallback) 39ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: dev AI decision panel slot (SWR-008 AC-13, QD-15) > gate open (DEV + switch on + automated participant) → the panel, one GET of the decisions; the table unchanged 23ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: dev AI decision panel slot (SWR-008 AC-13, QD-15) > D-3: DEV, switch off (default) → no dev-ai-* node, no /api/dev/ai request; switching on later shows it (the gate, not timing) 69ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > D-2 (ru): the budget alert says «Mock keeps working for free» exactly once 44ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > D-2 (en): the budget alert says «Mock keeps working for free» exactly once 40ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > D-2: a hint already contained in the error text is not repeated (AI_NOT_CONFIGURED) 39ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: dev AI decision panel slot (SWR-008 AC-13, QD-15) > D-4: DEV, switch on, strategy null → no panel, no request; an automated participant appears → panel 65ms
+ ✓ src/platform/session-host/SessionHost.test.tsx > SessionHost: dev AI decision panel slot (SWR-008 AC-13, QD-15) > D-2: production build (DEV=false) with the switch stored on and an AI session → no dev-ai-* node, no /api/dev/ai request 88ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > D-2: a hint not contained in the error text is still shown (aiKeyRejected) 37ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > D-3: placeholder words use the regular font; data slots use a Cyrillic-capable mono stack 29ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-8: status refetched after success and after error; a new attempt clears the previous error 63ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-9: 200 not matching the schema → INVALID_RESPONSE text, page intact 39ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-10: reason with markup is rendered as text 43ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-11: en → English page texts, no Cyrillic in the page 44ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > T-12: a11y by roles — 2 radiogroups, button, 5 h2 (SWR-008: + table diagnostics), ordered action list 26ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage: table diagnostics switch (SWR-008 plan-frontend §2.1 G-2, D-11) > D-11: off by default; a click stores {"state":{"enabled":true},"version":1}; a remount shows it on; off again 68ms
+ ✓ src/dev/ai/DevAiPage.test.tsx > DevAiPage: table diagnostics switch (SWR-008 plan-frontend §2.1 G-2, D-11) > D-11: en texts of the card 37ms
+
+ Test Files  13 passed (13)
+      Tests  136 passed (136)
+   Start at  17:05:24
+   Duration  4.91s (environment 34%, import 22%, tests 19%, setup 13%, transform 11%)
+
+Environment  jsdom was created 13 times · 10.73s total, 34% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+exit=0

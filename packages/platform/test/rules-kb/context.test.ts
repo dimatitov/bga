@@ -98,3 +98,74 @@ describe('buildRulesContext (AC-9, TC-F-03)', () => {
     expect(() => buildRulesContext(kb, { maxChars })).toThrow(RangeError);
   });
 });
+
+describe('buildRulesContext: SWR-008 options (C-5)', () => {
+  it('without the new options the result is exactly as before (backward compatible)', () => {
+    expect(buildRulesContext(kb, { ...BASE, excludeStatuses: [], tagRuleIds: [] })).toEqual(
+      buildRulesContext(kb, BASE),
+    );
+  });
+
+  it('excludeStatuses drops matching entries from every group, include too (QD-4)', () => {
+    const review = 'star-forge:turn.pass-timing';
+    const ctx = buildRulesContext(kb, {
+      ...BASE,
+      include: [review],
+      tagRuleIds: [review],
+      excludeStatuses: ['needs-review'],
+    });
+    expect(ctx.ruleIds).not.toContain(review);
+    expect(ctx.text).not.toContain('(unverified)');
+    expect(ctx.ruleIds).toEqual([
+      'star-forge:turn.order',
+      'star-forge:victory.score',
+      'star-forge:build.place-forge',
+      'star-forge:build.place-forge-errata',
+    ]);
+    expect(buildRulesContext(kb, { ...BASE, excludeStatuses: ['verified'] }).ruleIds).toEqual([
+      review,
+    ]);
+  });
+
+  it('tagRuleIds are the LAST group, id asc, never duplicates of earlier groups', () => {
+    const ctx = buildRulesContext(kb, {
+      ...BASE,
+      tagRuleIds: ['star-forge:victory.score', 'star-forge:setup.board', 'star-forge:no.such'],
+    });
+    expect(ctx.ruleIds).toEqual([
+      'star-forge:turn.order',
+      'star-forge:victory.score',
+      'star-forge:build.place-forge',
+      'star-forge:build.place-forge-errata',
+      'star-forge:turn.pass-timing',
+      'star-forge:setup.board',
+    ]);
+    const reversed = buildRulesContext(kb, {
+      ...BASE,
+      tagRuleIds: ['star-forge:setup.board', 'star-forge:victory.score'].reverse(),
+    });
+    expect(reversed).toEqual(ctx);
+  });
+
+  it('tagRuleIds obey the ai and side filters (unlike include)', () => {
+    const tags = ['star-forge:combat.engine-gap', 'star-forge:combat.resolve'];
+    expect(
+      buildRulesContext(kb, { maxChars: 10_000, side: 'builders', tagRuleIds: tags }).ruleIds,
+    ).toEqual(['star-forge:turn.order', 'star-forge:victory.score']);
+    expect(
+      buildRulesContext(kb, { maxChars: 10_000, side: 'raiders', tagRuleIds: tags }).ruleIds,
+    ).toEqual(['star-forge:turn.order', 'star-forge:victory.score', 'star-forge:combat.resolve']);
+  });
+
+  it('the tag group is cut first when the limit is tight', () => {
+    const full = buildRulesContext(kb, { ...BASE, tagRuleIds: ['star-forge:setup.board'] });
+    const cut = buildRulesContext(kb, {
+      ...BASE,
+      tagRuleIds: ['star-forge:setup.board'],
+      maxChars: full.text.length - 1,
+    });
+    expect(cut.truncated).toBe(true);
+    expect(cut.ruleIds).toEqual(full.ruleIds.slice(0, -1));
+    expect(cut.ruleIds).not.toContain('star-forge:setup.board');
+  });
+});

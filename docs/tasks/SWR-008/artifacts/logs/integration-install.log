@@ -1,0 +1,38 @@
+# node v22.23.5, pnpm 12.21.0, 2026-11-20T13:04:30Z
+# lock sha1 before: bfaf58ab0b58340a53d832b0c7fee7d057135e71  pnpm-lock.yaml
+Scope: all 6 workspace projects
+✓ Lockfile passes supply-chain policies (verified 22h ago)
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 205, reused 205, downloaded 0, added 202
+Progress: resolved 327, reused 327, downloaded 0, added 324
+Progress: resolved 393, reused 393, downloaded 0, added 390
+Progress: resolved 499, reused 499, downloaded 0, added 496
+Progress: resolved 581, reused 581, downloaded 0, added 578
+Progress: resolved 636, reused 636, downloaded 0, added 633
+Progress: resolved 748, reused 748, downloaded 0, added 746
+Progress: resolved 748, reused 748, downloaded 0, added 748
+Packages: +748
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 748, reused 748, downloaded 0, added 748, done
+.../node_modules/@swc/core postinstall$ node postinstall.js
+.../node_modules/prisma preinstall$ node scripts/preinstall-entry.js
+.../node_modules/prisma preinstall: Done
+.../node_modules/@swc/core postinstall: Done
+apps/api postinstall$ prisma generate
+apps/api postinstall: Loaded Prisma config from prisma.config.ts.
+apps/api postinstall: 
+apps/api postinstall: Prisma schema loaded from prisma/schema.prisma.
+apps/api postinstall: 
+apps/api postinstall: ✔ Generated Prisma Client (v7.10.1) to ./../../node_modules/.pnpm/@prisma+client@7.10.1_prisma@7.10.1_@types+node@22.20.5_@types+react-dom@19.3.0_@types+_714404430f8a3c83ce9f018318f6f09f/node_modules/@prisma/client in 57ms
+apps/api postinstall: 
+apps/api postinstall: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+apps/api postinstall: 
+apps/api postinstall: 
+apps/api postinstall: Done
+Done in 16.8s using pnpm v12.21.0
+exit=0
+# lock sha1 after: bfaf58ab0b58340a53d832b0c7fee7d057135e71  pnpm-lock.yaml
+# git diff --stat pnpm-lock.yaml:
+# git diff --stat package.json files:
+ apps/api/package.json | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)

@@ -1,0 +1,59 @@
+[
+  {
+    "id": "fake:turn.order",
+    "kind": "rule",
+    "status": "verified",
+    "product": "core",
+    "category": "turn",
+    "title": "Turn order",
+    "text": "The automated side moves after the human side ends a turn.",
+    "sources": [{ "sourceId": "FR", "page": 2, "section": "Turn" }],
+    "ai": "core",
+    "appliesTo": { "phases": ["bot-turn"] }
+  },
+  {
+    "id": "fake:move.one-step",
+    "kind": "rule",
+    "status": "verified",
+    "product": "core",
+    "category": "move",
+    "title": "Moving",
+    "text": "A move goes exactly one step north or south.",
+    "sources": [{ "sourceId": "FR", "page": 3, "section": "Moving" }],
+    "appliesTo": { "commands": ["MOVE"], "sides": ["p2"] }
+  },
+  {
+    "id": "fake:move.wait",
+    "kind": "rule",
+    "status": "verified",
+    "product": "core",
+    "category": "move",
+    "title": "Waiting",
+    "text": "Waiting ends the current move without changing the position.",
+    "sources": [{ "sourceId": "FR", "page": 3, "section": "Moving" }],
+    "appliesTo": { "commands": ["WAIT"] }
+  },
+  {
+    "id": "fake:turn.review",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "core",
+    "category": "turn",
+    "title": "Waiting twice",
+    "text": "Waiting twice in a row may end the game early.",
+    "sources": [{ "sourceId": "FR", "page": 2, "section": "Turn" }],
+    "rationale": "The rulebook is silent; kept out of AI contexts until reviewed.",
+    "appliesTo": { "phases": ["bot-turn"] }
+  },
+  {
+    "id": "fake:general.table",
+    "kind": "rule",
+    "status": "verified",
+    "product": "core",
+    "category": "general",
+    "title": "Table",
+    "text": "Players sit opposite each other.",
+    "sources": [{ "sourceId": "FR", "page": 2, "section": "Turn" }],
+    "ai": "none"
+  }
+]

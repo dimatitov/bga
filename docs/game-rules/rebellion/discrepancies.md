@@ -21,6 +21,9 @@ Learn to Play (записи писались по зеркалу, пока CDN F
   лояльность или наземные юниты в её системе (RR стр. 11). Движок проверяет это только в конце имперской активации системы
   базы. В срезе это эквивалентно, но перед добавлением лояльности, миссий с перемещением или развёртывания проверку нужно
   сделать постоянной.
+  **Исправлено в SWR-008:** централизованная проверка `runStateChecks` выполняется после каждой принятой команды
+  `core-v1` и при создании партии; во время активации Империи раскрытие ждёт конца её движения (`FINISH_ACTIVATION`).
+  DISC-009 закрыт (`decision: fixed`); часть условия про лояльность ждёт её появления (DISC-005).
 - **Данные для сверки с коробкой (`verify-with-box`):** значения листа Повстанцев (вместимость, атака, здоровье —
   DISC-014), соседство Мустафар–Утапау и названия регионов (DISC-016), лидеры без тактических значений (Мон Мотма,
   DISC-017), позиции значков трека времени (DISC-018). Исправление данных не требует изменения кода правил.
@@ -54,9 +57,9 @@ Learn to Play (записи писались по зеркалу, пока CDN F
 | Decision | Count |
 |---|---|
 | accepted-for-slice | 12 |
-| fix-later | 2 |
+| fix-later | 1 |
 | verify-with-box | 4 |
-| fixed | 0 |
+| fixed | 1 |
 | **total** | 18 |
 
 ## Items
@@ -149,15 +152,15 @@ Learn to Play (записи писались по зеркалу, пока CDN F
 - **Follow-up:** Model the space as its own location once deployment and voluntary reveal exist; revisit the Bothawui exclusion of DISC-007.
 - **Refs:** `rebellion:impl.base-space-merged`, `rebellion:base.units-on-space`
 
-### DISC-009 — Base reveal checked only at the end of an Imperial activation (R-8, latent gap)
+### DISC-009 — Base reveal as a central state check (fixed in SWR-008; loyalty part waits for DISC-005)
 
 - **Kind:** latent-gap
 - **Severity:** medium
-- **Decision:** fix-later
+- **Decision:** fixed
 - **Rules:** `rebellion:base.reveal-condition`, `rebellion:base.reveal-timing`
-- **Engine behaviour:** R-8: the base is revealed at FINISH_ACTIVATION of an Imperial activation of the base system when an Imperial ground unit is there. Within core-v1 this is equivalent, because Imperial ground units can only arrive by such an activation and loyalty does not exist.
+- **Engine behaviour:** R-8, SWR-008: one state check (runStateChecks) runs after every accepted core-v1 command and at game creation; it reveals the base once when an Imperial ground unit stands in the base system; during an Imperial activation the reveal waits for the end of its movement (FINISH_ACTIVATION). Imperial loyalty does not exist (DISC-005).
 - **Official behaviour:** Whenever the Empire has loyalty or ground units in the base system, the base must be revealed ("ever", RR p.11; LTP p.12); after movement it happens before combat (RR p.2 step 3).
-- **Follow-up:** Before adding loyalty, missions that move or place units, or deployment: make the reveal a state check run after every state change.
+- **Follow-up:** Loyalty slice: add Imperial loyalty to baseRevealConditionMet. Combat slice: keep the reveal after movement and before combat (activation step 3).
 - **Refs:** `rebellion:impl.reveal-only-at-finish`, RR p.11
 
 ### DISC-010 — Fixed first game setup instead of standard setup (D-5, R-10)

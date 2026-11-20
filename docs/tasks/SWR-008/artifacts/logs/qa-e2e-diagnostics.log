@@ -1,0 +1,83 @@
+# 2026-11-20T14:06:08Z node v22.23.5; ports 3100/5174 free before the run
+$ pnpm run build:packages && npx playwright test e2e/ai-diagnostics.spec.ts
+$ tsc -b packages
+[WebServer] $ node scripts/e2e-serve.mjs
+[WebServer] Loaded Prisma config from prisma.config.ts.
+[WebServer] 
+[WebServer] Prisma schema loaded from prisma/schema.prisma.
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 5 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] Applying migration `20261120120000_ai_usage_rules`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261120120000_ai_usage_rules/
+[WebServer]     └─ migration.sql
+[WebServer] 
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] AppModule dependencies initialized +8ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] RulesContextModule dependencies initialized +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +1ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] AiModule dependencies initialized +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RoutesResolver] HealthController {/api/health}: +4ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +1ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +1ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/automation/run, POST} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +1ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/sessions/:sessionId/decisions, GET} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +0ms
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:13 PM     LOG [NestApplication] Nest application successfully started +1ms
+[WebServer] $ vite
+
+Running 3 tests using 1 worker
+
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:17 PM     LOG [Automation] automation.step sessionId=05e057f6-73bc-4de0-ba1a-e595779feba9 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:17 PM     LOG [Automation] automation.step sessionId=05e057f6-73bc-4de0-ba1a-e595779feba9 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=5 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:17 PM     LOG [Automation] automation.step sessionId=05e057f6-73bc-4de0-ba1a-e595779feba9 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=4 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:17 PM     LOG [Automation] automation.run sessionId=05e057f6-73bc-4de0-ba1a-e595779feba9 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=19
+  ✓  1 [chromium] › e2e/ai-diagnostics.spec.ts:108:3 › SWR-008 dev AI decision diagnostics: absent from the normal UI (E-1) › E-1 / TC-DIAG-07: Rebels vs AI (bot) — AI turn played, no dev-ai-* node, no diagnostics request, switch off (2.6s)
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:19 PM     LOG [Automation] automation.step sessionId=2436a8b0-b1c7-47b9-a9ec-f124999918ce gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:19 PM     LOG [Automation] automation.step sessionId=2436a8b0-b1c7-47b9-a9ec-f124999918ce gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:19 PM     LOG [Automation] automation.step sessionId=2436a8b0-b1c7-47b9-a9ec-f124999918ce gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:19 PM     LOG [Automation] automation.run sessionId=2436a8b0-b1c7-47b9-a9ec-f124999918ce gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=10
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:21 PM     LOG [Automation] automation.step sessionId=2eece348-3308-48fd-8eec-92dbc78b84f2 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=4 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:21 PM     LOG [Automation] automation.step sessionId=2eece348-3308-48fd-8eec-92dbc78b84f2 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:21 PM     LOG [Automation] automation.step sessionId=2eece348-3308-48fd-8eec-92dbc78b84f2 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:21 PM     LOG [Automation] automation.run sessionId=2eece348-3308-48fd-8eec-92dbc78b84f2 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=12
+  ✓  2 [chromium] › e2e/ai-diagnostics.spec.ts:139:3 › SWR-008 dev AI decision diagnostics: absent from the normal UI (E-1) › E-1 / AC-10: faked OpenAI session with AI_PROMPT_TOO_LARGE — localized reason in the fallback notice (ru, en), no raw code, no panel (3.7s)
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:29 PM     LOG [Automation] automation.step sessionId=482d1d88-2eae-45b7-bca1-d3b250c35a00 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:29 PM     LOG [Automation] automation.step sessionId=482d1d88-2eae-45b7-bca1-d3b250c35a00 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:29 PM     LOG [Automation] automation.step sessionId=482d1d88-2eae-45b7-bca1-d3b250c35a00 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 3124  - 11/20/2026, 5:06:29 PM     LOG [Automation] automation.run sessionId=482d1d88-2eae-45b7-bca1-d3b250c35a00 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=13
+  ✓  3 [chromium] › e2e/ai-diagnostics.spec.ts:190:3 › SWR-008 dev AI decision diagnostics: opt-in panel against the real endpoint (E-2) › E-2 / TC-DIAG-07b: switch on, Rebels vs AI (bot) → panel ready with the empty state, one GET per load / AI turn, strict body, no hidden data (7.7s)
+
+  3 passed (20.1s)
+exit=0

@@ -12,9 +12,15 @@
  *
  * SWR-006 (Contract §4, plan-backend §7, Q-22): `AI_COMMANDER_*` are always checked (independent of OPENAI_ENABLED);
  * blank = unset = default; `AI_COMMANDER_PROVIDER=openai` requires a usable `OPENAI_ENABLED=true` (so never in test).
+ *
+ * SWR-008 (plan-backend C-7): `AI_COMMANDER_RULES_CONTEXT` (`on` | `off`, case-sensitive, default `on` — A-4),
+ * `AI_COMMANDER_RULES_MAX_CHARS` (integer 1000..12000, default 6000) and `AI_COMMANDER_MAX_PROMPT_TOKENS` (integer
+ * 4000..64000, default 16000; unit: the upper-bound input token estimate of a request) are always checked too.
+ * `knowledgeBaseRoot` never comes from the environment: `parseEnv` returns `null`, `main.ts` sets the repository root.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { inspect, parseEnv as parseDotenv } from 'node:util';
+import { RULES_CONTEXT_LIMITS } from '@bga/platform';
 import { z } from 'zod';
 
 export const ENV_KEYS = [
@@ -32,6 +38,9 @@ export const ENV_KEYS = [
   'AI_COMMANDER_MODEL_ROLE',
   'AI_COMMANDER_MAX_STEPS',
   'AI_COMMANDER_RUN_DEADLINE_MS',
+  'AI_COMMANDER_RULES_CONTEXT',
+  'AI_COMMANDER_RULES_MAX_CHARS',
+  'AI_COMMANDER_MAX_PROMPT_TOKENS',
 ] as const;
 export type EnvKey = (typeof ENV_KEYS)[number];
 
@@ -44,6 +53,11 @@ export const DEFAULT_OPENAI_MAX_RETRIES = 2;
 export type AiCommanderProvider = 'bot' | 'openai';
 /** Same union as `AIModelRole` of the AI layer (kept local: config does not depend on ai/). */
 export type AiCommanderModelRole = 'tactical' | 'strategy';
+/** SWR-008: whether the openai commander gets a rules block (the bot never uses rules). */
+export type AiCommanderRulesContext = 'on' | 'off';
+
+/** SWR-008 C-7: bounds of `AI_COMMANDER_MAX_PROMPT_TOKENS` (upper-bound input token estimate of one request). */
+export const MAX_PROMPT_TOKENS_LIMITS = { min: 4000, max: 64_000, default: 16_000 } as const;
 
 export interface AiCommanderConfig {
   readonly provider: AiCommanderProvider;
@@ -52,6 +66,12 @@ export interface AiCommanderConfig {
   readonly maxSteps: number;
   /** Wall-clock budget of one automation run for OpenAI calls, ms (1000..120000). */
   readonly runDeadlineMs: number;
+  /** SWR-008: rules block for the openai commander (`on` by default, A-4). */
+  readonly rulesContext: AiCommanderRulesContext;
+  /** SWR-008: size limit of the rules block, characters (1000..12000; checked against the pinned lines at start). */
+  readonly rulesMaxChars: number;
+  /** SWR-008: limit of one request's upper-bound input token estimate (4000..64000). */
+  readonly maxPromptTokens: number;
 }
 
 export const DEFAULT_AI_COMMANDER: AiCommanderConfig = Object.freeze({
@@ -59,6 +79,9 @@ export const DEFAULT_AI_COMMANDER: AiCommanderConfig = Object.freeze({
   modelRole: 'tactical',
   maxSteps: 64,
   runDeadlineMs: 45_000,
+  rulesContext: 'on',
+  rulesMaxChars: RULES_CONTEXT_LIMITS.maxCharsDefault,
+  maxPromptTokens: MAX_PROMPT_TOKENS_LIMITS.default,
 });
 
 /** Each variable on its own (input: a non-blank string or undefined). Conditional rules: `conditionalIssues`. */
@@ -92,6 +115,19 @@ export const EnvSchema = z.object({
     .min(1000)
     .max(120_000)
     .default(DEFAULT_AI_COMMANDER.runDeadlineMs),
+  AI_COMMANDER_RULES_CONTEXT: z.enum(['on', 'off']).default(DEFAULT_AI_COMMANDER.rulesContext),
+  AI_COMMANDER_RULES_MAX_CHARS: z.coerce
+    .number()
+    .int()
+    .min(RULES_CONTEXT_LIMITS.maxCharsMin)
+    .max(RULES_CONTEXT_LIMITS.maxCharsMax)
+    .default(DEFAULT_AI_COMMANDER.rulesMaxChars),
+  AI_COMMANDER_MAX_PROMPT_TOKENS: z.coerce
+    .number()
+    .int()
+    .min(MAX_PROMPT_TOKENS_LIMITS.min)
+    .max(MAX_PROMPT_TOKENS_LIMITS.max)
+    .default(DEFAULT_AI_COMMANDER.maxPromptTokens),
 });
 
 /** Fixed reasons; neither the values nor Zod messages ever reach the error text. */
@@ -110,6 +146,9 @@ const INVALID_REASON: Record<EnvKey, string> = {
   AI_COMMANDER_MODEL_ROLE: 'must be "tactical" or "strategy"',
   AI_COMMANDER_MAX_STEPS: 'must be an integer 1..256',
   AI_COMMANDER_RUN_DEADLINE_MS: 'must be an integer 1000..120000',
+  AI_COMMANDER_RULES_CONTEXT: 'must be "on" or "off"',
+  AI_COMMANDER_RULES_MAX_CHARS: `must be an integer ${RULES_CONTEXT_LIMITS.maxCharsMin}..${RULES_CONTEXT_LIMITS.maxCharsMax}`,
+  AI_COMMANDER_MAX_PROMPT_TOKENS: `must be an integer ${MAX_PROMPT_TOKENS_LIMITS.min}..${MAX_PROMPT_TOKENS_LIMITS.max}`,
 };
 const REASON_REQUIRED = 'is required';
 const REASON_REQUIRED_WHEN_ENABLED = 'is required when OPENAI_ENABLED=true';
@@ -205,6 +244,11 @@ export interface AppConfig {
   readonly openai: OpenAIConfig;
   /** SWR-006: who plays the AI side of a session (bot by default). */
   readonly aiCommander: AiCommanderConfig;
+  /**
+   * SWR-008 C-7: absolute repository root for repository-relative `GameRulesSupport.knowledgeBaseDir`. NOT from the
+   * environment: `parseEnv` returns `null`; `main.ts` sets it from its own location; tests set the repository root.
+   */
+  readonly knowledgeBaseRoot: string | null;
 }
 
 export type RawEnv = Readonly<Record<string, string | undefined>>;
@@ -294,11 +338,17 @@ export function parseEnv(raw: RawEnv): AppConfig {
   const modelRole = checkField('AI_COMMANDER_MODEL_ROLE', input);
   const maxSteps = checkField('AI_COMMANDER_MAX_STEPS', input);
   const runDeadlineMs = checkField('AI_COMMANDER_RUN_DEADLINE_MS', input);
+  const rulesContext = checkField('AI_COMMANDER_RULES_CONTEXT', input);
+  const rulesMaxChars = checkField('AI_COMMANDER_RULES_MAX_CHARS', input);
+  const maxPromptTokens = checkField('AI_COMMANDER_MAX_PROMPT_TOKENS', input);
   for (const [key, r] of [
     ['AI_COMMANDER_PROVIDER', provider],
     ['AI_COMMANDER_MODEL_ROLE', modelRole],
     ['AI_COMMANDER_MAX_STEPS', maxSteps],
     ['AI_COMMANDER_RUN_DEADLINE_MS', runDeadlineMs],
+    ['AI_COMMANDER_RULES_CONTEXT', rulesContext],
+    ['AI_COMMANDER_RULES_MAX_CHARS', rulesMaxChars],
+    ['AI_COMMANDER_MAX_PROMPT_TOKENS', maxPromptTokens],
   ] as const) {
     if (!r.ok) issues.set(key, r.reason);
   }
@@ -349,7 +399,11 @@ export function parseEnv(raw: RawEnv): AppConfig {
       modelRole: ok(modelRole),
       maxSteps: ok(maxSteps),
       runDeadlineMs: ok(runDeadlineMs),
+      rulesContext: ok(rulesContext),
+      rulesMaxChars: ok(rulesMaxChars),
+      maxPromptTokens: ok(maxPromptTokens),
     },
+    knowledgeBaseRoot: null,
   });
 }
 

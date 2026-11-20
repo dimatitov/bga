@@ -4,10 +4,19 @@
  * premise `toSideView(A, 'empire') ≡ toSideView(B, 'empire')`; then `decisionPoint(A) ≡ decisionPoint(B)` through
  * the server module, the bot's intel / situation are equal, and draining both games with the real bot gives the
  * same sequence of Imperial decision points up to a reveal.
+ * SWR-008 W4 (TC-H-02, C-4, QD-7): the points carry `rulesQuery = rulesQueryFor(view)` and the rules-selection
+ * input `{actor, phase, commandTypes, tags}` (plan-backend §3.1) is equal for every relocation and every drained
+ * point before the reveal.
  */
-import type { AutomationDecisionPoint, GameAutomation } from '@bga/platform';
+import {
+  RULES_CONTEXT_LIMITS,
+  rulesSelectionInputOf,
+  type AutomationDecisionPoint,
+  type GameAutomation,
+  type RulesSelectionInput,
+} from '@bga/platform';
 import { describe, expect, it } from 'vitest';
-import { deriveBaseIntel, situationFor } from '../../src/ai';
+import { deriveBaseIntel, rulesQueryFor, situationFor } from '../../src/ai';
 import { chooseRebelBase, createCoreGame, toSideView } from '../../src/rules';
 import { coreDataBaseV1 } from '../../src/scenario';
 import {
@@ -110,9 +119,18 @@ function pointsBeforeReveal(state: CoreGameState): AutomationDecisionPoint[] {
   return points;
 }
 
+/** SWR-008 §3.1: the rules-selection input of a point, built exactly as the server builds it. */
+function selectionInputOf(point: AutomationDecisionPoint): RulesSelectionInput {
+  if (point.rulesQuery === undefined)
+    throw new Error('the Rebellion point always carries rulesQuery');
+  return rulesSelectionInputOf(point, RULES_CONTEXT_LIMITS.maxCharsDefault);
+}
+
 function expectInvariant(a: CoreGameState, others: readonly string[]): void {
   const viewA = toSideView(a, 'empire');
   const pointA = automation.decisionPoint(a);
+  expect(pointA).toMatchObject({ rulesQuery: rulesQueryFor(viewA) });
+  const inputA = selectionInputOf(pointA);
   const intelA = deriveBaseIntel(viewA);
   const situationA = situationFor(viewA, intelA);
   const drainedA = pointsBeforeReveal(a);
@@ -123,13 +141,18 @@ function expectInvariant(a: CoreGameState, others: readonly string[]): void {
     const viewB = toSideView(b, 'empire');
     // Premise: the Empire cannot tell the two games apart.
     expect(viewB, to).toEqual(viewA);
-    expect(automation.decisionPoint(b), to).toEqual(pointA);
+    const pointB = automation.decisionPoint(b);
+    expect(pointB, to).toEqual(pointA);
+    expect(selectionInputOf(pointB), to).toEqual(inputA);
     expect(deriveBaseIntel(viewB), to).toEqual(intelA);
     expect(situationFor(viewB, deriveBaseIntel(viewB)), to).toBe(situationA);
     const drainedB = pointsBeforeReveal(b);
     const n = Math.min(drainedA.length, drainedB.length);
     expect(n, to).toBeGreaterThan(0);
     expect(drainedB.slice(0, n), to).toEqual(drainedA.slice(0, n));
+    expect(drainedB.slice(0, n).map(selectionInputOf), to).toEqual(
+      drainedA.slice(0, n).map(selectionInputOf),
+    );
   }
 }
 

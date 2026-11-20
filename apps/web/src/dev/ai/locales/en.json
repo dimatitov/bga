@@ -132,5 +132,57 @@
   "announce": {
     "success": "AI selected action {{id}}",
     "error": "Error: {{text}}"
+  },
+  "session": {
+    "title": "AI decisions · DEV",
+    "chip": "DEV · AI decisions: {{count}}",
+    "chipPending": "DEV · AI decisions…",
+    "chipError": "DEV · AI decisions: error",
+    "refresh": "Refresh",
+    "note": "Development only. Prompt text and model explanations are not shown.",
+    "none": "—",
+    "lastRun": {
+      "title": "Last AI turn",
+      "summary": "steps: {{steps}}, fallbacks: {{fallbacks}}"
+    },
+    "decisions": {
+      "title": "Model calls (newest first)"
+    },
+    "empty": "No model calls in this game yet (bot moves are not recorded).",
+    "attempts": "attempts: {{count}}",
+    "rules": {
+      "on": "Rules: on",
+      "off": "Rules: off",
+      "count": "rules: {{count}}",
+      "ids": "Rule IDs",
+      "tokens": "rules context ≈ {{tokens}} tok.",
+      "chars": "{{chars}} chars",
+      "truncated": "truncated",
+      "dropped": "dropped by the prompt limit",
+      "version": "Rules version"
+    },
+    "fallback": {
+      "code": "fallback: {{code}}",
+      "none": "no fallback"
+    },
+    "tokens": "Tokens: input {{input}} · cached {{cached}} · output {{output}}",
+    "cost": "Cost: {{cost}}",
+    "duration": "{{value}} ms",
+    "totals": {
+      "title": "Game totals",
+      "withRules": "With rules",
+      "withoutRules": "Without rules",
+      "total": "Total",
+      "line": "decisions: {{decisions}} · {{cost}} · mean {{mean}}"
+    },
+    "error": {
+      "unavailable": "The diagnostics endpoint was not found — the API runs in production mode or without the diagnostics module.",
+      "forbidden": "Access denied: open the game on the machine where the API runs (localhost)."
+    }
+  },
+  "tableDiagnostics": {
+    "title": "Game table diagnostics",
+    "label": "Show AI decision diagnostics on the game table",
+    "hint": "This browser only, dev build only. Off by default."
   }
 }

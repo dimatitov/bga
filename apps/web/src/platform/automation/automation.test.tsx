@@ -152,6 +152,25 @@ describe('automationFallbackReasonText (P-8, D-PO-3)', () => {
   const codes = AutomationFallbackCodeSchema.options;
 
   it.each(['ru', 'en'] as const)(
+    '%s: every enum code has its own locale key (no generic defaultValue fallback) — SWR-008 FE-1',
+    (lng) => {
+      // Without this check a code missing from the locale silently gets «другая причина» via `defaultValue`.
+      const missing = codes.filter(
+        (code) => !i18n.exists(`sessionHost:automation.reason.${code}`, { lng, fallbackLng: [] }),
+      );
+      expect(missing).toEqual([]);
+    },
+  );
+
+  it.each([
+    ['ru', 'запрос к модели слишком большой'],
+    ['en', 'model request too large'],
+  ] as const)('%s: AI_PROMPT_TOO_LARGE (SWR-008) → «%s»', async (lng, text) => {
+    await i18n.changeLanguage(lng);
+    expect(automationFallbackReasonText(i18n.t.bind(i18n), 'AI_PROMPT_TOO_LARGE')).toBe(text);
+  });
+
+  it.each(['ru', 'en'] as const)(
     '%s: a distinct non-empty text for every code; unknown → generic',
     async (lng) => {
       await i18n.changeLanguage(lng);

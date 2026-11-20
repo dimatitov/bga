@@ -11,11 +11,19 @@
  * - Deadline: `Promise.race` (AM-BE-5) without cancellation; the losing call finishes in the background, writes its
  *   `AiUsage` row and releases its reservation itself.
  * - The model's `reason` is dropped here: never stored, logged or shown to a player.
+ *
+ * SWR-008 (C-10, plan-backend §3.1 / §4.2): the prompt is built by `buildCommanderContext` — the SWR-006 context plus
+ * the rules block of the session's game (`CommanderRunContext.rules`), selected ONLY from the point's public
+ * `rulesQuery` and fitted under `maxPromptTokens`. The context is built only when a call is about to happen (after the
+ * `< 2` / run-stopping / deadline checks: QD-8 — no selection after a stop). A prompt that does not fit even without
+ * rules → the bot with `AI_PROMPT_TOO_LARGE`, without a call or a budget reservation; this code does NOT stop the run
+ * (the size depends on the point). A failing selection → the decision without rules (`onRulesSelectionError`).
  */
 import type { AutomationDecisionPoint, AutomationFallbackCode } from '@bga/platform';
 import type { AiDecisionService } from '../../ai/ai-decision.service';
 import { AiFailure } from '../../ai/ai.errors';
 import type { AIDecisionContext, AIModelRole } from '../../ai/ai.types';
+import { buildCommanderContext, type CommanderRulesConfig } from './commander-context';
 import {
   botChoice,
   type CommanderChoice,
@@ -36,6 +44,8 @@ export const realDeadlineTimer: DeadlineTimer = (ms, onElapsed) => {
 export interface OpenAiCommanderDeps {
   decisions: Pick<AiDecisionService, 'decide'>;
   modelRole: AIModelRole;
+  /** SWR-008 C-10: rules switch and limits (`aiCommander.rulesContext / rulesMaxChars / maxPromptTokens`). */
+  rules: CommanderRulesConfig;
   /** Monotonic clock of the AI runtime (ms), the same clock as `CommanderRunContext.deadline`. */
   monotonicNow: () => number;
   timer?: DeadlineTimer;
@@ -44,6 +54,11 @@ export interface OpenAiCommanderDeps {
    * can be linked to its session / `AiUsage.budgetKey` (review F-5; the id is never sent to a model, Q-BE-1).
    */
   onUnexpectedError?: (errorName: string, sessionId: string) => void;
+  /**
+   * SWR-008 (TC-FB-09, QD-27): called with the class name of a failed rules selection (no message, no data) and the
+   * run's session / game ids (server log only, like F-5; never sent to a model); the decision goes on without rules.
+   */
+  onRulesSelectionError?: (errorName: string, sessionId: string, gameId: string) => void;
 }
 
 /** Codes after which the rest of the run is played by the bot without calls (Q-7). */
@@ -102,7 +117,17 @@ export class OpenAiCommanderStrategy implements CommanderStrategy {
           stopCode = 'AI_DEADLINE';
           return botChoice(point, stopCode);
         }
-        const raced = await this.race(this.contextOf(point, ctx.sessionId), remaining);
+        const fit = buildCommanderContext(point, {
+          budgetKey: ctx.sessionId,
+          modelRole: this.deps.modelRole,
+          rules: ctx.rules,
+          config: this.deps.rules,
+          onSelectionError: (name) =>
+            this.deps.onRulesSelectionError?.(name, ctx.sessionId, ctx.gameId ?? '-'),
+        });
+        // Even the prompt without rules is above the hard limit: no call, no reservation, the run goes on.
+        if (!fit.ok) return botChoice(point, 'AI_PROMPT_TOO_LARGE');
+        const raced = await this.race(fit.ctx, remaining);
         const choice = this.choiceOf(point, raced, ctx.sessionId);
         if (raced.kind === 'deadline') stopCode = 'AI_DEADLINE';
         if (raced.kind === 'failure' && raced.error instanceof AiFailure) {
@@ -111,25 +136,6 @@ export class OpenAiCommanderStrategy implements CommanderStrategy {
         }
         return choice;
       },
-    };
-  }
-
-  /** Only data from the decision point; `budgetKey` is never part of the prompt (prompt.ts copies a whitelist). */
-  private contextOf(point: AutomationDecisionPoint, sessionId: string): AIDecisionContext {
-    return {
-      purpose: 'commander',
-      budgetKey: sessionId,
-      role: this.deps.modelRole,
-      side: point.actor,
-      phase: point.phase,
-      objective: point.objective,
-      situation: point.situation,
-      availableActions: point.candidates.map((c) => ({
-        id: c.id,
-        type: c.type,
-        ...(c.target === undefined ? {} : { target: c.target }),
-        summary: c.summary,
-      })),
     };
   }
 

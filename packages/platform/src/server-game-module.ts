@@ -9,6 +9,7 @@
 import type { GameAutomation } from './automation';
 import type { GameModuleError } from './errors';
 import type { GameDefinition } from './game';
+import type { GameRulesSupport } from './rules-context';
 import type { SessionDetails, SessionSettings, SessionStatus } from './sessions';
 import type { ValidationIssue } from './validation';
 
@@ -109,6 +110,8 @@ export interface ServerGameModule<
    * automation (`strategy: null`, no automated steps).
    */
   readonly automation?: GameAutomation<State, Event>;
+  /** SWR-008: optional rules knowledge of the game (AI rules context). Absent → no rules block, nothing loaded. */
+  readonly rules?: GameRulesSupport;
 }
 
 /** Type-checks a concrete module and widens it for the registry (`readonly ServerGameModule[]`). */

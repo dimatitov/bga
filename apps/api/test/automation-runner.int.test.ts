@@ -496,7 +496,10 @@ describe('automation runner over HTTP (SWR-006 W7)', () => {
     const B = await start(db, { strategy: sb });
     const ra = runAutomation(A.app, created.sessionId).then((r) => r);
     const rb = runAutomation(B.app, created.sessionId).then((r) => r);
-    await new Promise((resolve) => setTimeout(resolve, 150));
+    // Review F-1: no sleep — release only when BOTH runs have loaded the same version and are waiting at the gate, so
+    // neither can start after the other has finished (the old `['humanTurn','none']` flake is impossible here).
+    await Promise.all([sa.reachedGate(1), sb.reachedGate(1)]);
+    expect([sa.atGate, sb.atGate]).toEqual([1, 1]);
     gate.resolve();
     const bodies = (await Promise.all([ra, rb])).map((r) => {
       expect(r.status).toBe(200);

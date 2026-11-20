@@ -24,6 +24,7 @@
       "AI_NOT_CONFIGURED": "не настроен",
       "AI_BUDGET_EXCEEDED": "исчерпан бюджет партии",
       "AI_DEADLINE": "превышено время хода",
+      "AI_PROMPT_TOO_LARGE": "запрос к модели слишком большой",
       "unknown": "другая причина"
     }
   }

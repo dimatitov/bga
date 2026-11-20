@@ -13,6 +13,7 @@ import {
   type Faction,
   type RebellionSettings,
   eligibleRebelBaseSystemIds,
+  unitTypeRevealsRebelBase,
 } from '../../../src/schema';
 import {
   createCoreGame,
@@ -315,6 +316,18 @@ function relocateBase(state: CoreGameState, to: string): CoreGameState | null {
   if (state.units.some((u) => u.owner === 'rebels' && rebelsAt(u.systemId))) return null;
   if (state.leaders.some((l) => l.owner === 'rebels' && rebelsAt(l.systemId))) return null;
   if (state.activation?.side === 'rebels' && state.activation.systemId === to) return null;
+  // SWR-008 (R-3, DISC-009): an Imperial ground unit in the base reveals it at the next state check, so the
+  // Empire legitimately rules out every system where its own ground units stand — not a hidden-base variant.
+  const imperialGround = state.units.some((u) => {
+    const type = state.unitTypes.find((t) => t.typeKey === u.typeKey);
+    return (
+      u.owner === 'empire' &&
+      u.systemId === to &&
+      type !== undefined &&
+      unitTypeRevealsRebelBase(type)
+    );
+  });
+  if (imperialGround) return null;
   const mentions = state.log.some(
     (e) =>
       e.actor === 'rebels' &&

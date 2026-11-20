@@ -6,8 +6,11 @@ import {
   AutomationCandidateSchema,
   AutomationDecisionPointSchema,
   AutomationFallbackCodeSchema,
+  AutomationRulesQuerySchema,
   AutomationRunSummarySchema,
   AutomationStopReasonSchema,
+  RULES_CONTEXT_LIMITS,
+  RULES_TAG_PATTERN,
   AutomationStrategyIdSchema,
   RunAutomationRequestSchema,
   SessionAutomationSchema,
@@ -129,6 +132,63 @@ describe('AutomationDecisionPoint (Q-9, TC-PL-05)', () => {
   });
 });
 
+describe('AutomationDecisionPoint.rulesQuery (SWR-008 C-3, QD-7)', () => {
+  const query = { commandTypes: ['MOVE', 'PASS'], tags: ['opponent-passed', 'zone-open'] };
+
+  it('is optional: a point without it (SWR-006 shape) stays valid and unchanged', () => {
+    expect(AutomationDecisionPointSchema.parse(POINT)).toEqual(POINT);
+    expect(ok({ ...POINT, rulesQuery: query })).toBe(true);
+    expect(AutomationDecisionPointSchema.parse({ ...POINT, rulesQuery: query }).rulesQuery).toEqual(
+      query,
+    );
+    expect(ok({ ...POINT, rulesQuery: { commandTypes: [], tags: [] } })).toBe(true);
+  });
+
+  it('strict: both lists required, no extra keys (no state, candidates or private data)', () => {
+    expect(ok({ ...POINT, rulesQuery: { commandTypes: [] } })).toBe(false);
+    expect(ok({ ...POINT, rulesQuery: { tags: [] } })).toBe(false);
+    for (const leak of ['state', 'candidates', 'baseSystem', 'situation']) {
+      expect(ok({ ...POINT, rulesQuery: { ...query, [leak]: 'x' } })).toBe(false);
+    }
+    expect(ok({ ...POINT, rulesQuery: null })).toBe(false);
+  });
+
+  it('limits: ≤ 16 command types (each 1..64, no control chars), ≤ 8 tags', () => {
+    const types = (n: number) => Array.from({ length: n }, (_, i) => `T${i}`);
+    const tags = (n: number) => Array.from({ length: n }, (_, i) => `t${i}`);
+    const q = (patch: Record<string, unknown>) =>
+      AutomationRulesQuerySchema.safeParse({ ...query, ...patch }).success;
+    expect(q({ commandTypes: types(16) })).toBe(true);
+    expect(q({ commandTypes: types(17) })).toBe(false);
+    expect(q({ tags: tags(8) })).toBe(true);
+    expect(q({ tags: tags(9) })).toBe(false);
+    expect(q({ commandTypes: [s(64)] })).toBe(true);
+    expect(q({ commandTypes: [s(65)] })).toBe(false);
+    expect(q({ commandTypes: [''] })).toBe(false);
+    expect(q({ commandTypes: ['A\tB'] })).toBe(false);
+    expect(RULES_CONTEXT_LIMITS.commandTypesMax).toBe(16);
+    expect(RULES_CONTEXT_LIMITS.tagsMax).toBe(8);
+  });
+
+  it('tags: lowercase kebab ≤ 32 chars, same pattern as the Rules Context contract', () => {
+    const q = (tag: string) =>
+      AutomationRulesQuerySchema.safeParse({ commandTypes: [], tags: [tag] }).success;
+    for (const good of ['a', 'base-hidden', '0-x', s(32, 'a')]) expect(q(good)).toBe(true);
+    for (const bad of ['', '-a', 'A', 'a_b', 'a b', s(33, 'a')]) expect(q(bad)).toBe(false);
+    for (const tag of ['a', 'base-hidden', '-a', 'A', s(32, 'a'), s(33, 'a')]) {
+      expect(q(tag)).toBe(RULES_TAG_PATTERN.test(tag));
+    }
+  });
+
+  it('values are unique (order is free: the selection input sorts them)', () => {
+    const q = (patch: Record<string, unknown>) =>
+      AutomationRulesQuerySchema.safeParse({ ...query, ...patch }).success;
+    expect(q({ commandTypes: ['PASS', 'MOVE'] })).toBe(true);
+    expect(q({ commandTypes: ['PASS', 'PASS'] })).toBe(false);
+    expect(q({ tags: ['x', 'x'] })).toBe(false);
+  });
+});
+
 const NO_RUN = {
   steps: 0,
   pending: false,
@@ -159,7 +219,10 @@ describe('wire schemas (TC-PL-04, D-PO-3, Q-10, Q-BE-6)', () => {
       'AI_NOT_CONFIGURED',
       'AI_BUDGET_EXCEEDED',
       'AI_DEADLINE',
+      'AI_PROMPT_TOO_LARGE',
     ]);
+    // SWR-008 (C-3): the new code is appended LAST; the order of the existing codes is unchanged.
+    expect(AutomationFallbackCodeSchema.options.at(-1)).toBe('AI_PROMPT_TOO_LARGE');
   });
 
   it('SessionAutomation: { pending, strategy ∈ bot|openai|null }, strict', () => {

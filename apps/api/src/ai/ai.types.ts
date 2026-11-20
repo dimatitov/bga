@@ -36,6 +36,39 @@ export interface AIDecisionContext {
   readonly purpose?: AIDecisionPurpose;
   /** `commander` only: the position as the acting side sees it (≤ 4000 chars, English). Ignored for `dev-test`. */
   readonly situation?: string;
+  /**
+   * SWR-008 (C-9), `commander` only: the rules block SENT to the model. Absent → the prompt is byte-identical to
+   * SWR-006. Set only by `fitCommanderPrompt`. Ignored for `dev-test`.
+   */
+  readonly rules?: AIRulesBlock;
+  /** SWR-008 (C-9): never sent; written to `AiUsage` (AC-12). Absent → "rules off" columns. */
+  readonly rulesAccounting?: AIRulesAccounting;
+}
+
+/** Rules block of a commander prompt (SWR-008 C-9): public rule lines `[<id>] ...`, one per id, in order. */
+export interface AIRulesBlock {
+  /** 1..12000 chars, one line per rule id (`RulesContextResult.text`). */
+  readonly text: string;
+  readonly ruleIds: readonly string[];
+  readonly rulesVersion: string;
+  /** Cut by the selector's `maxChars` or reduced by the prompt-size limit. */
+  readonly truncated: boolean;
+}
+
+/** What `AiUsage` records about the rules of one request (SWR-008 C-9, AC-12, QD-9). Never sent to a model. */
+export interface AIRulesAccounting {
+  /** `AI_COMMANDER_RULES_CONTEXT=on`. */
+  readonly enabled: boolean;
+  /** `null`: off, or the game has no rules. */
+  readonly rulesVersion: string | null;
+  /** What was SENT (`[]` when dropped / empty / off). */
+  readonly ruleIds: readonly string[];
+  /** Length of the rules text sent. */
+  readonly chars: number;
+  /** Selector cut by `maxChars` OR reduced by the prompt-size limit. */
+  readonly truncated: boolean;
+  /** Removed entirely by the prompt-size limit (QD-9). */
+  readonly dropped: boolean;
 }
 
 /**

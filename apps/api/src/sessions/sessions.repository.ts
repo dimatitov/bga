@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { SessionEventRecord, SessionStatus } from '@bga/platform';
 import { PrismaService } from '../persistence/prisma.service';
@@ -65,6 +65,13 @@ export type CommitOutcome = { ok: true } | { ok: false; reason: 'VERSION_CONFLIC
 /** Thrown inside the transaction to roll it back when the optimistic version guard fails. */
 class VersionConflictSignal extends Error {}
 
+/** Constructor name of a caught value (log lines never carry its message, SQL, values or paths). */
+function errorClassOf(error: unknown): string {
+  if (typeof error !== 'object' || error === null) return typeof error;
+  const name = (error as { constructor?: { name?: unknown } }).constructor?.name;
+  return typeof name === 'string' && name !== '' ? name : 'Object';
+}
+
 const ROW_SELECT = {
   id: true,
   gameId: true,
@@ -97,6 +104,8 @@ function eventRows(
  */
 @Injectable()
 export class SessionsRepository {
+  private readonly logger = new Logger('SessionsRepository');
+
   constructor(private readonly prisma: PrismaService) {}
 
   /**
@@ -199,7 +208,14 @@ export class SessionsRepository {
       // SWR-007/SWR-008 (Prisma 7 + better-sqlite3): a write that lost the SQLite lock to another connection fails
       // with P1008 caused by SQLITE_BUSY (after the short busy timeout of createSqliteAdapter). The transaction is
       // rolled back, so nothing was written — the same outcome as a lost version race.
-      if (isSqliteBusy(error)) return { ok: false, reason: 'VERSION_CONFLICT' };
+      // SWR-008 review F-3: the mapping is not silent — a lock held by an outside process (Prisma Studio, a script, a
+      // stuck write) would otherwise look like an endless normal race. One line: error class + session id, no data.
+      if (isSqliteBusy(error)) {
+        this.logger.warn(
+          `sessionId=${update.id} code=SQLITE_BUSY error=${errorClassOf(error)} → VERSION_CONFLICT`,
+        );
+        return { ok: false, reason: 'VERSION_CONFLICT' };
+      }
       throw error;
     }
   }

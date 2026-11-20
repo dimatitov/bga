@@ -1,3 +1,5 @@
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   DEFAULT_AI_COMMANDER,
   DEFAULT_OPENAI_MAX_RETRIES,
@@ -7,6 +9,15 @@ import {
   type AppConfig,
   type OpenAIConfig,
 } from '../../src/config/env';
+
+/** Repository root (this file: apps/api/test/support/test-config.ts) — SWR-008 `knowledgeBaseRoot` of tests. */
+export const REPO_ROOT = resolve(
+  fileURLToPath(new URL('.', import.meta.url)),
+  '..',
+  '..',
+  '..',
+  '..',
+);
 
 /** OpenAI switched off — the only mode of ordinary api tests (plan-backend §2.5). */
 export const OPENAI_DISABLED: OpenAIConfig = Object.freeze({
@@ -24,8 +35,13 @@ export interface TestConfigOverrides {
   port?: number;
   nodeEnv?: AppConfig['nodeEnv'];
   openai?: OpenAIConfig;
-  /** SWR-006: merged field by field over `DEFAULT_AI_COMMANDER` (bot, tactical, 64 steps, 45000 ms). */
+  /**
+   * SWR-006: merged field by field over `DEFAULT_AI_COMMANDER` (bot, tactical, 64 steps, 45000 ms; SWR-008: rules
+   * `on`, 6000 characters, 16000 prompt tokens). Limits are set here, without the environment (SWR-008 TR-5).
+   */
   aiCommander?: Partial<AiCommanderConfig>;
+  /** SWR-008: defaults to the repository root (`REPO_ROOT`); `null` = what `parseEnv` returns. */
+  knowledgeBaseRoot?: string | null;
 }
 
 /**
@@ -45,5 +61,7 @@ export function testConfig(overrides: TestConfigOverrides = {}): AppConfig {
         Object.entries(overrides.aiCommander ?? {}).filter(([, value]) => value !== undefined),
       ),
     }) as AiCommanderConfig,
+    knowledgeBaseRoot:
+      overrides.knowledgeBaseRoot === undefined ? REPO_ROOT : overrides.knowledgeBaseRoot,
   });
 }
