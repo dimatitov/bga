@@ -373,9 +373,12 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
         if (variant === 'dblclick') {
           await start.dblclick();
         } else {
-          // Raw mouse clicks skip Playwright's actionability checks, so wait until the button stops moving
-          // (late layout shifts on a slow CI runner made every click miss — SWR-008 merge CI run).
+          // Raw mouse clicks skip Playwright's actionability checks (no auto-scroll): on the CI runner (Linux fonts)
+          // the form is taller and the button was below the fold, so every click missed. Scroll it into view and
+          // wait until it stops moving (SWR-008 merge CI runs).
           await page.waitForLoadState('networkidle');
+          await start.scrollIntoViewIfNeeded();
+          await expect(start).toBeInViewport({ ratio: 1 });
           let box = await start.boundingBox();
           await expect
             .poll(async () => {
