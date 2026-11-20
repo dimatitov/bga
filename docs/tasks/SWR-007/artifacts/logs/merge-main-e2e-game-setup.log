@@ -1,0 +1,84 @@
+v22.23.5
+merged origin/main 16b1cf1; only e2e/game-setup.spec.ts changed vs the verified merge (taken from main)
+$ pnpm run build:packages && playwright test e2e/game-setup.spec.ts
+$ tsc -b packages
+[WebServer] $ node scripts/e2e-serve.mjs
+[WebServer] Loaded Prisma config from prisma.config.ts.
+[WebServer] 
+[WebServer] Prisma schema loaded from prisma/schema.prisma.
+[WebServer] Datasource "db": SQLite database "e2e.db" at "file:/Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/.tmp/e2e.db"
+[WebServer] 
+[WebServer] SQLite database e2e.db created at file:/Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/.tmp/e2e.db
+[WebServer] 
+[WebServer] 4 migrations found in prisma/migrations
+[WebServer] 
+[WebServer] Applying migration `20261107235651_init`
+[WebServer] Applying migration `20261108120000_sessions`
+[WebServer] Applying migration `20261108200000_session_status_idempotency`
+[WebServer] Applying migration `20261108230000_ai_usage`
+[WebServer] 
+[WebServer] The following migration(s) have been applied:
+[WebServer] 
+[WebServer] migrations/
+[WebServer]   └─ 20261107235651_init/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108120000_sessions/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108200000_session_status_idempotency/
+[WebServer]     └─ migration.sql
+[WebServer]   └─ 20261108230000_ai_usage/
+[WebServer]     └─ migration.sql
+[WebServer] 
+[WebServer] All migrations have been successfully applied.
+[WebServer] [e2e-serve] starting API on :3100 with /Users/dimatitov/WebstormProjects/Game automa/.claude/worktrees/swr-007-node22-ci-520813/apps/api/.tmp/e2e.db
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [NestFactory] Starting Nest application...
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] AppModule dependencies initialized +8ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] GameRegistryModule dependencies initialized +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] PersistenceModule dependencies initialized +1ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] HealthModule dependencies initialized +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] AiModule dependencies initialized +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] DevAiModule dependencies initialized +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [InstanceLoader] SessionsModule dependencies initialized +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RoutesResolver] HealthController {/api/health}: +4ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/health, GET} route +2ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RoutesResolver] SessionsController {/api/sessions}: +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/sessions, POST} route +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/sessions, GET} route +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId, GET} route +1ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/commands, POST} route +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/sessions/:sessionId/automation/run, POST} route +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RoutesResolver] DevAiController {/api/dev/ai}: +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/status, GET} route +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [RouterExplorer] Mapped {/api/dev/ai/test-decision, POST} route +0ms
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:20 PM     LOG [NestApplication] Nest application successfully started +1ms
+[WebServer] $ vite
+
+Running 8 tests using 1 worker
+
+  ✓  1 [chromium] › e2e/game-setup.spec.ts:56:3 › SWR-004 PO TC-001..TC-006: game setup › TC-001: standard AI game — catalog → Rebellion → New game → defaults → Start → prototype table (3.8s)
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:27 PM     LOG [Automation] automation.step sessionId=4ccf67cf-3cc0-4c16-9d14-f243713a8fb6 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=8 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:27 PM     LOG [Automation] automation.step sessionId=4ccf67cf-3cc0-4c16-9d14-f243713a8fb6 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:27 PM     LOG [Automation] automation.step sessionId=4ccf67cf-3cc0-4c16-9d14-f243713a8fb6 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:27 PM     LOG [Automation] automation.run sessionId=4ccf67cf-3cc0-4c16-9d14-f243713a8fb6 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=22
+  ✓  2 [chromium] › e2e/game-setup.spec.ts:139:3 › SWR-004 PO TC-001..TC-006: game setup › TC-002: play as the Empire — caption flips, AI hard, view for the Empire, Rebel base hidden (2.1s)
+  ✓  3 [chromium] › e2e/game-setup.spec.ts:180:3 › SWR-004 PO TC-001..TC-006: game setup › TC-003: against a second player — difficulty hidden, no aiDifficulty sent, null stored, pass-turn shown (2.1s)
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:30 PM     LOG [Automation] automation.step sessionId=8d9c2001-0fdd-40b9-a360-17293f5e2812 gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:30 PM     LOG [Automation] automation.step sessionId=8d9c2001-0fdd-40b9-a360-17293f5e2812 gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:30 PM     LOG [Automation] automation.step sessionId=8d9c2001-0fdd-40b9-a360-17293f5e2812 gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=2 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:30 PM     LOG [Automation] automation.run sessionId=8d9c2001-0fdd-40b9-a360-17293f5e2812 gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=12
+  ✓  4 [chromium] › e2e/game-setup.spec.ts:219:3 › SWR-004 PO TC-001..TC-006: game setup › TC-004: restore — reload and a fresh browser context show the same session, settings and move (5.8s)
+  ✓  5 [chromium] › e2e/game-setup.spec.ts:287:3 › SWR-004 PO TC-001..TC-006: game setup › TC-005: server errors (500, 422, network) keep the form, show an alert and a retry works (7.6s)
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:47 PM     LOG [SessionsService] sessionId=40aa886d-7f56-41ad-8895-3a34fa0788c4 gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM     LOG [SessionsService] sessionId=caebae9e-caac-4452-a2a2-23841edb4fc9 gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+  ✓  6 [chromium] › e2e/game-setup.spec.ts:354:3 › SWR-004 PO TC-001..TC-006: game setup › TC-006: double click and rapid clicks/Enter with a delayed response → one POST, one session (6.6s)
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM     LOG [Automation] automation.step sessionId=832c0ed0-426b-4397-a454-faefce8ea7fc gameId=star-wars-rebellion step=1 strategy=bot source=bot fallbackCode=- durationMs=5 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM     LOG [Automation] automation.step sessionId=832c0ed0-426b-4397-a454-faefce8ea7fc gameId=star-wars-rebellion step=2 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM     LOG [Automation] automation.step sessionId=832c0ed0-426b-4397-a454-faefce8ea7fc gameId=star-wars-rebellion step=3 strategy=bot source=bot fallbackCode=- durationMs=3 code=OK
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM     LOG [Automation] automation.run sessionId=832c0ed0-426b-4397-a454-faefce8ea7fc gameId=star-wars-rebellion steps=3 fallbacks=0 stopReason=humanTurn durationMs=14
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM     LOG [SessionsService] sessionId=832c0ed0-426b-4397-a454-faefce8ea7fc gameId=star-wars-rebellion code=IDEMPOTENT_REPLAY status=200
+[WebServer] [Nest] 15329  - 11/20/2026, 3:29:50 PM    WARN [SessionsService] sessionId=- gameId=star-wars-rebellion code=IDEMPOTENCY_KEY_REUSED status=409
+  ✓  7 [chromium] › e2e/game-setup.spec.ts:426:3 › SWR-004 PO TC-001..TC-006: game setup › TC-006 (API): same Idempotency-Key → same session (201 then 200); same key, other body → 409 (84ms)
+  ✓  8 [chromium] › e2e/game-setup.spec.ts:456:3 › SWR-004 PO TC-001..TC-006: game setup › TC-E2E-RT-01: direct /new and refresh show defaults; back/forward re-open with defaults (Q-19) (2.3s)
+
+  8 passed (38.6s)
+exit=0
