@@ -95,6 +95,7 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
     const res = await post(app, DEF, key);
     expect(res.status).toBe(201);
     expect(Object.keys(res.body).sort()).toEqual([
+      'automation',
       'gameId',
       'sessionId',
       'settings',

@@ -54,6 +54,7 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
     expect(res.status).toBe(201);
     const body = SessionResponseSchema.parse(res.body);
     expect(Object.keys(res.body).sort()).toEqual([
+      'automation',
       'gameId',
       'sessionId',
       'settings',
@@ -77,19 +78,25 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
       orderBy: { seq: 'asc' },
     });
     // SWR-005 W6b (W5 accepted): "one event per version" (A-15) does not hold for core-v1 — event rows are
-    // consecutive from seq 1 and mirror the stored log; every engine command is version + 1. Empire vs AI:
-    // creation (version 1: GAME_CREATED + two PHASE_STARTED) + the AI Rebels' automatic pass (version 2).
+    // consecutive from seq 1 and mirror the stored log; every engine command is version + 1.
+    // SWR-006 W7: Empire vs AI — creation (version 1: GAME_CREATED + two PHASE_STARTED), then the automation runner
+    // plays the AI Rebels with the bot (one commit per step) until it is the Empire's turn, before the 201.
     expect(events.map((e) => e.seq)).toEqual(events.map((_, i) => i + 1));
-    expect(events[0]).toMatchObject({ seq: 1, type: 'GAME_CREATED', actor: 'system' });
-    expect(events.map((e) => [e.type, e.actor])).toEqual([
-      ['GAME_CREATED', 'system'],
-      ['PHASE_STARTED', 'system'],
-      ['PHASE_STARTED', 'system'],
-      ['PASSED', 'rebels'],
+    expect(events.slice(0, 3).map((e) => [e.seq, e.type, e.actor])).toEqual([
+      [1, 'GAME_CREATED', 'system'],
+      [2, 'PHASE_STARTED', 'system'],
+      [3, 'PHASE_STARTED', 'system'],
     ]);
-    expect(JSON.parse(events[3]!.payload)).toEqual({ auto: true });
-    expect(view.version).toBe(2);
+    const aiEvents = events.slice(3);
+    expect(aiEvents.length).toBeGreaterThan(0);
+    expect(aiEvents.some((e) => e.actor === 'rebels')).toBe(true);
+    for (const e of aiEvents) expect(['rebels', 'system']).toContain(e.actor);
+    expect(view.version).toBeGreaterThan(1);
+    expect(view.activeSide).toBe('empire');
+    expect(body.automation).toEqual({ pending: false, strategy: 'bot' });
     expect(view.log.map((e) => e.seq)).toEqual(events.map((e) => e.seq));
+    // GET shows the same envelope (nothing more happens on read).
+    expect((await api(app).get(`/api/sessions/${body.sessionId}`)).body).toEqual(res.body);
   });
 
   it('TC-SES-01 (TC-API-03): rebellion vs human — settings, base visible (legal actions: seeded block below)', async () => {
@@ -213,6 +220,8 @@ describe('sessions endpoints (Rebellion, real registry)', () => {
       status: 'prototype',
       settings: created.settings,
       view: created,
+      // SWR-006: an AI game (bot strategy configured); its AI moves were made at creation.
+      automation: { pending: false, strategy: 'bot' },
     });
     // MOVE_PIECES legal actions of the mock board: seeded block below (TC-SES-07 seeded).
 
@@ -385,6 +394,7 @@ describe('sessions endpoints on seeded mock-v1 rows', () => {
     expect(res.status).toBe(200);
     const body = SessionResponseSchema.parse(res.body);
     expect(Object.keys(res.body).sort()).toEqual([
+      'automation',
       'gameId',
       'sessionId',
       'settings',

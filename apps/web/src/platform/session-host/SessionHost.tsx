@@ -6,6 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import { isApiError, isNotFound } from '@/shared/api/errors';
 import { translateUnknownError } from '@/shared/i18n';
+import { AutomationNotice } from '../automation/AutomationNotice';
+import { SessionAutomationContext } from '../automation/SessionAutomationContext';
+import { useAutomationDriver } from '../automation/useAutomationDriver';
 import { paths } from '../paths';
 import { useGameEntry } from '../registry/useGameRegistry';
 import { sessionQuery } from '../sessions/queries';
@@ -20,6 +23,7 @@ function SessionView({ sessionId }: { sessionId: string }) {
   const { t } = useTranslation();
   const query = useQuery(sessionQuery(sessionId));
   const entry = useGameEntry(query.data?.gameId);
+  const automation = useAutomationDriver(sessionId, query.data, query.dataUpdatedAt);
 
   if (query.isPending) return <SessionLoading />;
   if (query.isError) {
@@ -60,6 +64,9 @@ function SessionView({ sessionId }: { sessionId: string }) {
       data-session-id={sessionId}
       data-game-id={gameId}
       data-session-status={status}
+      data-automation-pending={String(automation.pending)}
+      data-automation-strategy={automation.strategy ?? 'none'}
+      data-automation-state={automation.phase}
     >
       {refetchFailed ? (
         <Alert
@@ -87,24 +94,29 @@ function SessionView({ sessionId }: { sessionId: string }) {
           {t('sessionHost:refetchWarning', { reason: translateUnknownError(t, query.error) })}
         </Alert>
       ) : null}
-      <Suspense fallback={<SessionLoading />}>
-        <TableScreen
-          sessionId={sessionId}
-          gameId={gameId}
-          status={status}
-          view={view}
-          definition={entry.definition}
-          backHref={paths.game(gameId)}
-        />
-      </Suspense>
+      <AutomationNotice automation={automation} stacked={refetchFailed} />
+      <SessionAutomationContext value={automation}>
+        <Suspense fallback={<SessionLoading />}>
+          <TableScreen
+            sessionId={sessionId}
+            gameId={gameId}
+            status={status}
+            view={view}
+            definition={entry.definition}
+            backHref={paths.game(gameId)}
+          />
+        </Suspense>
+      </SessionAutomationContext>
     </div>
   );
 }
 
 /**
- * `/sessions/:sessionId` (plan-frontend §2.1): loads `{ sessionId, gameId, status, settings, view }`, finds the game by the
+ * `/sessions/:sessionId` (plan-frontend §2.1): loads `{ sessionId, gameId, status, settings, view, automation }`, finds the game by the
  * server's `gameId` and renders its `TableScreen` with `view: unknown` (never parsed here, TR-5). Subscribed to
  * `sessionKeys.detail(id)`, so `setQueryData` after a command re-renders the table with the new view.
+ * SWR-006: drives the automated participant (`useAutomationDriver`: ≤ 1 automatic `automation/run` per load or
+ * command response), shows `AutomationNotice` with «Continue AI turn» and exposes `useSessionAutomation()` to the game.
  */
 export function SessionHost() {
   const { sessionId = '' } = useParams();

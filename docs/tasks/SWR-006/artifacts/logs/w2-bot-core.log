@@ -1,0 +1,82 @@
+# SWR-006 W2 — bot core and Empire intel (backend-worker), 2026-11-19T14:55:52Z
+# git HEAD: c1ace26 + uncommitted work of parallel workers W1 (packages/platform), W3, W4 in the same tree
+
+$ (cd packages/games/rebellion && npx vitest run test/ai --reporter=verbose --silent=false)
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > passes its schema 3ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > has a profile for every difficulty and a strategy for every faction 0ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > default difficulty equals the setup default (A-7, REBELLION_SETUP_DEFAULTS) 3ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > harder difficulties explore less and consider at least as many candidates 1ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > rejects an invalid configuration 2ms
+ ✓ test/ai/random.test.ts > hash32 (FNV-1a 32) > matches the published FNV-1a vectors and the engine hash 4ms
+ ✓ test/ai/random.test.ts > seededRandom (mulberry32) > snapshot: the same seed always yields the same sequence 4ms
+ ✓ test/ai/random.test.ts > seededRandom (mulberry32) > values are in [0, 1) and different seeds differ 59ms
+ ✓ test/ai/random.test.ts > botSeed / gameCoin > botSeed = view.id#view.version (changes with every command) 1ms
+ ✓ test/ai/random.test.ts > botSeed / gameCoin > gameCoin is constant for the session, depends on the salt, in [0, 1) 1ms
+ ✓ test/ai/auto-pass.test.ts > chooseAutoCommand (auto-pass-v1) > TC-AI-01: PASS when PASS is legal; same answer on every call; input not mutated 8ms
+ ✓ test/ai/auto-pass.test.ts > chooseAutoCommand (auto-pass-v1) > TC-AI-02: FINISH_ACTIVATION during an activation (no PASS); null without legal actions 7ms
+ ✓ test/ai/auto-pass.test.ts > chooseAutoCommand (auto-pass-v1) > TC-AI-14: src/ai imports only ../schema, zod and its own modules (no OpenAI, Nest, React, scenario, rules, platform) 16ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > Empire at creation: own forces per system, hidden Rebel units only counted 10ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > distances are symmetric BFS jumps; unknown systems are unreachable 17ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > deliverableGround: Σ min(ground, capacity) over unpinned adjacent sources 7ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > own activation, pinned systems and moves made in it come from the view and its log 21ms
+ ✓ test/ai/describe.test.ts > objectiveFor > per side, ASCII, ≤ 300 9ms
+ ✓ test/ai/describe.test.ts > situationFor > Empire at creation: round, markers, own forces, unknown base, hidden zone; no id / version 7ms
+ ✓ test/ai/describe.test.ts > situationFor > easy Empire does not list possible base locations; Rebels see their own base 6ms
+ ✓ test/ai/describe.test.ts > situationFor > heaviest state (units spread over every system) stays ≤ 4000 and ASCII 9ms
+ ✓ test/ai/describe.test.ts > situationFor > clip cuts deterministically with a marker 4ms
+ ✓ test/ai/describe.test.ts > summaryFor > one line per kind, ≤ 160, ASCII 14ms
+ ✓ test/ai/describe.test.ts > situation of the Empire is invariant to the hidden base (D-PO-1, TC-H-01) > relocating the base before the reveal changes no text 467ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > at creation: visible Rebel systems excluded, nothing searched, the hidden zone counted 9ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > throws for the Rebels (they know their base) 3ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > searched: an Imperial activation that ends with an Imperial ground unit in it and no reveal 6ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > hints (Q-BE-5): Rebel moves out of / into the hidden zone point at the neighbours of the visible end 13ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > after the reveal the base is known and every other system is excluded 2ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — random-walk games > sound: the true base is never excluded, searched or start-rule-excluded before the reveal 685ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — random-walk games > invariant: states differing only in the hidden base give the same intel 187ms
+[bot-decision] decision points checked=393
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > AI Rebels at creation: PASS first (base policy), c1..c10, targets for activations 38ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > null when the view has no legal actions (not the side to move) 1ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > inside an activation FINISH is always offered (TC-BOT-09) 7ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > legacy AutoPolicy (auto-pass-v1): one candidate c1 with its command 8ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > selectTop keeps the terminating action: replaces the 10th, or appends when there is room 4ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > rankCandidates (base policy): terminating first, then by key; accepts only a view 6ms
+ ✓ test/ai/decision.test.ts > buildDecision — property on random-walk games (TC-BOT-02) > every decision point of the AI side is valid and every command is engine-legal (origin auto) 1262ms
+[bot-property] games=12 ended=12 states=1826 candidates=69381 autoCandidates=34349
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — fixed states > at creation (Rebels to move): every leader × system pair + PASS; nothing for the other side 23ms
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — fixed states > during an activation: ≤ 5 subsets per source, all fit, + FINISH; spare-load for the Rebels 8ms
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — fixed states > moveSubsets: riders never exceed the capacity of the chosen carriers 1ms
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — property on random-walk games (TC-BOT-01) > every candidate of every state is engine-legal (AI side with origin auto) 3069ms
+[bot-invariance] empire states=123 relocations compared=2449
+ ✓ test/ai/decision.test.ts > Empire decisions are invariant to the hidden base (AC-04, TC-H-01) > states differing only in the base before the reveal → identical decision points (incl. situation) 1947ms
+ Test Files  8 passed (8)
+      Tests  43 passed (43)
+   Duration  4.33s (transform 3.14s, setup 0ms, import 5.16s, tests 7.98s, environment 1ms)
+exit=0
+
+$ pnpm --filter @bga/game-rebellion test
+     × health / session response DTOs 20ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  test/schema/schemas.test.ts > results, errors and API DTOs > health / session response DTOs
+AssertionError: expected false to be true // Object.is equality
+ Test Files  1 failed | 48 passed (49)
+      Tests  1 failed | 445 passed (446)
+   Duration  9.90s (transform 3.93s, setup 0ms, import 18.63s, tests 34.11s, environment 5ms)
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @bga/game-rebellion@0.0.0 test: `vitest run`
+exit=1
+# NOTE: the single failure is test/schema/schemas.test.ts 'health / session response DTOs' (not a W2 file): its SessionResponse sample has no 'automation' field, which W1's uncommitted packages/platform/src/sessions.ts now requires (Q-BE-6). It is unrelated to src/ai; all 49-1 other files and every test/ai file pass.
+
+$ pnpm --filter @bga/game-rebellion typecheck
+> tsc -p tsconfig.test.json
+
+exit=0
+
+$ pnpm exec eslint packages/games/rebellion --max-warnings=0
+exit=0
+
+$ pnpm exec prettier --check packages/games/rebellion/src/ai packages/games/rebellion/test/ai
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+# Ad-hoc (scratch test, deleted afterwards, not part of the suite): 486 bot decision points from 6 walk games parsed with
+# AutomationDecisionPointSchema of W1's in-progress packages/platform/src/automation.ts -> all success (vitest 1 passed).

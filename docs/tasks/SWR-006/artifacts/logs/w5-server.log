@@ -1,0 +1,44 @@
+# SWR-006 W5 — Rebellion server automation + package test migration. backend-worker (Rules), 2026-11-19T15:07:34Z
+# Working tree shared with W6 (parallel, src/ai/** + test/ai/**): its in-progress files test/ai/tmp/** and test/ai/empire-policy.test.ts are not W5's.
+
+$ pnpm --filter @bga/game-rebellion test
+ Test Files  53 passed (53)
+      Tests  470 passed (470)
+exit=0
+
+# Same suite without W6's in-flight files (empire-policy.test.ts, test/ai/tmp/**):
+$ pnpm --filter @bga/game-rebellion exec vitest run --exclude "test/ai/tmp/**" --exclude "test/ai/empire-policy.test.ts"
+ Test Files  51 passed (51)
+      Tests  468 passed (468)
+exit=0
+
+$ pnpm --filter @bga/game-rebellion exec vitest run test/server test/schema
+ Test Files  14 passed (14)
+      Tests  186 passed (186)
+exit=0
+
+$ pnpm --filter @bga/game-rebellion typecheck
+exit=0
+# all typecheck errors (if any) are in test/ai/tmp/** (W6 scratch). Filtered run:
+$ (cd packages/games/rebellion && npx tsc -p tsconfig.test.json | grep -v test/ai/tmp/)
+(no lines above = no other errors)
+
+$ pnpm exec eslint packages/games/rebellion --max-warnings=0
+exit=0
+$ pnpm exec eslint packages/games/rebellion --max-warnings=0 --ignore-pattern "packages/games/rebellion/test/ai/tmp/**"
+exit=0
+
+$ pnpm build:packages
+> tsc -b packages
+
+exit=0
+
+$ pnpm exec prettier --check <W5 files>
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ git diff --stat packages/games/rebellion/test/fixtures   (must be empty; UPDATE_GOLDEN not used)
+exit=0 (empty output above)
+
+# Mutation check (manual, reverted): automation.ts decide() fed a base-dependent view → automation-hidden-base.test.ts 6 of 7 failed; file restored (diff vs backup empty).

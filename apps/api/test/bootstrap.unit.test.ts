@@ -51,6 +51,23 @@ describe('runBootstrap', () => {
     expect(h.createApp).not.toHaveBeenCalled();
   });
 
+  it('SWR-006 TC-ENV-08 (unit part): AI_COMMANDER_PROVIDER=openai without OpenAI → named, exit(1), no createApp', async () => {
+    const h = harness(() =>
+      parseEnv({
+        DATABASE_URL: 'file:./x.db',
+        OPENAI_ENABLED: 'false',
+        OPENAI_API_KEY: SENTINEL_KEY,
+        AI_COMMANDER_PROVIDER: 'openai',
+      }),
+    );
+    await expect(runBootstrap(h.deps)).rejects.toEqual(new ExitCalled(1));
+    expect(h.stderr).toEqual([
+      'Invalid environment: AI_COMMANDER_PROVIDER: requires OPENAI_ENABLED=true',
+    ]);
+    expect(h.stderr.join('\n')).not.toMatch(/sentinel|SENTINEL|sk-/);
+    expect(h.createApp).not.toHaveBeenCalled();
+  });
+
   it('an unexpected error while loading → fixed line (its message is not printed), exit(1)', async () => {
     const h = harness(() => {
       throw new Error(`boom ${SENTINEL_KEY}`);

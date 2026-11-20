@@ -218,6 +218,7 @@ describe('session service with a fake game (AC-5(a), TR-3)', () => {
       status: FAKE_STATUS,
       settings: { start: 0, mode: 'normal' },
       view: { count: 0, version: 1, status: FAKE_STATUS },
+      automation: { pending: false, strategy: null },
     });
     expect(res.text).not.toContain(FAKE_SECRET);
 
@@ -255,6 +256,14 @@ describe('session service with a fake game (AC-5(a), TR-3)', () => {
       ok: true,
       view: { count: 1, version: 2, status: FAKE_STATUS },
       events: [{ seq: 2, type: 'INCREMENTED', count: 1 }],
+      automation: {
+        steps: 0,
+        pending: false,
+        strategy: null,
+        fallbacks: 0,
+        fallbackReasons: [],
+        stopReason: 'none',
+      },
     });
 
     const stale = await postCommand(app, sessionId, inc(1));

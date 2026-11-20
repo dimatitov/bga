@@ -147,3 +147,41 @@ export async function toHandoff(
   );
   return asHandoff((await commandOk(request, sessionId, act, { type: 'FINISH_ACTIVATION' })).view);
 }
+
+/** The AI command types (SWR-006: the AI plays real moves through the same command pipeline). */
+export const AI_EVENT_TYPES = [
+  'SYSTEM_ACTIVATED',
+  'PIECES_MOVED',
+  'ACTIVATION_FINISHED',
+  'PASSED',
+] as const;
+
+/** Events of `side` in a response (SWR-006: the AI side's moves of this request). */
+export const eventsBy = (body: Pick<CoreCommandResponse, 'events'>, side: Faction) =>
+  body.events.filter((e) => e.actor === side);
+
+/**
+ * SWR-006 (Q-BE-8: properties, not exact moves): a response whose request handed the turn to the AI and got it
+ * back — `automation.steps` = number of the AI-side command events (each AI step is one command, its first event is
+ * the AI's), only AI command types, the turn back to the human (or the game over), no fallback with the bot.
+ */
+export function expectAiTurn(
+  body: CoreCommandResponse,
+  ai: Faction,
+  options: { minSteps?: number } = {},
+): CoreCommandResponse['automation'] {
+  const a = body.automation;
+  expect(a.strategy, 'e2e API plays the bot').toBe('bot');
+  expect(a.steps).toBeGreaterThanOrEqual(options.minSteps ?? 1);
+  expect(a.fallbacks).toBe(0);
+  expect(a.fallbackReasons).toEqual([]);
+  expect(a.pending).toBe(false);
+  expect(['humanTurn', 'gameOver']).toContain(a.stopReason);
+  const aiEvents = eventsBy(body, ai);
+  for (const e of aiEvents) expect(AI_EVENT_TYPES as readonly string[]).toContain(e.type);
+  // Every AI step is one AI command and each of these commands yields exactly one event of its actor.
+  expect(aiEvents.length, 'one AI-side event per AI step').toBe(a.steps);
+  const view = asCore(body.view);
+  if (a.stopReason === 'humanTurn') expect(view.activeSide).toBe(view.viewer);
+  return a;
+}

@@ -9,6 +9,18 @@ import type { AIAction, AIModelRole, AIProviderId, AIUsage } from '@bga/platform
 
 export type { AIAction, AIModelRole, AIProviderId, AIUsage };
 
+/**
+ * A legal action as the AI layer sees it (SWR-006 plan-backend §8.1). `summary` (≤ 160 chars, English) is a short
+ * human-readable description of the candidate, produced by the game from the acting side's view; sent only by the
+ * `commander` prompt variant.
+ */
+export interface AIDecisionAction extends AIAction {
+  readonly summary?: string;
+}
+
+/** Prompt variant: the SWR-005B dev endpoint (default, byte-identical prompt) or the in-game commander (SWR-006). */
+export type AIDecisionPurpose = 'dev-test' | 'commander';
+
 /** What the AI layer sees of a decision point. No game state, no session ids, no secrets. */
 export interface AIDecisionContext {
   /** Budget key (`dev-diagnostics` for the dev endpoint, a session id later). Never sent to the model. */
@@ -19,7 +31,11 @@ export interface AIDecisionContext {
   readonly phase: string;
   readonly objective: string;
   /** 2..10 legal actions with unique ids (validated by the caller's DTO and again by the service). */
-  readonly availableActions: readonly AIAction[];
+  readonly availableActions: readonly AIDecisionAction[];
+  /** Prompt variant; absent = `'dev-test'` (SWR-005B dev endpoint, unchanged prompt). */
+  readonly purpose?: AIDecisionPurpose;
+  /** `commander` only: the position as the acting side sees it (≤ 4000 chars, English). Ignored for `dev-test`. */
+  readonly situation?: string;
 }
 
 /**

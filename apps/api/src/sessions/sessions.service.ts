@@ -18,6 +18,9 @@ import { ApiError } from '../common/api-error';
 import { CLOCK, ID_GENERATOR, type Clock, type IdGenerator } from '../common/runtime.tokens';
 import type { GameRegistry } from '../game-registry/game-registry';
 import { GAME_REGISTRY } from '../game-registry/game-registry.tokens';
+import { AutomationRunner } from './automation/automation-runner.service';
+import { automationEnvelope } from './automation/session-automation';
+import { bestEffortEnvelope, settleRun } from './automation/settle-run';
 import { idempotencyHash } from './idempotency';
 import { SessionsRepository, type IdempotencyRecord, type SessionRow } from './sessions.repository';
 
@@ -40,6 +43,7 @@ export class SessionsService {
     @Inject(GAME_REGISTRY) private readonly registry: GameRegistry,
     @Inject(CLOCK) private readonly clock: Clock,
     @Inject(ID_GENERATOR) private readonly ids: IdGenerator,
+    private readonly runner: AutomationRunner,
   ) {}
 
   /**
@@ -47,6 +51,8 @@ export class SessionsService {
    * idempotency (replay 200 / 409) → 400 setup → 422 SETUP_UNSUPPORTED → create + insert.
    * The key is stored only together with a successfully created session, so a rejected request never
    * "burns" it. A lost insert race (unique violation) is resolved like a replay (Q-4) — never 500 (TR-8).
+   * SWR-006 (plan-backend §6.3): right after the insert the automation runner plays the automated side's first
+   * moves (one commit per step); the response shows the state after the run. A replay never runs it (like GET).
    */
   async create(
     request: CreateSessionRequest,
@@ -93,13 +99,18 @@ export class SessionsService {
       return { response: replay, replayed: true };
     }
 
+    // Review F-1: the same non-throwing guard as the command path — the session and its idempotency record are
+    // already committed, so a runner / `pendingActor` failure must not answer 500. Without a readable result the
+    // response shows the inserted state.
+    const { final } = await settleRun(this.runner, this.logger, sessionId, module, state, status);
     return {
       response: SessionResponseSchema.parse({
         sessionId,
         gameId: request.gameId,
-        status,
+        status: final.status,
         settings: module.publicSettings(setup.value),
-        view: module.toPlayerView(state, { status }),
+        view: module.toPlayerView(final.state, { status: final.status }),
+        automation: bestEffortEnvelope(module, final.state, this.runner.strategyId),
       }),
       replayed: false,
     };
@@ -166,8 +177,9 @@ export class SessionsService {
   }
 
   /**
-   * `{ sessionId, gameId, status, settings, view }` of a stored row (GET and idempotent replay):
-   * 422 (no module) → 500 (corrupt status / setup / snapshot).
+   * `{ sessionId, gameId, status, settings, view, automation }` of a stored row (GET and idempotent replay):
+   * 422 (no module) → 500 (corrupt status / setup / snapshot). `automation.pending: true` → the client calls
+   * `POST …/automation/run` (SWR-006).
    */
   private envelope(row: SessionRow): SessionResponse {
     const module = this.requireModule(row);
@@ -179,6 +191,7 @@ export class SessionsService {
       status,
       settings: this.checkedSettings(row, module, state),
       view: module.toPlayerView(state, { status }),
+      automation: automationEnvelope(module, state, this.runner.strategyId),
     });
   }
 

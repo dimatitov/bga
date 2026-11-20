@@ -140,6 +140,42 @@ add('packages/games/rebellion/src/rules/core/probe.ts', 'export const r = Math.r
 add('packages/games/rebellion/src/scenario/core/probe.ts', imp('../../rules'), 'error');
 add('packages/games/rebellion/src/scenario/core/probe.ts', imp('../../schema'), 'ok');
 add('packages/games/rebellion/src/ai/probe.ts', imp('../../rules'), 'error');
+// SWR-006 B-6: the AI (bot policies) is pure and deterministic — also in nested folders.
+for (const file of ['packages/games/rebellion/src/ai/probe.ts', 'packages/games/rebellion/src/ai/policies/probe.ts']) {
+  for (const code of [
+    'export const d = new Date();',
+    'export const d = new Date(0);',
+    'export const t = Date.now();',
+    'export const r = Math.random();',
+    'export const u = crypto.randomUUID();',
+    'export const b = crypto.getRandomValues(new Uint8Array(4));',
+    'export const p = performance.now();',
+    'export const u = globalThis.crypto.randomUUID();',
+    'export const p = globalThis.performance.now();',
+    'export const t = globalThis.Date.now();',
+    imp('crypto'),
+    imp('node:crypto'),
+    "import { randomInt } from 'node:crypto'; export const r = randomInt(2);",
+    "import { createHash } from 'crypto'; export const h = createHash;",
+    dyn('node:crypto'),
+    imp('node:perf_hooks'),
+    COMPUTED,
+  ]) {
+    add(file, code, 'error');
+  }
+}
+add('packages/games/rebellion/src/ai/policies/probe.ts', imp('../../rules'), 'error');
+add('packages/games/rebellion/src/ai/policies/probe.ts', imp('../../schema'), 'ok');
+add('packages/games/rebellion/src/ai/policies/probe.ts', imp('../random'), 'ok');
+add('packages/games/rebellion/src/ai/probe.ts', imp('./random'), 'ok');
+add('packages/games/rebellion/src/ai/probe.ts', imp('zod'), 'ok');
+// A seeded PRNG on plain integer math is fine; Math.imul / Date as a type are not clock reads.
+add(
+  'packages/games/rebellion/src/ai/probe.ts',
+  'export const next = (s: number) => (Math.imul(s, 1664525) + 1013904223) >>> 0;',
+  'ok',
+);
+add('packages/games/rebellion/src/ai/probe.ts', "export const k = 'crypto'; export const p = { performance: 1 }.performance;", 'ok');
 add('packages/games/rebellion/src/schema/probe.ts', imp('../../rules'), 'error');
 
 // B-12/B-13/B-14: api.
@@ -222,7 +258,7 @@ describe('ESLint architecture boundaries (TR-7)', () => {
       const [result] = await eslint.lintText(`${code}\n`, { filePath: path.join(REPO_ROOT, filePath) });
       const errors = result.messages.filter((m) => m.severity === 2);
       const relevant = errors.filter((m) =>
-        ['no-restricted-imports', 'no-restricted-syntax', 'no-restricted-properties'].includes(m.ruleId),
+        ['no-restricted-imports', 'no-restricted-syntax', 'no-restricted-properties', 'no-restricted-globals'].includes(m.ruleId),
       );
       if (expected === 'error') {
         assert.ok(relevant.length > 0, `expected a boundary error, got: ${JSON.stringify(errors)}`);

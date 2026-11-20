@@ -1,0 +1,5 @@
+=== qa-lead 2026-11-20T10:50:09Z; load averages: 7.30 18.00 30.71
+$ pnpm exec vitest run test/migration-swr004.int.test.ts test/settings-source.int.test.ts test/hotseat.int.test.ts
+ Test Files  3 passed (3)
+      Tests  17 passed (17)
+EXIT=0

@@ -1,0 +1,71 @@
+# SWR-006 W9 — integration HTTP scenarios (backend-worker), 2026-11-19
+# Files: apps/api/test/automation-{full-game,restart,double-submit,determinism,openai,hidden-info}.int.test.ts,
+#        apps/api/test/support/{automation-helpers,scripted-empire,hidden-scan}.ts (all new; no product code changed)
+
+$ pnpm --filter @bga/api test   (alone)
+ Test Files  64 passed | 1 skipped (65)
+      Tests  595 passed | 1 skipped (596)
+   Duration  56.98s (transform 6.70s, setup 1.87s, import 54.84s, tests 296.34s, environment 7ms)
+EXIT=0   (wall: pnpm --filter @bga/api test  311.40s user 50.90s system 622% cpu 58.187 total)
+(baseline before W9, from w7-runner.log: 562 passed | 1 skipped, Duration 55.12s)
+
+$ pnpm --filter @bga/api typecheck
+EXIT=0
+$ pnpm exec eslint apps/api --max-warnings=0
+EXIT=0
+$ pnpm exec prettier --check <9 W9 files>
+All matched files use Prettier code style!
+EXIT=0
+
+## Flakiness: the 6 W9 files, 3 consecutive runs (cd apps/api; pnpm exec vitest run test/automation-{…}.int.test.ts --reporter=verbose)
+run 1:  Tests 33 passed (33) |  Duration 11.88s (transform 3.28s, setup 298ms, import 8.36s, tests 21.83s, environment 1ms)
+run 2:  Tests 33 passed (33) |  Duration 11.54s (transform 2.94s, setup 306ms, import 7.70s, tests 21.43s, environment 1ms)
+run 3:  Tests 33 passed (33) |  Duration 11.53s (transform 3.06s, setup 347ms, import 7.82s, tests 21.30s, environment 1ms)
+
+## Run 1 (verbose)
+✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CP-07: the same PASS twice in parallel with one expectedVersion → one 200 (with the AI turn), one 409; the AI turn is stored once 595ms
+✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CP-08: POST /api/sessions twice with one Idempotency-Key (Empire vs AI) → same session; the AI Rebels' first moves are not repeated 86ms
+✓ test/automation-restart.int.test.ts > SWR-006 W9: restart in the middle of an automated turn (D-PO-6) > TC-RS-01 / TC-RS-04 / TC-LOOP-04 / TC-LOOP-05 / TC-LOOP-11: step limit → pending survives a restart; run on the new instance finishes the turn like an uninterrupted game 708ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-03 / TC-OA-25 / TC-H-04 / TC-H-07 / PO 8.2: a valid non-bot choice is applied exactly; one ok AiUsage row with budgetKey = sessionId; nothing of the model reaches the player 729ms
+✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CC-01 (real bot) / Q-5: two parallel runs on a pending AI turn → every step once; one run does all, the other finds nothing 241ms
+✓ test/automation-restart.int.test.ts > SWR-006 W9: restart in the middle of an automated turn (D-PO-6) > TC-RS-02: automated steps fail after 2 steps (error, pending) → 2 steps are committed; the new instance continues from the 3rd 258ms
+✓ test/automation-hidden-info.int.test.ts > SWR-006 W9: hidden base in OpenAI mode (AC-04) > TC-H-04 / TC-H-06 / TC-H-07 / Q-BE-9: AI Empire — prompts are byte-identical for two games differing only in the base; no session id; logs and AiUsage never name the base 1008ms
+✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CC-03: a run racing a human command on a pending AI turn → the human gets 409 / 422 notYourTurn, never both applied 216ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-06 / 07 / 08 / 09 / 10 / 11: hostile answers (ids outside the list, malformed JSON, schema violations with command params, empty reason, incomplete, refusal, injected id) → the bot moves, AI_INVALID_DECISION, the game goes on unchanged 508ms
+✓ test/automation-hidden-info.int.test.ts > SWR-006 W9: hidden base in OpenAI mode (AC-04) > TC-H-05 / TC-H-08 (OpenAI mode): human Empire vs AI Rebels — Empire-addressed bodies clean before the reveal; requests without session id; logs and AiUsage never name the base 456ms
+✓ test/automation-determinism.int.test.ts > SWR-006 W9: determinism over HTTP (AC-05) > TC-DET-01: Rebels vs AI normal (R-ACTIVE, 3 rounds) and Empire vs AI easy (E-HUNT, 3 rounds) — two apps, byte-identical rows 1701ms
+✓ test/automation-restart.int.test.ts > SWR-006 W9: restart in the middle of an automated turn (D-PO-6) > TC-RS-03: a game interrupted by a restart between turns continues identically (Rebels vs AI 3+2 rounds; Empire vs AI 3+2 commands) 1023ms
+✓ test/automation-determinism.int.test.ts > SWR-006 W9: determinism over HTTP (AC-05) > TC-DET-01 (negative): another session id → another game 389ms
+✓ test/automation-double-submit.int.test.ts > SWR-006 W9: double submit and races with the real bot (AC-02) > TC-CC-06: stress — every human turn of a whole game sent twice in parallel together with two runs → no 500, no duplicates, same game as undisturbed 1493ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > timeout ×3 → AI_TIMEOUT 1611ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 429 ×3 → AI_RATE_LIMITED 114ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 500 ×3 → AI_PROVIDER_ERROR 102ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 503 → AI_PROVIDER_ERROR 95ms
+✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-01 / TC-LOOP-07 / PO 8.9: human Rebels (R-PASSIVE) vs AI Empire easy / normal ×2 / hard → Rebels win on time; the AI activates in ≥ 10 of 13 rounds 3169ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > network → AI_PROVIDER_ERROR 93ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > insufficient_quota → AI_PROVIDER_ERROR 122ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > 401 key rejected → AI_NOT_CONFIGURED 117ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-13 / 14 / 15 / 16 / 17 / PO 8.7: transport failures → the bot, the game goes on > model without a price → AI_NOT_CONFIGURED 114ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-24: a mixed run [ok, timeout ×3, ok …] → strategy openai, fallbacks 1, fallbackReasons [AI_TIMEOUT] 223ms
+✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-02 / TC-OUT-08 / PO 8.12: PO default scenario — human Rebels R-ACTIVE vs AI Empire normal plays to the end; every answer is humanTurn / gameOver 976ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-18 / PO 8.8 / PO 8.13: the session budget runs out mid-game → no more calls, the bot finishes the game; ≤ 1 budget_exceeded row per run; Σ cost ≤ limit 713ms
+✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-06: WIN_SEED_EASY (swr006-d01) and WIN_SEED_NORMAL (swr006-d05) replayed through HTTP → winner empire, rebelBaseCaptured 422ms
+✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-OUT-03 / TC-OUT-07 / TC-DIF-01 / TC-LOOP-05 (HTTP): E-HUNT vs AI Rebels hard, one step per request → the base is never empty; the Rebels win 585ms
+✓ test/automation-full-game.int.test.ts > SWR-006 W9: full games over HTTP against the real bot (D-PO-5, AC-08) > TC-DIF-10: engine harness ≡ API — the same scripts give equal stored states and event rows (E-HUNT vs easy Rebels; R-PASSIVE vs hard Empire) 695ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-21 / PO 8.13: a hanging model and a 1 s run deadline → the request ends in time, AI_DEADLINE, no more calls in that run; the next run tries again 2630ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-CC-02: two parallel runs in OpenAI mode → no duplicated paid calls (calls = AiUsage rows = steps with a call) 297ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-OA-01: provider bot with OpenAI enabled and a key → no client call at all, strategy bot 79ms
+✓ test/automation-openai.int.test.ts > SWR-006 W9: OpenAI commander on the fake fetch (AC-09) > TC-ENV-09 / PO 8.14: default config (bot, OPENAI_ENABLED=false, no key) — three active rounds against the AI, no AiUsage, no network 245ms
+
+## Game transcript (.tmp/w9-full-games.log, written by automation-full-game.int.test.ts)
+TC-OUT-01 swr006-d01 AI empire normal: passes=13 finalVersion=144 outcome={"winner":"rebels","reason":"timeReachedReputation"} roundsWithAiActivation=13/13 aiSteps=130
+TC-OUT-01 swr006-d02 AI empire normal: passes=13 finalVersion=180 outcome={"winner":"rebels","reason":"timeReachedReputation"} roundsWithAiActivation=13/13 aiSteps=166
+TC-OUT-01 swr006-d03 AI empire easy: passes=13 finalVersion=84 outcome={"winner":"rebels","reason":"timeReachedReputation"} roundsWithAiActivation=12/13 aiSteps=70
+TC-OUT-01 swr006-d04 AI empire hard: passes=13 finalVersion=127 outcome={"winner":"rebels","reason":"timeReachedReputation"} roundsWithAiActivation=13/13 aiSteps=113
+TC-OUT-02 swr006-w9-active-1 R-ACTIVE vs AI empire normal: commands=52 finalVersion=171 outcome={"winner":"rebels","reason":"timeReachedReputation"} events=238
+TC-OUT-06 swr006-d01 E-HUNT vs AI rebels easy: humanCommands=11 finalVersion=59 finalRound=6 outcome={"winner":"empire","reason":"rebelBaseCaptured"}
+TC-OUT-06 swr006-d05 E-HUNT vs AI rebels normal: humanCommands=11 finalVersion=20 finalRound=3 outcome={"winner":"empire","reason":"rebelBaseCaptured"}
+TC-OUT-07 swr006-d01 E-HUNT vs AI rebels hard (maxSteps=1): states checked=53 emptyBase=0 finalVersion=48
+TC-OUT-07 swr006-d05 E-HUNT vs AI rebels hard (maxSteps=1): states checked=48 emptyBase=0 finalVersion=39
+TC-DIF-10 swr006-d02 empire vs AI easy: engine≡API version=33 outcome={"winner":"empire","reason":"rebelBaseCaptured"} humanCommands=11
+TC-DIF-10 swr006-d03 rebels vs AI hard: engine≡API version=133 outcome={"winner":"rebels","reason":"timeReachedReputation"} humanCommands=13

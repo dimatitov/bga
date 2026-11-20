@@ -53,7 +53,16 @@ test('TC-NEW-05 (was TC-E2E-03): catalog → game page → new session (Empire, 
   });
   expect(idempotencyKeyOf(res.request()), 'Idempotency-Key header').toBeTruthy();
   const body = (await res.json()) as SessionResponse;
-  expect(Object.keys(body).sort()).toEqual(['gameId', 'sessionId', 'settings', 'status', 'view']);
+  // SWR-006 (Q-BE-6): + required `automation`; the e2e API plays the bot, its first turn is done (not pending).
+  expect(Object.keys(body).sort()).toEqual([
+    'automation',
+    'gameId',
+    'sessionId',
+    'settings',
+    'status',
+    'view',
+  ]);
+  expect(body.automation).toEqual({ pending: false, strategy: 'bot' });
   expect(body.gameId).toBe(REBELLION);
   expect(body.status).toBe('prototype');
   expect(body.settings).toEqual({
@@ -71,7 +80,8 @@ test('TC-NEW-05 (was TC-E2E-03): catalog → game page → new session (Empire, 
 
   await expect(page).toHaveURL(urlOf(sessionPath(body.sessionId)));
   await waitForTable(page, body.sessionId);
-  // SWR-005: the AI Rebels' first auto-pass is applied at creation (AC-08) — the table shows the response version.
+  // SWR-005: the AI Rebels' first move is applied at creation (AC-08; SWR-006: real moves, not an auto-pass) — the
+  // table shows the response version.
   expect(await version(page)).toBe(view.version);
 
   const summary = (await listSessions(request, REBELLION)).find(

@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { inspect } from 'node:util';
 import { afterAll, describe, expect, it } from 'vitest';
 import {
+  DEFAULT_AI_COMMANDER,
   ENV_KEYS,
   EnvValidationError,
   Secret,
@@ -66,6 +67,7 @@ describe('parseEnv — valid environments', () => {
         timeoutMs: 30000,
         maxRetries: 2,
       },
+      aiCommander: { provider: 'bot', modelRole: 'tactical', maxSteps: 64, runDeadlineMs: 45000 },
     });
   });
 
@@ -86,6 +88,7 @@ describe('parseEnv — valid environments', () => {
     const config = parseEnv(ENV1);
     expect(Object.isFrozen(config)).toBe(true);
     expect(Object.isFrozen(config.openai)).toBe(true);
+    expect(Object.isFrozen(config.aiCommander)).toBe(true);
   });
 
   it('only ENV_KEYS are read (other variables are ignored)', () => {
@@ -284,6 +287,154 @@ describe('parseEnv — invalid variables', () => {
     );
     const order = error.variables.map((v) => ENV_KEYS.indexOf(v.name));
     expect([...order].sort((a, b) => a - b)).toEqual(order);
+  });
+});
+
+/** SWR-006 test-cases §1 (TC-ENV-01..06 of SWR-006), plan-backend §7, Q-22. */
+describe('parseEnv — AI_COMMANDER_* (SWR-006)', () => {
+  it('SWR-006 TC-ENV-01: defaults without AI_COMMANDER_* (bot, tactical, 64, 45000) = DEFAULT_AI_COMMANDER', () => {
+    const config = parseEnv(ENV0);
+    expect(config.aiCommander).toEqual({
+      provider: 'bot',
+      modelRole: 'tactical',
+      maxSteps: 64,
+      runDeadlineMs: 45000,
+    });
+    expect(config.aiCommander).toEqual(DEFAULT_AI_COMMANDER);
+    expect(parseEnv(ENV1).aiCommander).toEqual(DEFAULT_AI_COMMANDER);
+  });
+
+  it('valid values are parsed (openai with OpenAI on, strategy, numbers)', () => {
+    const config = parseEnv({
+      ...ENV1,
+      AI_COMMANDER_PROVIDER: 'openai',
+      AI_COMMANDER_MODEL_ROLE: 'strategy',
+      AI_COMMANDER_MAX_STEPS: '10',
+      AI_COMMANDER_RUN_DEADLINE_MS: '5000',
+    });
+    expect(config.aiCommander).toEqual({
+      provider: 'openai',
+      modelRole: 'strategy',
+      maxSteps: 10,
+      runDeadlineMs: 5000,
+    });
+    expect(parseEnv({ ...ENV0, AI_COMMANDER_PROVIDER: 'bot' }).aiCommander.provider).toBe('bot');
+  });
+
+  it('SWR-006 TC-ENV-02: openai without OPENAI_ENABLED=true fails, naming the variable, no values', () => {
+    expect(envError({ ...ENV0, AI_COMMANDER_PROVIDER: 'openai' }).message).toBe(
+      'Invalid environment: AI_COMMANDER_PROVIDER: requires OPENAI_ENABLED=true',
+    );
+    const missingFlag = envError({
+      DATABASE_URL: 'file:./x.db',
+      AI_COMMANDER_PROVIDER: 'openai',
+      OPENAI_API_KEY: SENTINEL_KEY,
+    });
+    expect(missingFlag.variables).toEqual([
+      { name: 'OPENAI_ENABLED', reason: 'is required' },
+      { name: 'AI_COMMANDER_PROVIDER', reason: 'requires OPENAI_ENABLED=true' },
+    ]);
+    expect(missingFlag.message).not.toMatch(/sentinel|SENTINEL|sk-|openai"/);
+    // An invalid flag is not "true" either.
+    expect(names({ ...ENV0, OPENAI_ENABLED: 'yes', AI_COMMANDER_PROVIDER: 'openai' })).toEqual([
+      'OPENAI_ENABLED',
+      'AI_COMMANDER_PROVIDER',
+    ]);
+  });
+
+  it('plan-backend §7: NODE_ENV=test + openai → two errors (OpenAI is never usable in a test process)', () => {
+    expect(
+      envError({ ...ENV1, NODE_ENV: 'test', AI_COMMANDER_PROVIDER: 'openai' }).variables,
+    ).toEqual([
+      { name: 'OPENAI_ENABLED', reason: 'must be false when NODE_ENV=test' },
+      { name: 'AI_COMMANDER_PROVIDER', reason: 'requires OPENAI_ENABLED=true' },
+    ]);
+  });
+
+  it('OPENAI_ENABLED=true with missing OpenAI variables reports those, not the provider', () => {
+    expect(
+      names({
+        DATABASE_URL: 'file:./x.db',
+        OPENAI_ENABLED: 'true',
+        AI_COMMANDER_PROVIDER: 'openai',
+      }),
+    ).toEqual([
+      'OPENAI_API_KEY',
+      'OPENAI_STRATEGY_MODEL',
+      'OPENAI_TACTICAL_MODEL',
+      'OPENAI_MAX_COST_PER_SESSION_USD',
+    ]);
+  });
+
+  it('SWR-006 TC-ENV-03 / Q-22: exact "bot" | "openai"; blank = unset = bot', () => {
+    for (const bad of ['OpenAI', 'mock', 'auto', 'bot ', 'BOT', ' openai']) {
+      expect(envError({ ...ENV1, AI_COMMANDER_PROVIDER: bad }).message).toBe(
+        'Invalid environment: AI_COMMANDER_PROVIDER: must be "bot" or "openai"',
+      );
+    }
+    for (const blank of ['', '   ']) {
+      expect(parseEnv({ ...ENV0, AI_COMMANDER_PROVIDER: blank }).aiCommander.provider).toBe('bot');
+    }
+  });
+
+  it('SWR-006 TC-ENV-04: AI_COMMANDER_MAX_STEPS integer 1..256', () => {
+    expect(parseEnv({ ...ENV0, AI_COMMANDER_MAX_STEPS: '1' }).aiCommander.maxSteps).toBe(1);
+    expect(parseEnv({ ...ENV0, AI_COMMANDER_MAX_STEPS: '256' }).aiCommander.maxSteps).toBe(256);
+    for (const bad of ['0', '257', '-1', '1.5', 'abc']) {
+      expect(envError({ ...ENV0, AI_COMMANDER_MAX_STEPS: bad }).message).toBe(
+        'Invalid environment: AI_COMMANDER_MAX_STEPS: must be an integer 1..256',
+      );
+    }
+  });
+
+  it('SWR-006 TC-ENV-05: AI_COMMANDER_RUN_DEADLINE_MS integer 1000..120000', () => {
+    const deadline = (v: string) =>
+      parseEnv({ ...ENV0, AI_COMMANDER_RUN_DEADLINE_MS: v }).aiCommander.runDeadlineMs;
+    expect(deadline('1000')).toBe(1000);
+    expect(deadline('120000')).toBe(120000);
+    for (const bad of ['999', '120001', 'abc', '1500.5']) {
+      expect(envError({ ...ENV0, AI_COMMANDER_RUN_DEADLINE_MS: bad }).message).toBe(
+        'Invalid environment: AI_COMMANDER_RUN_DEADLINE_MS: must be an integer 1000..120000',
+      );
+    }
+  });
+
+  it('SWR-006 TC-ENV-06: AI_COMMANDER_MODEL_ROLE tactical | strategy', () => {
+    expect(parseEnv({ ...ENV0, AI_COMMANDER_MODEL_ROLE: 'strategy' }).aiCommander.modelRole).toBe(
+      'strategy',
+    );
+    for (const bad of ['Tactical', 'fast']) {
+      expect(envError({ ...ENV0, AI_COMMANDER_MODEL_ROLE: bad }).message).toBe(
+        'Invalid environment: AI_COMMANDER_MODEL_ROLE: must be "tactical" or "strategy"',
+      );
+    }
+  });
+
+  it('AI_COMMANDER_* are checked even with OPENAI_ENABLED=false; all problems at once, ENV_KEYS order, no values', () => {
+    const error = envError({
+      ...ENV0,
+      AI_COMMANDER_PROVIDER: 'sentinel-provider',
+      AI_COMMANDER_MODEL_ROLE: 'sentinel-role',
+      AI_COMMANDER_MAX_STEPS: 'sentinel-steps',
+      AI_COMMANDER_RUN_DEADLINE_MS: 'sentinel-deadline',
+    });
+    expect(error.variables.map((v) => v.name)).toEqual([
+      'AI_COMMANDER_PROVIDER',
+      'AI_COMMANDER_MODEL_ROLE',
+      'AI_COMMANDER_MAX_STEPS',
+      'AI_COMMANDER_RUN_DEADLINE_MS',
+    ]);
+    for (const text of [error.message, JSON.stringify(error.variables), inspect(error)]) {
+      expect(text).not.toMatch(/sentinel/);
+    }
+  });
+
+  it('loadAppConfig reads AI_COMMANDER_* from the environment like the other keys', () => {
+    const config = loadAppConfig({
+      dotenvPath: join(tmpdir(), 'swr006-missing.env'),
+      env: { ...ENV0, NODE_ENV: 'production', AI_COMMANDER_MAX_STEPS: '7' },
+    });
+    expect(config.aiCommander.maxSteps).toBe(7);
   });
 });
 

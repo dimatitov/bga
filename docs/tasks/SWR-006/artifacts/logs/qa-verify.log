@@ -1,0 +1,28 @@
+=== SWR-006 QA_EXECUTION — final gate: pnpm verify (qa-lead) — start 2026-11-20T09:47:05Z
+node v20.19.5, pnpm 10.34.9; ports 3000/5173/3100/5174 free before the run; no other test/dev process
+
+$ pnpm verify
+
+> board-game-ai@ verify /Users/dimatitov/WebstormProjects/Game automa
+> pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm check:bundle && pnpm e2e
+
+
+> board-game-ai@ lint /Users/dimatitov/WebstormProjects/Game automa
+> eslint . --max-warnings=0 && prettier --check .
+
+Checking formatting...
+[warn] packages/games/rebellion/knowledge/discrepancies.json
+[warn] packages/games/rebellion/knowledge/entries/components.json
+[warn] packages/games/rebellion/knowledge/entries/implementation-notes.json
+[warn] packages/games/rebellion/knowledge/entries/movement.json
+[warn] packages/games/rebellion/knowledge/entries/rebel-base.json
+[warn] packages/games/rebellion/knowledge/entries/refresh.json
+[warn] packages/games/rebellion/knowledge/entries/round-command.json
+[warn] packages/games/rebellion/knowledge/entries/victory.json
+[warn] packages/games/rebellion/knowledge/manifest.json
+[warn] Code style issues found in 9 files. Run Prettier with --write to fix.
+ ELIFECYCLE  Command failed with exit code 1.
+ ELIFECYCLE  Command failed with exit code 1.
+
+EXIT=1
+=== end 2026-11-20T09:47:27Z, duration 22 s

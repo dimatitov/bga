@@ -9,6 +9,9 @@
  * - with `OPENAI_ENABLED=true` the key, both models and the session cost limit are required;
  * - `NODE_ENV=test` never loads `.env` and rejects `OPENAI_ENABLED=true`;
  * - the error message lists variable names with fixed reasons, never the values (no Zod messages either).
+ *
+ * SWR-006 (Contract §4, plan-backend §7, Q-22): `AI_COMMANDER_*` are always checked (independent of OPENAI_ENABLED);
+ * blank = unset = default; `AI_COMMANDER_PROVIDER=openai` requires a usable `OPENAI_ENABLED=true` (so never in test).
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { inspect, parseEnv as parseDotenv } from 'node:util';
@@ -25,6 +28,10 @@ export const ENV_KEYS = [
   'OPENAI_MAX_COST_PER_SESSION_USD',
   'OPENAI_TIMEOUT_MS',
   'OPENAI_MAX_RETRIES',
+  'AI_COMMANDER_PROVIDER',
+  'AI_COMMANDER_MODEL_ROLE',
+  'AI_COMMANDER_MAX_STEPS',
+  'AI_COMMANDER_RUN_DEADLINE_MS',
 ] as const;
 export type EnvKey = (typeof ENV_KEYS)[number];
 
@@ -33,6 +40,26 @@ const MODEL_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,99}$/;
 export const DEFAULT_PORT = 3000;
 export const DEFAULT_OPENAI_TIMEOUT_MS = 30_000;
 export const DEFAULT_OPENAI_MAX_RETRIES = 2;
+
+export type AiCommanderProvider = 'bot' | 'openai';
+/** Same union as `AIModelRole` of the AI layer (kept local: config does not depend on ai/). */
+export type AiCommanderModelRole = 'tactical' | 'strategy';
+
+export interface AiCommanderConfig {
+  readonly provider: AiCommanderProvider;
+  readonly modelRole: AiCommanderModelRole;
+  /** AI steps per automation run (1..256). */
+  readonly maxSteps: number;
+  /** Wall-clock budget of one automation run for OpenAI calls, ms (1000..120000). */
+  readonly runDeadlineMs: number;
+}
+
+export const DEFAULT_AI_COMMANDER: AiCommanderConfig = Object.freeze({
+  provider: 'bot',
+  modelRole: 'tactical',
+  maxSteps: 64,
+  runDeadlineMs: 45_000,
+});
 
 /** Each variable on its own (input: a non-blank string or undefined). Conditional rules: `conditionalIssues`. */
 export const EnvSchema = z.object({
@@ -51,6 +78,20 @@ export const EnvSchema = z.object({
     .max(120_000)
     .default(DEFAULT_OPENAI_TIMEOUT_MS),
   OPENAI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(DEFAULT_OPENAI_MAX_RETRIES),
+  AI_COMMANDER_PROVIDER: z.enum(['bot', 'openai']).default(DEFAULT_AI_COMMANDER.provider),
+  AI_COMMANDER_MODEL_ROLE: z.enum(['tactical', 'strategy']).default(DEFAULT_AI_COMMANDER.modelRole),
+  AI_COMMANDER_MAX_STEPS: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(256)
+    .default(DEFAULT_AI_COMMANDER.maxSteps),
+  AI_COMMANDER_RUN_DEADLINE_MS: z.coerce
+    .number()
+    .int()
+    .min(1000)
+    .max(120_000)
+    .default(DEFAULT_AI_COMMANDER.runDeadlineMs),
 });
 
 /** Fixed reasons; neither the values nor Zod messages ever reach the error text. */
@@ -65,10 +106,15 @@ const INVALID_REASON: Record<EnvKey, string> = {
   OPENAI_MAX_COST_PER_SESSION_USD: 'must be a number > 0 and <= 5',
   OPENAI_TIMEOUT_MS: 'must be an integer 1000..120000',
   OPENAI_MAX_RETRIES: 'must be an integer 0..5',
+  AI_COMMANDER_PROVIDER: 'must be "bot" or "openai"',
+  AI_COMMANDER_MODEL_ROLE: 'must be "tactical" or "strategy"',
+  AI_COMMANDER_MAX_STEPS: 'must be an integer 1..256',
+  AI_COMMANDER_RUN_DEADLINE_MS: 'must be an integer 1000..120000',
 };
 const REASON_REQUIRED = 'is required';
 const REASON_REQUIRED_WHEN_ENABLED = 'is required when OPENAI_ENABLED=true';
 const REASON_FALSE_IN_TEST = 'must be false when NODE_ENV=test';
+const REASON_PROVIDER_NEEDS_OPENAI = 'requires OPENAI_ENABLED=true';
 
 /** Variables checked only when OPENAI_ENABLED=true (Q-3: ignored when false). */
 const OPENAI_DEPENDENT: readonly EnvKey[] = [
@@ -157,6 +203,8 @@ export interface AppConfig {
   readonly databaseUrl: string;
   readonly port: number;
   readonly openai: OpenAIConfig;
+  /** SWR-006: who plays the AI side of a session (bot by default). */
+  readonly aiCommander: AiCommanderConfig;
 }
 
 export type RawEnv = Readonly<Record<string, string | undefined>>;
@@ -242,6 +290,24 @@ export function parseEnv(raw: RawEnv): AppConfig {
     }
   }
 
+  const provider = checkField('AI_COMMANDER_PROVIDER', input);
+  const modelRole = checkField('AI_COMMANDER_MODEL_ROLE', input);
+  const maxSteps = checkField('AI_COMMANDER_MAX_STEPS', input);
+  const runDeadlineMs = checkField('AI_COMMANDER_RUN_DEADLINE_MS', input);
+  for (const [key, r] of [
+    ['AI_COMMANDER_PROVIDER', provider],
+    ['AI_COMMANDER_MODEL_ROLE', modelRole],
+    ['AI_COMMANDER_MAX_STEPS', maxSteps],
+    ['AI_COMMANDER_RUN_DEADLINE_MS', runDeadlineMs],
+  ] as const) {
+    if (!r.ok) issues.set(key, r.reason);
+  }
+  // `openai` needs OpenAI really switched on: OPENAI_ENABLED=true and accepted (not rejected, e.g. in test).
+  const openaiUsable = openaiOn && !issues.has('OPENAI_ENABLED');
+  if (provider.ok && provider.value === 'openai' && !openaiUsable) {
+    issues.set('AI_COMMANDER_PROVIDER', REASON_PROVIDER_NEEDS_OPENAI);
+  }
+
   if (issues.size > 0) {
     throw new EnvValidationError(
       ENV_KEYS.filter((k) => issues.has(k)).map((name) => ({ name, reason: issues.get(name)! })),
@@ -278,6 +344,12 @@ export function parseEnv(raw: RawEnv): AppConfig {
     databaseUrl: ok(databaseUrl),
     port: ok(port),
     openai,
+    aiCommander: {
+      provider: ok(provider),
+      modelRole: ok(modelRole),
+      maxSteps: ok(maxSteps),
+      runDeadlineMs: ok(runDeadlineMs),
+    },
   });
 }
 

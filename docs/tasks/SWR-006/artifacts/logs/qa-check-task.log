@@ -1,0 +1,20 @@
+=== 2026-11-20T10:51:31Z
+$ node scripts/check-task.mjs docs/tasks/SWR-006
+docs/tasks/SWR-006/delivery-report.md: [R7] check "task check" evidence path `artifacts/logs/delivery-check.log` does not exist (line 97)
+docs/tasks/SWR-006/delivery-report.md: [R7] check "task check" is passed but evidence has no existing file path in backticks (line 97)
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-02 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-03 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-04 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-05 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-06 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-07 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-08 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-09 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-10 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-11 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-12 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-13 (defined in specification.md) is missing from acceptance.md
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but AC-01 in acceptance.md is not_run
+docs/tasks/SWR-006/delivery-report.md: [R10] accepted but FINAL_ACCEPTANCE in status.md is pending, not passed
+FAIL docs/tasks/SWR-006 (16 problems)
+EXIT=1

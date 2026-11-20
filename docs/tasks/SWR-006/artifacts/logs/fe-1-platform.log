@@ -1,0 +1,71 @@
+# SWR-006 FE-1 platform automation host — gate log (2026-11-19T15:22:24Z)
+
+## pnpm --filter @bga/web test
+ Test Files  63 passed (63)
+      Tests  547 passed (547)
+   Duration  27.33s (transform 9.96s, setup 27.05s, import 45.98s, tests 67.42s, environment 68.41s)
+exit 0
+
+## pnpm --filter @bga/web typecheck
+
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+exit 0
+
+## pnpm exec eslint apps/web --max-warnings=0
+
+exit 0
+
+## changed web files (prettier --check below)
+  apps/web/src/games/rebellion/core-v1/panels/test/harness.tsx
+  apps/web/src/games/rebellion/setup/SetupScreen.test.tsx
+  apps/web/src/games/rebellion/table/HandoffScreen.test.tsx
+  apps/web/src/games/rebellion/table/TableScreen.test.tsx
+  apps/web/src/games/rebellion/table/hooks/useSendCommand.test.tsx
+  apps/web/src/games/rebellion/table/hooks/useSendCommand.ts
+  apps/web/src/games/rebellion/test/fixtures.ts
+  apps/web/src/locales/en/sessionHost.json
+  apps/web/src/locales/ru/sessionHost.json
+  apps/web/src/platform/index.ts
+  apps/web/src/platform/session-host/SessionHost.test.tsx
+  apps/web/src/platform/session-host/SessionHost.tsx
+  apps/web/src/platform/sessions/api.test.ts
+  apps/web/src/platform/sessions/api.ts
+  apps/web/src/platform/sessions/queries.ts
+  apps/web/src/platform/test/fakeGame.ts
+  apps/web/src/platform/automation/commitCommandResult.ts
+  apps/web/src/platform/automation/useAutomationDriver.ts
+  apps/web/src/platform/automation/automation.test.tsx
+  apps/web/src/platform/automation/fallbackReason.ts
+  apps/web/src/platform/automation/SessionAutomationContext.ts
+  apps/web/src/platform/automation/AutomationNotice.tsx
+  apps/web/src/platform/automation/index.ts
+  apps/web/src/platform/automation/automationStore.ts
+  apps/web/src/platform/automation/runAutomation.ts
+
+## pnpm exec prettier --check apps/web/src/games/rebellion/core-v1/panels/test/harness.tsx apps/web/src/games/rebellion/setup/SetupScreen.test.tsx apps/web/src/games/rebellion/table/HandoffScreen.test.tsx apps/web/src/games/rebellion/table/TableScreen.test.tsx apps/web/src/games/rebellion/table/hooks/useSendCommand.test.tsx apps/web/src/games/rebellion/table/hooks/useSendCommand.ts apps/web/src/games/rebellion/test/fixtures.ts apps/web/src/locales/en/sessionHost.json apps/web/src/locales/ru/sessionHost.json apps/web/src/platform/index.ts apps/web/src/platform/session-host/SessionHost.test.tsx apps/web/src/platform/session-host/SessionHost.tsx apps/web/src/platform/sessions/api.test.ts apps/web/src/platform/sessions/api.ts apps/web/src/platform/sessions/queries.ts apps/web/src/platform/test/fakeGame.ts apps/web/src/platform/automation/commitCommandResult.ts apps/web/src/platform/automation/useAutomationDriver.ts apps/web/src/platform/automation/automation.test.tsx apps/web/src/platform/automation/fallbackReason.ts apps/web/src/platform/automation/SessionAutomationContext.ts apps/web/src/platform/automation/AutomationNotice.tsx apps/web/src/platform/automation/index.ts apps/web/src/platform/automation/automationStore.ts apps/web/src/platform/automation/runAutomation.ts
+Checking formatting...
+All matched files use Prettier code style!
+exit 0
+
+## pnpm --filter @bga/web build
+dist/assets/TableScreen-XlpiD1J-.js       121.79 kB │ gzip:  34.82 kB
+dist/assets/index-B8HMkM6H.js             137.74 kB │ gzip:  43.51 kB
+dist/assets/vendor-BwUA2TaR.js            186.48 kB │ gzip:  54.86 kB
+dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+
+✓ built in 349ms
+exit 0
+
+## pnpm check:bundle
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 10 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-qCWZaL
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 778 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit 0

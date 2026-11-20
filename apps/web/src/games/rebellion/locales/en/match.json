@@ -65,16 +65,16 @@
     "unknown": "Event: {{type}}",
     "hiddenZone": "hidden zone",
     "unknownUnit": "unit",
-    "autoTag": "auto",
-    "autoHint": "AI Commander is not implemented yet: the AI side always passes"
+    "aiActor": "{{actor}} (AI)",
+    "aiTag": "AI"
   },
   "announce": {
-    "autoPass": "AI pass ({{side}}) — auto: AI Commander is not implemented yet",
-    "autoPass_rebels": "{{side}} (AI) pass — auto: AI Commander is not implemented yet",
-    "autoPass_empire": "{{side}} (AI) passes — auto: AI Commander is not implemented yet",
-    "autoFinish": "AI activation ({{side}}) finished — auto",
-    "autoFinish_rebels": "{{side}} (AI) finish the activation — auto",
-    "autoFinish_empire": "{{side}} (AI) finishes the activation — auto",
+    "autoPass": "AI pass ({{side}})",
+    "autoPass_rebels": "{{side}} (AI) pass",
+    "autoPass_empire": "{{side}} (AI) passes",
+    "autoFinish": "AI activation ({{side}}) finished",
+    "autoFinish_rebels": "{{side}} (AI) finish the activation",
+    "autoFinish_empire": "{{side}} (AI) finishes the activation",
     "opponentPassed": "Pass: {{side}}",
     "opponentPassed_rebels": "{{side}} pass",
     "opponentPassed_empire": "{{side}} passes",
@@ -91,5 +91,24 @@
     "passed": "Passed",
     "rules": "Rules",
     "rulesValue": "core-v1 slice: round and leader activation"
+  },
+  "ai": {
+    "name": "AI Commander",
+    "label": "AI Commander · {{provider}} · {{difficulty}}",
+    "labelNoProvider": "AI Commander · {{difficulty}}",
+    "labelNoDifficulty": "AI Commander · {{provider}}",
+    "provider": {
+      "bot": "bot",
+      "openai": "OpenAI"
+    },
+    "thinking": "AI is thinking…",
+    "summary_one": "AI turn: {{count}} action",
+    "summary_other": "AI turn: {{count}} actions",
+    "summaryGameOver": "— the game is over",
+    "fallback": "{{count}} AI move(s) were made by the bot: OpenAI unavailable — {{reasons}}.",
+    "infoCommander": "AI Commander",
+    "infoCommanderBot": "Bot (deterministic)",
+    "infoCommanderOpenai": "OpenAI (bot on failure)",
+    "infoCommanderNone": "—"
   }
 }

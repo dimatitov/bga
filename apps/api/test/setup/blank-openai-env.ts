@@ -4,11 +4,16 @@
  * apps/api/.env that is not already present into process.env (at import and on `new PrismaClient`); dotenv never
  * overwrites a present key, even an empty one. So every OPENAI_* variable is set here: blank (= unset for our config)
  * and OPENAI_ENABLED=false — the PO's real key and model names never enter a test process.
+ * SWR-006: likewise every AI_COMMANDER_* is set (blank = default) with AI_COMMANDER_PROVIDER=bot.
  */
-import { BLANKED_OPENAI_VARS } from '../../scripts/e2e-env.mjs';
+import { BLANKED_OPENAI_VARS, forcedAiCommanderEnv } from '../../scripts/e2e-env.mjs';
 
 for (const key of Object.keys(process.env)) {
   if (/^OPENAI_/.test(key)) process.env[key] = '';
 }
 for (const key of BLANKED_OPENAI_VARS) process.env[key] = '';
 process.env.OPENAI_ENABLED = 'false';
+for (const key of Object.keys(process.env)) {
+  if (/^AI_COMMANDER_/.test(key)) process.env[key] = '';
+}
+Object.assign(process.env, forcedAiCommanderEnv());

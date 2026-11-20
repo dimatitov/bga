@@ -1,0 +1,29 @@
+=== SWR-006 QA — review F-3 tests (qa-lead) 2026-11-20T09:57:22Z
+$ pnpm exec vitest run test/automation-f3-coverage.int.test.ts --reporter=verbose
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): Retry-After on the commander path (TC-OA-14, PO 8.7) > 429 with retry-after: 2 → the runtime waits 2000 ms, the retry succeeds, the model pick is applied 340ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): Retry-After on the commander path (TC-OA-14, PO 8.7) > 429 with retry-after: 3600 → no wait, one call, the bot moves with AI_RATE_LIMITED 77ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): budget boundary and isolation (TC-OA-19, TC-OA-20, PO 8.8) > TC-OA-19: spent + reserve = limit → no call, the bot moves with AI_BUDGET_EXCEEDED; one micro-USD less → the call is made 103ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): budget boundary and isolation (TC-OA-19, TC-OA-20, PO 8.8) > TC-OA-20: session A exhausted, session B still calls with its own budgetKey; dev-diagnostics budget unchanged; dev endpoint refuses a session budgetKey 100ms
+ ✓ test/automation-f3-coverage.int.test.ts > SWR-006 QA (F-3): a SWR-005B-era stored game on the SWR-006 server (TC-RS-05, PO 8.11) > a game stored by the SWR-005 auto-pass policy (AI passed, human to move mid command phase) continues without migration; the AI plays non-pass moves in a later round 173ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  12:57:23
+   Duration  5.10s (transform 727ms, setup 52ms, import 1.51s, tests 795ms, environment 0ms)
+
+EXIT=0
+
+--- mutation check: copy with 3 wrong expectations (gap 0 expects a call; delay 1999; AI move before round end) → must fail
+$ pnpm exec vitest run test/zz-qa-mutant.int.test.ts
+     × 429 with retry-after: 2 → the runtime waits 2000 ms, the retry succeeds, the model pick is applied 296ms
+     × TC-OA-19: spent + reserve = limit → no call, the bot moves with AI_BUDGET_EXCEEDED; one micro-USD less → the call is made 49ms
+     × a game stored by the SWR-005 auto-pass policy (AI passed, human to move mid command phase) continues without migration; the AI plays non-pass moves in a later round 138ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+AssertionError: expected [ 2000 ] to deeply equal [ 1999 ]
+AssertionError: swr006-qa-budget-eq: expected [] to have a length of 1 but got +0
+AssertionError: expected true to be false // Object.is equality
+      Tests  3 failed | 2 passed (5)
+EXIT=1 (expected non-zero); mutant file removed

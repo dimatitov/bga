@@ -3,12 +3,19 @@
  * §3.1, §7). Pure: returns language-neutral descriptors; the text is built by the caller with `announcementI18n`
  * (keys live in the `rebellion.match` namespace, owned by Worker P2 — `announce.*`).
  *
- * Only what the player did NOT do themselves is announced: automatic AI moves (`payload.auto`), a new round
- * (time advanced), leaders returning, the base reveal, the end of the game. The player's own commands get their
- * feedback in the panels. Hidden information: events arrive already redacted by the server (system `null` =
+ * Only what the player did NOT do themselves is announced: the AI side passing / finishing its activation
+ * (SWR-006: by the AI actor of the settings, or `payload.auto`), a new round (time advanced), leaders returning,
+ * the base reveal, the end of the game. The AI's activations and moves are summed up by «Ход AI: N действий»
+ * instead (plan-frontend §6.4). The player's own commands get their feedback in the panels. Hidden information: events arrive already redacted by the server (system `null` =
  * hidden zone); nothing here looks anything up.
  */
-import type { FactionId, OutcomeReason, PlayerEvent } from '@bga/game-rebellion/schema';
+import type {
+  FactionId,
+  OutcomeReason,
+  PlayerEvent,
+  RebellionSettings,
+} from '@bga/game-rebellion/schema';
+import { isAiActor } from './aiCommander';
 
 export type Announcement =
   | { kind: 'autoPass'; side: FactionId }
@@ -20,22 +27,26 @@ export type Announcement =
   | { kind: 'gameOver'; winner: FactionId; reason: OutcomeReason };
 
 /**
- * Descriptors for `events` (response order) as seen by `viewer`. A pass / finish by the viewer itself is not
- * announced (unless it was automatic, which never happens to a human side but is kept honest).
+ * Descriptors for `events` (response order) as seen by `viewer` in a game with `settings`. A pass / finish by
+ * the viewer itself is not announced (unless it was automatic, which never happens to a human side but is kept
+ * honest). A pass / finish of the AI side → `autoPass` / `autoFinish`; a pass of a human opponent (hot-seat)
+ * → `opponentPassed`.
  */
 export function announcementsFor(
   events: readonly PlayerEvent[],
   viewer: FactionId,
+  settings: Pick<RebellionSettings, 'opponentType' | 'opponentFaction'>,
 ): Announcement[] {
   const out: Announcement[] = [];
+  const byAi = (actor: string, auto: boolean) => auto || isAiActor(actor, settings);
   for (const e of events) {
     switch (e.type) {
       case 'PASSED':
-        if (e.payload.auto) out.push({ kind: 'autoPass', side: e.actor });
+        if (byAi(e.actor, e.payload.auto)) out.push({ kind: 'autoPass', side: e.actor });
         else if (e.actor !== viewer) out.push({ kind: 'opponentPassed', side: e.actor });
         break;
       case 'ACTIVATION_FINISHED':
-        if (e.payload.auto) out.push({ kind: 'autoFinish', side: e.actor });
+        if (byAi(e.actor, e.payload.auto)) out.push({ kind: 'autoFinish', side: e.actor });
         break;
       case 'LEADERS_RETURNED':
         if (e.payload.leaderIds.length > 0) {

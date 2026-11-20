@@ -1,0 +1,82 @@
+# SWR-006 FE-2+3 Rebellion AI Commander UI, event log, announcements — gate log (2026-11-19T15:35:32Z)
+
+## pnpm --filter @bga/web test
+ Test Files  66 passed (66)
+      Tests  593 passed (593)
+   Duration  27.87s (transform 9.55s, setup 26.92s, import 47.60s, tests 70.32s, environment 67.80s)
+exit 0
+
+## pnpm --filter @bga/web typecheck
+> @bga/web@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/web
+> tsc -b
+
+exit 0
+
+## pnpm exec eslint apps/web --max-warnings=0
+exit 0
+
+## changed/new files of FE-2+3 (prettier --check below)
+  apps/web/src/games/rebellion/table/hooks/useSendCommand.ts
+  apps/web/src/games/rebellion/table/hooks/useSendCommand.test.tsx
+  apps/web/src/games/rebellion/core-v1/CoreTable.tsx
+  apps/web/src/games/rebellion/core-v1/CoreTable.test.tsx
+  apps/web/src/games/rebellion/core-v1/model/coreContext.ts
+  apps/web/src/games/rebellion/core-v1/model/aiCommander.ts
+  apps/web/src/games/rebellion/core-v1/model/aiCommander.test.ts
+  apps/web/src/games/rebellion/core-v1/model/announcements.ts
+  apps/web/src/games/rebellion/core-v1/model/announcements.test.ts
+  apps/web/src/games/rebellion/core-v1/top-bar/AiCommanderStatus.tsx
+  apps/web/src/games/rebellion/core-v1/top-bar/AiCommanderStatus.test.tsx
+  apps/web/src/games/rebellion/core-v1/top-bar/CoreTopBar.tsx
+  apps/web/src/games/rebellion/core-v1/top-bar/CoreTopBar.test.tsx
+  apps/web/src/games/rebellion/core-v1/top-bar/CoreGameInfoPanel.tsx
+  apps/web/src/games/rebellion/core-v1/top-bar/index.ts
+  apps/web/src/games/rebellion/core-v1/panels/AiTurnSummary.tsx
+  apps/web/src/games/rebellion/core-v1/panels/AiTurnSummary.test.tsx
+  apps/web/src/games/rebellion/core-v1/panels/TurnPanel.tsx
+  apps/web/src/games/rebellion/core-v1/panels/TurnPanel.test.tsx
+  apps/web/src/games/rebellion/core-v1/panels/useTurnCommands.ts
+  apps/web/src/games/rebellion/core-v1/panels/test/harness.tsx
+  apps/web/src/games/rebellion/core-v1/panels/test/CoreHarness.tsx
+  apps/web/src/games/rebellion/core-v1/sidebar/CoreEventLog.tsx
+  apps/web/src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx
+  apps/web/src/games/rebellion/core-v1/sidebar/coreLogMessage.ts
+  apps/web/src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts
+  apps/web/src/games/rebellion/test/coreFixtures.ts
+  apps/web/src/games/rebellion/locales/ru/match.json
+  apps/web/src/games/rebellion/locales/en/match.json
+  apps/web/src/games/rebellion/locales/ru/turn.json
+  apps/web/src/games/rebellion/locales/en/turn.json
+  apps/web/src/games/rebellion/locales.i18n.test.ts
+
+## pnpm exec prettier --check <files above>
+(re-run separately right after the other gates: the first attempt passed the list as one zsh word → ENAMETOOLONG; no file changed in between)
+Checking formatting...
+All matched files use Prettier code style!
+exit 0
+
+## pnpm --filter @bga/web build
+dist/assets/index-CveBiSby.js              31.32 kB │ gzip:  10.07 kB
+dist/assets/ui-mE5NODsV.js                108.11 kB │ gzip:  34.49 kB
+dist/assets/TableScreen-eujS6dO1.js       125.65 kB │ gzip:  36.12 kB
+dist/assets/vendor-BwUA2TaR.js            186.48 kB │ gzip:  54.86 kB
+dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+
+✓ built in 317ms
+exit 0
+
+## pnpm check:bundle
+
+> board-game-ai@ check:bundle /Users/dimatitov/WebstormProjects/Game automa
+> node scripts/check-web-bundle.mjs
+
+OK check-web-bundle: 11 files in apps/web/dist, 12 rules (dev-ai-path, dev-ai-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-6uvwEi
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 820 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit 0
+
+## not run
+- browser / e2e (owned by QA; server endpoint W7 built in parallel) — not_run

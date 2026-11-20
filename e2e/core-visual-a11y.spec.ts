@@ -168,7 +168,7 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await commandViaUi(page, () => page.mouse.up());
   });
 
-  test('TC-VA-03: AI auto-pass in the log (08) and the new round (09)', async ({
+  test('TC-VA-03: AI turn in the log (08, SWR-006: real AI moves instead of the auto-pass) and the new round (09)', async ({
     page,
     request,
   }) => {
@@ -176,10 +176,11 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await activateViaApi(request, sessionId, view);
     await openCore(page, sessionId);
     const fin = await finishViaUi(page);
-    const auto = fin.body.events.find((e) => e.type === 'PASSED')!;
+    const ai = fin.body.events.find((e) => e.actor === 'empire')!;
+    expect(ai, 'the AI Empire moved').toBeDefined();
     await openSidebarTab(page, 'log');
-    await expect(page.getByTestId(T.logEntryAuto(auto.seq))).toBeVisible();
-    await expectTextContrastDeep(page.getByTestId(T.logEntry(auto.seq)), 'auto-pass log entry');
+    await expect(page.getByTestId(T.logEntryAi(ai.seq))).toBeVisible();
+    await expectTextContrastDeep(page.getByTestId(T.logEntry(ai.seq)), 'AI log entry');
     await saveScreenshot(page, '08-ai-autopass-log', SWR005);
     await passViaUi(page, true);
     await expect(page.getByTestId(T.timeTrack)).toHaveAttribute('data-time', '2');
@@ -370,14 +371,17 @@ test.describe('SWR-005 visual & accessibility (core-v1)', () => {
     await expectTextContrastDeep(page.getByTestId(T.turnStatus), 'turn status');
     await expectTextContrastDeep(page.getByTestId(T.leaderPool), 'leader pool');
     await expectTextContrastDeep(page.getByTestId(T.prototypeBadge), 'slice badge');
-    await expectTextContrastDeep(page.getByTestId(T.passedIndicator), 'passed indicator');
+    // SWR-006: the AI Rebels no longer auto-pass at creation — the passed indicator exists only once a side passed.
+    if ((await page.getByTestId(T.passedIndicator).count()) > 0)
+      await expectTextContrastDeep(page.getByTestId(T.passedIndicator), 'passed indicator');
+    await expectTextContrastDeep(page.getByTestId(T.aiCommanderStatus), 'AI Commander status');
     await openSidebarTab(page, 'log');
     await expectTextContrastDeep(page.getByTestId(T.eventLog), 'event log');
     await openSidebarTab(page, 'objects');
     await expectTextContrastDeep(page.getByTestId(T.hiddenBaseZone), 'hidden zone item');
   });
 
-  test('TC-VA-13: roles and names — pool radiogroup/radios, turn panel, banner region, live region announces the auto-pass', async ({
+  test('TC-VA-13: roles and names — pool radiogroup/radios, turn panel, banner region, live region announces the AI turn', async ({
     page,
     request,
   }) => {

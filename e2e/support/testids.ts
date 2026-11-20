@@ -56,6 +56,7 @@ export const T = {
   newSessionPage: 'new-session-page',
   newSessionBackToGame: 'new-session-back-to-game',
   // session host `/sessions/:sessionId` (TR-1)
+  /** SWR-006: `data-automation-pending` true|false, `data-automation-strategy` bot|openai|none, `data-automation-state` idle|running|error|stalled */
   sessionHost: 'session-host',
   sessionNotFound: 'session-not-found',
   sessionUnsupported: 'session-unsupported',
@@ -193,10 +194,27 @@ export const T = {
   gameOverReason: 'game-over-reason',
   gameOverBack: 'game-over-back',
   sessionStatusCompleted: 'session-status-completed',
-  /** `data-seq`, `data-type`, `data-actor`, `data-auto` */
+  /** `data-seq`, `data-type`, `data-actor`, `data-auto`, SWR-006: `data-ai` (`true` for every event of the AI side) */
   logEntry: (seq: number) => `log-entry-${seq}`,
-  logEntryAuto: (seq: number) => `log-entry-${seq}-auto`,
-  logEntryAutoHint: (seq: number) => `log-entry-${seq}-auto-hint`,
+  /** SWR-006: «AI» chip of an AI-side log entry (replaces the removed `log-entry-<seq>-auto` / `-auto-hint`). */
+  logEntryAi: (seq: number) => `log-entry-${seq}-ai`,
+  // SWR-006 AI Commander (plan-frontend §8, final ids confirmed by FE-2+3)
+  /** top bar: `data-strategy` bot|openai|none, `data-difficulty`, `data-state` idle|thinking|stalled|over */
+  aiCommanderStatus: 'ai-commander-status',
+  /** «ИИ думает…», `role=status`; only while the AI moves */
+  aiThinking: 'ai-thinking',
+  /** «Об игре»: opponent row */
+  gameInfoOpponent: 'game-info-opponent',
+  /** «Об игре»: AI Commander row, `data-strategy` */
+  gameInfoAiCommander: 'game-info-ai-commander',
+  /** turn panel: `data-steps`, `data-source` command|run */
+  aiTurnSummary: 'ai-turn-summary',
+  /** turn panel: `data-fallbacks`, `data-reasons` (comma-separated codes) */
+  aiFallbackNotice: 'ai-fallback-notice',
+  /** platform notice «AI turn not finished»: `data-reason` error|stalled */
+  sessionAutomationNotice: 'session-automation-notice',
+  /** «Продолжить ход AI» */
+  sessionAutomationRetry: 'session-automation-retry',
   mapLegend: 'map-legend',
   gameInfo: 'game-info',
   /** hidden machine-readable mirror of the map (Worker M, accepted test hook, Q-37) */

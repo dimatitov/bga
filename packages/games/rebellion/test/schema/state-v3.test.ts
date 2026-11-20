@@ -2,6 +2,7 @@
  * SWR-005 W1: state v3 = discriminated union by `rulesEngine` (BD-1), `core-v1` invariants, events (state vs
  * view form), view / handoff / commands / error keys / details of the frozen contract.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   CommandEnvelopeSchema,
@@ -23,6 +24,7 @@ import {
   RebellionSessionDetailsSchema,
   type CoreGameStateV3,
 } from '../../src/schema';
+import { upcastState } from '../../src/server';
 import { AT, EMPIRE_VS_AI, coreEmpireView, coreState } from './core-sample';
 
 function messages(state: unknown): string[] {
@@ -222,13 +224,16 @@ describe('coreInvariants (stored core-v1 state)', () => {
     ).toContain('no activation after the game is over');
   });
 
-  it('AI game: no handoff; the player is active while the game runs (not after the outcome)', () => {
+  it('AI game: no handoff; SWR-006 AM-BE-2: the AI side may be active (a stored "AI to move" state)', () => {
     const ai = coreState(EMPIRE_VS_AI);
     expect(messages(ai)).toEqual([]);
-    expect(messages(changed((s) => (s.activeSide = 'rebels'), ai))).toContain(
-      'AI game: the player is always active',
-    );
+    // Per-step commits of the automation runner store states that wait for the AI's move.
+    const aiToMove = changed((s) => (s.activeSide = 'rebels'), ai);
+    expect(messages(aiToMove)).toEqual([]);
     expect(messages(changed((s) => (s.handoffPending = true), ai))).toContain(
+      'AI game: no handoff',
+    );
+    expect(messages(changed((s) => (s.handoffPending = true), aiToMove))).toContain(
       'AI game: no handoff',
     );
     const lostOnAiTurn = changed((s) => {
@@ -236,6 +241,19 @@ describe('coreInvariants (stored core-v1 state)', () => {
       s.outcome = { winner: 'empire', reason: 'rebelBaseCaptured' };
     }, ai);
     expect(messages(lostOnAiTurn)).toEqual([]);
+  });
+
+  it('mock-v1 is unchanged: in an AI game the player is always active', () => {
+    const raw = JSON.parse(
+      readFileSync(new URL('../fixtures/v2/state.v2.empire-ai.json', import.meta.url), 'utf8'),
+    ) as { state: unknown };
+    const mock = upcastState(raw.state);
+    if (mock.rulesEngine !== 'mock-v1') throw new Error('expected a mock-v1 state');
+    expect(mock.settings).toMatchObject({ opponentType: 'ai', playerFaction: 'empire' });
+    expect(MockGameStateV3Schema.safeParse(mock).success).toBe(true);
+    expect(messages({ ...mock, activeSide: 'rebels' })).toContain(
+      'AI game: the player is always active',
+    );
   });
 });
 

@@ -1,7 +1,11 @@
 /**
  * AI of Rebellion — server only, no OpenAI, never imported by web.
  * - Strategy Configuration (below) — DATA only; nothing executes it yet (the AI Commander arrives in stage F).
- * - `./auto-pass` — the deterministic automatic move of the `core-v1` slice (SWR-005 PO-3): pass.
+ * - `./auto-pass` — the deterministic automatic move of the `core-v1` slice (SWR-005 PO-3): pass (kept as a
+ *   test / legacy policy, SWR-006 AM-BE-6).
+ * - SWR-006 bot: `./decision` (`buildDecision`), `./candidates`, `./rank`, `./intel`, `./describe`,
+ *   `./view-model`, `./random`, `./types`, the policies `./empire-policy`, `./rebel-policy` (weights
+ *   `./profiles`) — pure, deterministic, input = the actor's own view only.
  *
  * Invariant: difficulty never grants access to hidden information — the AI only ever receives its
  * own PlayerView (filtered on the server) and chooses among legal actions computed by the rules.
@@ -10,6 +14,70 @@ import { z } from 'zod';
 import { DifficultySchema } from '../schema';
 
 export { AUTO_POLICY_ID, chooseAutoCommand, type AutoCommand, type AutoPolicy } from './auto-pass';
+// SWR-006: the deterministic bot (plan-backend §4). Input is only the actor's own CorePlayerView.
+export type {
+  BotCandidate,
+  BotCommand,
+  BotDecision,
+  BotDecisionCandidate,
+  BotDecisionPoint,
+  BotKind,
+  MoveVariant,
+  PolicyContext,
+  ScorePolicy,
+  ScoredCandidate,
+} from './types';
+export { botSeed, gameCoin, hash32, seededRandom } from './random';
+export {
+  buildViewModel,
+  type ForceSummary,
+  type OwnActivation,
+  type ViewModel,
+} from './view-model';
+export {
+  HINT_WEIGHT,
+  deriveBaseIntel,
+  possibleBaseSystems,
+  type BaseCandidateOptions,
+  type BaseIntel,
+} from './intel';
+export {
+  enumerateCandidates,
+  isTerminating,
+  moveSubsets,
+  rebelSpareCapacity,
+  sortByKey,
+} from './candidates';
+export {
+  allowedCandidates,
+  basePolicy,
+  onePerSystem,
+  policyContext,
+  policyFor,
+  rankCandidates,
+  rankWith,
+} from './rank';
+// SWR-006 W6/W8: side × difficulty policies and their weights (DATA in `./profiles`).
+export {
+  EMPIRE_PROFILES,
+  FINISH_DONE,
+  FINISH_EARLY,
+  REBEL_PROFILES,
+  USEFUL_MOVE,
+  finishScore,
+  type EmpireProfile,
+  type RebelProfile,
+} from './profiles';
+export { allowEmpire, empireKnowledge, scoreEmpire, type EmpireKnowledge } from './empire-policy';
+export { allowRebels, rebelSituation, scoreRebels, type RebelSituation } from './rebel-policy';
+export { DESCRIBE_LIMITS, clip, objectiveFor, situationFor, summaryFor } from './describe';
+export {
+  BOT_POLICY_ID,
+  MAX_DECISION_CANDIDATES,
+  buildDecision,
+  selectTop,
+  type BuildDecisionOptions,
+} from './decision';
 
 export const RebellionAiGoalSchema = z.enum([
   'locateRebelBase',

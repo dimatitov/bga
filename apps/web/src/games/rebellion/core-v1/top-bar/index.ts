@@ -1,4 +1,5 @@
 /** `core-v1` top bar and game-over UI (SWR-005 plan-frontend §7; Worker P2). Composed into `CoreTable` by P1. */
+export { AiCommanderStatus } from './AiCommanderStatus';
 export { CoreTopBar } from './CoreTopBar';
 export { CoreGameInfoPanel } from './CoreGameInfoPanel';
 export { OutcomeBanner } from './OutcomeBanner';

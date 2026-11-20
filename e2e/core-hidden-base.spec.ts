@@ -19,12 +19,14 @@ import {
   waitForTable,
 } from './support/board';
 import {
+  AI_EVENT_TYPES,
   armLeader,
   clickSystem,
   commandViaUi,
   eventsOf,
   expectTurn,
   finishViaUi,
+  systemName,
 } from './support/core';
 import { readStoredRow, seedCore, storedRebelBase } from './support/seed';
 import { T } from './support/testids';
@@ -42,7 +44,7 @@ async function expectBaseHiddenInDom(page: Page, baseId: string): Promise<void> 
 }
 
 test.describe('SWR-005 hidden rebel base (core-v1)', () => {
-  test('TC-E-04: AI game as the Empire — Empire to move on first show, AI auto-pass logged, hidden zone of exactly the 6 «on base» units, base id in no response, DOM or debug hook', async ({
+  test("TC-E-04: AI game as the Empire — Empire to move on first show, the AI Rebels' first turn logged (SWR-006), hidden zone of exactly the 6 «on base» units, base id in no response, DOM or debug hook", async ({
     page,
   }) => {
     const recorder = recordApi(page);
@@ -58,52 +60,65 @@ test.describe('SWR-005 hidden rebel base (core-v1)', () => {
     const view = asCore(body.view);
     const baseId = await storedRebelBase(body.sessionId);
 
-    // AC-08: the AI Rebels' first pass is already applied when the player sees the table.
+    // AC-08 / SWR-006: the AI Rebels' first turn (real moves, no auto-pass) is already applied when the player sees
+    // the table; properties only (Q-BE-8).
     expect(view.viewer).toBe('empire');
     expect(view.activeSide).toBe('empire');
-    expect(view.passed).toEqual({ rebels: true, empire: false });
-    const autoPass = view.log.filter((e) => e.type === 'PASSED');
-    expect(autoPass).toHaveLength(1);
-    expect(autoPass[0]).toMatchObject({ actor: 'rebels', payload: { auto: true } });
+    expect(body.automation).toEqual({ pending: false, strategy: 'bot' });
+    const aiEvents = view.log.filter((e) => e.actor === 'rebels');
+    expect(aiEvents.length, 'the AI Rebels moved before the first show').toBeGreaterThan(0);
+    for (const e of aiEvents) expect(AI_EVENT_TYPES as readonly string[]).toContain(e.type);
+    expect(view.log.some((e) => e.type === 'BASE_REVEALED')).toBe(false);
     expect(view.rebelBase).toEqual({ systemId: null, revealed: false });
     const zoneUnits = view.units.filter((u) => u.location.kind === 'rebelBase');
-    // The zone holds every Rebel unit in the base system. Since review #1 (Analyst decision, R-10) a system holding
-    // starting Rebel units (Bothawui) is no longer an eligible base, so the zone is exactly the 6 «on base» units of the
-    // first-game setup (spec Data clarifications) — no starting system units can «disappear» into it.
+    // The zone holds every Rebel unit in the base system (stored-state oracle). Since review #1 (Analyst decision,
+    // R-10) a system holding starting Rebel units is not an eligible base, so before the AI moved the zone was
+    // exactly the 6 «on base» units of the first-game setup; SWR-006: the AI Rebels may already have moved units
+    // into / out of the base, so the zone is compared with the stored state, not with a fixed list.
     const stored = await readStoredRow(body.sessionId);
     const inBase = (
       stored.state.units as { owner: string; systemId: string; typeKey: string }[]
     ).filter((u) => u.owner === 'rebels' && u.systemId === baseId);
     expect(zoneUnits.map((u) => u.typeKey).sort()).toEqual(inBase.map((u) => u.typeKey).sort());
-    expect(zoneUnits, 'hidden zone = exactly the 6 «on base» units').toHaveLength(6);
-    const onBase = [
-      'unit.rebels.airspeeder',
-      'unit.rebels.rebel-trooper',
-      'unit.rebels.rebel-trooper',
-      'unit.rebels.rebel-trooper',
-      'unit.rebels.x-wing',
-      'unit.rebels.y-wing',
-    ];
-    const zoneTypes = zoneUnits.map((u) => u.typeKey);
-    for (const t of onBase) {
-      const i = zoneTypes.indexOf(t);
-      expect(i, `${t} on the base`).toBeGreaterThanOrEqual(0);
-      zoneTypes.splice(i, 1);
+    const rebelMoves = aiEvents.filter((e) => e.type === 'PIECES_MOVED');
+    if (rebelMoves.length === 0) {
+      expect(zoneUnits, 'hidden zone = exactly the 6 «on base» units').toHaveLength(6);
+      const onBase = [
+        'unit.rebels.airspeeder',
+        'unit.rebels.rebel-trooper',
+        'unit.rebels.rebel-trooper',
+        'unit.rebels.rebel-trooper',
+        'unit.rebels.x-wing',
+        'unit.rebels.y-wing',
+      ];
+      const zoneTypes = zoneUnits.map((u) => u.typeKey);
+      for (const t of onBase) {
+        const i = zoneTypes.indexOf(t);
+        expect(i, `${t} on the base`).toBeGreaterThanOrEqual(0);
+        zoneTypes.splice(i, 1);
+      }
     }
-    const zoneCount = String(zoneUnits.length);
-    test
-      .info()
-      .annotations.push({ type: 'base', description: `${baseId}: ${zoneCount} units in the zone` });
+    // The zone counts units AND leaders on the base (CoreBoardList: unitIds + leaderIds, unchanged since SWR-005);
+    // SWR-006: the AI Rebels may leave a leader in the base system after activating it.
+    const zoneLeaders = view.leaders.filter((l) => l.location.kind === 'rebelBase');
+    const zoneCount = String(zoneUnits.length + zoneLeaders.length);
+    test.info().annotations.push({
+      type: 'base',
+      description: `${baseId}: ${zoneCount} pieces (units + leaders) in the zone`,
+    });
 
     await waitForTable(page, body.sessionId, { engine: 'core-v1' });
     await expectTurn(page, 'empire');
     await expect(page.getByTestId(T.turnPanel)).toHaveAttribute('data-state', 'idle');
-    await expect(page.getByTestId(T.passedIndicator)).toHaveAttribute('data-rebels', 'true');
     await openSidebarTab(page, 'log');
-    const entry = page.getByTestId(T.logEntry(autoPass[0]!.seq));
-    await expect(entry).toHaveAttribute('data-actor', 'rebels');
-    await expect(entry).toHaveAttribute('data-auto', 'true');
-    await expect(page.getByTestId(T.logEntryAuto(autoPass[0]!.seq))).toBeVisible();
+    for (const e of aiEvents) {
+      const entry = page.getByTestId(T.logEntry(e.seq));
+      await expect(entry).toHaveAttribute('data-actor', 'rebels');
+      await expect(entry).toHaveAttribute('data-ai', 'true');
+      await expect(page.getByTestId(T.logEntryAi(e.seq))).toBeVisible();
+    }
+    // No base system name in the log before BASE_REVEALED (TC-H-11).
+    await expect(page.getByTestId(T.eventLog)).not.toContainText(await systemName(page, baseId));
 
     // Hidden zone «base — location unknown» with the 6 units; the base system itself is not marked.
     await openSidebarTab(page, 'objects');

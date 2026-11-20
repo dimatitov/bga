@@ -1,7 +1,12 @@
-import type { GameDefinition, GameStatus, SessionSummary } from '@bga/platform';
+import type {
+  AutomationRunSummary,
+  GameDefinition,
+  GameStatus,
+  SessionSummary,
+} from '@bga/platform';
 import { lazy } from 'react';
 import type { WebGameEntry } from '@/games/registry';
-import type { SessionEnvelope } from '../sessions/api';
+import type { SessionCommandOk, SessionEnvelope } from '../sessions/api';
 import { FakeSetupScreen, FakeTableScreen } from './fakeScreens';
 
 export { FakeSetupScreen, FakeTableScreen } from './fakeScreens';
@@ -53,6 +58,33 @@ export function makeSessionEnvelope(overrides: Partial<SessionEnvelope> = {}): S
     status: 'prototype',
     settings: { mode: 'test' },
     view: { turn: 1 },
+    automation: { pending: false, strategy: null },
+    ...overrides,
+  };
+}
+
+/** `automation` of a command / run response; default = no automated participant (`steps: 0`, `stopReason: 'none'`). */
+export function makeAutomationSummary(
+  overrides: Partial<AutomationRunSummary> = {},
+): AutomationRunSummary {
+  return {
+    steps: 0,
+    pending: false,
+    strategy: null,
+    fallbacks: 0,
+    fallbackReasons: [],
+    stopReason: 'none',
+    ...overrides,
+  };
+}
+
+/** `SessionCommandOk` (`POST …/commands` / `POST …/automation/run` 200). */
+export function makeCommandOk(overrides: Partial<SessionCommandOk> = {}): SessionCommandOk {
+  return {
+    ok: true,
+    view: { turn: 2 },
+    events: [],
+    automation: makeAutomationSummary(),
     ...overrides,
   };
 }

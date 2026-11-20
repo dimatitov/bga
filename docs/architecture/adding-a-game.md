@@ -75,7 +75,7 @@ web-запись **без** экранов (§7). Правил, схем, кар
 | `./rules` | Чистый TS: без React/Nest/Prisma/OpenAI/`node:*`, без `Date`/`Math.random` (время и id — через ctx). Отказ — результат, не исключение. Вход не мутируется |
 | `./scenario` | Данные старта; видит только `../schema`. Не попадает в web-бандл |
 | `./board` | Только данные отрисовки; **не импортирует** другие подпапки (в т.ч. `scenario`) |
-| `./ai` | Данные стратегии (уровни сложности, веса целей) и чистые детерминированные политики хода (у Rebellion — `chooseAutoCommand`, авто-пас), без OpenAI; видит только `../schema`. Политика получает **только** view своей стороны и выбирает из его `legalActions`; AI никогда не получает скрытую информацию |
+| `./ai` | Данные стратегии (уровни сложности, веса целей) и чистый детерминированный бот (у Rebellion — `buildDecision`: кандидаты, ранжирование, тексты для модели), без OpenAI, часов и энтропии (ESLint B-6); видит только `../schema`. Бот получает **только** view своей стороны и выбирает из его `legalActions`; AI никогда не получает скрытую информацию (§5.2) |
 | `./server` | `defineServerGameModule({...})` — реализация `ServerGameModule` (`@bga/platform`, §5.1) |
 
 ### 5.1 `ServerGameModule`
@@ -89,14 +89,55 @@ web-запись **без** экранов (§7). Правил, схем, кар
 | `statusOf(state)` | **обязателен** (SWR-005): `SessionStatus` после принятой команды; чистая функция от state. Сервис сессий пишет его в `Session.status` в том же commit, что и state (откат вместе при 409), и строит view с ним; значение вне `SessionStatusSchema` → `500 INTERNAL`. Платформа значение не интерпретирует — победы/фракции знает только игра (Rebellion: `core-v1` + `outcome` → `'completed'`, иначе `'prototype'`). Игра без конца партии просто возвращает тот же статус, что `initialStatus` |
 | `publicSettings(setup)` | **несекретный** JSON-объект → `SessionResponse.settings` (платформа не интерпретирует; клиентские поля, которым нельзя доверять, вычисляет игра — у Rebellion `opponentFaction`) |
 | `setupOf(state)` | setup, с которым создан state, в **текущей** сохранённой форме. Единый источник настроек (SWR-004 review #1): при каждой записи state платформа перезаписывает `Session.setup` значением `setupOf(newState)` (старая строка становится текущей версией при первой команде), а при чтении сверяет `publicSettings(parseStoredSetup(Session.setup))` с `publicSettings(setupOf(state))` — расхождение → `500 INTERNAL` (лог: только `sessionId`, `gameId`, `code=SETTINGS_MISMATCH`), в списке строка пропускается. Значит, настройки должны храниться и в state (у Rebellion — `state.settings` → `toStoredSetup`) |
-| `createInitialState(setup, { sessionId, now })` | `{ state, events }`, версия **≥ 1**, события seq ≥ 1 (подряд); детерминированно (одинаковые `setup`, `sessionId`, `now` → побайтно одинаковый state). Может применять автоматические ходы до первого ответа — каждый такой ход +1 к версии (Rebellion: AI-партия за Империю создаётся с версией 2, пас AI-Повстанцев уже применён) |
+| `createInitialState(setup, { sessionId, now })` | `{ state, events }`, версия **≥ 1**, события seq ≥ 1 (подряд); детерминированно (одинаковые `setup`, `sessionId`, `now` → побайтно одинаковый state). Автоматических ходов **не** делает (SWR-006): если первым ходит автоматический участник, его ходы сделает раннер сервера сразу после вставки через `automation` (§5.2) |
 | `parseState(raw, { sessionId, version })` | снимок из БД; несоответствие → `throw` (сервис отвечает `500 INTERNAL`, не раскрывая деталей) |
 | `version(state)` | текущая версия (optimistic concurrency) |
-| `applyCommand(state, envelope, { now })` | порядок внутри: 400 (схема конверта) → 409 (`expectedVersion`) → 422 (правила, игровой `messageKey`); игра может поставить свой ранний отказ раньше 409 (Rebellion `core-v1`: 422 `gameOver` сразу после 400). Одна команда может дать несколько событий и включать автоматические ходы противника (одна версия + 1 на каждую команду движка, всё — один commit); ошибка авто-хода — `throw` (→ 500, ничего не записано) |
+| `applyCommand(state, envelope, { now })` | порядок внутри: 400 (схема конверта) → 409 (`expectedVersion`) → 422 (правила, игровой `messageKey`); игра может поставить свой ранний отказ раньше 409 (Rebellion `core-v1`: 422 `gameOver` сразу после 400). Одна команда может дать несколько событий (версия + 1 на команду движка). Только команды **человека**: ходы автоматического участника сюда не входят — их делает раннер через `automation` (§5.2), каждый отдельным commit |
 | `toPlayerView(state, { status })` / `toPlayerEvents(events, state)` | только видимое текущему зрителю, провалидировано схемой view; `status` — `Session.status` (можно показать в view). Зритель выбирается игрой из state (у Rebellion — активная сторона; при передаче хода — отдельная «заслонка» без игровых данных) |
 | `summarize(state)` | плоские **несекретные** поля (`string \| number \| boolean \| null`) → `SessionSummary.details` |
+| `automation?` | необязательно (SWR-006): `GameAutomation` — если в игре есть автоматический участник (AI-противник), §5.2. Без него сессии игры отвечают `automation: { pending: false, strategy: null }` |
 
 Методы объявлены method-синтаксисом (бивариантность параметров) — не менять на property-синтаксис.
+
+### 5.2 `GameAutomation` — автоматический участник (SWR-006)
+
+Платформа (`packages/platform/src/automation.ts`) и раннер сервера (`apps/api/src/sessions/automation`) game-agnostic:
+игра отдаёт им `ServerGameModule.automation`, сервер ходит за автоматического участника шаг за шагом через тот же конвейер
+команд, что и человек, по одному commit на шаг. Сервер решает **кто** выбирает (стратегия `bot` или `openai`,
+`AI_COMMANDER_PROVIDER`); игра решает **из чего** выбирать. Подробности раннера, стратегий, логов и бюджета —
+[`application.md`](application.md) §7.2; пример — `packages/games/rebellion/src/server/automation.ts`.
+
+| Метод | Контракт |
+|---|---|
+| `isAutomated(state)` | есть ли в этой сессии автоматический участник (иначе `strategy: null`; напр. партия двух людей или старый движок правил). Чистая функция |
+| `pendingActor(state)` | непрозрачная сторона, чей автоматический ход ожидается сейчас, или `null` (не автоматизировано / ход человека / партия окончена). Не должна бросать: создание/команда/run переживут исключение (`settleRun` → `stopReason: 'error'`, `pending: true`), но `GET` сессии ответит 500 и партия застрянет |
+| `decisionPoint(state)` | `AutomationDecisionPoint` — **только из view своей стороны** (у Rebellion `toSideView(state, aiSide)`), детерминированно; вызывается только при `pendingActor ≠ null` (иначе — `throw`). Поля: `actor`, `phase`, `objective` (≤ 300), `situation` (≤ 4000, D-PO-1), 1..10 `candidates` `{ id, type, target?, summary ≤ 160 }` в порядке ранжирования бота, `fallbackCandidateId` (выбор бота, один из кандидатов), `policyId` (`<bot>-vN:<level>`). Сервер валидирует схемой; невалидная точка — ошибка программы, модели не отправляется |
+| `applyCandidate(state, candidateId, { now })` | id → команда игры → **полный** конвейер движка с «автоматическим» origin и `expectedVersion = version(state)`; неизвестный id / не ход участника → `{ ok: false, error }` (сервер повторит с `fallbackCandidateId`, затем остановит прогон). Детерминированно (те же state и id → та же команда) |
+
+Правила для игры:
+
+- **Скрытая информация.** Всё, что попадает в точку решения (тексты, `target`, кандидаты), строится только из view
+  автоматической стороны — оно уходит в промпт модели. Нельзя использовать `state.id`/версию или скрытые данные соперника.
+  Проверка — метаморфический тест: изменение скрытых данных соперника не меняет точку решения (у Rebellion —
+  `test/server/automation-hidden-base.test.ts` и `apps/api/test/automation-hidden-info.int.test.ts`).
+- **Id кандидатов непрозрачны** (`^[a-z0-9-]{1,32}$`, напр. `c1..cN`), без игровых данных (D-PO-2). Завершающее действие
+  хода держать в списке, чтобы любой выбор стратегии вёл к завершению хода.
+- **Тексты — английский, нейтральный тон**, без управляющих символов; не формулировать сложность как указание модели
+  («bot difficulty» → «game difficulty setting», review F-8).
+- **Детерминизм и чистота.** Бот — чистая функция view (засеянный PRNG допустим, часы и `Math.random` — нет; ESLint B-6 для
+  `packages/games/*/src/ai/**`). `ctx.now` — единственный источник времени.
+- **Только тот, чей ход.** «Автоматический» origin разрешён движком только автоматической стороне автоматизированной
+  сессии; `applyCommand` модуля для людей всегда использует origin игрока, чтобы человек не мог сходить за AI.
+- **Завершимость.** Ход автоматического участника должен заканчиваться за разумное число шагов: раннер останавливается
+  после `AI_COMMANDER_MAX_STEPS` (`stopReason: 'stepLimit'`), и ход продолжает следующий `POST …/automation/run`.
+- **Тесты игры:** точка решения валидна схемой платформы на случайных партиях; каждый кандидат принимается движком;
+  детерминизм; невидимость скрытых данных; завершимость партий бот против бота (у Rebellion — `test/ai/**`,
+  `test/ai/sim/**`, `test/server/automation*.test.ts`). Тесты раннера сервера (`apps/api/test/automation-*.int.test.ts`)
+  используют фиктивную игру `FAKE_AUTO` и для новой игры не меняются.
+
+Web: платформа сама вызывает `POST …/automation/run`, когда сессия пришла с `automation.pending: true`
+(`apps/web/src/platform/automation`), и показывает общее уведомление; игра может показать свою сводку хода AI по
+`AutomationRunSummary` (у Rebellion — `AiTurnSummary`, `AiCommanderStatus`).
 
 **Несколько движков правил в одной игре (SWR-005).** Игра может держать несколько движков (у Rebellion — замороженный
 `mock-v1` для старых сессий и `core-v1` для новых). Рекомендуемая форма: дискриминатор движка в state
@@ -117,7 +158,7 @@ Q-16). Сейчас эти строки никто не читает. Любой
 `Idempotency-Key` (UUID, необязательный) у `POST /api/sessions`: повтор с тем же телом → `200` + `Idempotent-Replay: true`
 (тело — текущее состояние сессии), другое тело → `409 IDEMPOTENCY_KEY_REUSED`; ключ сохраняется только с успешно созданной
 сессией. Порядок проверок создания: 400 тело/заголовок → 404 игра → 422 `GAME_UNAVAILABLE` → идемпотентность →
-`parseSetup` (400 → 422) → создание. Ответы `POST`/`GET /api/sessions/:id` — `{ sessionId, gameId, status, settings, view }`,
+`parseSetup` (400 → 422) → создание → прогон автоматизации (§5.2). Ответы `POST`/`GET /api/sessions/:id` — `{ sessionId, gameId, status, settings, view, automation }`,
 `SessionSummary` — с `status`. Подробности — [`application.md`](application.md) §2.
 
 ## 6. Регистрация на сервере
@@ -271,4 +312,6 @@ export const myGameEntry: WebGameEntry = {
 - [ ] Не изменён производственный код платформы: `apps/web/src/{app,platform}/**` (тесты — только guard-списки §10), `apps/api/src/sessions/**`, Prisma-схема, маршруты.
 - [ ] Guard-тесты §10 обновлены: `setupFor` и TC-FS-03 в `apps/api/test/game-registry.int.test.ts`; списки id в
       `apps/web/src/games/registry.test.ts`, `apps/web/src/platform/catalog/CatalogPage.test.tsx`, `apps/web/src/platform/extensibility.test.tsx`.
+- [ ] Если есть AI-противник: `automation` реализован по §5.2 (точка решения только из view своей стороны, непрозрачные id,
+      детерминизм, завершимость), его тесты написаны; `apps/api/src/sessions/**` не менялся.
 - [ ] Новые тесты пакета/web/e2e из §10 написаны; `pnpm verify` зелёный; `node scripts/check-task.mjs docs/tasks/<ID>` — 0.

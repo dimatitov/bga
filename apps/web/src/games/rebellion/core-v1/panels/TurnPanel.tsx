@@ -2,6 +2,8 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
+import { useSessionAutomation } from '@/platform';
+import { aiSideOf } from '../model/aiCommander';
 import { useCoreBoard } from '../model/coreContext';
 import { useCoreUiStore } from '../model/coreUiStore';
 import {
@@ -12,6 +14,7 @@ import {
   turnState,
 } from '../model/viewModel';
 import { ActivationPicker } from './ActivationPicker';
+import { AiTurnSummary } from './AiTurnSummary';
 import { TURN_PANEL_ID, TURN_TITLE_ID } from './focus';
 import { factionLabel } from './labels';
 import { LeaderPool } from './LeaderPool';
@@ -26,10 +29,13 @@ export type TurnPanelState = 'idle' | 'armed' | 'activation' | 'waiting' | 'over
  * `activation` — the viewer's own activation (moves); `waiting` — not the viewer's turn; `over` — game over.
  * Everything comes from `legalActions` / view fields through `viewModel`; the heading is the focus target after
  * FINISH / PASS in an AI game and the target of the «To the turn panel» skip link.
+ * SWR-006 (plan-frontend §6.4): `AiTurnSummary` under the heading; while the AI moves `turn-status` reads
+ * «ИИ думает…», after a failed / unfinished AI run (waiting for the AI) — «Ход AI не завершён — …».
  */
 export function TurnPanel() {
   const { t } = useTranslation();
-  const { view } = useCoreBoard();
+  const { view, aiThinking = false } = useCoreBoard();
+  const automation = useSessionAutomation();
   const armedLeaderId = useCoreUiStore((s) => s.armedLeaderId);
   const activationError = useTurnErrorStore((s) => s.activation);
 
@@ -41,8 +47,14 @@ export function TurnPanel() {
   const state: TurnPanelState = armed ? 'armed' : coarse;
   const opponent = opponentOf(view.viewer);
 
+  const aiStalled =
+    aiSideOf(view.settings) !== null &&
+    (automation?.phase === 'error' || automation?.phase === 'stalled');
+
   let status: string;
   if (state === 'over') status = t('rebellion.turn:panel.gameOver');
+  else if (aiThinking) status = t('rebellion.turn:panel.aiThinking');
+  else if (state === 'waiting' && aiStalled) status = t('rebellion.turn:panel.aiStalled');
   else if (state === 'waiting') {
     status = hasPassed(view, view.viewer)
       ? t('rebellion.turn:panel.youPassed')
@@ -72,6 +84,7 @@ export function TurnPanel() {
       >
         {t('rebellion.turn:panel.title')}
       </Typography>
+      <AiTurnSummary />
       {status && (
         <Typography variant="body2" data-testid="turn-status">
           {status}

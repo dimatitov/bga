@@ -1,0 +1,85 @@
+# SWR-006 W4 — commander prompt (2026-11-19T14:42:25Z)
+$ pnpm --filter @bga/api exec vitest run test/ai test/dev-ai-*
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ❯ test/dev-ai-decision.int.test.ts (5 tests | 1 failed) 1869ms
+     × 200: strict wire schema, first action, cost 0, one AiUsage row; game tables unchanged 1189ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/dev-ai-decision.int.test.ts > POST /api/dev/ai/test-decision — mock (SWR-005B W6) > 200: strict wire schema, first action, cost 0, one AiUsage row; game tables unchanged
+AssertionError: expected 500 to be 201 // Object.is equality
+
+- Expected
++ Received
+
+- 201
++ 500
+
+ ❯ createSession test/support/fixtures.ts:104:22
+    102| }> {
+    103|   const res = await api(app).post('/api/sessions').send({ gameId, setu…
+    104|   expect(res.status).toBe(201);
+       |                      ^
+    105|   return SessionResponseSchema.parse(res.body);
+    106| }
+ ❯ createRebellionSession test/support/fixtures.ts:117:49
+ ❯ test/dev-ai-decision.int.test.ts:38:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 19 passed (20)
+      Tests  1 failed | 229 passed (230)
+   Start at  17:42:27
+   Duration  23.64s (transform 25.29s, setup 4.23s, import 65.86s, tests 23.37s, environment 2ms)
+
+exit=1
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+$ pnpm exec eslint apps/api/src/ai --max-warnings=0
+exit=0
+
+# W4 fix: no-control-regex (2026-11-19T14:48:57Z)
+$ pnpm exec eslint apps/api/test/ai/prompt.unit.test.ts --max-warnings=0
+exit=0
+$ pnpm exec prettier --check apps/api/test/ai/prompt.unit.test.ts apps/api/src/ai/prompt.ts apps/api/src/ai/ai.types.ts
+Checking formatting...
+[warn] apps/api/test/ai/prompt.unit.test.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+exit=1
+$ pnpm --filter @bga/api exec vitest run test/ai/prompt.unit.test.ts
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  17:49:02
+   Duration  3.58s (transform 284ms, setup 75ms, import 392ms, tests 26ms, environment 0ms)
+
+exit=0
+
+# W4 fix: after prettier --write apps/api/test/ai/prompt.unit.test.ts (2026-11-19T14:49:13Z)
+$ pnpm exec eslint apps/api/test/ai/prompt.unit.test.ts --max-warnings=0
+exit=0
+$ pnpm exec prettier --check apps/api/test/ai/prompt.unit.test.ts apps/api/src/ai/prompt.ts apps/api/src/ai/ai.types.ts
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+$ pnpm --filter @bga/api exec vitest run test/ai/prompt.unit.test.ts
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  17:49:19
+   Duration  4.01s (transform 590ms, setup 122ms, import 823ms, tests 49ms, environment 0ms)
+
+exit=0

@@ -10,6 +10,7 @@ import type { AppConfig } from './config/env';
 import { DEV_AI_PATH, devAiBodyGate } from './dev/ai/dev-ai-body.middleware';
 import { GAME_DEFINITIONS } from './game-registry/definitions';
 import { SERVER_GAME_MODULES } from './game-registry/registry';
+import type { AutomationTestOverrides } from './sessions/automation/automation.tokens';
 
 export interface CreateAppOptions {
   /**
@@ -31,6 +32,11 @@ export interface CreateAppOptions {
    * dev rate limits). Refused with `nodeEnv: 'production'`.
    */
   ai?: AiTestOverrides;
+  /**
+   * Test-only automation overrides (SWR-006 §6.3: injectable commander strategy, log sink). Refused with
+   * `nodeEnv: 'production'`.
+   */
+  automation?: AutomationTestOverrides;
 }
 
 /** `createApp` was given test-only options under `nodeEnv: 'production'`. */
@@ -48,7 +54,10 @@ export class ProductionOverridesError extends Error {
  * on the same DB file (TC-API-21). An inconsistent game registry makes it throw (validateRegistry).
  */
 export async function createApp(options: CreateAppOptions): Promise<INestApplication> {
-  if (options.config.nodeEnv === 'production' && options.ai !== undefined) {
+  if (
+    options.config.nodeEnv === 'production' &&
+    (options.ai !== undefined || options.automation !== undefined)
+  ) {
     throw new ProductionOverridesError();
   }
   const app = await NestFactory.create(
@@ -59,6 +68,7 @@ export async function createApp(options: CreateAppOptions): Promise<INestApplica
       gameModules: options.gameModules ?? SERVER_GAME_MODULES,
       gameDefinitions: options.gameDefinitions ?? GAME_DEFINITIONS,
       ai: options.ai,
+      automation: options.automation,
     }),
     { logger: options.logger ?? ['error', 'warn', 'log'] },
   );

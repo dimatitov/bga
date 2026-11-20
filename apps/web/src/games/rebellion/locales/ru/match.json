@@ -65,16 +65,16 @@
     "unknown": "Событие: {{type}}",
     "hiddenZone": "скрытая зона",
     "unknownUnit": "юнит",
-    "autoTag": "авто",
-    "autoHint": "AI Commander ещё не реализован: AI-сторона всегда пасует"
+    "aiActor": "{{actor}} (AI)",
+    "aiTag": "AI"
   },
   "announce": {
-    "autoPass": "Пас AI ({{side}}) — авто: AI Commander ещё не реализован",
-    "autoPass_rebels": "{{side}} (AI) пасуют — авто: AI Commander ещё не реализован",
-    "autoPass_empire": "{{side}} (AI) пасует — авто: AI Commander ещё не реализован",
-    "autoFinish": "Активация AI ({{side}}) завершена — авто",
-    "autoFinish_rebels": "{{side}} (AI) завершают активацию — авто",
-    "autoFinish_empire": "{{side}} (AI) завершает активацию — авто",
+    "autoPass": "Пас AI ({{side}})",
+    "autoPass_rebels": "{{side}} (AI) пасуют",
+    "autoPass_empire": "{{side}} (AI) пасует",
+    "autoFinish": "Активация AI ({{side}}) завершена",
+    "autoFinish_rebels": "{{side}} (AI) завершают активацию",
+    "autoFinish_empire": "{{side}} (AI) завершает активацию",
     "opponentPassed": "Пас: {{side}}",
     "opponentPassed_rebels": "{{side}} пасуют",
     "opponentPassed_empire": "{{side}} пасует",
@@ -93,5 +93,26 @@
     "passed": "Спасовали",
     "rules": "Правила",
     "rulesValue": "Срез core-v1: раунд и активация лидерами"
+  },
+  "ai": {
+    "name": "AI Commander",
+    "label": "AI Commander · {{provider}} · {{difficulty}}",
+    "labelNoProvider": "AI Commander · {{difficulty}}",
+    "labelNoDifficulty": "AI Commander · {{provider}}",
+    "provider": {
+      "bot": "бот",
+      "openai": "OpenAI"
+    },
+    "thinking": "ИИ думает…",
+    "summary_one": "Ход AI: {{count}} действие",
+    "summary_few": "Ход AI: {{count}} действия",
+    "summary_many": "Ход AI: {{count}} действий",
+    "summary_other": "Ход AI: {{count}} действия",
+    "summaryGameOver": "— партия окончена",
+    "fallback": "Часть ходов AI ({{count}}) сделал бот: OpenAI недоступен — {{reasons}}.",
+    "infoCommander": "AI Commander",
+    "infoCommanderBot": "Бот (детерминированный)",
+    "infoCommanderOpenai": "OpenAI (при сбое — бот)",
+    "infoCommanderNone": "—"
   }
 }

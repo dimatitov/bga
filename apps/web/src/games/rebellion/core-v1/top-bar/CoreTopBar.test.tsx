@@ -4,6 +4,8 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { i18n } from '@/shared/i18n';
+// Test-only: SessionHost provides the automation context in the app.
+import { SessionAutomationContext, type SessionAutomationState } from '@/platform';
 import { renderWithProviders } from '@/shared/test';
 import {
   CORE_HOT_SEAT,
@@ -11,6 +13,7 @@ import {
   makeCoreEmpireView,
   makeCoreOutcomeView,
   makeCoreView,
+  makeSessionAutomationState,
 } from '../../test/coreFixtures';
 import { CoreBoardContext, type CoreBoardContextValue } from '../model/coreContext';
 import { CoreTopBar } from './CoreTopBar';
@@ -19,24 +22,32 @@ const BACK = '/games/star-wars-rebellion';
 
 function renderBar(
   view: PlayerViewCore,
-  opts: { status?: SessionStatus; controls?: ReactNode } = {},
+  opts: {
+    status?: SessionStatus;
+    controls?: ReactNode;
+    automation?: SessionAutomationState | null;
+    aiThinking?: boolean;
+  } = {},
 ) {
   const ctx: CoreBoardContextValue = {
     sessionId: CORE_SESSION_ID,
     view,
     send: vi.fn() as CoreBoardContextValue['send'],
     isPending: false,
+    aiThinking: opts.aiThinking ?? false,
   };
   return renderWithProviders({
     element: (
-      <CoreBoardContext.Provider value={ctx}>
-        <CoreTopBar
-          status={opts.status ?? 'prototype'}
-          saveStatus="idle"
-          backHref={BACK}
-          controls={opts.controls}
-        />
-      </CoreBoardContext.Provider>
+      <SessionAutomationContext value={opts.automation ?? null}>
+        <CoreBoardContext.Provider value={ctx}>
+          <CoreTopBar
+            status={opts.status ?? 'prototype'}
+            saveStatus="idle"
+            backHref={BACK}
+            controls={opts.controls}
+          />
+        </CoreBoardContext.Provider>
+      </SessionAutomationContext>
     ),
   });
 }
@@ -129,5 +140,37 @@ describe('CoreTopBar (SWR-005 P2, TC-C-01, TC-C-14; AC-07, AC-12, AC-13)', () =>
     );
     expect(screen.getByTestId('turn-indicator')).toHaveTextContent('(you)');
     expect(bar.textContent).not.toMatch(/[А-Яа-яЁё]/);
+  });
+});
+
+describe('CoreTopBar — AI Commander (SWR-006 R-3, plan-frontend §6.3)', () => {
+  it('AI game: «AI Commander · бот · Обычная» next to the turn indicator; no ai-status placeholder', () => {
+    renderBar(makeCoreView(), { automation: makeSessionAutomationState({ strategy: 'bot' }) });
+    const status = screen.getByTestId('ai-commander-status');
+    expect(status).toHaveTextContent('AI Commander · бот · Обычная');
+    expect(status).toHaveAttribute('data-strategy', 'bot');
+    expect(status).toHaveAttribute('data-difficulty', 'normal');
+    expect(status).toHaveAttribute('data-state', 'idle');
+    expect(screen.getByTestId('turn-indicator').parentElement).toContainElement(status);
+    expect(screen.queryByTestId('ai-thinking')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('ai-status')).not.toBeInTheDocument();
+    expect(screen.getByTestId('table-top-bar')).not.toHaveTextContent(/не реализован/);
+  });
+
+  it('while the AI moves: «ИИ думает…» (role=status); hot-seat: nothing', () => {
+    const { unmount } = renderBar(makeCoreView(), {
+      automation: makeSessionAutomationState({ phase: 'running' }),
+      aiThinking: true,
+    });
+    expect(screen.getByTestId('ai-commander-status')).toHaveAttribute('data-state', 'thinking');
+    expect(screen.getByTestId('ai-thinking')).toHaveAttribute('role', 'status');
+    expect(screen.getByTestId('ai-thinking')).toHaveTextContent('ИИ думает…');
+    unmount();
+    renderBar(makeCoreView({ settings: { ...CORE_HOT_SEAT } }), {
+      automation: makeSessionAutomationState({ strategy: null }),
+      aiThinking: false,
+    });
+    expect(screen.queryByTestId('ai-commander-status')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('ai-thinking')).not.toBeInTheDocument();
   });
 });

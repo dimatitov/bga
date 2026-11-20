@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AutomationRunSummarySchema, SessionAutomationSchema } from './automation';
 import { ErrorResponseSchema } from './errors';
 import { GameIdSchema } from './game';
 
@@ -66,6 +67,8 @@ export type CreateSessionRequest = z.infer<typeof CreateSessionRequestSchema>;
 /**
  * Session envelope: `POST /api/sessions` (201, or 200 on an idempotent replay) and `GET /api/sessions/:id`.
  * `settings` are the game's public settings, `view` is the game's PlayerView (both validated by the game).
+ * `automation` (SWR-006, REQUIRED, Q-BE-6): `{ pending, strategy }`; sessions without an automated
+ * participant answer `{ pending: false, strategy: null }`.
  */
 export const SessionResponseSchema = z.strictObject({
   sessionId: SessionIdSchema,
@@ -73,6 +76,7 @@ export const SessionResponseSchema = z.strictObject({
   status: SessionStatusSchema,
   settings: SessionSettingsSchema,
   view: z.unknown(),
+  automation: SessionAutomationSchema,
 });
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
 
@@ -95,11 +99,15 @@ export const CommandEnvelopeFrameSchema = z.object({
 });
 export type CommandEnvelopeFrame = z.infer<typeof CommandEnvelopeFrameSchema>;
 
-/** Success of `POST /api/sessions/:id/commands`; `view`/`events` are the game's. */
+/**
+ * Success of `POST /api/sessions/:id/commands` and `POST /api/sessions/:id/automation/run`; `view`/`events`
+ * are the game's. `automation` (SWR-006, REQUIRED, Q-BE-6) summarises the automated steps of this request.
+ */
 export const SessionCommandOkSchema = z.strictObject({
   ok: z.literal(true),
   view: z.unknown(),
   events: z.array(z.unknown()),
+  automation: AutomationRunSummarySchema,
 });
 export type SessionCommandOk = z.infer<typeof SessionCommandOkSchema>;
 

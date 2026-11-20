@@ -16,7 +16,8 @@ import type {
   RebellionSettings,
   UnitType,
 } from '@bga/game-rebellion/schema';
-import type { SessionEnvelope } from '@/platform';
+import type { AutomationRunSummary } from '@bga/platform';
+import type { SessionAutomationState, SessionEnvelope } from '@/platform';
 import { makeRebellionSession } from './fixtures';
 
 export const CORE_SESSION_ID = 'core-fixture-1';
@@ -443,4 +444,37 @@ export function makeCoreSession(
     settings: { ...(view.kind === 'player' ? view.settings : CORE_HOT_SEAT) },
     ...overrides,
   });
+}
+
+/** Automation summary of a response (SWR-006, `SessionCommandOk.automation`); default — no automated steps. */
+export function makeAutomationSummary(
+  overrides: Partial<AutomationRunSummary> = {},
+): AutomationRunSummary {
+  return {
+    steps: 0,
+    pending: false,
+    strategy: null,
+    fallbacks: 0,
+    fallbackReasons: [],
+    stopReason: 'none',
+    ...overrides,
+  };
+}
+
+/**
+ * What `useSessionAutomation()` returns inside SessionHost (SWR-006 plan-frontend §4.3); default — an idle bot
+ * AI game with no AI turn summary. `retry` is a no-op unless given.
+ */
+export function makeSessionAutomationState(
+  overrides: Partial<SessionAutomationState> = {},
+): SessionAutomationState {
+  return {
+    strategy: 'bot',
+    pending: false,
+    phase: 'idle',
+    error: null,
+    lastRun: null,
+    retry: () => {},
+    ...overrides,
+  };
 }

@@ -1,0 +1,111 @@
+# W6 — Rebellion bot policies (backend-worker), 2026-11-19T15:08:12Z
+
+$ pnpm --filter @bga/game-rebellion exec vitest run test/ai --silent=false --reporter=verbose
+ ✓ test/ai/random.test.ts > hash32 (FNV-1a 32) > matches the published FNV-1a vectors and the engine hash 3ms
+ ✓ test/ai/random.test.ts > seededRandom (mulberry32) > snapshot: the same seed always yields the same sequence 4ms
+ ✓ test/ai/random.test.ts > seededRandom (mulberry32) > values are in [0, 1) and different seeds differ 67ms
+ ✓ test/ai/random.test.ts > botSeed / gameCoin > botSeed = view.id#view.version (changes with every command) 3ms
+ ✓ test/ai/random.test.ts > botSeed / gameCoin > gameCoin is constant for the session, depends on the salt, in [0, 1) 2ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > AI Rebels at creation: the fleet moves first (W6 policy), PASS kept, c1..c10, targets for activations 84ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > null when the view has no legal actions (not the side to move) 1ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > inside an activation FINISH is always offered (TC-BOT-09) 7ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > legacy AutoPolicy (auto-pass-v1): one candidate c1 with its command 13ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > Empire at creation: own forces per system, hidden Rebel units only counted 12ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > distances are symmetric BFS jumps; unknown systems are unreachable 43ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > deliverableGround: Σ min(ground, capacity) over unpinned adjacent sources 6ms
+ ✓ test/ai/view-model.test.ts > buildViewModel > own activation, pinned systems and moves made in it come from the view and its log 20ms
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — consolidation (Q-2) > the first decision activates the next hop of the Bothawui fleet towards the base (normal / hard) 88ms
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — consolidation (Q-2) > inside the consolidation activation the fleet moves with the cargo of the difficulty 25ms
+ ✓ test/ai/rank.test.ts > rank — frame > policyFor: Empire → scoreEmpire, Rebels → scoreRebels 15ms
+ ✓ test/ai/rank.test.ts > rank — frame > onePerSystem keeps one activation per system (the picked leader, clamped) and every other candidate 11ms
+ ✓ test/ai/rank.test.ts > rank — frame > allowedCandidates never drops the terminating action 449ms
+ ✓ test/ai/describe.test.ts > objectiveFor > per side, ASCII, ≤ 300 12ms
+ ✓ test/ai/describe.test.ts > situationFor > Empire at creation: round, markers, own forces, unknown base, hidden zone; no id / version 8ms
+ ✓ test/ai/describe.test.ts > situationFor > easy Empire does not list possible base locations; Rebels see their own base 20ms
+ ✓ test/ai/describe.test.ts > situationFor > heaviest state (units spread over every system) stays ≤ 4000 and ASCII 9ms
+ ✓ test/ai/describe.test.ts > situationFor > clip cuts deterministically with a marker 5ms
+ ✓ test/ai/describe.test.ts > summaryFor > one line per kind, ≤ 160, ASCII 16ms
+ ✓ test/ai/describe.test.ts > situation of the Empire is invariant to the hidden base (D-PO-1, TC-H-01) > relocating the base before the reveal changes no text 919ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > passes its schema 10ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > has a profile for every difficulty and a strategy for every faction 0ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > default difficulty equals the setup default (A-7, REBELLION_SETUP_DEFAULTS) 3ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > harder difficulties explore less and consider at least as many candidates 1ms
+ ✓ test/ai/ai-config.test.ts > @bga/game-rebellion/ai (configuration data) > rejects an invalid configuration 15ms
+ ✓ test/ai/auto-pass.test.ts > chooseAutoCommand (auto-pass-v1) > TC-AI-01: PASS when PASS is legal; same answer on every call; input not mutated 11ms
+ ✓ test/ai/auto-pass.test.ts > chooseAutoCommand (auto-pass-v1) > TC-AI-02: FINISH_ACTIVATION during an activation (no PASS); null without legal actions 14ms
+ ✓ test/ai/auto-pass.test.ts > chooseAutoCommand (auto-pass-v1) > TC-AI-14: src/ai imports only ../schema, zod and its own modules (no OpenAI, Nest, React, scenario, rules, platform) 27ms
+[empire-hard] activations before reveal=143 with ground=143
+ ✓ test/ai/empire-policy.test.ts > Empire policy — hard search discipline (TC-DIF-06, informative) > never activates a searched system before the reveal; ≥ 90% of activations move ground in 1364ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > at creation: visible Rebel systems excluded, nothing searched, the hidden zone counted 10ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > throws for the Rebels (they know their base) 3ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > searched: an Imperial activation that ends with an Imperial ground unit in it and no reveal 7ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > hints (Q-BE-5): Rebel moves out of / into the hidden zone point at the neighbours of the visible end 27ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — fixed states > after the reveal the base is known and every other system is excluded 2ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — random-walk games > sound: the true base is never excluded, searched or start-rule-excluded before the reveal 1332ms
+[rebel-hard] games=18 walk decisions=22
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — hard never leaves the base empty (PO-1) > crafted: fleet in the base under threat → no emptying MOVE among the ranked candidates 3ms
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — hard never leaves the base empty (PO-1) > property: hard Rebels keep ≥ 1 unit in the base after every command (bot Empires + random walks) 1306ms
+ ✓ test/ai/intel.test.ts > deriveBaseIntel — random-walk games > invariant: states differing only in the hidden base give the same intel 282ms
+[rank-difficulty] states=645 easy≠hard=0.44 easy≠normal=0.44
+ ✓ test/ai/rank.test.ts > rank — frame > deterministic for a seed; scores are finite and sorted 34ms
+ ✓ test/ai/rank.test.ts > rank — difficulties choose differently (TC-DIF-08, informative) > on AI-turn states of bot-vs-bot normal games, easy ≠ hard and easy ≠ normal in a real share of states 1196ms
+[rebel-normal] emptyings under a hunting Empire=5 (8 games)
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — normal evacuates only under threat and when the game coin allows (Q-BE-3, Q-13) > fleet in the base, threat, coin < 0.5 → activates a neighbour of the base to evacuate 13ms
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — normal evacuates only under threat and when the game coin allows (Q-BE-3, Q-13) > no threat, or coin ≥ 0.5 → stays (PASS) 2ms
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — normal evacuates only under threat and when the game coin allows (Q-BE-3, Q-13) > property: every emptying of the base by normal Rebels happens under threat; never vs a passive Empire 337ms
+[rebel-share] emptied vs passive Empire (10 games) {"easy":5,"normal":0,"hard":0}
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — easy leaves the base proactively (PO-1) > fleet in the base, no threat, coin < 0.8 → evacuation ranked first 2ms
+ ✓ test/ai/rebel-policy.test.ts > Rebel policy — easy leaves the base proactively (PO-1) > vs a passive Empire the easy base is emptied in a noticeable share of games; normal/hard never 318ms
+[empire-gradient] mean reveal round easy=10.6 normal=5.6 hard=3.0; activations/round easy=2.04 normal=2.87 hard=2.17
+ ✓ test/ai/empire-policy.test.ts > Empire policy — hard search discipline (TC-DIF-06, informative) > allowEmpire: only hard filters, and only searched systems before the reveal 37ms
+ ✓ test/ai/empire-policy.test.ts > Empire policy — first decisions > normal searches a reachable possible-base system; hard (no reachable candidate at the start) pulls ground closer 8ms
+ ✓ test/ai/empire-policy.test.ts > Empire policy — first decisions > hard uses the setup rule (Q-BE-4): no starting Imperial system or neighbour among its targets 1ms
+ ✓ test/ai/empire-policy.test.ts > Empire policy — difficulty gradient (TC-DIF-05/07, informative) > vs passive Rebels: hard reveals no later than easy on average; easy activates less per round 789ms
+[bot-decision] decision points checked=393
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > selectTop keeps the terminating action: replaces the 10th, or appends when there is room 3ms
+ ✓ test/ai/decision.test.ts > buildDecision — fixed states > rankCandidates: score desc then key asc; basePolicy (legacy) puts the terminating action first; accepts only a view 4ms
+ ✓ test/ai/decision.test.ts > buildDecision — property on random-walk games (TC-BOT-02) > every decision point of the AI side is valid and every command is engine-legal (origin auto) 2139ms
+stdout | test/ai/rank.test.ts > rank — termination (never loops) > bot vs bot: every side × difficulty pair ends the game; activations respect maxMoves
+[rank-termination] empire/rebels:winner@round(commands) easy/easy:r@14(181) easy/easy:r@14(168) easy/normal:r@14(133) easy/normal:e@10(100) easy/hard:r@14(105) easy/hard:r@14(115) normal/easy:r@14(128) normal/easy:e@5(84) normal/normal:r@14(122) normal/normal:r@14(122) normal/hard:r@14(89) normal/hard:r@14(176) hard/easy:e@3(50) hard/easy:e@6(101) hard/normal:e@4(58) hard/normal:e@5(70) hard/hard:r@14(116) hard/hard:r@14(134)
+ ✓ test/ai/rank.test.ts > rank — termination (never loops) > bot vs bot: every side × difficulty pair ends the game; activations respect maxMoves 566ms
+ ✓ test/ai/empire-policy.test.ts > Empire policy — after the reveal (converge on the base) > with no Imperial unit left in the revealed base the Empire moves back in hop by hop 106ms
+[bot-property] games=12 ended=12 states=1826 candidates=69381 autoCandidates=34349
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — fixed states > at creation (Rebels to move): every leader × system pair + PASS; nothing for the other side 45ms
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — fixed states > during an activation: ≤ 5 subsets per source, all fit, + FINISH; spare-load for the Rebels 9ms
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — fixed states > moveSubsets: riders never exceed the capacity of the chosen carriers 5ms
+ ✓ test/ai/candidates.test.ts > enumerateCandidates — property on random-walk games (TC-BOT-01) > every candidate of every state is engine-legal (AI side with origin auto) 3821ms
+[bot-invariance] empire states=123 relocations compared=2449
+ ✓ test/ai/decision.test.ts > Empire decisions are invariant to the hidden base (AC-04, TC-H-01) > states differing only in the base before the reveal → identical decision points (incl. situation) 1976ms
+ Test Files  11 passed (11)
+      Tests  64 passed (64)
+   Duration  5.56s (transform 4.39s, setup 0ms, import 8.40s, tests 17.71s, environment 1ms)
+exit=(see summary)
+
+$ pnpm --filter @bga/game-rebellion typecheck
+
+> @bga/game-rebellion@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> tsc -p tsconfig.test.json
+
+exit=(see summary)
+
+$ pnpm exec eslint packages/games/rebellion/src/ai packages/games/rebellion/test/ai --max-warnings=0
+exit=(see summary)
+
+$ pnpm exec prettier --check <W6 files + decision.test.ts>
+Checking formatting...
+All matched files use Prettier code style!
+exit=(see summary)
+
+## Exit codes (re-run without pipes; the shell is zsh, so the PIPESTATUS lines above are empty)
+vitest test/ai: 0
+typecheck: 0
+eslint: 0
+prettier --check: 0
+
+## Full package suite (informative; W5 works in parallel in src/server/**)
+$ pnpm --filter @bga/game-rebellion test
+Test Files 1 failed | 51 passed (52); Tests 3 failed | 471 passed (474)
+Failed: test/rules/core/hidden-info.test.ts "seeded random games before the reveal" (hot-seat / Rebels vs AI / Empire vs AI)
+Cause: "Test timed out in 5000ms" (default vitest timeout). Run alone: 1 of 3 timed out (5232ms). The file imports only
+src/schema, src/rules, src/scenario and its own fixtures — no src/ai, no src/server — so it is not affected by W6 (the
+hot-seat variant has no AI at all). Timing-sensitive under load; not changed by W6 (not in W6 owned files).

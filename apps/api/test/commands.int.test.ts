@@ -25,6 +25,22 @@ import { api, startApp, stopApp, type TestDb } from './support/test-app';
 const ROW = SEEDED.empireAi;
 const V0 = ROW.version;
 
+/** SWR-006 (Q-BE-6): every command success carries the platform `automation` summary (W1 stub: no steps). */
+const NO_AUTOMATION_RUN = {
+  steps: 0,
+  pending: false,
+  strategy: null,
+  fallbacks: 0,
+  fallbackReasons: [],
+  stopReason: 'none',
+};
+
+/** The game part of a command success (`automation` is validated by the platform schema, AM-FE-1). */
+function gamePart(body: unknown): unknown {
+  const { automation: _automation, ...rest } = body as Record<string, unknown>;
+  return rest;
+}
+
 describe('POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row)', () => {
   let db: TestDb;
   let app: INestApplication;
@@ -52,9 +68,9 @@ describe('POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row)
       moveEnv('empire', V0, [m.pieceId], m.from, m.adjacent),
     );
     expect(res.status).toBe(200);
-    expect(Object.keys(res.body).sort()).toEqual(['events', 'ok', 'view']); // Q-6: no gameId
-    SessionCommandOkSchema.parse(res.body);
-    const body = CommandOkSchema.parse(res.body);
+    expect(Object.keys(res.body).sort()).toEqual(['automation', 'events', 'ok', 'view']); // Q-6: no gameId
+    expect(SessionCommandOkSchema.parse(res.body).automation).toEqual(NO_AUTOMATION_RUN);
+    const body = CommandOkSchema.parse(gamePart(res.body));
     expect(body.view.version).toBe(V0 + 1);
     expect(pieceIn(playerView(body.view), m.pieceId)?.systemId).toBe(m.adjacent);
     expect(body.events).toHaveLength(1);
@@ -225,7 +241,7 @@ describe('POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row)
     for (let i = 0; i < 3; i++) {
       const res = await postCommand(app, sessionId, advanceEnv('empire', version));
       expect(res.status).toBe(200);
-      const body = CommandOkSchema.parse(res.body);
+      const body = CommandOkSchema.parse(gamePart(res.body));
       version = body.view.version;
       seen.push([body.view.round, body.view.phase]);
       expect(body.events).toHaveLength(1);

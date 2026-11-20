@@ -2,13 +2,22 @@ import type { PlayerViewCore } from '@bga/game-rebellion/schema';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+// Test-only: SessionHost provides the automation context in the app.
+import { SessionAutomationContext, type SessionAutomationState } from '@/platform';
 import { i18n } from '@/shared/i18n';
 import { renderWithProviders } from '@/shared/test';
 import {
+  CORE_HOT_SEAT,
   CORE_SESSION_ID,
+  CS_SULLUST,
+  CS_YAVIN,
+  L_LEIA,
+  L_VADER,
+  U_XWING,
   makeCoreEmpireView,
   makeCoreOutcomeView,
   makeCoreView,
+  makeSessionAutomationState,
 } from '../../test/coreFixtures';
 import { CoreBoardContext, type CoreBoardContextValue } from '../model/coreContext';
 import { CoreGameInfoPanel } from '../top-bar/CoreGameInfoPanel';
@@ -17,7 +26,11 @@ import { MapLegend } from './MapLegend';
 
 const AT = '2026-11-08T10:00:00.000Z';
 
-function renderCore(view: PlayerViewCore, ui: ReactNode) {
+function renderCore(
+  view: PlayerViewCore,
+  ui: ReactNode,
+  automation: SessionAutomationState | null = null,
+) {
   const ctx: CoreBoardContextValue = {
     sessionId: CORE_SESSION_ID,
     view,
@@ -25,12 +38,16 @@ function renderCore(view: PlayerViewCore, ui: ReactNode) {
     isPending: false,
   };
   return renderWithProviders({
-    element: <CoreBoardContext.Provider value={ctx}>{ui}</CoreBoardContext.Provider>,
+    element: (
+      <SessionAutomationContext value={automation}>
+        <CoreBoardContext.Provider value={ctx}>{ui}</CoreBoardContext.Provider>
+      </SessionAutomationContext>
+    ),
   });
 }
 
 describe('CoreEventLog (SWR-005 P2, TC-C-09, AC-08)', () => {
-  it('AI auto-pass entry: data attrs, «Империя (AI) пасует» + chip «авто» + hint «AI Commander ещё не реализован»', () => {
+  it('AI auto-pass entry (SWR-006 L-2): data attrs, «Повстанцы (AI) пасуют» + chip «AI»; no «авто» / hint', () => {
     renderCore(makeCoreEmpireView(), <CoreEventLog />);
     const log = screen.getByTestId('event-log');
     expect(log).toHaveAttribute('role', 'log');
@@ -39,39 +56,134 @@ describe('CoreEventLog (SWR-005 P2, TC-C-09, AC-08)', () => {
     const items = within(log).getAllByRole('listitem');
     expect(items.map((li) => li.getAttribute('data-seq'))).toEqual(['3', '2', '1']);
 
-    // The fixture's auto-pass is by the AI Rebels; re-check with an AI Empire entry below.
     const entry = screen.getByTestId('log-entry-3');
     expect(entry).toHaveAttribute('data-type', 'PASSED');
     expect(entry).toHaveAttribute('data-actor', 'rebels');
     expect(entry).toHaveAttribute('data-auto', 'true');
+    expect(entry).toHaveAttribute('data-ai', 'true');
     expect(entry).toHaveTextContent('Повстанцы (AI) пасуют');
-    const chip = within(entry).getByTestId('log-entry-3-auto');
-    expect(chip).toHaveTextContent('авто');
-    const hint = within(entry).getByTestId('log-entry-3-auto-hint');
-    expect(hint).toHaveTextContent('AI Commander ещё не реализован');
-    expect(chip).toHaveAttribute('aria-describedby', expect.stringContaining(hint.id));
+    const chip = within(entry).getByTestId('log-entry-3-ai');
+    expect(chip).toHaveTextContent('AI');
+    // The line already says «(AI)»: the chip is not read twice.
+    expect(chip).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.queryByTestId('log-entry-3-auto')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('log-entry-3-auto-hint')).not.toBeInTheDocument();
+    expect(log).not.toHaveTextContent(/не реализован|авто/);
 
-    expect(screen.getByTestId('log-entry-2')).toHaveAttribute('data-auto', 'false');
-    expect(within(screen.getByTestId('log-entry-2')).queryByText('авто')).not.toBeInTheDocument();
+    expect(screen.getByTestId('log-entry-2')).toHaveAttribute('data-ai', 'false');
+    expect(screen.queryByTestId('log-entry-2-ai')).not.toBeInTheDocument();
   });
 
-  it('AI Empire auto-pass (Rebels game): «Империя (AI) пасует — авто, AI Commander ещё не реализован»', () => {
+  it('every event of the AI Empire is marked (Q-FE-4): activation, move, finish without `auto`; human ones are not', () => {
     const base = makeCoreView();
     renderCore(
       makeCoreView({
         log: [
           ...base.log,
-          { seq: 3, at: AT, type: 'PASSED', actor: 'empire', payload: { auto: true } },
+          {
+            seq: 3,
+            at: AT,
+            type: 'SYSTEM_ACTIVATED',
+            actor: 'rebels',
+            payload: { leaderId: L_LEIA, systemId: CS_SULLUST },
+          },
+          { seq: 4, at: AT, type: 'PASSED', actor: 'rebels', payload: { auto: false } },
+          {
+            seq: 5,
+            at: AT,
+            type: 'SYSTEM_ACTIVATED',
+            actor: 'empire',
+            payload: { leaderId: L_VADER, systemId: CS_SULLUST },
+          },
+          {
+            seq: 6,
+            at: AT,
+            type: 'PIECES_MOVED',
+            actor: 'empire',
+            payload: { pieceIds: ['u-e-sd'], fromSystemId: 'coruscant', toSystemId: CS_SULLUST },
+          },
+          {
+            seq: 7,
+            at: AT,
+            type: 'ACTIVATION_FINISHED',
+            actor: 'empire',
+            payload: { auto: false },
+          },
         ],
       }),
       <CoreEventLog />,
     );
-    const entry = screen.getByTestId('log-entry-3');
-    expect(entry).toHaveAttribute('data-actor', 'empire');
-    expect(entry).toHaveAttribute('data-auto', 'true');
-    expect(entry).toHaveTextContent('Империя (AI) пасует');
-    expect(entry).toHaveTextContent('авто');
-    expect(entry).toHaveTextContent('AI Commander ещё не реализован');
+    for (const seq of [5, 6, 7]) {
+      const entry = screen.getByTestId(`log-entry-${seq}`);
+      expect(entry, `seq ${seq}`).toHaveAttribute('data-ai', 'true');
+      expect(entry, `seq ${seq}`).toHaveAttribute('data-auto', 'false');
+      expect(within(entry).getByTestId(`log-entry-${seq}-ai`)).toBeInTheDocument();
+    }
+    expect(screen.getByTestId('log-entry-5')).toHaveTextContent('Империя (AI):');
+    expect(screen.getByTestId('log-entry-6')).toHaveTextContent('Империя (AI):');
+    expect(screen.getByTestId('log-entry-7')).toHaveTextContent('Империя (AI) завершает активацию');
+    for (const seq of [3, 4]) {
+      expect(screen.getByTestId(`log-entry-${seq}`)).toHaveAttribute('data-ai', 'false');
+      expect(screen.getByTestId(`log-entry-${seq}`)).not.toHaveTextContent('(AI)');
+    }
+  });
+
+  it("hot-seat: no event is marked as the AI's", () => {
+    const base = makeCoreView({ settings: { ...CORE_HOT_SEAT } });
+    renderCore(
+      {
+        ...base,
+        log: [
+          ...base.log,
+          { seq: 3, at: AT, type: 'PASSED', actor: 'empire', payload: { auto: false } },
+        ],
+      },
+      <CoreEventLog />,
+    );
+    expect(screen.getByTestId('log-entry-3')).toHaveAttribute('data-ai', 'false');
+    expect(screen.getByTestId('log-entry-3')).toHaveTextContent('Империя пасует');
+    expect(screen.queryByTestId('log-entry-3-ai')).not.toBeInTheDocument();
+  });
+
+  it('L-4 hidden base: AI Rebels moving in/out of the base read «скрытая зона» for the human Empire; the base system never shows', () => {
+    const base = makeCoreEmpireView();
+    renderCore(
+      makeCoreEmpireView({
+        log: [
+          ...base.log,
+          {
+            seq: 4,
+            at: AT,
+            type: 'SYSTEM_ACTIVATED',
+            actor: 'rebels',
+            payload: { leaderId: L_LEIA, systemId: null },
+          },
+          {
+            seq: 5,
+            at: AT,
+            type: 'PIECES_MOVED',
+            actor: 'rebels',
+            payload: { pieceIds: [U_XWING], fromSystemId: CS_SULLUST, toSystemId: null },
+          },
+          {
+            seq: 6,
+            at: AT,
+            type: 'PIECES_MOVED',
+            actor: 'rebels',
+            payload: { pieceIds: [U_XWING], fromSystemId: null, toSystemId: CS_SULLUST },
+          },
+        ],
+      }),
+      <CoreEventLog />,
+    );
+    expect(screen.getByTestId('log-entry-4')).toHaveTextContent('Повстанцы (AI):');
+    expect(screen.getByTestId('log-entry-4')).toHaveTextContent('скрытая зона');
+    expect(screen.getByTestId('log-entry-5')).toHaveTextContent('→ скрытая зона');
+    expect(screen.getByTestId('log-entry-6')).toHaveTextContent('Повстанцы (AI):');
+    const text = screen.getByTestId('event-log').textContent ?? '';
+    const yavin = i18n.t(`systems.${CS_YAVIN}`, { ns: 'rebellion.data', defaultValue: CS_YAVIN });
+    expect(text).not.toContain(yavin);
+    expect(screen.getByTestId('event-log').innerHTML).not.toContain(CS_YAVIN);
   });
 
   it('hidden zone, base reveal, game over entries; en texts without Cyrillic', async () => {
@@ -149,7 +261,51 @@ describe('MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19)', () => {
     expect(status).toHaveAttribute('data-status', 'prototype');
     expect(status).toHaveTextContent('Реальная карта; правила частично');
     expect(within(info).getByTestId('map-legend')).toBeInTheDocument();
-    expect(within(info).getByTestId('ai-status')).toBeInTheDocument();
+    // SWR-006 R-6: the «не активен в прототипе» placeholder is gone in core-v1.
+    expect(within(info).queryByTestId('ai-status')).not.toBeInTheDocument();
+  });
+
+  it('SWR-006 R-6: rows «Противник» and «AI Commander» (bot / OpenAI / none); hot-seat — no AI Commander row', () => {
+    const { unmount } = renderCore(
+      makeCoreEmpireView(),
+      <CoreGameInfoPanel status="prototype" />,
+      makeSessionAutomationState({ strategy: 'bot' }),
+    );
+    expect(screen.getByTestId('game-info-opponent')).toHaveTextContent('Обычная');
+    const commander = screen.getByTestId('game-info-ai-commander');
+    expect(commander).toHaveAttribute('data-strategy', 'bot');
+    expect(commander).toHaveTextContent('Бот (детерминированный)');
+    expect(screen.getByTestId('game-info')).toHaveTextContent('AI CommanderБот');
+    expect(screen.getByTestId('game-info')).not.toHaveTextContent(/не реализован|не активен/);
+    unmount();
+
+    const { unmount: unmount2 } = renderCore(
+      makeCoreView(),
+      <CoreGameInfoPanel status="prototype" />,
+      makeSessionAutomationState({ strategy: 'openai' }),
+    );
+    expect(screen.getByTestId('game-info-ai-commander')).toHaveAttribute('data-strategy', 'openai');
+    expect(screen.getByTestId('game-info-ai-commander')).toHaveTextContent(
+      'OpenAI (при сбое — бот)',
+    );
+    unmount2();
+
+    const { unmount: unmount3 } = renderCore(
+      makeCoreView(),
+      <CoreGameInfoPanel status="prototype" />,
+    );
+    expect(screen.getByTestId('game-info-ai-commander')).toHaveAttribute('data-strategy', 'none');
+    expect(screen.getByTestId('game-info-ai-commander')).toHaveTextContent('—');
+    unmount3();
+
+    renderCore(
+      makeCoreView({ settings: { ...CORE_HOT_SEAT } }),
+      <CoreGameInfoPanel status="prototype" />,
+    );
+    expect(screen.getByTestId('game-info-opponent')).toHaveTextContent(
+      i18n.t('rebellion.session:info.opponentHuman'),
+    );
+    expect(screen.queryByTestId('game-info-ai-commander')).not.toBeInTheDocument();
   });
 
   it('«Партия» tab after the game: status «Завершена» from view.outcome, base visible (Q-14)', () => {

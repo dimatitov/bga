@@ -509,26 +509,35 @@ describe('Empire observations are invariant to relocating the hidden base (TC-H-
     }
   });
 
+  /**
+   * SWR-006 review F-2: CPU-heavy (4 seeds × up to 40 steps × a metamorphic check over every eligible base). On a
+   * loaded machine (full workspace suite next to Playwright) it exceeded the 5000 ms default; same coverage.
+   */
+  const SEEDED_GAMES_TIMEOUT_MS = 30_000;
   for (const [name, settings] of [
     ['hot-seat', HOT_SEAT],
     ['Rebels vs AI', REBELS_VS_AI],
     ['Empire vs AI', EMPIRE_VS_AI],
   ] as const) {
-    it(`seeded random games before the reveal: ${name}`, () => {
-      let compared = 0;
-      for (let seed = 1; seed <= 4; seed += 1) {
-        const rng = mulberry32(seed * 104_729);
-        let state = newCore(settings, `meta-${name}-${seed}`);
-        for (
-          let step = 0;
-          step < 40 && !state.rebelBase.revealed && state.outcome === null;
-          step += 1
-        ) {
-          compared += checkInvariance(state);
-          state = randomStep(state, rng, 0.1).state;
+    it(
+      `seeded random games before the reveal: ${name}`,
+      { timeout: SEEDED_GAMES_TIMEOUT_MS },
+      () => {
+        let compared = 0;
+        for (let seed = 1; seed <= 4; seed += 1) {
+          const rng = mulberry32(seed * 104_729);
+          let state = newCore(settings, `meta-${name}-${seed}`);
+          for (
+            let step = 0;
+            step < 40 && !state.rebelBase.revealed && state.outcome === null;
+            step += 1
+          ) {
+            compared += checkInvariance(state);
+            state = randomStep(state, rng, 0.1).state;
+          }
         }
-      }
-      expect(compared).toBeGreaterThan(50);
-    });
+        expect(compared).toBeGreaterThan(50);
+      },
+    );
   }
 });

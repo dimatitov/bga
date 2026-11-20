@@ -6,10 +6,15 @@
  * → 422 `gameOver` (checked before the version) with nothing changed.
  * The command response envelope `{ok, view, events}` has no `status` field (platform contract unchanged):
  * the status of the same commit is read from GET / the list right after it.
+ * SWR-006 W7 (plan-backend §9.1, AM-BE-6): the AI passes are made by the automation runner; this file keeps the
+ * SWR-005 auto-pass policy (`chooseAutoCommand`) via `createRebellionServerModule({ automation: { policy } })` for the
+ * exact 13-pass games (full games against the real bot: W9).
  */
 import type { INestApplication } from '@nestjs/common';
 import { ListSessionsResponseSchema } from '@bga/platform';
+import { chooseAutoCommand } from '@bga/game-rebellion/ai';
 import { RebellionSessionDetailsSchema, type Faction } from '@bga/game-rebellion/schema';
+import { createRebellionServerModule } from '@bga/game-rebellion/server';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   AI_EMP_SETUP,
@@ -60,6 +65,9 @@ const SEED_WIN_STEPS: Step[] = [
   accept('empire'),
 ];
 
+/** AM-BE-6: the SWR-005 auto-pass policy instead of the bot (tests only). */
+const PASS_MODULE = createRebellionServerModule({ automation: { policy: chooseAutoCommand } });
+
 describe('core-v1 victories over HTTP (AC-07, AC-13)', () => {
   let db: TestDb;
   let app: INestApplication;
@@ -67,6 +75,7 @@ describe('core-v1 victories over HTTP (AC-07, AC-13)', () => {
   beforeEach(async () => {
     db = createTestDb();
     app = await startApp(db.url, {
+      gameModules: [PASS_MODULE],
       clock: tickingClock(),
       idGenerator: fixedIds(HS_SESSION_2, 'victory-2', 'victory-3'),
     });

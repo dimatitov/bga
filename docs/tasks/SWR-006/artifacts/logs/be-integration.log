@@ -1,0 +1,229 @@
+SWR-006 — INTEGRATION BE (backend-lead) + CODE_REVIEW round 1 fixes (F-1, F-2, F-5, F-8)
+Date: 2026-11-19. Machine: macOS (darwin), local. QA may have been running Playwright in parallel; no e2e / verify run here (frontend-lead runs the final gate).
+apps/api/.env was never read or printed. No real OpenAI call (test config: OPENAI_ENABLED=false, AI_COMMANDER_PROVIDER=bot except fake strategies).
+
+== Fixes ==
+F-1  apps/api/src/sessions/automation/settle-run.ts (NEW: settleRun + bestEffortEnvelope, shared non-throwing guard);
+     sessions.service.ts create path uses settleRun + bestEffortEnvelope; session-commands.service.ts safeRun delegates to settleRun.
+     Regression: apps/api/test/automation-create-guard.int.test.ts (3 tests); fake game control.throwPendingActor (test/support/fake-automation.ts).
+     Pre-fix check: with the create path temporarily reverted to the old code -> 2 of 3 tests failed (create answered 500); restored -> 3/3 passed:
+       vitest run test/automation-create-guard.int.test.ts (old create path) -> 'Tests 2 failed | 1 passed (3)'
+       vitest run test/automation-create-guard.int.test.ts (fixed)           -> 'Tests 3 passed (3)'
+F-2  packages/games/rebellion/test/rules/core/hidden-info.test.ts (TC-H-02 seeded games x3) and invariants.test.ts (x3):
+     explicit per-test timeout 30 000 ms via vitest options ({ timeout }), same seeds/steps/assertions (no coverage change).
+F-5  openai-commander.strategy.ts: onUnexpectedError(errorName, sessionId); automation.providers.ts logs sessionId of the run
+     (gameId/step unknown to the strategy -> masked '?'/0). AiUsage.budgetKey already = sessionId (unchanged).
+     Test: test/automation/openai-commander-strategy.unit.test.ts (Q-20 expects the session id; new 'review F-5' test on createCommanderStrategy line).
+F-8  packages/games/rebellion/src/ai/describe.ts: '(bot difficulty X)' -> '(game difficulty setting: X)'; test/ai/describe.test.ts updated
+     (+ not.toContain('bot difficulty')). No snapshots/fixtures contained the phrase; W8 sim fixtures and prompt-invariance tests pass (see suites).
+
+== Commands (each run alone, sequentially; exact tails) ==
+
+---- 01-build-packages ----
+$ pnpm build:packages
+# started 2026-11-19 19:03:33
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+# exit code: 0 (3 s)
+
+---- 02-platform ----
+$ pnpm --filter @bga/platform test
+# started 2026-11-19 19:03:36
+
+> @bga/platform@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+
+ Test Files  6 passed (6)
+      Tests  95 passed (95)
+   Start at  19:03:37
+   Duration  791ms (transform 1.24s, setup 0ms, import 2.13s, tests 181ms, environment 1ms)
+
+# exit code: 0 (2 s)
+
+---- 03-rebellion-1 ----
+$ pnpm --filter @bga/game-rebellion test
+# started 2026-11-19 19:03:41
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  58 passed (58)
+      Tests  510 passed (510)
+   Start at  19:03:42
+   Duration  32.23s (transform 4.68s, setup 0ms, import 21.90s, tests 116.17s, environment 6ms)
+
+# exit code: 0 (34 s)
+
+---- 04-rebellion-2 ----
+$ pnpm --filter @bga/game-rebellion test
+# started 2026-11-19 19:04:15
+
+> @bga/game-rebellion@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  58 passed (58)
+      Tests  510 passed (510)
+   Start at  19:04:16
+   Duration  31.59s (transform 4.90s, setup 0ms, import 21.05s, tests 113.12s, environment 6ms)
+
+# exit code: 0 (32 s)
+
+---- 05-api ----
+$ pnpm --filter @bga/api test
+# started 2026-11-19 19:04:51
+
+> @bga/api@0.0.0 test /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> vitest run
+
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+[31m[Nest] 88623  - [39m11/19/2026, 7:05:00 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 89367  - [39m11/19/2026, 7:05:17 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 89367  - [39m11/19/2026, 7:05:17 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=SyntaxError[39m
+[31m[Nest] 89367  - [39m11/19/2026, 7:05:17 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=5b0c1f7e-0002-4a00-8000-000000000002 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=9da10626-3e1e-4972-87d0-6d30db0960c6 code=INTERNAL status=500 error=Error[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=- code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 89700  - [39m11/19/2026, 7:05:19 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=72e3e3ab-da27-4459-977e-ddbf43de7a7d code=INTERNAL status=500 error=PrismaClientKnownRequestError[39m
+[31m[Nest] 90003  - [39m11/19/2026, 7:05:28 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=a7a5690f-4c17-425b-b00e-f0a0b0fc9f44 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 90003  - [39m11/19/2026, 7:05:28 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=a7a5690f-4c17-425b-b00e-f0a0b0fc9f44 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 90104  - [39m11/19/2026, 7:05:30 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=golden-empire-win-3 code=INTERNAL status=500 error=ZodError[39m
+[31m[Nest] 90187  - [39m11/19/2026, 7:05:32 PM [31m  ERROR[39m [38;5;3m[SessionCommandsService] [39m[31msessionId=session-001 gameId=fake-game code=INVALID_STATUS status=500[39m
+[31m[Nest] 90187  - [39m11/19/2026, 7:05:32 PM [31m  ERROR[39m [38;5;3m[ApiExceptionFilter] [39m[31msessionId=session-001 code=INTERNAL status=500 error=ApiError[39m
+
+ Test Files  65 passed | 1 skipped (66)
+      Tests  599 passed | 1 skipped (600)
+   Start at  19:04:52
+   Duration  60.52s (transform 7.23s, setup 1.90s, import 62.27s, tests 319.23s, environment 7ms)
+
+# exit code: 0 (62 s)
+
+---- 06-typecheck ----
+$ pnpm typecheck
+# started 2026-11-19 19:05:57
+
+> board-game-ai@ typecheck /Users/dimatitov/WebstormProjects/Game automa
+> pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+
+
+> board-game-ai@ build:packages /Users/dimatitov/WebstormProjects/Game automa
+> tsc -b packages
+
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/web typecheck$ tsc -b
+apps/web typecheck: Done
+apps/api typecheck: Done
+# exit code: 0 (21 s)
+
+---- 07-eslint ----
+$ pnpm exec eslint . --max-warnings=0
+# started 2026-11-19 19:06:18
+# exit code: 0 (14 s)
+
+---- 09-build ----
+$ pnpm build
+# started 2026-11-19 19:06:37
+
+> board-game-ai@ build /Users/dimatitov/WebstormProjects/Game automa
+> pnpm -r run build
+
+Scope: 5 of 6 workspace projects
+packages/platform build$ tsc -b
+packages/platform build: Done
+packages/games/forbidden-stars build$ tsc -b
+packages/games/rebellion build$ tsc -b
+packages/games/rebellion build: Done
+packages/games/forbidden-stars build: Done
+apps/api build$ nest build
+apps/web build$ tsc -b && vite build
+apps/api build: Done
+apps/web build: vite v8.3.6 building client environment for production...
+apps/web build: transforming...
+apps/web build: ✓ 1195 modules transformed.
+apps/web build: rendering chunks...
+apps/web build: computing gzip size...
+apps/web build: dist/index.html                             0.76 kB │ gzip:   0.38 kB
+apps/web build: dist/assets/FactionEmblem-gwuJWDu1.js       0.34 kB │ gzip:   0.27 kB
+apps/web build: dist/assets/rolldown-runtime-XKyaHtl9.js    0.72 kB │ gzip:   0.42 kB
+apps/web build: dist/assets/SetupScreen-B4ODUg8U.js         6.60 kB │ gzip:   2.29 kB
+apps/web build: dist/assets/index-CveBiSby.js              31.32 kB │ gzip:  10.07 kB
+apps/web build: dist/assets/ui-mE5NODsV.js                108.11 kB │ gzip:  34.49 kB
+apps/web build: dist/assets/TableScreen-eujS6dO1.js       125.65 kB │ gzip:  36.12 kB
+apps/web build: dist/assets/vendor-BwUA2TaR.js            186.48 kB │ gzip:  54.86 kB
+apps/web build: dist/assets/vendor-react-DgOG5Cvb.js      309.55 kB │ gzip:  97.69 kB
+apps/web build: dist/assets/vendor-konva-DTW2HZoO.js      330.31 kB │ gzip: 100.82 kB
+apps/web build: dist/assets/vendor-mui-D4dNwCZH.js        360.56 kB │ gzip: 112.18 kB
+apps/web build: ✓ built in 344ms
+apps/web build: Done
+# exit code: 0 (11 s)
+
+---- 10-prettier ----
+$ pnpm exec prettier --check .
+# started 2026-11-19 19:10:06
+Checking formatting...
+All matched files use Prettier code style!
+# exit code: 0 (9 s)
+
+---- 12-check-task ----
+$ node scripts/check-task.mjs docs/tasks/SWR-006
+# started 2026-11-19 19:10:20
+OK docs/tasks/SWR-006
+# exit code: 0 (0 s)
+
+---- 08-scripts (head + summary; full TAP output of 2461 lines omitted) ----
+$ node --test scripts/
+# started 2026-11-19 19:06:32
+# tests 449
+# suites 29
+# pass 449
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4897.103708
+# exit code: 0 (5 s)
+
+---- 11-scripts-after-docs (head + summary; full TAP output of 2461 lines omitted) ----
+$ node --test scripts/
+# started 2026-11-19 19:10:15
+# tests 449
+# suites 29
+# pass 449
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4843.630333
+# exit code: 0 (5 s)
+
+== Notes ==
+- No .tmp/DB collision; no rerun was needed for any suite.
+- 11-scripts-after-docs and 12-check-task were run after editing docs/architecture/{application,adding-a-game}.md.

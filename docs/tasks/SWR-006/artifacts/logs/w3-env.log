@@ -1,0 +1,165 @@
+# SWR-006/W3 env + ESLint B-6 — 2026-11-19T14:44:25Z
+
+$ pnpm --filter @bga/api exec vitest run test/env.unit.test.ts test/env-example.unit.test.ts test/env-isolation.int.test.ts test/bootstrap.unit.test.ts
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ❯ test/env-isolation.int.test.ts (6 tests | 1 failed) 303ms
+     × GET /api/dev/ai/status of the test app reports keyConfigured:false (plain app and AI test app) 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/env-isolation.int.test.ts > defect D-1: no OpenAI values from apps/api/.env in test processes > GET /api/dev/ai/status of the test app reports keyConfigured:false (plain app and AI test app)
+Error: ENOENT: no such file or directory, copyfile '/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/template.db' -> '/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/test-9987fe9a-0771-4faf-b0d2-4537efdfd8d2.db'
+ ❯ createTestDb test/support/test-app.ts:18:3
+     16| export function createTestDb(): TestDb {
+     17|   const file = join(TMP_DIR, `test-${randomUUID()}.db`);
+     18|   copyFileSync(TEMPLATE_DB, file);
+       |   ^
+     19|   return { file, url: `file:${file}` };
+     20| }
+ ❯ test/env-isolation.int.test.ts:119:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 51 passed (52)
+   Start at  17:44:26
+   Duration  5.05s (transform 1.19s, setup 330ms, import 2.21s, tests 442ms, environment 1ms)
+
+undefined
+/Users/dimatitov/WebstormProjects/Game automa/apps/api:
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command failed with exit code 1: vitest run test/env.unit.test.ts test/env-example.unit.test.ts test/env-isolation.int.test.ts test/bootstrap.unit.test.ts
+exit=1
+
+## Run 2 (run 1 above: 1 failure = ENOENT on .tmp/template.db while copying — global-setup of a parallel worker's vitest run wiped apps/api/.tmp concurrently; not related to W3 changes)
+$ pnpm --filter @bga/api exec vitest run test/env.unit.test.ts test/env-example.unit.test.ts test/env-isolation.int.test.ts test/bootstrap.unit.test.ts
+
+ RUN  v4.1.12 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+
+ Test Files  4 passed (4)
+      Tests  52 passed (52)
+   Start at  17:44:45
+   Duration  11.27s (transform 3.15s, setup 370ms, import 5.19s, tests 1.24s, environment 0ms)
+
+exit=0
+
+$ pnpm --filter @bga/api exec tsc --noEmit -p tsconfig.json (typecheck)
+exit=0
+
+$ pnpm --filter @bga/api typecheck
+
+> @bga/api@0.0.0 typecheck /Users/dimatitov/WebstormProjects/Game automa/apps/api
+> tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+
+exit=0
+
+$ pnpm exec eslint . --max-warnings=0
+
+/Users/dimatitov/WebstormProjects/Game automa/apps/api/test/ai/prompt.unit.test.ts
+  214:30  error  Unexpected control character(s) in regular expression: \x00, \x1f  no-control-regex
+
+✖ 1 problem (1 error, 0 warnings)
+
+exit=1
+
+$ node --test scripts/
+# tests 449
+# pass 449
+# fail 0
+# cancelled 0
+# skipped 0
+exit=0
+(the only error above is in apps/api/test/ai/prompt.unit.test.ts — W4's file, not W3)
+
+$ pnpm exec eslint --max-warnings=0 eslint.config.mjs apps/api/src/config/env.ts apps/api/test/support/test-config.ts apps/api/test/setup/blank-openai-env.ts apps/api/scripts/e2e-env.mjs apps/api/scripts/e2e-env.d.mts apps/api/test/env.unit.test.ts apps/api/test/env-example.unit.test.ts apps/api/test/env-isolation.int.test.ts apps/api/test/bootstrap.unit.test.ts packages/games/rebellion/src/ai
+exit=0
+
+$ pnpm exec prettier --check <the 10 W3 source/test files above> scripts/eslint-boundaries.test.mjs
+Checking formatting...
+[warn] apps/api/src/config/env.ts
+[warn] apps/api/test/env.unit.test.ts
+[warn] Code style issues found in 2 files. Run Prettier with --write to fix.
+exit=1
+(fixed with prettier --write on env.ts and env.unit.test.ts)
+
+$ pnpm exec prettier --check <same files>
+Checking formatting...
+All matched files use Prettier code style!
+exit=0
+
+$ pnpm --filter @bga/api test   (full suite, after formatting)
+     × TC-EXT-01/02: create, get and list a fake-game session; no secret leaves the server 454ms
+     × TC-EXT-03: commands of the fake game — 200, 409, 422 errors.fakeLimit, 400, 404; order 404→400→409→422 150ms
+     × TC-I-15 (Q-1): same key + same body → 201, then 200 + Idempotent-Replay with the same envelope; one row 640ms
+     × a finishing command → response view, row, GET and list show status completed; log has only the transition 768ms
+     × TC-API-14: legal move → 200, version + 1, piece moved, PIECES_MOVED persisted 5246ms
+     × TC-API-22: ADVANCE_PHASE ×3 cycles phases and round; MOVE accepted in any phase 80ms
+     × TC-I-01: defaults → 201 {sessionId, gameId, status, settings, view}; row status/key/v2 state; GAME_CREATED 647ms
+     × TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted 632ms
+     × TC-SES-07: GET /api/sessions/:id → { sessionId, gameId, view }; unknown / over-long id → 404 sessionNotFound 86ms
+     × TC-SES-07 (seeded): GET → { sessionId, gameId, status, settings, view }; MOVE_PIECES only empire pieces 50ms
+     × TC-UC-19: SWR-005-shape DB with sessions → deploy adds only AiUsage; Session/SessionEvent rows and schema byte-equal; re-deploy no-op 16093ms
+     × refuses (no --yes): exit 2, no rows deleted 24ms
+     × refuses (no --yes (env URL)): exit 2, no rows deleted 1ms
+     × refuses (no key): exit 2, no rows deleted 3ms
+     × refuses (empty key): exit 2, no rows deleted 1ms
+     × refuses (no URL): exit 2, no rows deleted 3ms
+     × refuses (non-file URL): exit 2, no rows deleted 2ms
+     × refuses (unknown flag): exit 2, no rows deleted 1ms
+     × refuses (missing file): exit 2, no rows deleted 1ms
+     × with --yes deletes only the given key (flag URL) 2ms
+     × with --yes uses DATABASE_URL from the environment; --database-url=… inline form works too 1ms
+     × before: setup column is v1; after a command: v2 equal to the state settings; GET settings unchanged 10774ms
+     × GET :id and a command → 500 without internals; nothing written; list skips only that row 7ms
+     × a new session: setup column equals toStoredSetup(state.settings) 1ms
+       × TC-API-11 (creation): an Empire player does not get the stored rebel base in the POST / GET response 106ms
+     × the fixture really is v1 (legacy faction in setup, state and event actors) 15339ms
+     × a command on a v1 row → 200; the snapshot is written as v3 mock-v1 (SWR-005); old mirror rows keep their actor (Q-16) 4812ms
+     × TC-MIG-01/05: 3 SWR-002 games → Session rows byte-equal + gameId backfill; events kept; re-deploy is a no-op 20212ms
+     × TC-M-01: SWR-003 DB (3 v1 sessions) → deploy: status = prototype, key/hash NULL, unique index; data and events unchanged; re-deploy no-op 19847ms
+     × TC-M-02/03/05: migrated sessions through the API — status prototype, no legacy faction, a command works, rereads are stable 7054ms
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-14: legal move → 200, version + 1, piece moved, PIECES_MOVED persisted
+AssertionError: expected [ Array(4) ] to deeply equal [ 'events', 'ok', 'view' ]
+ FAIL  test/commands.int.test.ts > POST /api/sessions/:sessionId/commands (TC-SES-12, seeded mock-v1 row) > TC-API-22: ADVANCE_PHASE ×3 cycles phases and round; MOVE accepted in any phase
+ZodError: [
+ FAIL  test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-EXT-01/02: create, get and list a fake-game session; no secret leaves the server
+AssertionError: expected { sessionId: 'session-001', …(5) } to deeply equal { sessionId: 'session-001', …(4) }
+ FAIL  test/game-registry.int.test.ts > session service with a fake game (AC-5(a), TR-3) > TC-EXT-03: commands of the fake game — 200, 409, 422 errors.fakeLimit, 400, 404; order 404→400→409→422
+AssertionError: expected { ok: true, …(3) } to deeply equal { ok: true, …(2) }
+ FAIL  test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > new sessions (engine-independent) > TC-API-11 (creation): an Empire player does not get the stored rebel base in the POST / GET response
+Error: ENOENT: no such file or directory, copyfile '/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/template.db' -> '/Users/dimatitov/WebstormProjects/Game automa/apps/api/.tmp/test-70549143-5f92-4c36-8739-8dc75622e089.db'
+ FAIL  test/hidden-info.int.test.ts > hidden information (PlayerView only leaves the server) > new sessions (engine-independent) > TC-API-11 (creation): an Empire player does not get the stored rebel base in the POST / GET response
+TypeError: Cannot read properties of undefined (reading 'close')
+ FAIL  test/idempotency.int.test.ts > POST /api/sessions — Idempotency-Key (fake game) > TC-I-15 (Q-1): same key + same body → 201, then 200 + Idempotent-Replay with the same envelope; one row
+AssertionError: expected [ 'automation', 'gameId', …(4) ] to deeply equal [ 'gameId', 'sessionId', …(3) ]
+ FAIL  test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-01: SWR-003 DB (3 v1 sessions) → deploy: status = prototype, key/hash NULL, unique index; data and events unchanged; re-deploy no-op
+Error: Command failed: pnpm exec prisma migrate resolve --applied 20261108120000_sessions
+Error: P1003: Database `test-swr003-75fe739b-0d3c-4ea0-8ecc-29760f0e2796.db` does not exist
+ FAIL  test/migration-swr004.int.test.ts > migration 20261108200000_session_status_idempotency > TC-M-02/03/05: migrated sessions through the API — status prototype, no legacy faction, a command works, rereads are stable
+Error: Command failed: pnpm exec prisma migrate resolve --applied 20261107235651_init
+Error: P1003: Database `test-swr003-1f62c9b2-f8de-4d00-94ce-9d6391b384ae.db` does not exist
+ FAIL  test/migration-swr005b.int.test.ts > migration 20261108230000_ai_usage > TC-UC-19: SWR-005-shape DB with sessions → deploy adds only AiUsage; Session/SessionEvent rows and schema byte-equal; re-deploy no-op
+AssertionError: expected 'Prisma schema loaded from prisma/sche…' to match /No pending migrations/
+ FAIL  test/migration.int.test.ts > migration 20261108120000_sessions (AC-7, TR-6) > TC-MIG-01/05: 3 SWR-002 games → Session rows byte-equal + gameId backfill; events kept; re-deploy is a no-op
+AssertionError: expected 'Prisma schema loaded from prisma/sche…' to match /No pending migrations/
+ FAIL  test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-01: defaults → 201 {sessionId, gameId, status, settings, view}; row status/key/v2 state; GAME_CREATED
+AssertionError: expected [ 'automation', 'gameId', …(4) ] to deeply equal [ 'gameId', 'sessionId', …(3) ]
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-01: POST /api/sessions creates a Rebellion session; Session.gameId + GAME_CREATED persisted
+AssertionError: expected [ 'automation', 'gameId', …(4) ] to deeply equal [ 'gameId', 'sessionId', …(3) ]
+ FAIL  test/sessions.int.test.ts > sessions endpoints (Rebellion, real registry) > TC-SES-07: GET /api/sessions/:id → { sessionId, gameId, view }; unknown / over-long id → 404 sessionNotFound
+AssertionError: expected { sessionId: 'session-001', …(5) } to deeply equal { sessionId: 'session-001', …(4) }
+exit=1
+Summary of the full run: Test Files 13 failed | 40 passed | 1 skipped; Tests 30 failed | 485 passed | 1 skipped.
+None of the failures is in a W3 file. Causes (from the failure text):
+ - ENOENT on apps/api/.tmp/template.db / test-swr003-*.db 'does not exist' / 'no such table' / 'No pending migrations' mismatch: global-setup of a concurrently running vitest process (parallel workers) wipes and re-migrates apps/api/.tmp;
+ - 'expected [automation, gameId, …] to deeply equal [gameId, …]' (commands, game-registry, idempotency, rebellion-contract, sessions int tests): W1's new 'automation' field in session responses; updating those expectations is W1/W7 scope.
+W3 test files in the full run:
+(not printed by the default reporter when passing — re-run below as final evidence)
+
+$ pnpm --filter @bga/api exec vitest run test/env.unit.test.ts test/env-example.unit.test.ts test/env-isolation.int.test.ts test/bootstrap.unit.test.ts  (final, after prettier)
+ Test Files  4 passed (4)
+      Tests  52 passed (52)
+exit=0

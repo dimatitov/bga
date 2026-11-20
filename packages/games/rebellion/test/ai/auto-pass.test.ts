@@ -65,15 +65,36 @@ describe('chooseAutoCommand (auto-pass-v1)', () => {
     ).toEqual({ type: 'FINISH_ACTIVATION' });
   });
 
-  it('TC-AI-14: src/ai imports only ../schema and zod (no OpenAI, Nest, React, scenario, rules)', () => {
+  it('TC-AI-14: src/ai imports only ../schema, zod and its own modules (no OpenAI, Nest, React, scenario, rules, platform)', () => {
     const dir = new URL('../../src/ai/', import.meta.url);
-    for (const file of readdirSync(dir).filter((f) => f.endsWith('.ts'))) {
+    const files = readdirSync(dir).filter((f) => f.endsWith('.ts'));
+    // SWR-006 W2: the bot modules are scanned too (TC-BOT-06, AC-05).
+    for (const module of [
+      'types',
+      'random',
+      'view-model',
+      'intel',
+      'candidates',
+      'describe',
+      'decision',
+      'rank',
+    ]) {
+      expect(files).toContain(`${module}.ts`);
+    }
+    const siblings = files.map((f) => `./${f.replace(/\.ts$/, '')}`);
+    for (const file of files) {
       const source = readFileSync(new URL(file, dir), 'utf8');
-      const imports = [...source.matchAll(/from\s+'([^']+)'/g)].map((m) => m[1]);
+      const imports = [...source.matchAll(/(?:from|import)\s*\(?\s*'([^']+)'/g)].map((m) => m[1]);
       for (const spec of imports) {
-        expect(['../schema', 'zod', './auto-pass'], `${file}: ${spec}`).toContain(spec);
+        expect(['../schema', 'zod', ...siblings], `${file}: ${spec}`).toContain(spec);
       }
-      expect(source).not.toMatch(/Math\.random|Date\.now|new Date\(|process\.env|fetch\(/);
+      expect(source, file).not.toMatch(
+        /Math\.random|Date\.now|new Date\(|process\.env|fetch\(|\bcrypto\b|\bperformance\b|@bga\/platform'|require\(/,
+      );
+      // The bot never reproduces the base choice (TC-BOT-06).
+      expect(source, file).not.toMatch(
+        /chooseRebelBase|rebelBaseCandidates|eligibleRebelBaseSystemIds/,
+      );
     }
   });
 });

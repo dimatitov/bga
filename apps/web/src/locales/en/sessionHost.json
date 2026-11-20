@@ -11,5 +11,20 @@
   "error": {
     "title": "Could not load the session"
   },
-  "refetchWarning": "Could not refresh the session: {{reason}} Showing the last loaded state."
+  "refetchWarning": "Could not refresh the session: {{reason}} Showing the last loaded state.",
+  "automation": {
+    "error": "The AI turn did not finish: {{reason}}",
+    "stalled": "The AI has not finished its turn yet.",
+    "retry": "Continue AI turn",
+    "reason": {
+      "AI_TIMEOUT": "no answer in time",
+      "AI_RATE_LIMITED": "too many requests",
+      "AI_PROVIDER_ERROR": "service error",
+      "AI_INVALID_DECISION": "invalid model answer",
+      "AI_NOT_CONFIGURED": "not configured",
+      "AI_BUDGET_EXCEEDED": "game budget exhausted",
+      "AI_DEADLINE": "turn time exceeded",
+      "unknown": "other reason"
+    }
+  }
 }
