@@ -1,0 +1,134 @@
+[
+  {
+    "id": "rebellion:general.golden-rules.precedence",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Precedence of sources",
+    "text": "When the Rules Reference and the Learn to Play booklet disagree, the Rules Reference wins. When a card ability disagrees with the Rules Reference, the card wins; if the card and the rules can both be obeyed, obey both.",
+    "sources": [{ "sourceId": "RR", "page": 2, "section": "The Golden Rules" }],
+    "related": ["rebellion:general.golden-rules.cannot", "rebellion:general.faq-errata"],
+    "ai": "none",
+    "keywords": ["приоритет правил", "golden rules"]
+  },
+  {
+    "id": "rebellion:general.golden-rules.cannot",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "\"Cannot\" is absolute",
+    "text": "If a card ability says something cannot happen, no other ability can override that restriction.",
+    "sources": [{ "sourceId": "RR", "page": 2, "section": "The Golden Rules" }],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:general.faq-errata",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "FAQ errata officially change rule and card text",
+    "text": "The errata section of the FAQ lists official changes to the text of the rules and of cards. In this knowledge base an erratum therefore replaces the Rules Reference wording it amends; FAQ answers clarify how the rules apply.",
+    "sources": [{ "sourceId": "FAQ", "page": 1, "section": "Errata" }],
+    "amends": ["rebellion:general.golden-rules.precedence"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:general.cheating",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Bluffing is allowed, cheating loses",
+    "text": "Players may bluff about intentions and about where the Rebel base is. An effect that must happen in the Rebel base's system has to be resolved in the real base system (not the \"Rebel Base\" space). A player revealed at the end of the game to have cheated, even by accident (for example an illegal move from the base or a recruit that does not match the chosen action card), loses.",
+    "sources": [{ "sourceId": "RR", "page": 4, "section": "Cheating" }],
+    "related": ["rebellion:base.space-not-system"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:general.notes-allowed",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Taking notes is allowed",
+    "text": "Both players may take notes about any information they like, for example the Imperial player about where the Rebel base cannot be.",
+    "sources": [{ "sourceId": "FAQ", "page": 5, "section": "Miscellaneous" }],
+    "amends": ["rebellion:general.cheating"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:general.current-player",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Current player",
+    "text": "The current player is the player who is resolving his turn. Several timing rules (combat steps, simultaneous action cards) start with the current player.",
+    "sources": [
+      { "sourceId": "RR", "page": 6, "section": "Current Player" },
+      { "sourceId": "RR", "page": 2, "section": "Action Cards" }
+    ],
+    "related": ["rebellion:command.turn-order"]
+  },
+  {
+    "id": "rebellion:general.simultaneous-timing",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Abilities with the same timing",
+    "text": "If a Rebel ability and an Imperial ability resolve at exactly the same time, the Rebel ability resolves first and then the Imperial one. If both abilities belong to one player, that player chooses their order.",
+    "sources": [{ "sourceId": "FAQ", "page": 4, "section": "Mission and Action Cards" }],
+    "amends": ["rebellion:general.current-player"]
+  },
+  {
+    "id": "rebellion:general.component-limits",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Component limitations",
+    "text": "Dice: at most five black and five red dice per attack or mission roll. Leaders and attachment rings are limited to those in the box; other markers are unlimited (use substitutes). Units are limited: a unit type with none left in the supply cannot be built, but during Refresh step 5 a player may destroy own units on the board to return them to the supply. An empty deck is replaced by its shuffled discard pile.",
+    "sources": [{ "sourceId": "RR", "page": 6, "section": "Component Limitations" }],
+    "related": ["rebellion:general.dice", "rebellion:general.discarding"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:general.component-limits.destroy-own",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "When a player may destroy his own units",
+    "text": "During Refresh step 5 a player may destroy one of his own units only if no unit with that name is left in his supply and he is placing such a unit on the build queue; the Empire can never destroy its own Death Star this way. An ability that lets a player gain units at another time also allows destroying own units then if the supply is short.",
+    "sources": [{ "sourceId": "FAQ", "page": 5, "section": "Miscellaneous" }],
+    "amends": ["rebellion:general.component-limits"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:general.dice",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Dice results",
+    "text": "Dice show hit, direct hit, special or blank. In combat a hit damages a unit whose health colour matches the die, a direct hit damages a unit of any health colour, and a special may be spent to draw or play a tactic card. In a mission a hit or direct hit is one success and a special is two successes. Die colour only matters in combat; dice may be rerolled any number of times.",
+    "sources": [{ "sourceId": "RR", "page": 7, "section": "Dice" }],
+    "related": ["rebellion:combat.attack", "rebellion:missions.opposition-dice"],
+    "keywords": ["кубики", "попадание"]
+  },
+  {
+    "id": "rebellion:general.discarding",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "general",
+    "title": "Discard piles",
+    "text": "Discarded cards go faceup into a pile next to their deck; anyone may look through discard piles at any time. When a deck runs out, its discard pile is shuffled to form a new deck.",
+    "sources": [{ "sourceId": "RR", "page": 7, "section": "Discarding" }],
+    "ai": "none"
+  }
+]

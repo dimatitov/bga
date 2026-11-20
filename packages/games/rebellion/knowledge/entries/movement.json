@@ -1,0 +1,359 @@
+[
+  {
+    "id": "rebellion:command.move.into-activated-from-adjacent",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Units move only into the activated system, from adjacent systems",
+    "text": "Units move only during an activation and only into the activated system, from any number of systems adjacent to it. Units cannot move into a system that was not activated.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Activate a System"
+      }
+    ],
+    "related": [
+      "rebellion:command.move.adjacency",
+      "rebellion:command.move.own-leader-locks",
+      "rebellion:command.transport.capacity"
+    ],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["MOVE_PIECES"]
+    },
+    "ai": "core",
+    "keywords": ["движение", "перемещение юнитов", "соседние системы", "move units"]
+  },
+  {
+    "id": "rebellion:command.move.own-leader-locks",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Units cannot leave a system that contains their own leader",
+    "text": "Units cannot move out of a system containing a leader of their own faction, even one without tactic values. Leaders placed earlier in the phase stay until Refresh and keep locking their systems.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      },
+      {
+        "sourceId": "RR",
+        "page": 8,
+        "section": "Leaders"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Activate a System"
+      }
+    ],
+    "exceptions": [
+      {
+        "text": "A leader on the \"Rebel Base\" space only locks units on that space, not units in the base's system.",
+        "ruleIds": ["rebellion:base.leader-in-space-locks"],
+        "sources": [
+          {
+            "sourceId": "RR",
+            "page": 9,
+            "section": "Moving Units"
+          }
+        ]
+      },
+      {
+        "text": "A captured Rebel leader does not stop Rebel units from leaving its system.",
+        "ruleIds": ["rebellion:leaders.captured"],
+        "sources": [
+          {
+            "sourceId": "RR",
+            "page": 3,
+            "section": "Captured Leaders"
+          }
+        ]
+      }
+    ],
+    "related": ["rebellion:command.move.no-enemy-pinning", "rebellion:refresh.retrieve-leaders"],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["MOVE_PIECES", "ACTIVATE_SYSTEM"]
+    },
+    "ai": "core",
+    "keywords": [
+      "лидер блокирует",
+      "свой лидер",
+      "нельзя уйти из системы",
+      "leave a system with my leader"
+    ]
+  },
+  {
+    "id": "rebellion:command.move.no-enemy-pinning",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "movement",
+    "title": "Enemy units or leaders do not pin units",
+    "text": "Units may leave a system that contains enemy units or enemy leaders; only a leader of their own faction keeps them in place.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      }
+    ],
+    "rationale": "The movement rules list the restrictions exhaustively (adjacency, impassable areas, transport, immobile units, own leader) and none mentions enemy units or leaders; retreat has its own separate rules. Silence of the source, not an explicit statement.",
+    "related": ["rebellion:command.move.own-leader-locks"],
+    "appliesTo": {
+      "commands": ["MOVE_PIECES"]
+    }
+  },
+  {
+    "id": "rebellion:command.move.adjacency",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Adjacency and impassable areas",
+    "text": "Two systems that share a border are adjacent. Units may cross the orange region borders but cannot pass through the impassable areas shaded in light red.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 12,
+        "section": "Regions"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "What are Systems and Regions?"
+      }
+    ],
+    "related": ["rebellion:map.mustafar-utapau", "rebellion:map.regions"],
+    "appliesTo": {
+      "commands": ["MOVE_PIECES"]
+    },
+    "keywords": ["соседство", "соседние системы", "непроходимые"]
+  },
+  {
+    "id": "rebellion:command.move.immobile",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Immobile units never move",
+    "text": "A unit with the immobile icon cannot move: the Rebel structures (Shield Generator, Ion Cannon) and the Death Star Under Construction.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 13,
+        "section": "Structures"
+      },
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Building a Death Star"
+      }
+    ],
+    "related": ["rebellion:units.structures"],
+    "appliesTo": {
+      "commands": ["MOVE_PIECES"]
+    },
+    "keywords": ["неподвижные юниты", "сооружения"]
+  },
+  {
+    "id": "rebellion:command.move.abilities-follow-rules",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Abilities that move units follow the movement rules",
+    "text": "When a card lets a player move units, all movement rules still apply (transport capacity, immobile units and so on). Only an ability that says to ignore transport restrictions lets restricted units move without a carrier leaving their system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      }
+    ],
+    "related": ["rebellion:command.transport.restriction-icon"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:command.move.combat-trigger",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Moving into enemy units causes combat",
+    "text": "If, after units move into the activated system, the other faction has units there, combat follows (only in a theater where both sides have units).",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 4,
+        "section": "Combat"
+      }
+    ],
+    "related": ["rebellion:combat.trigger"]
+  },
+  {
+    "id": "rebellion:command.move.rapid-mobilization-locked",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "Mission movement is also blocked by own leaders",
+    "text": "A mission that moves units (for example Rapid Mobilization) cannot move Rebel units out of a system that contains a friendly leader.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 4,
+        "section": "Mission and Action Cards"
+      }
+    ],
+    "amends": ["rebellion:command.move.own-leader-locks"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:command.move.base-space-leader-missions",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "movement",
+    "title": "A leader on the Rebel Base space blocks mission movement from it",
+    "text": "With a Rebel leader on the \"Rebel Base\" space, a mission such as Lead the Strike Team cannot move units from the base; only cards that explicitly override this (such as Plan the Assault) can.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "Movement"
+      }
+    ],
+    "amends": ["rebellion:base.leader-in-space-locks"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:command.transport.capacity",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "transport",
+    "title": "Transport capacity",
+    "text": "Ground units and TIE Fighters move only by transport: each moving ship carries from its own system up to its transport capacity (faction sheet), one place per unit. X-wings and Y-wings need no transport.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Transport Capacity"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Activate a System"
+      }
+    ],
+    "related": [
+      "rebellion:command.transport.restriction-icon",
+      "rebellion:units.faction-sheet-values"
+    ],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["MOVE_PIECES"]
+    },
+    "ai": "core",
+    "keywords": ["транспорт", "вместимость", "перевозка наземных юнитов", "transport ship carry"]
+  },
+  {
+    "id": "rebellion:command.transport.restriction-icon",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "transport",
+    "title": "Transport restriction icon",
+    "text": "Units with the transport restriction icon (ground units, TIE Fighters) move only together with transport-capacity units leaving the same system; ships staying behind or already at the destination cannot carry them.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Activate a System"
+      }
+    ],
+    "related": [
+      "rebellion:command.transport.capacity",
+      "rebellion:command.move.abilities-follow-rules"
+    ],
+    "appliesTo": {
+      "commands": ["MOVE_PIECES"]
+    },
+    "ai": "core",
+    "keywords": ["значок ограничения транспорта", "TIE"]
+  },
+  {
+    "id": "rebellion:units.faction-sheet-values",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "transport",
+    "title": "Transport capacities used by the engine",
+    "text": "Capacities used by core-v1: Star Destroyer 6, Assault Carrier 4, Super Star Destroyer 8, Death Star 8; Corellian Corvette 2, Rebel Transport 4, Mon Calamari Cruiser 4; X-wing, Y-wing and TIE Fighter 0. Rebel values and the other Rebel faction sheet stats still have to be checked against the physical sheet.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 14,
+        "section": "Transport Capacity"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 4,
+        "section": "Imperial Player's Components (faction sheet illustration)"
+      }
+    ],
+    "rationale": "The rules say capacity is printed on the faction sheet but give no numbers in text. The Imperial values were read from the faction sheet illustration (LTP p.4) in SWR-005; the Rebel values come from a fan data set only, because the Rebel sheet values are not readable in the text layer.",
+    "discrepancyIds": ["DISC-014"],
+    "related": ["rebellion:command.transport.capacity"],
+    "appliesTo": {
+      "commands": ["MOVE_PIECES"]
+    },
+    "ai": "none"
+  }
+]

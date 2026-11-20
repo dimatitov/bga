@@ -1,0 +1,440 @@
+[
+  {
+    "id": "rebellion:round.structure",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "round",
+    "title": "Game round: Assignment, Command, Refresh",
+    "text": "The game is a series of rounds, each with three phases in order: Assignment (leaders go on missions), Command (players alternate turns) and Refresh (cleanup, time advances), until one side wins.",
+    "sources": [
+      {
+        "sourceId": "LTP",
+        "page": 6,
+        "section": "Playing the Game"
+      },
+      {
+        "sourceId": "RR",
+        "page": 13,
+        "section": "Rounds"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 20,
+        "section": "Quick Reference: Round Summary"
+      }
+    ],
+    "related": ["rebellion:round.rr-activation-phase-typo", "rebellion:refresh.steps"],
+    "appliesTo": {
+      "phases": ["assignment", "command", "refresh"]
+    },
+    "ai": "core",
+    "keywords": ["раунд", "фазы раунда", "структура раунда"]
+  },
+  {
+    "id": "rebellion:round.rr-activation-phase-typo",
+    "kind": "interpretation",
+    "status": "verified",
+    "product": "base",
+    "category": "round",
+    "title": "\"Activation Phase\" in the Rounds entry means the Assignment Phase",
+    "text": "The Rounds glossary entry names the first phase of a round \"Activation Phase\". This is read as the Assignment Phase; there is no separate activation phase, systems are activated during the Command Phase.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 13,
+        "section": "Rounds"
+      },
+      {
+        "sourceId": "RR",
+        "page": 3,
+        "section": "Assignment Phase"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 6,
+        "section": "Playing the Game"
+      }
+    ],
+    "rationale": "Every other place (LTP p.6 round overview, LTP p.20 quick reference, the RR Assignment Phase entry and the Rounds entry's own related topics) lists Assignment, Command and Refresh; activating systems is a Command Phase action (RR p.6).",
+    "amends": ["rebellion:round.structure"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:assignment.order",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "assignment",
+    "title": "Assigning leaders to missions",
+    "text": "The Rebel player assigns first, then the Imperial player. To assign, a player puts a mission card from his hand facedown near his faction sheet and places one or two leaders from his pool on it (two are allowed even if not required). Missions are not revealed now. Unassigned leaders stay in the pool for the Command Phase.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 3,
+        "section": "Assignment Phase"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 6,
+        "section": "1. Assignment Phase"
+      }
+    ],
+    "related": ["rebellion:missions.reveal-steps"],
+    "appliesTo": {
+      "phases": ["assignment"]
+    },
+    "keywords": ["назначение", "фаза назначения", "миссии"]
+  },
+  {
+    "id": "rebellion:assignment.extra-leader-by-ability",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "assignment",
+    "title": "Adding a second leader when an ability assigns one",
+    "text": "If a card assigns a leader to a mission during the Assignment Phase, the player may also assign a second leader from his pool to it. If the ability is used during the Command Phase, no additional leader can be assigned at that time.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 4,
+        "section": "Mission and Action Cards"
+      }
+    ],
+    "amends": ["rebellion:assignment.order"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:command.turn-order",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "Command Phase turn order",
+    "text": "The Rebels take the first Command Phase turn, then the players alternate. A turn is activating a system with a pool leader or revealing an assigned mission; instead of a turn a player may pass.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Command Phase"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "2. Command Phase"
+      }
+    ],
+    "related": ["rebellion:command.pass", "rebellion:command.activate.place-leader"],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["ACTIVATE_SYSTEM", "PASS"]
+    },
+    "ai": "core",
+    "keywords": ["порядок хода", "кто ходит первым", "фаза приказов", "first turn"]
+  },
+  {
+    "id": "rebellion:command.pass",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "Passing",
+    "text": "A player may pass. Then he cannot activate systems or reveal missions for the rest of this Command Phase and his turns are skipped while the other player continues. When both have passed, the Refresh Phase begins.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Command Phase",
+        "quote": "A player may choose to pass at any time during the Command Phase."
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "2. Command Phase"
+      }
+    ],
+    "related": [
+      "rebellion:command.pass-is-not-action",
+      "rebellion:command.pass-not-mid-activation"
+    ],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["PASS"]
+    },
+    "ai": "core",
+    "keywords": ["пас", "пасовать", "конец фазы приказов"]
+  },
+  {
+    "id": "rebellion:command.pass-is-not-action",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "Passing replaces a turn",
+    "text": "Passing is not an action: a player passes instead of taking his turn.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 5,
+        "section": "Miscellaneous",
+        "quote": "A player passes instead of taking his turn."
+      }
+    ],
+    "amends": ["rebellion:command.pass"]
+  },
+  {
+    "id": "rebellion:command.pass-not-mid-activation",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "command",
+    "title": "No passing in the middle of an activation",
+    "text": "A player cannot pass while his own activation of a system is still being resolved; he finishes the activation first and may pass on a later turn.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Command Phase"
+      },
+      {
+        "sourceId": "FAQ",
+        "page": 5,
+        "section": "Miscellaneous"
+      }
+    ],
+    "rationale": "RR p.6 says a player may pass \"at any time\", but the FAQ (p.5) defines passing as something done instead of taking a turn, and activating a system is that turn (RR p.2, p.6). Reading both together, a started activation is a turn already taken. Low risk; confirm with the publisher's rulings if a dispute arises.",
+    "related": ["rebellion:command.pass", "rebellion:command.activate.steps"],
+    "discrepancyIds": ["DISC-012"],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["PASS", "FINISH_ACTIVATION"]
+    }
+  },
+  {
+    "id": "rebellion:command.passed-player-still-reacts",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "A passed player can still oppose and defend",
+    "text": "After passing, a player may still send leaders from his pool to oppose enemy missions and may add a leader from his pool in the first step of a combat.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Command Phase"
+      }
+    ],
+    "related": ["rebellion:missions.reveal-steps", "rebellion:combat.steps"]
+  },
+  {
+    "id": "rebellion:command.unrevealed-missions-return",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "Unrevealed missions return at the end of the phase",
+    "text": "A player does not have to reveal a mission he assigned leaders to. At the end of the Command Phase, leaders still on mission cards go back to the leader pool and those cards return to the hand unrevealed.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Command Phase"
+      }
+    ],
+    "related": ["rebellion:refresh.retrieve-leaders"]
+  },
+  {
+    "id": "rebellion:command.leader-anywhere-in-system",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "command",
+    "title": "A leader in a system takes part in everything there",
+    "text": "Where exactly a leader stands inside a system does not matter: it participates in all missions, space battles and ground battles in that system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 6,
+        "section": "Command Phase"
+      }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:command.activate.place-leader",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "activation",
+    "title": "Activate a system by placing a leader",
+    "text": "To activate a system the player takes one leader from his own leader pool and places it in any system on the map. Activation is how units move and combats start.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Activate a System"
+      }
+    ],
+    "related": [
+      "rebellion:command.activate.steps",
+      "rebellion:command.activate.tactic-values-required"
+    ],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["ACTIVATE_SYSTEM"]
+    },
+    "ai": "core",
+    "keywords": ["активация", "активировать систему", "поставить лидера"]
+  },
+  {
+    "id": "rebellion:command.activate.steps",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "activation",
+    "title": "Steps of an activation",
+    "text": "Five steps: 1 place the leader; 2 move own units in from adjacent systems; 3 reveal the base if Imperial ground units moved into its system; 4 combat if both sides share a theater; 5 subjugate if an Imperial ground unit is in a system without Imperial loyalty.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      }
+    ],
+    "related": [
+      "rebellion:command.activate.place-leader",
+      "rebellion:command.move.into-activated-from-adjacent",
+      "rebellion:base.reveal-timing",
+      "rebellion:combat.trigger",
+      "rebellion:loyalty.subjugation"
+    ],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["ACTIVATE_SYSTEM", "MOVE_PIECES", "FINISH_ACTIVATION"]
+    },
+    "ai": "core",
+    "keywords": ["шаги активации"]
+  },
+  {
+    "id": "rebellion:command.activate.tactic-values-required",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "activation",
+    "title": "Only leaders with tactic values can activate",
+    "text": "A leader that has no tactic values cannot be used to activate a system. Such a leader still stops its own side's units from leaving the system it stands in.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      },
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Activate a System"
+      }
+    ],
+    "related": [
+      "rebellion:leaders.mon-mothma-no-tactics",
+      "rebellion:command.move.own-leader-locks"
+    ],
+    "appliesTo": {
+      "commands": ["ACTIVATE_SYSTEM"]
+    },
+    "keywords": ["тактические значения", "лидер без тактики"]
+  },
+  {
+    "id": "rebellion:command.activate.system-with-leader",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "activation",
+    "title": "A system that already holds a leader can be activated",
+    "text": "A player may activate a system that already contains a leader.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems",
+        "quote": "A system that already contains a leader can be activated."
+      }
+    ],
+    "related": [
+      "rebellion:command.activate.own-leader-system",
+      "rebellion:command.move.own-leader-locks"
+    ],
+    "appliesTo": {
+      "commands": ["ACTIVATE_SYSTEM"]
+    }
+  },
+  {
+    "id": "rebellion:command.activate.own-leader-system",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "activation",
+    "title": "Activating a system that holds one's own leader",
+    "text": "A player may activate a system where his own leader already stands (e.g. from an earlier activation); units may still move in from adjacent systems without his leaders.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      }
+    ],
+    "rationale": "RR p.2 allows activating a system that already contains \"a leader\" without restricting whose leader it is; the own-leader restriction only forbids moving units out of such a system, and in an activation units move into the activated system. Literal reading, not confirmed by the FAQ.",
+    "related": ["rebellion:command.activate.system-with-leader"],
+    "appliesTo": {
+      "commands": ["ACTIVATE_SYSTEM"]
+    }
+  },
+  {
+    "id": "rebellion:command.activate.zero-units",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "activation",
+    "title": "An activation may move no units",
+    "text": "A player may place a leader to activate a system and then move zero units into it.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "Movement"
+      }
+    ],
+    "amends": ["rebellion:command.activate.steps"],
+    "appliesTo": {
+      "commands": ["FINISH_ACTIVATION", "MOVE_PIECES"]
+    }
+  },
+  {
+    "id": "rebellion:command.activate.overflow",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "activation",
+    "title": "Not enough room in a system",
+    "text": "If the moving units do not physically fit in the activated system, they are placed near its border and moved in after combat ends.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      }
+    ],
+    "ai": "none"
+  }
+]

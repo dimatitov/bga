@@ -1,0 +1,1830 @@
+{
+  "engine": "core-v1",
+  "items": [
+    {
+      "ruleId": "rebellion:combat.trigger",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.steps",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.round",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.end",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.attack",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.damage",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.theater",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.retreat",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.retreat-limits",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:combat.winning-battle",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1."
+    },
+    {
+      "ruleId": "rebellion:leaders.overview",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "validateActivate"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/helpers.ts",
+          "symbol": "hasOwnLeaderIn"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/activate.test.ts",
+          "name": "places an own pool leader in any system"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "pinnedByLeader: own leader in the source system"
+        }
+      ],
+      "discrepancyIds": ["DISC-001", "DISC-002"],
+      "note": "Leaders activate and lock systems; missions, opposition and combat roles are missing."
+    },
+    {
+      "ruleId": "rebellion:leaders.starting",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreLeaders"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has the 8 starting leaders; only Mon Mothma cannot activate"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "copies the static data and only the starting leaders"
+        }
+      ],
+      "discrepancyIds": ["DISC-011"],
+      "note": "D-7: only the starting leaders exist."
+    },
+    {
+      "ruleId": "rebellion:leaders.skills",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:leaders.luke-jedi",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-011"]
+    },
+    {
+      "ruleId": "rebellion:leaders.eliminated",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:leaders.attachment-rings",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:leaders.captured",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:leaders.carbonite",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:leaders.rescue",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002", "DISC-001"]
+    },
+    {
+      "ruleId": "rebellion:units.roster",
+      "status": "not-applicable",
+      "note": "All 18 unit types exist as data, but no unit is ever created, so box counts cannot matter in core-v1 (DISC-015)."
+    },
+    {
+      "ruleId": "rebellion:units.ships",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has 18 types (9 per side, incl. the Super Star Destroyer)"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "sets capacity, arena, mobility and the transport restriction"
+        }
+      ],
+      "note": "Arena space for ships; capital/fighter distinction matters only for combat (D-1).",
+      "discrepancyIds": ["DISC-001"]
+    },
+    {
+      "ruleId": "rebellion:units.ground",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "sets capacity, arena, mobility and the transport restriction"
+        }
+      ],
+      "note": "Arena ground for ground units."
+    },
+    {
+      "ruleId": "rebellion:units.structures",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "validateMove"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "unknownPiece, notOwner, notInFromSystem, immobileUnit"
+        }
+      ],
+      "discrepancyIds": ["DISC-001"],
+      "note": "Immobile; combat abilities need combat (D-1)."
+    },
+    {
+      "ruleId": "rebellion:units.attack-health",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001", "DISC-014"]
+    },
+    {
+      "ruleId": "rebellion:units.destroyed",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"]
+    },
+    {
+      "ruleId": "rebellion:map.systems",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/map.ts",
+          "symbol": "coreSystems"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has exactly 32 systems with unique kebab-case ids"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "is connected (BFS reaches all 32 systems)"
+        }
+      ],
+      "note": "\"Closest system\" effects need card abilities (not used in core-v1)."
+    },
+    {
+      "ruleId": "rebellion:map.regions",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/map.ts",
+          "symbol": "coreRegions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has 8 regions r1..r8, 4 systems each"
+        }
+      ],
+      "discrepancyIds": ["DISC-016"],
+      "note": "Region ids r1..r8; names unofficial."
+    },
+    {
+      "ruleId": "rebellion:map.populous-remote",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/map.ts",
+          "symbol": "coreSystems"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "marks exactly the 8 remote systems"
+        }
+      ],
+      "discrepancyIds": ["DISC-005"],
+      "note": "Remote flag stored; loyalty and deployment consequences missing."
+    },
+    {
+      "ruleId": "rebellion:map.resource-icons",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:map.destroyed-systems",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:loyalty.basics",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-005"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:loyalty.system-types",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-005"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:loyalty.subjugation",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-005"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:general.golden-rules.precedence",
+      "status": "not-applicable",
+      "note": "Governs how the rules are read; no engine behaviour."
+    },
+    {
+      "ruleId": "rebellion:general.golden-rules.cannot",
+      "status": "not-applicable",
+      "note": "No card abilities in core-v1."
+    },
+    {
+      "ruleId": "rebellion:general.cheating",
+      "status": "not-applicable",
+      "note": "The server validates every command and hides secrets, so cheating is impossible rather than punished."
+    },
+    {
+      "ruleId": "rebellion:general.current-player",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "handOver"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/apply.ts",
+          "symbol": "applyCoreCommand"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "the other side, hot-seat handoff"
+        }
+      ],
+      "note": "activeSide is the current player."
+    },
+    {
+      "ruleId": "rebellion:general.component-limits",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-015"]
+    },
+    {
+      "ruleId": "rebellion:general.dice",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001", "DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:general.discarding",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:missions.reveal-requirement",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.reveal-steps",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.unopposed",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.opposition-dice",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.against-leader",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.leader-removed",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.rebel-base-space",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.starting",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:missions.projects",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:cards.action",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:cards.objectives",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-004"]
+    },
+    {
+      "ruleId": "rebellion:cards.probe",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:cards.tactic",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001"]
+    },
+    {
+      "ruleId": "rebellion:deathstar.rules",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "the Death Star is mobile with capacity 8"
+        }
+      ],
+      "discrepancyIds": ["DISC-001"],
+      "note": "Moves as a ship with capacity 8; health and retreat rules need combat."
+    },
+    {
+      "ruleId": "rebellion:deathstar.build",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:deathstar.destroy",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001", "DISC-004"]
+    },
+    {
+      "ruleId": "rebellion:deathstar.superlaser",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2."
+    },
+    {
+      "ruleId": "rebellion:command.move.into-activated-from-adjacent",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "validateMove"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/legal.ts",
+          "symbol": "coreLegalActions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "moves own units into the activated system; the activation continues"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "unknownSystem (from, then to), notActivatedSystem, sameSystem, notAdjacent"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/legal.test.ts",
+          "name": "one MOVE_PIECES per adjacent source without an own leader with movable units"
+        }
+      ],
+      "note": "R-5: only into the activated system, only from adjacent systems, several sources allowed (one per command, DISC-013)."
+    },
+    {
+      "ruleId": "rebellion:command.move.own-leader-locks",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/helpers.ts",
+          "symbol": "hasOwnLeaderIn"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "validateMove"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "pinnedByLeader: own leader in the source system"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "an enemy leader in the source system does not pin"
+        }
+      ],
+      "note": "R-5: own leader locks the source system; the Rebel Base space exception is a deviation (D-6, DISC-008); captured leaders do not exist yet."
+    },
+    {
+      "ruleId": "rebellion:command.move.adjacency",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/map.ts",
+          "symbol": "coreSystems"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "validateMove"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has exactly the 69 undirected edges"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "does not connect Mustafar and Utapau"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "unknownSystem (from, then to), notActivatedSystem, sameSystem, notAdjacent"
+        }
+      ],
+      "discrepancyIds": ["DISC-016"],
+      "note": "R-5: adjacency from map data; Mustafar-Utapau to verify with the box."
+    },
+    {
+      "ruleId": "rebellion:command.move.immobile",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "validateMove"
+        },
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "unknownPiece, notOwner, notInFromSystem, immobileUnit"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "sets capacity, arena, mobility and the transport restriction"
+        }
+      ],
+      "note": "R-5: structures and the Death Star Under Construction are immobile."
+    },
+    {
+      "ruleId": "rebellion:command.move.abilities-follow-rules",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "No card abilities in core-v1."
+    },
+    {
+      "ruleId": "rebellion:command.move.combat-trigger",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "applyMove"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "into a system with enemy units: allowed, contested, no combat"
+        }
+      ],
+      "discrepancyIds": ["DISC-001"],
+      "note": "D-1: moving into enemy units is allowed but starts no combat."
+    },
+    {
+      "ruleId": "rebellion:command.transport.capacity",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "transportNeeds"
+        },
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "SD (6) + exactly 6 units needing a place"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "capacities of the ships of one command add up"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "Rebel catalogue: CC (2) + 2 RT legal"
+        }
+      ],
+      "discrepancyIds": ["DISC-013", "DISC-014"],
+      "note": "R-5: one shared capacity per MOVE_PIECES command (UX limit DISC-013); Rebel capacities to verify (DISC-014)."
+    },
+    {
+      "ruleId": "rebellion:command.transport.restriction-icon",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "transportNeeds"
+        },
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "restrictedFighter"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "ground units and TIE fighters share the places"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "X-wing / Y-wing need no place; a lone TIE does"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "a ship staying behind gives no capacity"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "a ship that arrived earlier gives no capacity to a later move"
+        }
+      ],
+      "note": "R-5: requiresTransport units move only with carriers leaving the same system in the same command."
+    },
+    {
+      "ruleId": "rebellion:base.secret-location",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/base.ts",
+          "symbol": "chooseRebelBase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/base.test.ts",
+          "name": "golden: sessionId"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "base = chooseRebelBase(gameId, eligible) among eligible systems"
+        }
+      ],
+      "discrepancyIds": ["DISC-007"],
+      "note": "R-10 / D-4: hidden base chosen by the engine, not by the Rebel player."
+    },
+    {
+      "ruleId": "rebellion:base.space-not-system",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "unit ids follow the data order and never depend on the base; base units stand in the base"
+        }
+      ],
+      "discrepancyIds": ["DISC-008"],
+      "note": "D-6: units \"on the Rebel Base space\" stand in the base system."
+    },
+    {
+      "ruleId": "rebellion:base.move-from-space",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/movement.ts",
+          "symbol": "validateMove"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "from the base system by the same rules"
+        }
+      ],
+      "discrepancyIds": ["DISC-008"],
+      "note": "D-6: base units move like any units in the base system."
+    },
+    {
+      "ruleId": "rebellion:base.activate-space",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "validateActivate"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "the Rebels finishing an activation of their own base never reveal it"
+        }
+      ],
+      "discrepancyIds": ["DISC-008"],
+      "note": "D-6: there is no separate space; activating the base system plays its role."
+    },
+    {
+      "ruleId": "rebellion:base.leader-in-space-locks",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/helpers.ts",
+          "symbol": "hasOwnLeaderIn"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "pinnedByLeader: own leader in the source system"
+        }
+      ],
+      "discrepancyIds": ["DISC-008"],
+      "note": "D-6: a Rebel leader in the base system locks every unit there."
+    },
+    {
+      "ruleId": "rebellion:base.reveal-condition",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/victory.ts",
+          "symbol": "revealsBaseNow"
+        },
+        {
+          "path": "packages/games/rebellion/src/schema/data.ts",
+          "symbol": "unitTypeRevealsRebelBase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "an Imperial ground unit already standing in the base reveals it when the base is activated"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "a leader alone does not reveal"
+        }
+      ],
+      "discrepancyIds": ["DISC-009", "DISC-005"],
+      "note": "R-8: checked at the end of Imperial activations only (latent gap DISC-009); Imperial loyalty does not exist (DISC-005)."
+    },
+    {
+      "ruleId": "rebellion:base.reveal-timing",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "applyFinishActivation"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/victory.ts",
+          "symbol": "revealsBaseNow"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "ground units moved into the base reveal it only at FINISH_ACTIVATION"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "only when the activated system is the base"
+        }
+      ],
+      "note": "R-8: reveal after all movement of the Imperial activation (no combat exists yet, D-1)."
+    },
+    {
+      "ruleId": "rebellion:base.ships-do-not-reveal",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/schema/data.ts",
+          "symbol": "unitTypeRevealsRebelBase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "ships, TIE fighters and the Death Star do not reveal"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "derives base reveal only for Imperial ground units"
+        }
+      ],
+      "note": "R-8: only Imperial ground units reveal."
+    },
+    {
+      "ruleId": "rebellion:base.reveal-procedure",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/victory.ts",
+          "symbol": "revealBase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "reveal with no Rebel unit in the base"
+        }
+      ],
+      "discrepancyIds": ["DISC-008"],
+      "note": "R-8 / D-6: the base becomes public (BASE_REVEALED); units are already in the system."
+    },
+    {
+      "ruleId": "rebellion:base.voluntary-reveal",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-006"],
+      "note": "D-4."
+    },
+    {
+      "ruleId": "rebellion:base.after-reveal",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003", "DISC-008"],
+      "note": "No building or deployment; no separate space (D-6)."
+    },
+    {
+      "ruleId": "rebellion:base.new-base",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:refresh.steps",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "endCommandPhase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "refresh and a new round in the same command"
+        }
+      ],
+      "discrepancyIds": ["DISC-003"],
+      "note": "R-7 / D-3: only steps 1 and 5 (time)."
+    },
+    {
+      "ruleId": "rebellion:refresh.retrieve-leaders",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "endCommandPhase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "refresh: all leaders back in state.leaders order, units untouched, time + 1"
+        }
+      ],
+      "note": "R-7 step 1 (no mission cards to return in core-v1)."
+    },
+    {
+      "ruleId": "rebellion:refresh.draw-missions",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"],
+      "note": "D-3."
+    },
+    {
+      "ruleId": "rebellion:refresh.probe-droids",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"],
+      "note": "D-3."
+    },
+    {
+      "ruleId": "rebellion:refresh.draw-objective",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003", "DISC-004"],
+      "note": "D-3."
+    },
+    {
+      "ruleId": "rebellion:refresh.advance-time",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "endCommandPhase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "refresh: all leaders back in state.leaders order, units untouched, time + 1"
+        }
+      ],
+      "discrepancyIds": ["DISC-003", "DISC-018"],
+      "note": "R-7 step 5: time +1 only; recruit/build icons ignored (D-3, D-7)."
+    },
+    {
+      "ruleId": "rebellion:refresh.deploy-step",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"],
+      "note": "D-3."
+    },
+    {
+      "ruleId": "rebellion:build.build-units",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:build.blocked-by-enemy",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:build.rebel-base-icons",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:build.rebel-choices",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:build.sabotage",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002", "DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:deploy.deploy-units",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:deploy.restrictions",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:deploy.rebel-base-space",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003", "DISC-008"]
+    },
+    {
+      "ruleId": "rebellion:deploy.gain-units",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:deploy.subjugated-not-for-rebels",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003", "DISC-005"]
+    },
+    {
+      "ruleId": "rebellion:recruit.procedure",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003", "DISC-011"],
+      "note": "D-3, D-7."
+    },
+    {
+      "ruleId": "rebellion:recruit.restrictions",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-011"]
+    },
+    {
+      "ruleId": "rebellion:recruit.first-game",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-011"]
+    },
+    {
+      "ruleId": "rebellion:round.structure",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "endCommandPhase"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "refresh and a new round in the same command"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "the assignment phase passes automatically"
+        }
+      ],
+      "discrepancyIds": ["DISC-002"],
+      "note": "R-2/R-3/R-7: assignment -> command -> refresh loop exists; the Assignment Phase is empty (D-2)."
+    },
+    {
+      "ruleId": "rebellion:assignment.order",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"],
+      "note": "D-2: the Assignment Phase passes automatically."
+    },
+    {
+      "ruleId": "rebellion:command.turn-order",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "handOver"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "starts in the command phase of round 1 with the Rebels to act"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "the other side, hot-seat handoff"
+        }
+      ],
+      "note": "R-3: Rebels first, then alternating. The reveal-a-mission turn option belongs to the missions rules (DISC-002).",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:command.pass",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "applyPass"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/legal.ts",
+          "symbol": "coreLegalActions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "passed.rebels, the other side, handoff; the phase continues"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "a side that passed has no turn and no legal actions"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "Rebels passed: the Empire acts in consecutive turns without handoff"
+        }
+      ],
+      "discrepancyIds": ["DISC-012"],
+      "note": "R-3/R-6: a pass lasts until the end of the Command Phase; the phase ends when both passed. PASS during an own activation is rejected (interpretation, DISC-012)."
+    },
+    {
+      "ruleId": "rebellion:command.passed-player-still-reacts",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001", "DISC-002"],
+      "note": "Needs mission opposition and combat."
+    },
+    {
+      "ruleId": "rebellion:command.unrevealed-missions-return",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:command.leader-anywhere-in-system",
+      "status": "not-applicable",
+      "note": "Physical placement inside a system; the engine stores a leader per system."
+    },
+    {
+      "ruleId": "rebellion:command.activate.place-leader",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "validateActivate"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "applyActivate"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/activate.test.ts",
+          "name": "places an own pool leader in any system"
+        }
+      ],
+      "note": "R-4: own pool leader into any system of the map."
+    },
+    {
+      "ruleId": "rebellion:command.activate.steps",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/apply.ts",
+          "symbol": "applyCoreCommand"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "applyFinishActivation"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "moves own units into the activated system; the activation continues"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "ground units moved into the base reveal it only at FINISH_ACTIVATION"
+        }
+      ],
+      "discrepancyIds": ["DISC-001", "DISC-005"],
+      "note": "R-4/R-5/R-8: steps 1-3 (place leader, move, reveal at FINISH_ACTIVATION); step 4 combat (D-1) and step 5 subjugation (D-5) missing."
+    },
+    {
+      "ruleId": "rebellion:command.activate.tactic-values-required",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "validateActivate"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/legal.ts",
+          "symbol": "coreLegalActions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/activate.test.ts",
+          "name": "legal actions: ACTIVATE_SYSTEM = own pool leaders that can activate"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "with only Mon Mothma left they can only pass"
+        }
+      ],
+      "note": "R-4: leaderCannotActivate; which leaders lack tactic values is data (DISC-017)."
+    },
+    {
+      "ruleId": "rebellion:command.activate.system-with-leader",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "validateActivate"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/activate.test.ts",
+          "name": "a system with an own leader may be activated again"
+        }
+      ],
+      "note": "R-4 (Q-BE-3): systems with leaders of either side can be activated."
+    },
+    {
+      "ruleId": "rebellion:command.activate.overflow",
+      "status": "not-applicable",
+      "note": "Physical space on the board; not relevant to a digital engine."
+    },
+    {
+      "ruleId": "rebellion:setup.factions",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "Rebels act first also when the AI plays the Rebels"
+        }
+      ],
+      "note": "The faction choice is part of the game settings."
+    },
+    {
+      "ruleId": "rebellion:setup.time-track",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "starts with time 1 and reputation 14"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "starts in the command phase of round 1 with the Rebels to act"
+        }
+      ],
+      "note": "R-1: time 1, reputation 14."
+    },
+    {
+      "ruleId": "rebellion:setup.decks",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002", "DISC-010"]
+    },
+    {
+      "ruleId": "rebellion:setup.standard-loyalty",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-010", "DISC-005"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:setup.standard-imperial-units",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-010"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:setup.standard-rebel-units",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-010"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:setup.starting-action-cards",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-011"]
+    },
+    {
+      "ruleId": "rebellion:setup.base-choice",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/base.ts",
+          "symbol": "chooseRebelBase"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "base = chooseRebelBase(gameId, eligible) among eligible systems"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/base.test.ts",
+          "name": "is deterministic, independent of the input order"
+        }
+      ],
+      "discrepancyIds": ["DISC-007"],
+      "note": "R-10 / D-4: chosen by the engine from the game id."
+    },
+    {
+      "ruleId": "rebellion:setup.base-choice-restrictions",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/schema/data.ts",
+          "symbol": "eligibleRebelBaseSystemIds"
+        },
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "derives the eligible rebel base systems (R-10)"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "lists Coruscant and the 5 removed probe cards as base-ineligible"
+        }
+      ],
+      "discrepancyIds": ["DISC-007"],
+      "note": "R-10: official first game limits plus the extra Bothawui exclusion."
+    },
+    {
+      "ruleId": "rebellion:setup.starting-hand",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:setup.first-game-or-standard",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "places units exactly as"
+        }
+      ],
+      "discrepancyIds": ["DISC-010"],
+      "note": "D-5 / R-10: always the first game setup."
+    },
+    {
+      "ruleId": "rebellion:setup.first-game-rebels",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "places units exactly as"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "totals of both sides"
+        }
+      ],
+      "discrepancyIds": ["DISC-005"],
+      "note": "D-5: units and removed probe cards match; Rebel loyalty markers are not placed."
+    },
+    {
+      "ruleId": "rebellion:setup.first-game-empire",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "places units exactly as"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "totals of both sides"
+        }
+      ],
+      "discrepancyIds": ["DISC-005"],
+      "note": "D-5: units match; Imperial loyalty and subjugation markers are not placed."
+    },
+    {
+      "ruleId": "rebellion:victory.empire",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/victory.ts",
+          "symbol": "empireCapturedBase"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/victory.ts",
+          "symbol": "checkEmpireVictory"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "reveal with no Rebel unit in the base"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "any remaining Rebel unit (ship, structure, ground) prevents it"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "checked after a Rebel move: the last Rebel units leave the revealed base"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "any Imperial unit suffices"
+        }
+      ],
+      "note": "R-9: revealed base, at least one Imperial unit, no Rebel unit; checked immediately. The Death Star route needs missions (DISC-002)."
+    },
+    {
+      "ruleId": "rebellion:victory.rebels",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "endCommandPhase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "TIME_ADVANCED then GAME_OVER, phase refresh, no new round"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/victory.test.ts",
+          "name": "the game goes on"
+        }
+      ],
+      "discrepancyIds": ["DISC-004"],
+      "note": "R-9: time reaches reputation (timeReachedReputation); reputation never moves without objectives (DISC-004)."
+    },
+    {
+      "ruleId": "rebellion:victory.time-track",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "endCommandPhase"
+        },
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "refresh: all leaders back in state.leaders order, units untouched, time + 1"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "starts with time 1 and reputation 14"
+        }
+      ],
+      "note": "R-1/R-7: time starts at 1 and advances once per round."
+    },
+    {
+      "ruleId": "rebellion:victory.reputation",
+      "status": "partial",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/start-setup.ts",
+          "symbol": "coreStartSetup"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "starts with time 1 and reputation 14"
+        }
+      ],
+      "discrepancyIds": ["DISC-004"],
+      "note": "Starts on 14; gains and losses need objectives and missions."
+    },
+    {
+      "ruleId": "rebellion:round.rr-activation-phase-typo",
+      "status": "not-applicable",
+      "note": "Reading of the RR text; the engine uses the phases assignment, command, refresh."
+    },
+    {
+      "ruleId": "rebellion:command.pass-is-not-action",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "applyPass"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/apply.ts",
+          "symbol": "applyCoreCommand"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "PASS during an activation"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "passed.rebels, the other side, handoff; the phase continues"
+        }
+      ],
+      "note": "R-6: PASS is a whole turn (only without a running activation)."
+    },
+    {
+      "ruleId": "rebellion:command.pass-not-mid-activation",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/apply.ts",
+          "symbol": "applyCoreCommand"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/legal.ts",
+          "symbol": "coreLegalActions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "PASS during an activation"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/legal.test.ts",
+          "name": "one MOVE_PIECES per adjacent source without an own leader with movable units"
+        }
+      ],
+      "discrepancyIds": ["DISC-012"],
+      "note": "R-6: PASS during an own activation returns activationInProgress; interpretation, needs-review (DISC-012)."
+    },
+    {
+      "ruleId": "rebellion:command.activate.own-leader-system",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/activation.ts",
+          "symbol": "validateActivate"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/activate.test.ts",
+          "name": "a system with an own leader may be activated again"
+        }
+      ],
+      "note": "R-4 (Q-BE-3): literal reading implemented."
+    },
+    {
+      "ruleId": "rebellion:command.activate.zero-units",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/turn-flow.ts",
+          "symbol": "applyFinishActivation"
+        },
+        {
+          "path": "packages/games/rebellion/src/rules/core/legal.ts",
+          "symbol": "coreLegalActions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/legal.test.ts",
+          "name": "only FINISH_ACTIVATION when nothing can move"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "activation + finish"
+        }
+      ],
+      "note": "FINISH_ACTIVATION is legal without any MOVE_PIECES."
+    },
+    {
+      "ruleId": "rebellion:command.move.no-enemy-pinning",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/helpers.ts",
+          "symbol": "hasOwnLeaderIn"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "an enemy leader in the source system does not pin"
+        }
+      ],
+      "note": "R-5: only own leaders lock; interpretation, needs-review."
+    },
+    {
+      "ruleId": "rebellion:command.move.rapid-mobilization-locked",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:command.move.base-space-leader-missions",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002", "DISC-008"]
+    },
+    {
+      "ruleId": "rebellion:units.faction-sheet-values",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreUnitTypes"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "sets capacity, arena, mobility and the transport restriction"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/move.test.ts",
+          "name": "Rebel catalogue: CC (2) + 2 RT legal"
+        }
+      ],
+      "discrepancyIds": ["DISC-014"],
+      "note": "Values are in the data; Rebel values to verify with the box (DISC-014)."
+    },
+    {
+      "ruleId": "rebellion:base.units-on-space",
+      "status": "deviation",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/rules/core/create.ts",
+          "symbol": "createCoreGame"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/create.test.ts",
+          "name": "unit ids follow the data order and never depend on the base; base units stand in the base"
+        }
+      ],
+      "discrepancyIds": ["DISC-008"],
+      "note": "D-6: base units stand in the base system (hidden), not outside every system."
+    },
+    {
+      "ruleId": "rebellion:base.death-star-does-not-reveal",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/schema/data.ts",
+          "symbol": "unitTypeRevealsRebelBase"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/rules/core/reveal.test.ts",
+          "name": "ships, TIE fighters and the Death Star do not reveal"
+        },
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "derives base reveal only for Imperial ground units"
+        }
+      ],
+      "note": "R-8: only Imperial ground units reveal."
+    },
+    {
+      "ruleId": "rebellion:base.voluntary-reveal-timing",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-006"],
+      "note": "D-4: no voluntary reveal."
+    },
+    {
+      "ruleId": "rebellion:base.voluntary-reveal-after-pass",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-006"],
+      "note": "D-4: no voluntary reveal."
+    },
+    {
+      "ruleId": "rebellion:base.voluntary-reveal-combat",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-006", "DISC-001"]
+    },
+    {
+      "ruleId": "rebellion:base.deploy-when-revealed",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:victory.superlaser-hidden-base",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:victory.empire-first-in-same-step",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-001", "DISC-004"]
+    },
+    {
+      "ruleId": "rebellion:refresh.time-track-icons",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-018", "DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:build.fewer-units",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:build.sabotage-wording",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:recruit.card-choice",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-011"]
+    },
+    {
+      "ruleId": "rebellion:setup.rebel-units-errata",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-010"],
+      "note": "D-5: standard setup not available (first game placement only)."
+    },
+    {
+      "ruleId": "rebellion:setup.coruscant-placement",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-010"],
+      "note": "Standard setup not available; the first game setup does place Imperial units on Coruscant."
+    },
+    {
+      "ruleId": "rebellion:map.region-names",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/map.ts",
+          "symbol": "coreRegions"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has 8 regions r1..r8, 4 systems each"
+        }
+      ],
+      "discrepancyIds": ["DISC-016"],
+      "note": "Neutral ids r1..r8."
+    },
+    {
+      "ruleId": "rebellion:map.mustafar-utapau",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/map.ts",
+          "symbol": "coreSystems"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "does not connect Mustafar and Utapau"
+        }
+      ],
+      "discrepancyIds": ["DISC-016"],
+      "note": "Not adjacent in the data; verify with the box."
+    },
+    {
+      "ruleId": "rebellion:map.resource-icons-on-queue",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-003"]
+    },
+    {
+      "ruleId": "rebellion:map.destroyed-systems-faq",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:loyalty.neutral-errata",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-005"],
+      "note": "D-5."
+    },
+    {
+      "ruleId": "rebellion:leaders.mon-mothma-no-tactics",
+      "status": "implemented",
+      "implementation": [
+        {
+          "path": "packages/games/rebellion/src/scenario/core/catalog.ts",
+          "symbol": "coreLeaders"
+        }
+      ],
+      "tests": [
+        {
+          "path": "packages/games/rebellion/test/scenario/core-data.test.ts",
+          "name": "has the 8 starting leaders; only Mon Mothma cannot activate"
+        },
+        {
+          "path": "packages/games/rebellion/test/rules/core/turn-flow.test.ts",
+          "name": "with only Mon Mothma left they can only pass"
+        }
+      ],
+      "discrepancyIds": ["DISC-017"],
+      "note": "canActivate false; verify with the tokens (DISC-017)."
+    },
+    {
+      "ruleId": "rebellion:leaders.captured-faq",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    },
+    {
+      "ruleId": "rebellion:leaders.lured-not-captured",
+      "status": "not-implemented",
+      "discrepancyIds": ["DISC-002"]
+    }
+  ]
+}

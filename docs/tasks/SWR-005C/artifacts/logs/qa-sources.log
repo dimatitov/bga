@@ -1,0 +1,61 @@
+# QA source check (AC-1, TC-S-06) — downloads to a temp dir outside the repo, deleted afterwards
+Fri Nov 20 10:17:04 UTC 2026
+dir: /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/69c2be98-580c-400b-beab-56710898d9e8/scratchpad/qa-dl-56225
+
+== RR https://images-cdn.fantasyflightgames.com/filer_public/d9/76/d97645d4-3973-41b6-ad78-6c9b927d3bc1/sw03_rules_reference_web.pdf
+http_code=200 size=6056794
+HTTP/1.1 200 OK
+Last-Modified: Tue, 22 Mar 2016 20:52:22 GMT
+sha256=0b5af3a28bc4bc29a16f84456ed3a6543bf4d6a141461971e6fb170c6afba35a
+pages(/Type /Page count)=16
+
+== FAQ https://images-cdn.fantasyflightgames.com/filer_public/53/ac/53ac8f34-2d3b-4ec1-bfe8-816811756692/sw03_faq_v2_1.pdf
+http_code=200 size=377091
+HTTP/1.1 200 OK
+Last-Modified: Thu, 09 May 2019 20:46:21 GMT
+sha256=0f6cdcbe9bf50d8afe6d17bfb6d8936d99ea1f060b89bcd9500ce5fafcebd82e
+pages(/Type /Page count)=8
+
+== LTP https://images-cdn.fantasyflightgames.com/filer_public/0b/07/0b07601a-6ac3-4333-ac41-b6d1b9a979da/sw03_learn_to_play_web.pdf
+http_code=200 size=18018407
+HTTP/1.1 200 OK
+Last-Modified: Tue, 22 Mar 2016 20:51:48 GMT
+sha256=b26b98139d694e9f42cb36060ec82fdc3000ab753d29809be03b7bc44d8598fc
+pages(/Type /Page count)=20
+
+== LTP-mirror https://cdn.1j1ju.com/medias/e5/7d/d0-star-wars-rebellion-rulebook.pdf
+http_code=200 size=17707297
+HTTP/2 200 
+last-modified: Fri, 31 Aug 2018 15:12:04 GMT
+sha256=e471220f4130a091c954c7d07696830a281c95bd3dd5f294c552b1a82a29fe16
+pages(/Type /Page count)=0
+
+deleted: /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/69c2be98-580c-400b-beab-56710898d9e8/scratchpad/qa-dl-56225 -> removed
+
+== LTP official re-download for text comparison (pypdf 7.1.1 in a temp venv; script outside the download dir)
+Fri Nov 20 10:19:01 UTC 2026
+sha256=b26b98139d694e9f42cb36060ec82fdc3000ab753d29809be03b7bc44d8598fc
+$ python -I cmp_ltp.py <official ltp.pdf> scratchpad/text/ltp_mirror_1j1ju.txt   (word-level difflib ratio per page)
+official pages 20 mirror pages 20
+p01 official_words=    2 mirror_words=    2 similarity=1.000
+p02 official_words=  413 mirror_words=  413 similarity=1.000
+p03 official_words=  340 mirror_words=  340 similarity=1.000
+p04 official_words=  580 mirror_words=  580 similarity=1.000
+p05 official_words=  751 mirror_words=  751 similarity=1.000
+p06 official_words=  476 mirror_words=  476 similarity=1.000
+p07 official_words=  624 mirror_words=  624 similarity=1.000
+p08 official_words=  780 mirror_words=  780 similarity=1.000
+p09 official_words=  388 mirror_words=  388 similarity=1.000
+p10 official_words=  654 mirror_words=  654 similarity=1.000
+p11 official_words=  359 mirror_words=  359 similarity=1.000
+p12 official_words=  554 mirror_words=  554 similarity=1.000
+p13 official_words=  804 mirror_words=  804 similarity=1.000
+p14 official_words=  846 mirror_words=  846 similarity=1.000
+p15 official_words=  620 mirror_words=  620 similarity=1.000
+p16 official_words=  216 mirror_words=  216 similarity=1.000
+p17 official_words=  488 mirror_words=  488 similarity=1.000
+p18 official_words=  617 mirror_words=  617 similarity=1.000
+p19 official_words=  640 mirror_words=  640 similarity=1.000
+p20 official_words=  590 mirror_words=  590 similarity=1.000
+Result: official LTP (now HTTP 200) has 20 pages and the same text as the 1j1ju mirror on every page; the files differ (sha256 b26b9813...98fc vs e471220f...fe16).
+deleted: /private/tmp/claude-501/-Users-dimatitov-WebstormProjects-Game-automa/69c2be98-580c-400b-beab-56710898d9e8/scratchpad/qa-dl-ltp -> removed

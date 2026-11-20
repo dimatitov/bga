@@ -1,0 +1,837 @@
+{
+  "formatVersion": 1,
+  "gameId": "rebellion",
+  "title": "Star Wars: Rebellion (base game)",
+  "language": "en",
+  "products": ["base"],
+  "excludedProducts": ["rise-of-the-empire"],
+  "categories": [
+    {
+      "id": "general",
+      "title": "General rules and components"
+    },
+    {
+      "id": "round",
+      "title": "Game round"
+    },
+    {
+      "id": "assignment",
+      "title": "Assignment Phase"
+    },
+    {
+      "id": "command",
+      "title": "Command Phase"
+    },
+    {
+      "id": "activation",
+      "title": "Activating systems",
+      "parent": "command"
+    },
+    {
+      "id": "movement",
+      "title": "Moving units",
+      "parent": "command"
+    },
+    {
+      "id": "transport",
+      "title": "Transport capacity",
+      "parent": "movement"
+    },
+    {
+      "id": "missions",
+      "title": "Missions"
+    },
+    {
+      "id": "combat",
+      "title": "Combat"
+    },
+    {
+      "id": "refresh",
+      "title": "Refresh Phase"
+    },
+    {
+      "id": "build-deploy",
+      "title": "Building and deploying units",
+      "parent": "refresh"
+    },
+    {
+      "id": "recruit",
+      "title": "Recruiting leaders",
+      "parent": "refresh"
+    },
+    {
+      "id": "rebel-base",
+      "title": "Rebel base"
+    },
+    {
+      "id": "victory",
+      "title": "Winning the game, time and reputation"
+    },
+    {
+      "id": "leaders",
+      "title": "Leaders"
+    },
+    {
+      "id": "units",
+      "title": "Units"
+    },
+    {
+      "id": "map",
+      "title": "Systems and regions"
+    },
+    {
+      "id": "loyalty",
+      "title": "Loyalty and subjugation",
+      "parent": "map"
+    },
+    {
+      "id": "cards",
+      "title": "Action, objective, probe and tactic cards"
+    },
+    {
+      "id": "death-star",
+      "title": "Death Star"
+    },
+    {
+      "id": "setup",
+      "title": "Setup"
+    }
+  ],
+  "sources": [
+    {
+      "id": "RR",
+      "kind": "rules",
+      "title": "Star Wars: Rebellion — Rules Reference",
+      "publisher": "Fantasy Flight Games",
+      "url": "https://images-cdn.fantasyflightgames.com/filer_public/d9/76/d97645d4-3973-41b6-ad78-6c9b927d3bc1/sw03_rules_reference_web.pdf",
+      "version": "web edition (HTTP Last-Modified 2016-03-22)",
+      "date": "2016-03-22",
+      "retrievedAt": "2026-11-20",
+      "sha256": "0b5af3a28bc4bc29a16f84456ed3a6543bf4d6a141461971e6fb170c6afba35a",
+      "pages": 16,
+      "precedence": 2,
+      "status": "current",
+      "notes": "PDF page numbers equal the printed page numbers (page 2 is printed \"02\"). Golden Rules (p.2): a card overrides the RR, the RR overrides the Learn to Play booklet. Errata in the FAQ change the RR text, therefore FAQ precedence is 1. Team Game paragraphs are out of scope."
+    },
+    {
+      "id": "LTP",
+      "kind": "tutorial",
+      "title": "Star Wars: Rebellion — Learn to Play",
+      "publisher": "Fantasy Flight Games",
+      "url": "https://images-cdn.fantasyflightgames.com/filer_public/0b/07/0b07601a-6ac3-4333-ac41-b6d1b9a979da/sw03_learn_to_play_web.pdf",
+      "version": "web edition (HTTP Last-Modified 2016-03-22)",
+      "date": "2016-03-22",
+      "retrievedAt": "2026-11-20",
+      "sha256": "b26b98139d694e9f42cb36060ec82fdc3000ab753d29809be03b7bc44d8598fc",
+      "pages": 20,
+      "precedence": 3,
+      "status": "current",
+      "mirror": {
+        "url": "https://cdn.1j1ju.com/medias/e5/7d/d0-star-wars-rebellion-rulebook.pdf",
+        "sha256": "e471220f4130a091c954c7d07696830a281c95bd3dd5f294c552b1a82a29fe16",
+        "reason": "Official CDN returned 503 at first retrieval on 2026-11-20; later the same day it returned 200 and QA verified the text is identical page by page (all 20 pages). Entries were authored from this mirror copy."
+      },
+      "notes": "The RR takes precedence over this booklet (RR p.2). Page 19 (Team Game) is out of scope. sha256 is the hash of the official file (HTTP 200, Last-Modified 2016-03-22, 20 pages); mirror.sha256 is the hash of the mirror copy the entries were authored from (text identical, verified by QA)."
+    },
+    {
+      "id": "FAQ",
+      "kind": "faq",
+      "title": "Star Wars: Rebellion — FAQ and Errata",
+      "publisher": "Fantasy Flight Games",
+      "url": "https://images-cdn.fantasyflightgames.com/filer_public/53/ac/53ac8f34-2d3b-4ec1-bfe8-816811756692/sw03_faq_v2_1.pdf",
+      "version": "2.1 (May 2019)",
+      "date": "2019-05-09",
+      "retrievedAt": "2026-11-20",
+      "sha256": "0f6cdcbe9bf50d8afe6d17bfb6d8936d99ea1f060b89bcd9500ce5fafcebd82e",
+      "pages": 8,
+      "precedence": 1,
+      "status": "current",
+      "excludedPages": [6, 7, 8],
+      "notes": "Pages 1-5 cover the base game; pages 6-8 cover the Rise of the Empire expansion and are excluded. Supersedes the FAQ of 18 May 2016 used in SWR-005. No newer version was found on 2026-11-20."
+    }
+  ],
+  "sourceSections": [
+    {
+      "sourceId": "RR",
+      "page": 2,
+      "title": "Action Cards"
+    },
+    {
+      "sourceId": "RR",
+      "page": 2,
+      "title": "Activating Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Assignment Phase"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Attachment Rings"
+    },
+    {
+      "sourceId": "RR",
+      "page": 4,
+      "title": "Attacks (see Resolving an Attack)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Attack Values"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Attempt (see Mission Cards)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Base (see Rebel Base)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 5,
+      "title": "Block Damage (see Combat)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 4,
+      "title": "Block (see Combat)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Building a Death Star"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Building Units"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Capital Ships"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Captured Leaders"
+    },
+    {
+      "sourceId": "RR",
+      "page": 3,
+      "title": "Carbonite Ring (see Captured Leaders)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 4,
+      "title": "Cheating"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Closest System (see Systems)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 4,
+      "title": "Combat"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Command Phase"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Component Limitations"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Current Player"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Damage"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Death Star"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Death Star Plans (see Destroying a Death Star)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Deploy Units"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Destroyed Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Destroyed Units"
+    },
+    {
+      "sourceId": "RR",
+      "page": 6,
+      "title": "Destroying a Death Star"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Dice"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Diplomacy"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Discarding"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Eliminating Leaders"
+    },
+    {
+      "sourceId": "RR",
+      "page": 11,
+      "title": "Establishing a New Base"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Fighters"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Gain Units (see Deploy Units)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 4,
+      "title": "Ground Battle (see Combat)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 7,
+      "title": "Ground Units"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Health Values"
+    },
+    {
+      "sourceId": "RR",
+      "page": 9,
+      "title": "Immobile (see Moving Units)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Imperial Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Intel"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Leaders"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Logistics"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Loyalty"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Lure of the Dark Side (see Leaders)",
+      "coveredBy": "skip",
+      "reason": "The RR paragraph is a Team Game rule (which Imperial leader pool receives the lured leader); out of scope. The FAQ answer that a lured leader is not captured is covered separately."
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Mission Cards"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Moving from the Rebel Base"
+    },
+    {
+      "sourceId": "RR",
+      "page": 9,
+      "title": "Moving Units"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Neutral Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Objective Cards"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Oppose (see Mission Cards)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Populous Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Probe Cards"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Projects"
+    },
+    {
+      "sourceId": "RR",
+      "page": 10,
+      "title": "Rebel Base"
+    },
+    {
+      "sourceId": "RR",
+      "page": 11,
+      "title": "Rebel Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 11,
+      "title": "Recruit"
+    },
+    {
+      "sourceId": "RR",
+      "page": 12,
+      "title": "Refresh Phase"
+    },
+    {
+      "sourceId": "RR",
+      "page": 12,
+      "title": "Regions"
+    },
+    {
+      "sourceId": "RR",
+      "page": 12,
+      "title": "Remote Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 12,
+      "title": "Reputation"
+    },
+    {
+      "sourceId": "RR",
+      "page": 12,
+      "title": "Rescuing Captured Leaders"
+    },
+    {
+      "sourceId": "RR",
+      "page": 12,
+      "title": "Resource Icons"
+    },
+    {
+      "sourceId": "RR",
+      "page": 5,
+      "title": "Retreating"
+    },
+    {
+      "sourceId": "RR",
+      "page": 11,
+      "title": "Revealing the Rebel Base"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Rounds"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Sabotage Markers"
+    },
+    {
+      "sourceId": "RR",
+      "page": 15,
+      "title": "Setup"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Ships"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Skills"
+    },
+    {
+      "sourceId": "RR",
+      "page": 4,
+      "title": "Space Battle (see Combat)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Spec Ops"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Starting Missions"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Structures"
+    },
+    {
+      "sourceId": "RR",
+      "page": 13,
+      "title": "Subjugation"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Systems"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Tactic Cards"
+    },
+    {
+      "sourceId": "RR",
+      "page": 8,
+      "title": "Tactic Value (see Leaders)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Team Game",
+      "coveredBy": "skip",
+      "reason": "Team Game (3-4 players) is out of scope: this product supports the two-player game only."
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Theater"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Time Marker and Time Track"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Transport Capacity"
+    },
+    {
+      "sourceId": "RR",
+      "page": 9,
+      "title": "Transport Restriction (see Moving Units)"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Units"
+    },
+    {
+      "sourceId": "RR",
+      "page": 5,
+      "title": "Winning a Battle"
+    },
+    {
+      "sourceId": "RR",
+      "page": 14,
+      "title": "Winning the Game"
+    },
+    {
+      "sourceId": "RR",
+      "page": 2,
+      "title": "The Golden Rules"
+    },
+    {
+      "sourceId": "RR",
+      "page": 15,
+      "title": "Appendix: Complete Setup (steps 1-10)"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 2,
+      "title": "Introduction and Game Overview",
+      "coveredBy": "skip",
+      "reason": "Narrative introduction; the victory conditions it summarises are restated as rules on LTP p.11 and RR p.14."
+    },
+    {
+      "sourceId": "LTP",
+      "page": 3,
+      "title": "Component List"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 4,
+      "title": "Setup (steps 1-5)"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 5,
+      "title": "Setup (steps 6-10)"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 6,
+      "title": "Playing the Game (round overview)"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 6,
+      "title": "1. Assignment Phase"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 7,
+      "title": "2. Command Phase"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 7,
+      "title": "Activate a System"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 7,
+      "title": "Finding the Rebel Base"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 7,
+      "title": "What are Systems and Regions?"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 8,
+      "title": "Revealing a Mission"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 8,
+      "title": "Opposing a Mission"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 8,
+      "title": "What are Skills?"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 9,
+      "title": "Mission Example",
+      "coveredBy": "skip",
+      "reason": "Worked example only; every rule it shows is covered by the mission entries (LTP p.8, RR p.8-9)."
+    },
+    {
+      "sourceId": "LTP",
+      "page": 10,
+      "title": "3. Refresh Phase"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 10,
+      "title": "Building Units Example"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 11,
+      "title": "Winning the Game"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 11,
+      "title": "Objective Cards"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 11,
+      "title": "The Death Star"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 12,
+      "title": "The Rebel Base"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 12,
+      "title": "Moving To and From the Rebel Base"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 12,
+      "title": "Revealing the Rebel Base"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 12,
+      "title": "Establishing a New Base"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 12,
+      "title": "Sabotage Markers"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 13,
+      "title": "Loyalty and Subjugation"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 13,
+      "title": "Attachment Rings, Capturing and Rescuing Leaders"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 13,
+      "title": "Structures"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 14,
+      "title": "Combat"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 14,
+      "title": "Resolving an Attack"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 15,
+      "title": "Retreat"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 16,
+      "title": "First Game Setup"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 17,
+      "title": "Credits",
+      "coveredBy": "skip",
+      "reason": "Credits and a pointer to the Team Game rules; no rules."
+    },
+    {
+      "sourceId": "LTP",
+      "page": 18,
+      "title": "Advanced Rules: Advanced Setup"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 18,
+      "title": "Action Cards"
+    },
+    {
+      "sourceId": "LTP",
+      "page": 19,
+      "title": "Team Game",
+      "coveredBy": "skip",
+      "reason": "Team Game (3-4 players) is out of scope: this product supports the two-player game only."
+    },
+    {
+      "sourceId": "LTP",
+      "page": 20,
+      "title": "Quick Reference (round and combat summary, dice)"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 1,
+      "title": "Errata"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 1,
+      "title": "FAQ: Death Star"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 1,
+      "title": "FAQ: Movement"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 2,
+      "title": "FAQ: Destroyed Systems"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 2,
+      "title": "FAQ: Objective Cards"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 2,
+      "title": "FAQ: Combat"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 3,
+      "title": "FAQ: Captured Leaders"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 4,
+      "title": "FAQ: Mission and Action Cards"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 5,
+      "title": "FAQ: Mission and Action Cards (continued)"
+    },
+    {
+      "sourceId": "FAQ",
+      "page": 5,
+      "title": "FAQ: Miscellaneous"
+    }
+  ]
+}

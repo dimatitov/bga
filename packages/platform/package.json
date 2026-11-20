@@ -9,6 +9,11 @@
       "@bga/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./rules-kb": {
+      "@bga/source": "./src/rules-kb/index.ts",
+      "types": "./dist/rules-kb/index.d.ts",
+      "default": "./dist/rules-kb/index.js"
     }
   },
   "scripts": {

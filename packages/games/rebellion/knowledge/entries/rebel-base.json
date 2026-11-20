@@ -1,0 +1,453 @@
+[
+  {
+    "id": "rebellion:base.secret-location",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "The Rebel base is chosen secretly",
+    "text": "During setup the Rebel player secretly picks the system of his base; its probe card lies facedown under the \"Location\" space of the board. The base starts hidden and may be revealed later.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Rebel Base"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "The Rebel Base"
+      }
+    ],
+    "related": ["rebellion:setup.base-choice"],
+    "keywords": ["база повстанцев", "скрытая база", "где база"]
+  },
+  {
+    "id": "rebellion:base.space-not-system",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "The \"Rebel Base\" space is not a system",
+    "text": "The \"Rebel Base\" space on the board is separate from the base's system and is not a system. Units can be built from and deployed to it as if it were a system and can move to and from it by special rules; missions cannot be attempted or resolved there unless a card says so; it cannot gain or lose loyalty.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Rebel Base"
+      },
+      {
+        "sourceId": "RR",
+        "page": 8,
+        "section": "Loyalty"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "The Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.move-from-space", "rebellion:base.units-on-space"],
+    "keywords": ["клетка база повстанцев", "Rebel Base space"]
+  },
+  {
+    "id": "rebellion:base.units-on-space",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Units on the Rebel Base space are outside every system",
+    "text": "While the base is hidden, units on the \"Rebel Base\" space are not in the base's system: they do not fight there and do not count as Rebel units in that system. Only when the base is revealed are they placed into the system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Rebel Base"
+      },
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "rationale": "RR p.10 says the space is not a system and RR p.11 says that on reveal the units on the space are placed in the base's system, which only makes sense if they were not there before. No source spells out the consequences for combat or victory explicitly.",
+    "related": ["rebellion:base.space-not-system", "rebellion:base.reveal-procedure"],
+    "discrepancyIds": ["DISC-008"]
+  },
+  {
+    "id": "rebellion:base.move-from-space",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Moving to and from the Rebel Base space",
+    "text": "While the base is hidden, Rebel units on the \"Rebel Base\" space may move to the base's system or to a system adjacent to it. Moving to or from the space therefore tells the Empire the base is in, or next to, that system. A few missions move units between the space and any system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Moving to or from the Rebel Base"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "Moving To and From the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.activate-space"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    }
+  },
+  {
+    "id": "rebellion:base.activate-space",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Activating the Rebel Base space",
+    "text": "The Rebel player may activate the \"Rebel Base\" space to move units onto it from the base's system or from systems adjacent to the base's system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Moving to or from the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.move-from-space"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    }
+  },
+  {
+    "id": "rebellion:base.leader-in-space-locks",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "A leader on the Rebel Base space locks only that space",
+    "text": "A leader on the \"Rebel Base\" space prevents units from moving out of that space, but does not stop units that stand in the base's system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 9,
+        "section": "Moving Units"
+      },
+      {
+        "sourceId": "RR",
+        "page": 10,
+        "section": "Moving to or from the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:command.move.own-leader-locks"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    }
+  },
+  {
+    "id": "rebellion:base.reveal-condition",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "When the Rebel base must be revealed",
+    "text": "Whenever the Empire has loyalty or ground units in the Rebel base's system, the Rebel player must reveal the base. The condition is checked at any time, not only after movement.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base",
+        "quote": "If the Imperial player ever has loyalty or ground units in the Rebel base’s system"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "exceptions": [
+      {
+        "text": "Imperial ships alone, including the Death Star and the Death Star Under Construction, never reveal the base.",
+        "ruleIds": [
+          "rebellion:base.ships-do-not-reveal",
+          "rebellion:base.death-star-does-not-reveal"
+        ],
+        "sources": [
+          {
+            "sourceId": "RR",
+            "page": 11,
+            "section": "Revealing the Rebel Base"
+          }
+        ]
+      },
+      {
+        "text": "Probe cards and the Imperial Long Range Probe mission never reveal the base.",
+        "sources": [
+          {
+            "sourceId": "RR",
+            "page": 11,
+            "section": "Revealing the Rebel Base"
+          },
+          {
+            "sourceId": "RR",
+            "page": 10,
+            "section": "Probe Cards"
+          }
+        ]
+      }
+    ],
+    "related": [
+      "rebellion:base.reveal-timing",
+      "rebellion:base.voluntary-reveal",
+      "rebellion:victory.empire"
+    ],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["MOVE_PIECES", "FINISH_ACTIVATION"]
+    },
+    "ai": "core",
+    "keywords": ["раскрытие базы", "база раскрыта", "найти базу", "base revealed"]
+  },
+  {
+    "id": "rebellion:base.reveal-timing",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Revealing the base after Imperial ground units move in",
+    "text": "When Imperial ground units move into a system, the Rebel player must declare whether his base is there; if so, it is revealed after all movement of the activation and before combat.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 2,
+        "section": "Activating Systems"
+      },
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 7,
+        "section": "Finding the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.reveal-condition", "rebellion:command.activate.steps"],
+    "appliesTo": {
+      "phases": ["command"],
+      "commands": ["MOVE_PIECES", "FINISH_ACTIVATION"]
+    },
+    "ai": "core",
+    "keywords": ["раскрытие базы", "когда раскрывается база"]
+  },
+  {
+    "id": "rebellion:base.ships-do-not-reveal",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Imperial ships alone do not reveal the base",
+    "text": "If the Empire has ships but no ground units in a system, the base is not revealed and the Rebel player gives no information about whether the base is there.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.death-star-does-not-reveal"],
+    "appliesTo": {
+      "commands": ["MOVE_PIECES"],
+      "sides": ["empire"]
+    },
+    "keywords": ["корабли не раскрывают базу", "Star Destroyer"]
+  },
+  {
+    "id": "rebellion:base.death-star-does-not-reveal",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "The Death Star does not reveal the base",
+    "text": "A Death Star or Death Star Under Construction in the same system as the hidden base does not reveal it: ships, including the Death Star, never reveal the base; only Imperial ground units or Imperial loyalty in the base's system do (RR p.11).",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "FAQ: Death Star"
+      },
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "amends": ["rebellion:base.reveal-condition"],
+    "keywords": ["звезда смерти", "Death Star reveal"]
+  },
+  {
+    "id": "rebellion:base.reveal-procedure",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "How the base is revealed",
+    "text": "To reveal, the Rebel player turns the probe card from the \"Location\" space faceup and puts it on the \"Rebel Base\" space, where it stays as a reminder. All units and leaders on the \"Rebel Base\" space are placed in the system shown on that card.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.after-reveal"]
+  },
+  {
+    "id": "rebellion:base.voluntary-reveal",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Voluntary reveal",
+    "text": "The Rebel player may choose to reveal his base during one of his Command Phase turns (timing narrowed by the FAQ errata).",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:base.voluntary-reveal-timing"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    }
+  },
+  {
+    "id": "rebellion:base.voluntary-reveal-timing",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Voluntary reveal only at the start of a Rebel turn (errata)",
+    "text": "The Rebel player can reveal his base voluntarily only at the start of one of his Command Phase turns, before he uses a leader or passes.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "Errata"
+      }
+    ],
+    "amends": ["rebellion:base.voluntary-reveal"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    },
+    "keywords": ["добровольное раскрытие базы", "раскрыть базу самому", "reveal base voluntarily"]
+  },
+  {
+    "id": "rebellion:base.voluntary-reveal-after-pass",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "No voluntary reveal after passing",
+    "text": "Once the Rebel player has passed he takes no more turns this phase, so he cannot reveal the base voluntarily.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 5,
+        "section": "Miscellaneous"
+      }
+    ],
+    "amends": ["rebellion:base.voluntary-reveal"],
+    "appliesTo": {
+      "sides": ["rebels"]
+    }
+  },
+  {
+    "id": "rebellion:base.voluntary-reveal-combat",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Revealing the base next to Imperial units starts combat",
+    "text": "If the Rebel player reveals his base on his turn while Imperial units are already in that system, combat is resolved immediately.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 5,
+        "section": "Miscellaneous"
+      }
+    ],
+    "amends": ["rebellion:base.voluntary-reveal"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:base.after-reveal",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "While the base is revealed",
+    "text": "Units can no longer be deployed to or moved to the \"Rebel Base\" space; anything that would be placed there goes to the base's system instead. Cards that refer to the space apply to the base's system. The space's resource icons still work unless an Imperial unit or Imperial loyalty is in the base's system.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Revealing the Rebel Base"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "Revealing the Rebel Base"
+      }
+    ],
+    "related": ["rebellion:build.rebel-base-icons", "rebellion:deploy.rebel-base-space"]
+  },
+  {
+    "id": "rebellion:base.deploy-when-revealed",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Deploying to a revealed base system",
+    "text": "After the base is revealed, the Rebel player may deploy units to its system only if he has loyalty there and there are no Imperial units in it; a remote or neutral base system receives no deployments.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 5,
+        "section": "Miscellaneous"
+      }
+    ],
+    "amends": ["rebellion:base.after-reveal"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:base.new-base",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "rebel-base",
+    "title": "Establishing a new base",
+    "text": "The Rapid Mobilization mission, resolved at the end of the Command Phase, lets the Rebel player draw four probe cards and pick one as his new base; it cannot be a system with Imperial loyalty, Imperial units or a destroyed marker. The old base is revealed, units and leaders from the space go to the old system and its probe card goes to the Empire. Unchosen cards go to the bottom of the probe deck.",
+    "sources": [
+      {
+        "sourceId": "RR",
+        "page": 11,
+        "section": "Establishing a New Base"
+      },
+      {
+        "sourceId": "LTP",
+        "page": 12,
+        "section": "Establishing a New Base"
+      }
+    ],
+    "related": ["rebellion:base.secret-location"],
+    "ai": "none"
+  }
+]

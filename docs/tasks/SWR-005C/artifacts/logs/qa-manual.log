@@ -1,0 +1,154 @@
+# QA manual-review helpers — SWR-005C (TC-M-01, TC-P-04, TC-M-03)
+Fri Nov 20 10:21:19 UTC 2026
+Texts: extracted official RR, FAQ v2.1, LTP (1j1ju mirror; text identical to the official LTP per page, see qa-sources.log)
+
+## Candidate verified entries NOT in the reviewer sample (review.md), grouped by first source
+RR 93
+  rebellion:combat.steps [rule] p.RR4,LTP14,LTP20
+  rebellion:combat.round [rule] p.RR4,RR13,LTP14
+  rebellion:combat.end [rule] p.RR4
+  rebellion:combat.attack [rule] p.RR4,RR5,LTP14
+  rebellion:combat.damage [rule] p.RR6,RR5
+  rebellion:combat.theater [rule] p.RR14
+  rebellion:combat.retreat [rule] p.RR5,LTP15
+  rebellion:combat.winning-battle [rule] p.RR5
+  rebellion:leaders.overview [rule] p.RR8,LTP6
+  rebellion:leaders.starting [rule] p.RR8,RR15,LTP4
+  rebellion:leaders.skills [rule] p.RR13,RR7,RR8,RR8,RR13,LTP8
+  rebellion:leaders.luke-jedi [rule] p.RR8
+  rebellion:leaders.eliminated [rule] p.RR7
+  rebellion:leaders.attachment-rings [rule] p.RR3,LTP13
+  rebellion:leaders.captured [rule] p.RR3,LTP13
+  rebellion:leaders.carbonite [rule] p.RR3
+  rebellion:leaders.rescue [rule] p.RR12,LTP13
+  rebellion:units.roster [rule] p.RR14,LTP3
+  rebellion:units.ships [rule] p.RR13,RR3,RR7
+  rebellion:units.ground [rule] p.RR7,LTP7
+  rebellion:units.structures [rule] p.RR13,LTP13
+  rebellion:units.attack-health [rule] p.RR3,RR8
+  rebellion:units.destroyed [rule] p.RR7
+  rebellion:map.regions [rule] p.RR12,LTP7
+  rebellion:map.populous-remote [rule] p.RR10,RR12,LTP7
+  rebellion:map.resource-icons [rule] p.RR12
+  rebellion:map.destroyed-systems [rule] p.RR7
+  rebellion:loyalty.basics [rule] p.RR8,LTP13
+  rebellion:loyalty.system-types [rule] p.RR8,RR11,RR10
+  rebellion:general.golden-rules.precedence [rule] p.RR2
+  rebellion:general.golden-rules.cannot [rule] p.RR2
+  rebellion:general.cheating [rule] p.RR4
+  rebellion:general.current-player [rule] p.RR6,RR2
+  rebellion:general.dice [rule] p.RR7
+  rebellion:general.discarding [rule] p.RR7
+  rebellion:missions.reveal-requirement [rule] p.RR8,LTP8
+  rebellion:missions.reveal-steps [rule] p.RR8,RR9,LTP8
+  rebellion:missions.unopposed [rule] p.RR9,LTP8
+  rebellion:missions.opposition-dice [rule] p.RR9,LTP8
+  rebellion:missions.against-leader [rule] p.RR9,LTP8
+  rebellion:missions.leader-removed [rule] p.RR9
+  rebellion:missions.starting [rule] p.RR13,LTP8
+  rebellion:missions.projects [rule] p.RR10
+  rebellion:cards.action [rule] p.RR2,LTP18
+  rebellion:cards.objectives [rule] p.RR10,LTP11
+  rebellion:cards.probe [rule] p.RR10
+  rebellion:cards.tactic [rule] p.RR14
+  rebellion:deathstar.rules [rule] p.RR6
+  rebellion:deathstar.build [rule] p.RR6
+  rebellion:deathstar.destroy [rule] p.RR6
+  rebellion:command.move.adjacency [rule] p.RR9,RR12,LTP7
+  rebellion:command.move.immobile [rule] p.RR9,RR13,RR6
+  rebellion:command.move.abilities-follow-rules [rule] p.RR9
+  rebellion:command.move.combat-trigger [rule] p.RR9,RR4
+  rebellion:command.transport.capacity [rule] p.RR9,RR14,LTP7
+  rebellion:base.secret-location [rule] p.RR10,LTP12
+  rebellion:base.space-not-system [rule] p.RR10,RR8,LTP12
+  rebellion:base.move-from-space [rule] p.RR10,LTP12
+  rebellion:base.activate-space [rule] p.RR10
+  rebellion:base.reveal-procedure [rule] p.RR11,LTP12
+  rebellion:base.voluntary-reveal [rule] p.RR11
+  rebellion:base.after-reveal [rule] p.RR11,LTP12
+  rebellion:base.new-base [rule] p.RR11,LTP12
+  rebellion:refresh.retrieve-leaders [rule] p.RR12,LTP10
+  rebellion:refresh.draw-missions [rule] p.RR12,LTP10
+  rebellion:refresh.probe-droids [rule] p.RR12,RR10,LTP10
+  rebellion:refresh.draw-objective [rule] p.RR12,LTP10
+  rebellion:refresh.advance-time [rule] p.RR12,LTP10
+  rebellion:refresh.deploy-step [rule] p.RR12,LTP10
+  rebellion:build.build-units [rule] p.RR3,RR12,LTP10
+  rebellion:build.blocked-by-enemy [rule] p.RR3,LTP10
+  rebellion:build.rebel-base-icons [rule] p.RR3,LTP10
+  rebellion:build.rebel-choices [rule] p.RR3
+  rebellion:build.sabotage [rule] p.RR13,LTP12
+  rebellion:deploy.deploy-units [rule] p.RR7,LTP10
+  rebellion:deploy.restrictions [rule] p.RR7,RR12
+  rebellion:deploy.rebel-base-space [rule] p.RR7,LTP12
+  rebellion:deploy.gain-units [rule] p.RR7
+  rebellion:recruit.procedure [rule] p.RR11,RR12,LTP10
+  rebellion:recruit.restrictions [rule] p.RR11
+  rebellion:round.rr-activation-phase-typo [interpretation] p.RR13,RR3,LTP6
+  rebellion:assignment.order [rule] p.RR3,LTP6
+  rebellion:command.turn-order [rule] p.RR6,LTP7
+  rebellion:command.unrevealed-missions-return [rule] p.RR6
+  rebellion:command.leader-anywhere-in-system [rule] p.RR6
+  rebellion:setup.factions [rule] p.RR15,LTP4
+  rebellion:setup.time-track [rule] p.RR15,LTP4
+  rebellion:setup.decks [rule] p.RR15,LTP4,LTP5
+  rebellion:setup.standard-loyalty [rule] p.RR15,LTP18
+  rebellion:setup.standard-imperial-units [rule] p.RR15,LTP18
+  rebellion:setup.base-choice [rule] p.RR15,LTP5
+  rebellion:setup.starting-hand [rule] p.RR15,LTP5
+  rebellion:victory.time-track [rule] p.RR14,RR12
+LTP 2
+  rebellion:round.structure [rule] p.LTP6,RR13,LTP20
+  rebellion:setup.first-game-or-standard [rule] p.LTP5,LTP18,RR15
+FAQ 16
+  rebellion:leaders.captured-faq [clarification] p.FAQ3
+  rebellion:map.resource-icons-on-queue [clarification] p.FAQ4
+  rebellion:map.destroyed-systems-faq [clarification] p.FAQ2
+  rebellion:general.faq-errata [clarification] p.FAQ1
+  rebellion:general.notes-allowed [clarification] p.FAQ5
+  rebellion:general.simultaneous-timing [clarification] p.FAQ4
+  rebellion:missions.no-benefit [clarification] p.FAQ4
+  rebellion:cards.objectives-timing [clarification] p.FAQ2
+  rebellion:deathstar.faq [clarification] p.FAQ1
+  rebellion:command.move.rapid-mobilization-locked [clarification] p.FAQ4
+  rebellion:command.move.base-space-leader-missions [clarification] p.FAQ1
+  rebellion:base.voluntary-reveal-combat [clarification] p.FAQ5
+  rebellion:build.fewer-units [clarification] p.FAQ5
+  rebellion:build.sabotage-wording [clarification] p.FAQ5
+  rebellion:assignment.extra-leader-by-ability [clarification] p.FAQ4
+  rebellion:victory.superlaser-hidden-base [clarification] p.FAQ2,LTP11
+reviewer ids not found: []
+
+## All quotes: verbatim on the cited page?
+OK  rebellion:loyalty.neutral-errata FAQ p.1 words=12 "a system can be both neutral and subjugated at the same time."
+OK  rebellion:base.reveal-condition RR p.11 words=15 "If the Imperial player ever has loyalty or ground units in the Rebel base’s system"
+OK  rebellion:command.pass RR p.6 words=13 "A player may choose to pass at any time during the Command Phase."
+OK  rebellion:command.pass-is-not-action FAQ p.5 words=8 "A player passes instead of taking his turn."
+OK  rebellion:command.activate.system-with-leader RR p.2 words=10 "A system that already contains a leader can be activated."
+quotes: 5, not found verbatim on cited page: 0
+quote words per source {"RR":38,"LTP":0,"FAQ":20}
+
+## Paraphrase check: longest word run shared by entry text and its cited pages
+entries 181 longest shared run histogram {"20+":2,"15-19":6,"10-14":19,"<10":154}
+29 words (0.45 of 65) rebellion:units.roster: "24 tie fighters 8 assault carriers 8 star destroyers 2 super star destroyers 2 death stars 1 death star under construction 30 stormtroopers 10 at sts 4 at ats"
+25 words (0.54 of 46) rebellion:setup.standard-imperial-units: "3 star destroyers 3 assault carriers 12 tie fighters 12 stormtroopers 5 at sts 1 at at and 1 death star and places them in"
+18 words (0.38 of 47) rebellion:setup.standard-rebel-units: "1 corellian corvette 1 rebel transport 2 x wings 2 y wings 6 rebel troopers and 2 airspeeders"
+18 words (0.38 of 48) rebellion:setup.first-game-rebels: "bothawui 1 corellian corvette 1 rebel transport 1 x wing 1 y wing 3 rebel troopers 1 airspeeder"
+17 words (0.55 of 31) rebellion:setup.base-choice: "the rebel player secretly chooses one card from the probe deck and places it facedown under the"
+16 words (0.52 of 31) rebellion:base.reveal-condition: "has loyalty or ground units in the rebel bases system the rebel player must reveal the"
+15 words (0.34 of 44) rebellion:base.death-star-does-not-reveal: "a death star or death star under construction in the same system as the hidden"
+15 words (0.75 of 20) rebellion:setup.starting-hand: "each player takes his four starting missions and draws two cards from his mission deck"
+
+## FAQ citations of pages 6-8 (Rise of the Empire)
+count: 0 []
+needs-review: 10
+  rebellion:leaders.mon-mothma-no-tactics interpretation rationale: The rule that leaders without tactic values cannot activate is official (RR p.2); which leaders lack tactic va | DISC: DISC-017
+  rebellion:map.region-names interpretation rationale: No region name appears in RR or LTP; fan sources name regions after a member system. Whether the board prints  | DISC: DISC-016
+  rebellion:map.mustafar-utapau interpretation rationale: RR p.9 says units cannot move through impassable areas; the adjacency itself is read from fan images and a fan | DISC: DISC-016
+  rebellion:command.move.no-enemy-pinning interpretation rationale: The movement rules list the restrictions exhaustively (adjacency, impassable areas, transport, immobile units, | DISC: 
+  rebellion:units.faction-sheet-values interpretation rationale: The rules say capacity is printed on the faction sheet but give no numbers in text. The Imperial values were r | DISC: DISC-014
+  rebellion:base.units-on-space interpretation rationale: RR p.10 says the space is not a system and RR p.11 says that on reveal the units on the space are placed in th | DISC: DISC-008
+  rebellion:refresh.time-track-icons interpretation rationale: Both books only say to recruit or build if the icon is in the time marker's new space; the positions are known | DISC: DISC-018
+  rebellion:command.pass-not-mid-activation interpretation rationale: RR p.6 says a player may pass "at any time", but the FAQ (p.5) defines passing as something done instead of ta | DISC: DISC-012
+  rebellion:command.activate.own-leader-system interpretation rationale: RR p.2 allows activating a system that already contains "a leader" without restricting whose leader it is; the | DISC: 
+  rebellion:setup.coruscant-placement interpretation rationale: RR p.15 allows systems with an Imperial loyalty or subjugation marker; Coruscant has no marker but is permanen | DISC: 

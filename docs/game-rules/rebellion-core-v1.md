@@ -1,5 +1,7 @@
 # Rebellion — движок правил `core-v1` (срез 1: раунд и активация)
 
+> **SWR-005C (2026-11-20):** проверяемая база знаний правил — `packages/games/rebellion/knowledge/` (формат: [`knowledge-base.md`](knowledge-base.md); отчёты: [`rebellion/coverage-matrix.md`](rebellion/coverage-matrix.md), [`rebellion/discrepancies.md`](rebellion/discrepancies.md)). Она сверена по официальным RR (2016), LTP и **FAQ v2.1 (May 2019)**, который заменяет FAQ 18 May 2016, указанный ниже. При расхождении с этим файлом приоритет у базы знаний.
+
 Статус: **реализован в SWR-005** (2026-11-08). Это описание того, что движок `packages/games/rebellion/src/rules/core`
 делает, — пересказ правил базовой игры своими словами. Факты и источники (официальные Rules Reference, Learn to Play, FAQ
 FFG; фан-данные для соседства) — [`rebellion-reference.md`](rebellion-reference.md). Тексты правил и карт правообладателя

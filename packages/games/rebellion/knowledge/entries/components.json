@@ -1,0 +1,439 @@
+[
+  {
+    "id": "rebellion:leaders.overview",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "What leaders do",
+    "text": "Leaders move units (by activating systems) and attempt missions. Skill icons decide which missions a leader can reveal; tactic values decide how many tactic cards it draws in combat. Leaders in the pool can be assigned to missions, activate systems, oppose missions or join a combat. Leaders on the board take part in missions and combats in their system and stop their side's units from leaving it.",
+    "sources": [
+      { "sourceId": "RR", "page": 8, "section": "Leaders" },
+      { "sourceId": "LTP", "page": 6, "section": "What are Leaders?" }
+    ],
+    "related": ["rebellion:command.move.own-leader-locks", "rebellion:leaders.skills"],
+    "keywords": ["лидеры", "пул лидеров"]
+  },
+  {
+    "id": "rebellion:leaders.starting",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Starting leaders",
+    "text": "Each player begins with his four leaders that have no recruit icon in his leader pool. Leaders with a recruit icon wait next to the board and can only join through recruiting.",
+    "sources": [
+      { "sourceId": "RR", "page": 8, "section": "Leaders" },
+      { "sourceId": "RR", "page": 15, "section": "Setup step 2" },
+      { "sourceId": "LTP", "page": 4, "section": "Setup step 2" }
+    ],
+    "related": ["rebellion:recruit.procedure"],
+    "keywords": ["стартовые лидеры"]
+  },
+  {
+    "id": "rebellion:leaders.mon-mothma-no-tactics",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "leaders",
+    "title": "Mon Mothma cannot activate systems",
+    "text": "Among the starting leaders, only the Rebel leader Mon Mothma has no tactic values, so she can be used for missions but never to activate a system.",
+    "sources": [{ "sourceId": "RR", "page": 2, "section": "Activating Systems" }],
+    "rationale": "The rule that leaders without tactic values cannot activate is official (RR p.2); which leaders lack tactic values is printed on the leader tokens and is known here only from fan data (SWR-005 reference, medium confidence). Needs a check against the physical tokens.",
+    "discrepancyIds": ["DISC-017"],
+    "related": ["rebellion:command.activate.tactic-values-required"],
+    "appliesTo": { "commands": ["ACTIVATE_SYSTEM"], "sides": ["rebels"] },
+    "keywords": ["Мон Мотма"]
+  },
+  {
+    "id": "rebellion:leaders.skills",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Skills",
+    "text": "There are four skills: diplomacy (loyalty or more units), intel (Rebels: objectives; Empire: finding the base), logistics (Rebels: moving units to and from the base; Empire: special units and faster building) and spec ops (Rebels: destroying Imperial units; Empire: capturing leaders). A leader's skill icons decide which missions it can attempt and oppose.",
+    "sources": [
+      { "sourceId": "RR", "page": 13, "section": "Skills" },
+      { "sourceId": "RR", "page": 7, "section": "Diplomacy" },
+      { "sourceId": "RR", "page": 8, "section": "Intel" },
+      { "sourceId": "RR", "page": 8, "section": "Logistics" },
+      { "sourceId": "RR", "page": 13, "section": "Spec Ops" },
+      { "sourceId": "LTP", "page": 8, "section": "What are Skills?" }
+    ],
+    "related": ["rebellion:missions.reveal-requirement"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.luke-jedi",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Luke Skywalker (Jedi)",
+    "text": "Luke Skywalker (Jedi) counts as Luke Skywalker for all card abilities and action card restrictions.",
+    "sources": [{ "sourceId": "RR", "page": 8, "section": "Leaders" }],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.eliminated",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Eliminated leaders",
+    "text": "An eliminated leader is removed from wherever it is and returned to the box; it cannot be used for the rest of the game.",
+    "sources": [{ "sourceId": "RR", "page": 7, "section": "Eliminating Leaders" }],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.attachment-rings",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Attachment rings",
+    "text": "Some cards attach a ring to a leader; its effect is explained on the card. A leader holds only one ring: a new ring replaces the old one. A removed ring goes back to the supply and its effect ends.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Attachment Rings" },
+      { "sourceId": "LTP", "page": 13, "section": "Attachment Rings" }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.captured",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Captured leaders",
+    "text": "A captured Rebel leader wears the captured ring. It does not oppose missions (except those attempted against it), cannot return to the pool, cannot be moved by the Rebels and does not stop Rebel units from leaving its system. The Empire may move it like a ground unit that needs no capacity, but not when retreating. Capturing a second leader frees the first.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Captured Leaders" },
+      { "sourceId": "LTP", "page": 13, "section": "Capturing Leaders" }
+    ],
+    "related": ["rebellion:leaders.rescue", "rebellion:command.move.own-leader-locks"],
+    "ai": "none",
+    "keywords": ["захваченный лидер", "плен"]
+  },
+  {
+    "id": "rebellion:leaders.carbonite",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Carbonite ring",
+    "text": "A leader in the carbonite ring is still a captured leader: it can be rescued and is affected by every card that refers to captured leaders. Rescuing it does not give back reputation lost to the Carbon Freezing mission.",
+    "sources": [{ "sourceId": "RR", "page": 3, "section": "Captured Leaders" }],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.captured-faq",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Captured leaders: tactic values and two rings",
+    "text": "Captured leaders do not add their tactic values in a combat in their system and cannot use action cards. The Empire can hold one leader in the captured ring and another in the carbonite ring at the same time.",
+    "sources": [{ "sourceId": "FAQ", "page": 3, "section": "FAQ: Captured Leaders" }],
+    "amends": ["rebellion:leaders.captured"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.lured-not-captured",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "A lured leader is not a captured leader",
+    "text": "A leader wearing the Lure of the Dark Side ring is not treated as captured by cards and abilities.",
+    "sources": [{ "sourceId": "FAQ", "page": 3, "section": "FAQ: Captured Leaders" }],
+    "amends": ["rebellion:leaders.captured"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:leaders.rescue",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "leaders",
+    "title": "Rescuing captured leaders",
+    "text": "A rescued leader loses its ring and is placed on the \"Rebel Base\" space (in the base's system if the base is revealed). A captured leader is rescued at once when no Imperial unit remains in its system. After a rescue by a mission, the leaders assigned to that mission may also go to the \"Rebel Base\" space.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Rescuing Captured Leaders" },
+      { "sourceId": "LTP", "page": 13, "section": "Rescuing Captured Leaders" }
+    ],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:units.roster",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "units",
+    "title": "Units in the box",
+    "text": "Imperial: 24 TIE Fighters, 8 Assault Carriers, 8 Star Destroyers, 2 Super Star Destroyers, 2 Death Stars, 1 Death Star Under Construction, 30 Stormtroopers, 10 AT-STs, 4 AT-ATs. Rebel: 8 X-wings, 12 Y-wings, 4 Corellian Corvettes, 4 Rebel Transports, 3 Mon Calamari Cruisers, 21 Rebel Troopers, 6 Airspeeders, 3 Shield Generators, 3 Ion Cannons. Their abilities are on the faction sheets.",
+    "sources": [
+      { "sourceId": "RR", "page": 14, "section": "Units" },
+      { "sourceId": "LTP", "page": 3, "section": "Component List" }
+    ],
+    "related": ["rebellion:general.component-limits"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:units.ships",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "units",
+    "title": "Ships, capital ships and fighters",
+    "text": "Units with a blue resource icon are ships, and the Super Star Destroyer, Death Star and Death Star Under Construction are ships too. A ship with red health is a capital ship, one with black health is a fighter. The Death Star and the Death Star Under Construction are space stations: neither capital ships nor fighters.",
+    "sources": [
+      { "sourceId": "RR", "page": 13, "section": "Ships" },
+      { "sourceId": "RR", "page": 3, "section": "Capital Ships" },
+      { "sourceId": "RR", "page": 7, "section": "Fighters" }
+    ],
+    "keywords": ["корабли", "истребители"]
+  },
+  {
+    "id": "rebellion:units.ground",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "units",
+    "title": "Ground units",
+    "text": "A unit with an orange resource icon is a ground unit. Ground units stand on the planet artwork and fight in the ground theater.",
+    "sources": [
+      { "sourceId": "RR", "page": 7, "section": "Ground Units" },
+      { "sourceId": "LTP", "page": 7, "section": "What are Systems and Regions?" }
+    ],
+    "keywords": ["наземные юниты"]
+  },
+  {
+    "id": "rebellion:units.structures",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "units",
+    "title": "Structures",
+    "text": "The Rebel Shield Generator and Ion Cannon are ground units called structures. They are immobile, roll no combat dice, and instead give the abilities described on the Rebel faction sheet while they are in a system; several structures in one system each give their benefit.",
+    "sources": [
+      { "sourceId": "RR", "page": 13, "section": "Structures" },
+      { "sourceId": "LTP", "page": 13, "section": "Structures" }
+    ],
+    "related": ["rebellion:command.move.immobile"],
+    "keywords": ["сооружения"]
+  },
+  {
+    "id": "rebellion:units.attack-health",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "units",
+    "title": "Attack and health values",
+    "text": "Each unit's attack values (black, red, both or none) and health value are on its faction sheet. In an attack a player rolls dice equal to the summed attack values of his participating units. Health is the damage needed to destroy the unit; the Death Star has no health and cannot be damaged.",
+    "sources": [
+      { "sourceId": "RR", "page": 3, "section": "Attack Values" },
+      { "sourceId": "RR", "page": 8, "section": "Health Values" }
+    ],
+    "related": ["rebellion:combat.attack"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:units.destroyed",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "units",
+    "title": "Destroyed units",
+    "text": "A destroyed unit leaves the board and returns to the supply. An ability that destroys \"X-health worth\" of units lets the player pick units whose combined health is at most X.",
+    "sources": [{ "sourceId": "RR", "page": 7, "section": "Destroyed Units" }],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:map.systems",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Systems",
+    "text": "The board shows 32 systems. A system is the planet artwork, the space area around it and its name, and stands for the whole star system. Ground units go on the planet, ships in space. For \"closest system\" effects count the moves a unit would need; ties are chosen by the player resolving the ability.",
+    "sources": [
+      { "sourceId": "RR", "page": 14, "section": "Systems" },
+      { "sourceId": "LTP", "page": 7, "section": "What are Systems and Regions?" }
+    ],
+    "related": ["rebellion:map.regions", "rebellion:map.populous-remote"],
+    "keywords": ["системы", "карта"]
+  },
+  {
+    "id": "rebellion:map.regions",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Regions",
+    "text": "The board has eight regions of four systems each, separated by thick orange borders. Units may move across region borders; some cards affect systems that share a region.",
+    "sources": [
+      { "sourceId": "RR", "page": 12, "section": "Regions" },
+      { "sourceId": "LTP", "page": 7, "section": "What are Systems and Regions?" }
+    ],
+    "related": ["rebellion:map.region-names"],
+    "keywords": ["регионы"]
+  },
+  {
+    "id": "rebellion:map.region-names",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "map",
+    "title": "Regions have no official names",
+    "text": "The rules number and describe the eight regions but never name them; the project uses neutral ids r1 to r8 and only informal labels.",
+    "sources": [{ "sourceId": "RR", "page": 12, "section": "Regions" }],
+    "rationale": "No region name appears in RR or LTP; fan sources name regions after a member system. Whether the board prints names must be checked on the board.",
+    "discrepancyIds": ["DISC-016"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:map.mustafar-utapau",
+    "kind": "interpretation",
+    "status": "needs-review",
+    "product": "base",
+    "category": "map",
+    "title": "Mustafar and Utapau are treated as not adjacent",
+    "text": "The map data treats Mustafar and Utapau as not adjacent, because the board appears to show an impassable stripe on their shared border.",
+    "sources": [{ "sourceId": "RR", "page": 9, "section": "Moving Units" }],
+    "rationale": "RR p.9 says units cannot move through impassable areas; the adjacency itself is read from fan images and a fan data set (SWR-005 reference, medium-high confidence), not from the rules text. Needs a check on the physical board.",
+    "discrepancyIds": ["DISC-016"],
+    "related": ["rebellion:command.move.adjacency"],
+    "appliesTo": { "commands": ["MOVE_PIECES"] },
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:map.populous-remote",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Populous and remote systems",
+    "text": "A populous system has at least one resource icon and a loyalty space. A remote system has neither: it is always neutral, cannot receive loyalty or subjugation markers and units cannot be deployed there.",
+    "sources": [
+      { "sourceId": "RR", "page": 10, "section": "Populous Systems" },
+      { "sourceId": "RR", "page": 12, "section": "Remote Systems" },
+      { "sourceId": "LTP", "page": 7, "section": "What are Systems and Regions?" }
+    ],
+    "keywords": ["удалённые системы", "населённые системы"]
+  },
+  {
+    "id": "rebellion:map.resource-icons",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Resource icons",
+    "text": "Every populous system has resource icons showing which unit types it can build; the faction sheets map icons to units. An ability that refers to a system's resource icons uses all of them, whoever has loyalty, subjugation or units there.",
+    "sources": [{ "sourceId": "RR", "page": 12, "section": "Resource Icons" }],
+    "related": ["rebellion:build.build-units"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:map.resource-icons-on-queue",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Placing units on the queue ignores loyalty",
+    "text": "When a card lets a player place units on his build queue using a system's resource icons, he uses all of that system's icons regardless of its loyalty or subjugation.",
+    "sources": [{ "sourceId": "FAQ", "page": 4, "section": "Mission and Action Cards" }],
+    "amends": ["rebellion:map.resource-icons"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:map.destroyed-systems",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Destroyed systems",
+    "text": "A system destroyed by Superlaser Online gets a destroyed system marker and all Rebel ground units there are destroyed. Imperial ground units survive, but any exceeding the transport capacity of Imperial ships there are destroyed. Leaders are unaffected. Ground units may enter but no ground battle happens; space battles happen normally. The system has no loyalty and cannot be subjugated.",
+    "sources": [{ "sourceId": "RR", "page": 7, "section": "Destroyed Systems" }],
+    "related": ["rebellion:deathstar.superlaser"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:map.destroyed-systems-faq",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "map",
+    "title": "Destroyed systems: missions, icons, sabotage",
+    "text": "Missions, objectives and action cards may still target a destroyed system. A destroyed system is neither populous nor remote and has no resource icons or loyalty. A sabotage marker in it is removed.",
+    "sources": [{ "sourceId": "FAQ", "page": 2, "section": "FAQ: Destroyed Systems" }],
+    "amends": ["rebellion:map.destroyed-systems"],
+    "ai": "none"
+  },
+  {
+    "id": "rebellion:loyalty.basics",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "loyalty",
+    "title": "Loyalty",
+    "text": "A system's loyalty is shown by its loyalty marker; with none it is neutral. Loyalty lets a player build from and deploy to the system. Gaining one loyalty in a neutral system places a marker; in an enemy-loyal system it removes the enemy marker; gaining two there replaces it with one's own. A system holds at most one loyalty and one subjugation marker. Coruscant is always Imperial.",
+    "sources": [
+      { "sourceId": "RR", "page": 8, "section": "Loyalty" },
+      { "sourceId": "LTP", "page": 13, "section": "Loyalty" }
+    ],
+    "related": ["rebellion:loyalty.system-types", "rebellion:loyalty.subjugation"],
+    "keywords": ["лояльность"]
+  },
+  {
+    "id": "rebellion:loyalty.system-types",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "loyalty",
+    "title": "Imperial, Rebel and neutral systems",
+    "text": "An Imperial system has an Imperial loyalty marker or a subjugation marker. A Rebel system has a Rebel loyalty marker and no subjugation marker. The Rules Reference defines a neutral system as one with none of these markers (corrected by the FAQ errata).",
+    "sources": [
+      { "sourceId": "RR", "page": 8, "section": "Imperial Systems" },
+      { "sourceId": "RR", "page": 11, "section": "Rebel Systems" },
+      { "sourceId": "RR", "page": 10, "section": "Neutral Systems" }
+    ],
+    "related": ["rebellion:loyalty.neutral-errata"]
+  },
+  {
+    "id": "rebellion:loyalty.neutral-errata",
+    "kind": "clarification",
+    "status": "verified",
+    "product": "base",
+    "category": "loyalty",
+    "title": "A subjugated system can be neutral (errata)",
+    "text": "Neutral always describes loyalty: a system without a Rebel or Imperial loyalty marker is neutral, even if it is subjugated. A system can be neutral and subjugated at the same time.",
+    "sources": [
+      {
+        "sourceId": "FAQ",
+        "page": 1,
+        "section": "Errata",
+        "quote": "a system can be both neutral and subjugated at the same time."
+      }
+    ],
+    "amends": ["rebellion:loyalty.system-types"],
+    "keywords": ["нейтральная система", "подчинённая система"]
+  },
+  {
+    "id": "rebellion:loyalty.subjugation",
+    "kind": "rule",
+    "status": "verified",
+    "product": "base",
+    "category": "loyalty",
+    "title": "Subjugation",
+    "text": "A system with at least one Imperial ground unit and no Imperial loyalty becomes subjugated and gets a subjugation marker (on top of any Rebel marker). The Empire may build from it (left-most icon only) and deploy to it. When no Imperial ground unit is left, the marker is removed. If a neutral subjugated system gains Imperial loyalty, the marker flips to its loyalty side.",
+    "sources": [
+      { "sourceId": "RR", "page": 13, "section": "Subjugation" },
+      { "sourceId": "RR", "page": 2, "section": "Activating Systems" },
+      { "sourceId": "LTP", "page": 13, "section": "Subjugation" }
+    ],
+    "related": ["rebellion:deploy.subjugated-not-for-rebels"],
+    "keywords": ["подчинение"]
+  }
+]
