@@ -1,0 +1,6 @@
+$ pnpm exec eslint --max-warnings=0 <N files>
+eslint exit 0
+$ pnpm exec prettier --check <N files>
+Checking formatting...
+All matched files use Prettier code style!
+prettier exit 0

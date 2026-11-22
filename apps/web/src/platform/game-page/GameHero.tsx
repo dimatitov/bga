@@ -6,9 +6,13 @@ import type { WebGameEntry } from '@/games/registry';
 import { GameCover } from '../ui/GameCover';
 import { GameMeta } from '../ui/GameMeta';
 import { GameStatusChip } from '../ui/GameStatusChip';
+import { TerminalPanel } from '../ui/TerminalPanel';
 import { useGameText } from '../ui/useGameText';
 
-/** Hero (D-GP-1): cover left (≤ 420px), name (h1), status, meta, description; cover on top on narrow screens. */
+/**
+ * Hero (D-GP-1): cover left (≤ 420px), name (h1), status, meta, description; cover on top on narrow screens.
+ * SWR-009: the cover sits in a terminal bezel with the game's accent as the top edge.
+ */
 export function GameHero({ entry, children }: { entry: WebGameEntry; children?: ReactNode }) {
   const { definition } = entry;
   const text = useGameText(entry);
@@ -21,13 +25,9 @@ export function GameHero({ entry, children }: { entry: WebGameEntry; children?: 
         alignItems: 'start',
       }}
     >
-      <Box
-        sx={{
-          borderRadius: 1,
-          overflow: 'hidden',
-          borderTop: 4,
-          borderTopColor: entry.cover?.accentColor ?? 'divider',
-        }}
+      <TerminalPanel
+        accent={entry.cover?.accentColor}
+        sx={{ overflow: 'hidden', bgcolor: 'terminal.crt' }}
       >
         <GameCover
           src={text.coverSrc}
@@ -35,14 +35,9 @@ export function GameHero({ entry, children }: { entry: WebGameEntry; children?: 
           status={definition.status}
           data-testid="game-page-cover"
         />
-      </Box>
+      </TerminalPanel>
       <Stack spacing={2}>
-        <Typography
-          variant="h4"
-          component="h1"
-          data-testid="game-page-name"
-          sx={{ fontWeight: 700 }}
-        >
+        <Typography variant="h1" data-testid="game-page-name" sx={{ color: 'primary.main' }}>
           {text.name}
         </Typography>
         <Stack

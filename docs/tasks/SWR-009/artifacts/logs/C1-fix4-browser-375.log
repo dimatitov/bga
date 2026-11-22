@@ -1,0 +1,8 @@
+# SWR-009 C1 fix round 4 (QA-1, AC-14) — browser check, dev server http://localhost:5180,
+# session 46d94157-50b9-4773-a525-a4415be5556b, viewport 375x812, no moves made
+# (the first attempt hit M's transient WIP error "ReferenceError: rectInside is not defined" in labelCulling.ts;
+#  re-checked after M's file was fixed)
+session-back-to-game: rect [left 12, top 8, width 44, height 44] (was 36x44 per QA-1), aria-label "К игре", visible text "" (icon only)
+session-settings: 44x44
+console-header height: 46
+document scrollWidth 375 = clientWidth 375 (no horizontal scroll)

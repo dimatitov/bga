@@ -17,7 +17,7 @@ import type {
   UnitType,
 } from '@bga/game-rebellion/schema';
 import type { AutomationRunSummary } from '@bga/platform';
-import type { SessionAutomationState, SessionEnvelope } from '@/platform';
+import type { AutomationLastRun, SessionAutomationState, SessionEnvelope } from '@/platform';
 import { makeRebellionSession } from './fixtures';
 
 export const CORE_SESSION_ID = 'core-fixture-1';
@@ -475,6 +475,92 @@ export function makeSessionAutomationState(
     error: null,
     lastRun: null,
     retry: () => {},
+    ...overrides,
+  };
+}
+
+// ---------------------------------------------------------------------------------------------------------
+// SWR-009 (F): builders for forces / manifest / AI marks (plan §3.5). Test-only, frozen after F.
+// ---------------------------------------------------------------------------------------------------------
+
+/** A view with its units (and optionally leaders) replaced — e.g. to build a manifest state. */
+export function withUnits(
+  view: PlayerViewCore,
+  units: CoreUnitView[],
+  leaders: CoreLeaderView[] = view.leaders,
+): PlayerViewCore {
+  return { ...view, units: units.map((u) => ({ ...u })), leaders: leaders.map((l) => ({ ...l })) };
+}
+
+/**
+ * The Empire's REDACTED view before the reveal (§3.5): like `makeCoreEmpireView` — base units in the zone
+ * (`location.kind === 'rebelBase'`), `rebelBase.systemId === null` — plus a Rebel leader (Dodonna) in the zone and
+ * the AI Rebels' redacted log events (`SYSTEM_ACTIVATED` / `PIECES_MOVED` with `null` = the zone). Nothing in it
+ * names the base system (Yavin) as a location.
+ */
+export function empireRedactedView(overrides: Partial<PlayerViewCore> = {}): PlayerViewCore {
+  const base = makeCoreEmpireView();
+  return makeCoreEmpireView({
+    leaders: base.leaders.map((l) => (l.id === L_DODONNA ? { ...l, location: BASE } : l)),
+    log: [
+      ...base.log,
+      {
+        seq: 4,
+        at: AT,
+        type: 'SYSTEM_ACTIVATED',
+        actor: 'rebels',
+        payload: { leaderId: L_DODONNA, systemId: null },
+      },
+      {
+        seq: 5,
+        at: AT,
+        type: 'PIECES_MOVED',
+        actor: 'rebels',
+        payload: { pieceIds: [U_TRANSPORT], fromSystemId: CS_SULLUST, toSystemId: null },
+      },
+    ],
+    ...overrides,
+  });
+}
+
+/** A redacted AI event list of an Empire view: activation of the zone, a move Sullust → zone, a move Hoth → Sullust. */
+export function aiRunEventsRedacted(): CoreViewEvent[] {
+  return [
+    {
+      seq: 10,
+      at: AT,
+      type: 'SYSTEM_ACTIVATED',
+      actor: 'rebels',
+      payload: { leaderId: L_DODONNA, systemId: null },
+    },
+    {
+      seq: 11,
+      at: AT,
+      type: 'PIECES_MOVED',
+      actor: 'rebels',
+      payload: { pieceIds: [U_TRANSPORT], fromSystemId: CS_SULLUST, toSystemId: null },
+    },
+    {
+      seq: 12,
+      at: AT,
+      type: 'PIECES_MOVED',
+      actor: 'rebels',
+      payload: { pieceIds: [U_RT_SULLUST], fromSystemId: CS_HOTH, toSystemId: CS_SULLUST },
+    },
+    { seq: 13, at: AT, type: 'PASSED', actor: 'rebels', payload: { auto: false } },
+  ];
+}
+
+/** `automation.lastRun` (SWR-006) with the given events; default — an AI run with `steps = events.length`. */
+export function withLastRun(
+  events: unknown[],
+  overrides: Partial<AutomationLastRun> = {},
+): AutomationLastRun {
+  return {
+    source: 'run',
+    summary: makeAutomationSummary({ steps: events.length, strategy: 'bot' }),
+    events,
+    seq: 1,
     ...overrides,
   };
 }

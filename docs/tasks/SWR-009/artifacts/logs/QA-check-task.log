@@ -1,0 +1,3 @@
+$ node scripts/check-task.mjs docs/tasks/SWR-009   # QA_EXECUTION, after writing qa-results.md
+OK docs/tasks/SWR-009
+exit=0

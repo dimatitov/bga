@@ -1,0 +1,5 @@
+eslint exit 0
+Checking formatting...
+All matched files use Prettier code style!
+prettier exit 0
+hex-grep exit 1 (1 = none)

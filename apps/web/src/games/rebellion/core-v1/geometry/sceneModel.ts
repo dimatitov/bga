@@ -1,33 +1,36 @@
 /**
- * `view` + local UI state → props of the `core-v1` Konva nodes (SWR-005 plan-frontend §4). Pure, no React/Konva.
+ * `view` + local UI state → props of the `core-v1` Konva nodes (SWR-005 plan-frontend §4; SWR-009 plan §2 M). Pure, no
+ * React/Konva.
  *
- * Invariant (plan-frontend §0): nothing here evaluates game rules. Highlights come from `legalActions` via
- * `viewModel` (activation targets of the armed leader, move sources, movable units), markers from explicit view
- * fields (`remote`, `contestedSystemIds`, `activation`, `rebelBase.systemId`). The hidden rebel-base zone is drawn
- * exactly when `viewModel.hiddenZone(view)` says the server hides the base; its content is what the server put in
- * `location.kind === 'rebelBase'`.
+ * Invariant (plan-frontend §0, SWR-009 §3.5): nothing here evaluates game rules or infers hidden information.
+ * Highlights come from `legalActions` via `viewModel` (activation targets of the armed leader, move sources, movable
+ * units), state marks from explicit view fields (`remote`, `contestedSystemIds`, `activation`, `rebelBase.systemId`),
+ * AI marks from `aiRecentMarks` (redacted events of the last run), group counters from `forcesBySystem` (only
+ * `location.kind === 'system'`) and the hidden-zone counters from `zoneForces` — the zone carries no system id.
  */
-import type { CoreUnitView, Faction, FactionId, PlayerViewCore } from '@bga/game-rebellion/schema';
+import type { FactionId, PlayerViewCore } from '@bga/game-rebellion/schema';
 import {
   HIDDEN_BASE_ZONE_RECT,
   type MapPoint,
   coreMapLayout,
   coreRegionShapes,
 } from '@bga/game-rebellion/board';
-import { layoutPiecesInSystem, overflowChipPosition } from '../../board/model/pieceLayout';
 import type { Selection } from '../../board/model/selectionStore';
+import type { AiRecentMarks } from '../model/aiRecent';
+import type { ManifestRequest } from '../model/coreUiStore';
+import { type Arena, arenaOf, forcesBySystem, sideTotals, zoneForces } from '../model/forces';
 import {
   activatedSystemId,
   activationOf,
   activationTargets,
   hiddenZone,
   isContested,
-  isMovable,
   moveSources,
-  unitTypeOf,
   visibleRebelBaseSystemId,
 } from '../model/viewModel';
 import {
+  HANDLE_ARC_RADIUS,
+  HANDLE_STEP_DEG,
   LEADER_ARC_RADIUS,
   LEADER_STEP_DEG,
   ZONE_PADDING,
@@ -35,6 +38,15 @@ import {
   ZONE_TITLE_HEIGHT,
 } from './constants';
 import type { Lod } from './lod';
+import {
+  type MarkerBox,
+  compactMarkerBox,
+  groupMarkerBox,
+  groupMarkerWidth,
+  zoneMarkerBox,
+} from './markerLayout';
+
+type Faction = FactionId;
 
 export interface SystemScene {
   id: string;
@@ -46,7 +58,7 @@ export interface SystemScene {
   /** Activation target of the armed leader (`ACTIVATE_SYSTEM.systemIds`). */
   target: boolean;
   /** Side of the current activation when this is the activated system. */
-  activatedBy: FactionId | null;
+  activatedBy: Faction | null;
   /** `MOVE_PIECES` source of the viewer's activation. */
   source: boolean;
   selected: boolean;
@@ -54,17 +66,21 @@ export interface SystemScene {
   isBase: boolean;
   /** A unit is dragged over this system and it is the move target. */
   dropTarget: boolean;
+  /** A unit is dragged over this system and it is NOT the move target. */
+  dropIllegal: boolean;
+  /** Touched by the AI in its last run: 1-based order of first appearance («AI · 01»), else `null`. */
+  aiRecent: number | null;
 }
 
+/** A single-unit move handle (detail LOD, own activation): a unit listed in `MOVE_PIECES.pieces`. */
 export interface UnitScene {
   id: string;
   owner: Faction;
   typeKey: string;
-  arena: 'space' | 'ground';
-  immobile: boolean;
-  /** `null` = hidden rebel-base zone. */
-  systemId: string | null;
+  arena: Arena;
+  systemId: string;
   pos: MapPoint;
+  /** Always true for a handle (listed by the server); kept for the node props. */
   movable: boolean;
   selected: boolean;
 }
@@ -80,29 +96,42 @@ export interface LeaderScene {
   activating: boolean;
 }
 
-export interface OverflowScene {
-  systemId: string;
+/**
+ * Counter marker of one group (SWR-009 AC-6, QD-4): detail — side × arena; compact — one per side (`arena: 'all'`,
+ * leaders counted too); hidden zone — Rebel side × arena with `systemId: null`. Screen-constant box (`markerLayout`).
+ */
+export interface GroupMarkerScene {
+  key: string;
+  /** `null` = the hidden rebel-base zone (never a system id there, §3.5). */
+  systemId: string | null;
   owner: Faction;
+  arena: Arena | 'all';
+  /** Number of units (figures) of the group (compact: all units of the side). */
   count: number;
-  pos: MapPoint;
-}
-
-/** Compact LOD: one chip per side and system (units + leaders of that side). */
-export interface ChipScene {
-  systemId: string;
-  owner: Faction;
-  units: number;
+  /** Fleet / ground split of `count` (detail: the group's own arena; compact: both, drawn «▲n ■m»). */
+  space: number;
+  ground: number;
+  /** Compact LOD only: leaders of the side at the system (0 otherwise). */
   leaders: number;
-  /** World centre of the system; the chip is offset in screen px (left for the Empire, right for the Rebels). */
+  unitIds: string[];
+  leaderIds: string[];
+  /** World anchor (system centre / zone point); `box` is relative to it in screen px at factor 1. */
   anchor: MapPoint;
+  box: MarkerBox;
+  /** Contains the selected unit, or is the group of the open Unit Manifest. */
+  selected: boolean;
 }
 
 export interface ZoneScene {
   rect: { x: number; y: number; width: number; height: number };
-  units: UnitScene[];
+  /** Unit ids the server placed in the zone (counted by `markers`). */
+  unitIds: string[];
+  markers: GroupMarkerScene[];
   leaders: LeaderScene[];
   activated: boolean;
   selected: boolean;
+  /** The AI's last run touched the zone (a `null` system in the redacted events). */
+  aiRecent: boolean;
 }
 
 export interface LinkScene {
@@ -125,18 +154,19 @@ export interface Scene {
   regions: Array<{ id: string; nameKey: string; polygon: readonly MapPoint[]; label: MapPoint }>;
   links: LinkScene[];
   systems: SystemScene[];
-  /** Detail LOD only (empty in compact). */
-  units: UnitScene[];
-  overflow: OverflowScene[];
-  /** Compact LOD only (empty in detail). */
-  chips: ChipScene[];
-  /** Detail LOD only (in compact the leaders are counted in the chips). */
+  /** Group counter markers of the systems (detail: side × arena; compact: per side). */
+  markers: GroupMarkerScene[];
+  /** Detail LOD, own activation only: single-unit drag handles (empty otherwise). */
+  handles: UnitScene[];
+  /** Detail LOD only (in compact the leaders are counted in the markers). */
   leaders: LeaderScene[];
   zone: ZoneScene | null;
   moveLines: MoveLineScene[];
   targetIds: string[];
   sourceIds: string[];
   activatedSystemId: string | null;
+  /** Systems of the AI's last run, in order of first appearance. */
+  aiRecentIds: string[];
 }
 
 export interface SceneInput {
@@ -144,8 +174,16 @@ export interface SceneInput {
   armedLeaderId: string | null;
   selection: Selection;
   lod: Lod;
-  /** Unit drag in progress (`overSystemId` = system under the pointer). */
-  drag?: { pieceId: string; overSystemId: string | null } | null;
+  /** Unit drag in progress (`overSystemId` = system under the pointer, `overState` from `useCoreMoveDrag`). */
+  drag?: {
+    pieceId: string;
+    overSystemId: string | null;
+    overState?: 'legal' | 'illegal' | 'none';
+  } | null;
+  /** AI marks of the last automation run (`aiRecentMarks`), `null` = none. */
+  aiRecent?: AiRecentMarks | null;
+  /** The open Unit Manifest (highlights its group's marker). */
+  manifest?: ManifestRequest | null;
   layout?: Readonly<Record<string, MapPoint>>;
   /** Precomputed `buildMapStatics(view.map)` (memoised by the stage). */
   statics?: Pick<Scene, 'centers' | 'regions' | 'links'>;
@@ -153,14 +191,14 @@ export interface SceneInput {
 
 const SIDES: readonly Faction[] = ['empire', 'rebels'];
 
-function unitShape(view: PlayerViewCore, u: CoreUnitView) {
-  const t = unitTypeOf(view, u.typeKey);
-  return { arena: t?.arena ?? 'ground', immobile: t?.mobility === 'immobile' };
-}
-
 function arcPoint(center: MapPoint, deg: number, radius: number): MapPoint {
   const rad = (deg * Math.PI) / 180;
   return { x: center.x + radius * Math.cos(rad), y: center.y + radius * Math.sin(rad) };
+}
+
+/** Slot offset (in steps) for the n-th item: 0, +1, −1, +2, −2 … */
+function slotOffset(n: number): number {
+  return n === 0 ? 0 : n % 2 === 1 ? (n + 1) / 2 : -(n / 2);
 }
 
 /** Leader badge slots on the outer arc above a system: Empire to the left of the top, Rebels to the right. */
@@ -183,17 +221,28 @@ export function leaderSlots(
   return slots;
 }
 
-/** Grid positions inside the hidden zone (below its title), row by row. */
-export function zoneSlots(count: number, startIndex = 0): MapPoint[] {
-  const z = HIDDEN_BASE_ZONE_RECT;
-  const perRow = Math.max(1, Math.floor((z.width - ZONE_PADDING * 2) / ZONE_STEP) + 1);
-  return Array.from({ length: count }, (_, i) => {
-    const k = i + startIndex;
-    return {
-      x: z.x + ZONE_PADDING + (k % perRow) * ZONE_STEP,
-      y: z.y + ZONE_TITLE_HEIGHT + Math.floor(k / perRow) * ZONE_STEP,
-    };
+/** Move-handle slots on the inner upper arc of a source system (centred on the top, alternating sides). */
+export function handleSlots(center: MapPoint, ids: readonly string[]): Map<string, MapPoint> {
+  const slots = new Map<string, MapPoint>();
+  [...ids].sort().forEach((id, n) => {
+    slots.set(id, arcPoint(center, 270 + slotOffset(n) * HANDLE_STEP_DEG, HANDLE_ARC_RADIUS));
   });
+  return slots;
+}
+
+/** World anchor of the hidden-zone markers (below the zone title, left). */
+export function zoneMarkerAnchor(): MapPoint {
+  const z = HIDDEN_BASE_ZONE_RECT;
+  return { x: z.x + ZONE_PADDING, y: z.y + ZONE_TITLE_HEIGHT };
+}
+
+/** Leader diamonds of the hidden zone: a row from the right edge, below the title. */
+export function zoneLeaderSlots(count: number): MapPoint[] {
+  const z = HIDDEN_BASE_ZONE_RECT;
+  return Array.from({ length: count }, (_, i) => ({
+    x: z.x + z.width - ZONE_PADDING - i * ZONE_STEP,
+    y: z.y + ZONE_TITLE_HEIGHT + ZONE_STEP / 2,
+  }));
 }
 
 /** Static part of the scene (centres, region outlines, adjacency): depends on `view.map` only. */
@@ -224,12 +273,31 @@ export function buildMapStatics(
   return { centers, regions, links };
 }
 
+function manifestGroupSelected(
+  manifest: ManifestRequest | null,
+  systemId: string | null,
+  owner: Faction,
+  arena: Arena | 'all',
+): boolean {
+  if (!manifest?.group) return false;
+  const t = manifest.target;
+  const sameTarget =
+    systemId === null ? t.kind === 'zone' : t.kind === 'system' && t.systemId === systemId;
+  return (
+    sameTarget &&
+    manifest.group.owner === owner &&
+    (manifest.group.arena === arena || manifest.group.arena === 'all' || arena === 'all')
+  );
+}
+
 export function buildScene({
   view,
   armedLeaderId,
   selection,
   lod,
   drag = null,
+  aiRecent = null,
+  manifest = null,
   layout = coreMapLayout,
   statics = buildMapStatics(view.map, layout),
 }: SceneInput): Scene {
@@ -242,12 +310,16 @@ export function buildScene({
   const activation = activationOf(view);
   const activated = activatedSystemId(view);
   const baseId = visibleRebelBaseSystemId(view);
-  const dragTarget =
-    drag && drag.overSystemId !== null && drag.overSystemId === activated ? activated : null;
+  const over = drag?.overSystemId ?? null;
+  const dragTarget = over !== null && over === activated ? activated : null;
+  const dragIllegal =
+    over !== null && over !== activated && drag?.overState === 'illegal' ? over : null;
+  const aiRecentIds = aiRecent?.systemIds ?? [];
 
   const systems: SystemScene[] = view.map.systems.flatMap((s) => {
     const center = centers.get(s.id);
     if (!center) return [];
+    const aiIndex = aiRecentIds.indexOf(s.id);
     return [
       {
         id: s.id,
@@ -262,75 +334,69 @@ export function buildScene({
         selected: selection.kind === 'system' && selection.systemId === s.id,
         isBase: baseId === s.id,
         dropTarget: dragTarget === s.id,
+        dropIllegal: dragIllegal === s.id,
+        aiRecent: aiIndex >= 0 ? aiIndex + 1 : null,
       },
     ];
   });
 
-  const isSelectedUnit = (id: string) => selection.kind === 'piece' && selection.pieceId === id;
+  const selectedPiece = selection.kind === 'piece' ? selection.pieceId : null;
   const isSelectedLeader = (id: string) => selection.kind === 'leader' && selection.leaderId === id;
 
-  // Units and leaders on the map, per system.
-  const unitsBySystem = new Map<string, CoreUnitView[]>();
-  for (const u of view.units) {
-    if (u.location.kind !== 'system') continue;
-    const list = unitsBySystem.get(u.location.systemId);
-    if (list) list.push(u);
-    else unitsBySystem.set(u.location.systemId, [u]);
-  }
-  const leadersBySystem = new Map<string, PlayerViewCore['leaders']>();
-  for (const l of view.leaders) {
-    if (l.location.kind !== 'system') continue;
-    const list = leadersBySystem.get(l.location.systemId);
-    if (list) list.push(l);
-    else leadersBySystem.set(l.location.systemId, [l]);
-  }
-
-  const units: UnitScene[] = [];
-  const overflow: OverflowScene[] = [];
-  const chips: ChipScene[] = [];
+  // Group counters: ONLY units / leaders whose location is the system (§3.5).
+  const forces = forcesBySystem(view);
+  const markers: GroupMarkerScene[] = [];
   const leaders: LeaderScene[] = [];
-
   for (const [systemId, center] of centers) {
-    const here = unitsBySystem.get(systemId) ?? [];
-    const leadersHere = leadersBySystem.get(systemId) ?? [];
+    const set = forces.get(systemId);
+    if (!set) continue;
     if (lod === 'compact') {
-      for (const owner of SIDES) {
-        const u = here.filter((x) => x.owner === owner).length;
-        const l = leadersHere.filter((x) => x.owner === owner).length;
-        if (u + l > 0) chips.push({ systemId, owner, units: u, leaders: l, anchor: center });
+      for (const side of sideTotals(set)) {
+        const unitIds = set.groups.filter((g) => g.owner === side.owner).flatMap((g) => g.unitIds);
+        const leaderIds = set.leaders.filter((l) => l.owner === side.owner).map((l) => l.id);
+        const arenaCount = (arena: Arena) =>
+          set.groups.find((g) => g.owner === side.owner && g.arena === arena)?.count ?? 0;
+        const split = { space: arenaCount('space'), ground: arenaCount('ground') };
+        markers.push({
+          key: `${systemId}-${side.owner}-all`,
+          systemId,
+          owner: side.owner,
+          arena: 'all',
+          count: side.units,
+          ...split,
+          leaders: side.leaders,
+          unitIds,
+          leaderIds,
+          anchor: center,
+          box: compactMarkerBox(side.owner, { ...split, leaders: side.leaders }),
+          selected:
+            (selectedPiece !== null && unitIds.includes(selectedPiece)) ||
+            manifestGroupSelected(manifest, systemId, side.owner, 'all'),
+        });
       }
       continue;
     }
-    const { slots, overflow: over } = layoutPiecesInSystem(
-      center,
-      here.map((u) => ({ id: u.id, kind: 'unit' as const, owner: u.owner })),
-    );
-    for (const u of here) {
-      const pos = slots.get(u.id);
-      if (!pos) continue;
-      units.push({
-        id: u.id,
-        owner: u.owner,
-        typeKey: u.typeKey,
-        ...unitShape(view, u),
+    for (const g of set.groups) {
+      markers.push({
+        key: `${systemId}-${g.owner}-${g.arena}`,
         systemId,
-        pos,
-        movable: isMovable(view, u.id),
-        selected: isSelectedUnit(u.id),
+        owner: g.owner,
+        arena: g.arena,
+        count: g.count,
+        space: g.arena === 'space' ? g.count : 0,
+        ground: g.arena === 'ground' ? g.count : 0,
+        leaders: 0,
+        unitIds: [...g.unitIds],
+        leaderIds: [],
+        anchor: center,
+        box: groupMarkerBox(g.owner, g.arena, g.count),
+        selected:
+          (selectedPiece !== null && g.unitIds.includes(selectedPiece)) ||
+          manifestGroupSelected(manifest, systemId, g.owner, g.arena),
       });
     }
-    for (const owner of SIDES) {
-      if (over[owner] > 0) {
-        overflow.push({
-          systemId,
-          owner,
-          count: over[owner],
-          pos: overflowChipPosition(center, owner),
-        });
-      }
-    }
-    const lslots = leaderSlots(center, leadersHere);
-    for (const l of leadersHere) {
+    const lslots = leaderSlots(center, set.leaders);
+    for (const l of set.leaders) {
       leaders.push({
         id: l.id,
         owner: l.owner,
@@ -342,23 +408,66 @@ export function buildScene({
     }
   }
 
-  // Hidden rebel-base zone: exactly what the server placed there.
+  // Single-unit move handles: detail LOD, units the server lists in MOVE_PIECES of the viewer's activation.
+  const handles: UnitScene[] = [];
+  if (lod === 'detail') {
+    for (const source of sources) {
+      const center = centers.get(source.fromSystemId);
+      if (!center) continue;
+      const ids = source.pieces
+        .map((p) => p.pieceId)
+        .filter((id) => {
+          const u = view.units.find((x) => x.id === id);
+          return u?.location.kind === 'system' && u.location.systemId === source.fromSystemId;
+        });
+      const slots = handleSlots(center, ids);
+      for (const id of ids) {
+        const u = view.units.find((x) => x.id === id)!;
+        handles.push({
+          id,
+          owner: u.owner,
+          typeKey: u.typeKey,
+          arena: arenaOf(view, u.typeKey),
+          systemId: source.fromSystemId,
+          pos: slots.get(id)!,
+          movable: true,
+          selected: selectedPiece === id,
+        });
+      }
+    }
+  }
+
+  // Hidden rebel-base zone: exactly what the server placed there; no system id anywhere in it.
   const hz = hiddenZone(view);
+  const zf = zoneForces(view);
   let zone: ZoneScene | null = null;
-  if (hz) {
-    const zoneUnits = hz.unitIds.flatMap((id) => {
-      const u = view.units.find((x) => x.id === id);
-      return u ? [u] : [];
-    });
-    const zoneLeaders = hz.leaderIds.flatMap((id) => {
-      const l = view.leaders.find((x) => x.id === id);
-      return l ? [l] : [];
-    });
-    const leaderPos = zoneSlots(zoneLeaders.length);
-    const unitPos = zoneSlots(zoneUnits.length, zoneLeaders.length);
+  if (hz && zf) {
+    const anchor = zoneMarkerAnchor();
+    const spaceGroup = zf.groups.find((g) => g.arena === 'space');
+    const spaceWidth = spaceGroup ? groupMarkerWidth(spaceGroup.count) : 0;
+    const zoneMarkers = zf.groups.map((g): GroupMarkerScene => ({
+      key: `zone-${g.owner}-${g.arena}`,
+      systemId: null,
+      owner: g.owner,
+      arena: g.arena,
+      count: g.count,
+      space: g.arena === 'space' ? g.count : 0,
+      ground: g.arena === 'ground' ? g.count : 0,
+      leaders: 0,
+      unitIds: [...g.unitIds],
+      leaderIds: [],
+      anchor,
+      box: zoneMarkerBox(g.arena, g.count, spaceGroup ? spaceWidth : -6),
+      selected:
+        (selectedPiece !== null && g.unitIds.includes(selectedPiece)) ||
+        manifestGroupSelected(manifest, null, g.owner, g.arena),
+    }));
+    const leaderPos = zoneLeaderSlots(zf.leaders.length);
     zone = {
       rect: { ...HIDDEN_BASE_ZONE_RECT },
-      leaders: zoneLeaders.map((l, i) => ({
+      unitIds: [...hz.unitIds],
+      markers: zoneMarkers,
+      leaders: zf.leaders.map((l, i) => ({
         id: l.id,
         owner: l.owner,
         systemId: null,
@@ -366,18 +475,9 @@ export function buildScene({
         selected: isSelectedLeader(l.id),
         activating: activation?.leaderId === l.id,
       })),
-      units: zoneUnits.map((u, i) => ({
-        id: u.id,
-        owner: u.owner,
-        typeKey: u.typeKey,
-        ...unitShape(view, u),
-        systemId: null,
-        pos: unitPos[i]!,
-        movable: false,
-        selected: isSelectedUnit(u.id),
-      })),
       activated: hz.activated,
       selected: selection.kind === 'zone',
+      aiRecent: aiRecent?.zone ?? false,
     };
   }
 
@@ -393,14 +493,14 @@ export function buildScene({
     regions,
     links,
     systems,
-    units,
-    overflow,
-    chips,
+    markers,
+    handles,
     leaders,
     zone,
     moveLines,
     targetIds,
     sourceIds,
     activatedSystemId: activated,
+    aiRecentIds: aiRecentIds.filter((id) => centers.has(id)),
   };
 }

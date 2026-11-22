@@ -1,0 +1,45 @@
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/platform/automation/AutomationNotice.test.tsx (3 tests | 1 failed) 121ms
+   ❯ AutomationNotice placement (SWR-006 QA defect D-1) (3)
+     × layout: in flow full-width on xs–sm; fixed bottom-left with a bounded width on md+; never the 50%/translate centring 6ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/platform/automation/AutomationNotice.test.tsx > AutomationNotice placement (SWR-006 QA defect D-1) > layout: in flow full-width on xs–sm; fixed bottom-left with a bounded width on md+; never the 50%/translate centring
+AssertionError: expected { md: 104 } to deeply equal { md: 16 }
+
+- Expected
++ Received
+
+  {
+-   "md": 16,
++   "md": 104,
+  }
+
+ ❯ src/platform/automation/AutomationNotice.test.tsx:34:23
+     32|     expect(sx.maxWidth).toEqual({ xs: 'none', md: 'min(560px, calc(50%…
+     33|     expect(sx.left).toEqual({ md: 16 });
+     34|     expect(sx.bottom).toEqual({ md: 16 });
+       |                       ^
+     35|     // The shrink-to-half-viewport bug came from `left: 50%` + `transl…
+     36|     expect(sx).not.toHaveProperty('transform');
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 38 passed (39)
+      Tests  1 failed | 276 passed (277)
+   Start at  00:58:50
+   Duration  8.36s (environment 33%, tests 25%, import 20%, setup 13%, transform 9%)
+
+Environment  jsdom was created 39 times · 21.85s total, 33% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in /Users/dimatitov/WebstormProjects/Game
+  │ automa/apps/web
+

@@ -1,0 +1,135 @@
+TAP version 13
+# Subtest: check-web-bundle: rules
+    # Subtest: clean bundle: schemas, i18n names, layout and testids are allowed
+    ok 1 - clean bundle: schemas, i18n names, layout and testids are allowed
+      ---
+      duration_ms: 0.972334
+      type: 'test'
+      ...
+    # Subtest: scenario rebel base assignment is found (minified and JSON forms)
+    ok 2 - scenario rebel base assignment is found (minified and JSON forms)
+      ---
+      duration_ms: 0.315416
+      type: 'test'
+      ...
+    # Subtest: scenario piece ids as string literals are found
+    ok 3 - scenario piece ids as string literals are found
+      ---
+      duration_ms: 0.068792
+      type: 'test'
+      ...
+    # Subtest: hidden piece → typeKey mapping is found
+    ok 4 - hidden piece → typeKey mapping is found
+      ---
+      duration_ms: 0.119042
+      type: 'test'
+      ...
+    # Subtest: core-v1 base choice strings are found (Q-18): names, string literals and keys
+    ok 5 - core-v1 base choice strings are found (Q-18): names, string literals and keys
+      ---
+      duration_ms: 0.071958
+      type: 'test'
+      ...
+    # Subtest: core-v1 base choice rule: no false positives on legal core-v1 web content
+    ok 6 - core-v1 base choice rule: no false positives on legal core-v1 web content
+      ---
+      duration_ms: 0.274375
+      type: 'test'
+      ...
+    # Subtest: __boardDebug hook is found
+    ok 7 - __boardDebug hook is found
+      ---
+      duration_ms: 0.115708
+      type: 'test'
+      ...
+    1..7
+ok 1 - check-web-bundle: rules
+  ---
+  duration_ms: 2.430166
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: module composition (Q-23, TC-ARCH-08)
+    # Subtest: clean list: only definition/schema/board/assets of games
+    ok 1 - clean list: only definition/schema/board/assets of games
+      ---
+      duration_ms: 0.312375
+      type: 'test'
+      ...
+    # Subtest: rules, scenario, server, ai (src or dist), unknown subpaths and root files are forbidden
+    ok 2 - rules, scenario, server, ai (src or dist), unknown subpaths and root files are forbidden
+      ---
+      duration_ms: 0.819792
+      type: 'test'
+      ...
+    # Subtest: CLI --modules-dir: exit 0 on clean maps, 1 on a rules module, 2 without game modules
+    ok 3 - CLI --modules-dir: exit 0 on clean maps, 1 on a rules module, 2 without game modules
+      ---
+      duration_ms: 306.378125
+      type: 'test'
+      ...
+    1..3
+ok 2 - check-web-bundle: module composition (Q-23, TC-ARCH-08)
+  ---
+  duration_ms: 307.783542
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: CLI
+    # Subtest: exit 0 on a clean dist, exit 1 with FORBIDDEN lines on a leaking dist
+    ok 1 - exit 0 on a clean dist, exit 1 with FORBIDDEN lines on a leaking dist
+      ---
+      duration_ms: 269.840042
+      type: 'test'
+      ...
+    1..1
+ok 3 - check-web-bundle: CLI
+  ---
+  duration_ms: 269.902125
+  type: 'suite'
+  ...
+# Subtest: check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)
+    # Subtest: static rules are part of every rule set
+    ok 1 - static rules are part of every rule set
+      ---
+      duration_ms: 0.130834
+      type: 'test'
+      ...
+    # Subtest: dev paths, testids and secrets are found
+    ok 2 - dev paths, testids and secrets are found
+      ---
+      duration_ms: 0.171458
+      type: 'test'
+      ...
+    # Subtest: no false positives: AI_* codes and their texts, platform paths, look-alike words
+    ok 3 - no false positives: AI_* codes and their texts, platform paths, look-alike words
+      ---
+      duration_ms: 0.058708
+      type: 'test'
+      ...
+    # Subtest: module check: apps/web/src/dev/** is forbidden, other web modules are fine
+    ok 4 - module check: apps/web/src/dev/** is forbidden, other web modules are fine
+      ---
+      duration_ms: 0.177625
+      type: 'test'
+      ...
+    # Subtest: CLI: dev path / testid / key name in dist → exit 1; dev module in maps → exit 1
+    ok 5 - CLI: dev path / testid / key name in dist → exit 1; dev module in maps → exit 1
+      ---
+      duration_ms: 641.026792
+      type: 'test'
+      ...
+    1..5
+ok 4 - check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18, TC-S-01/02)
+  ---
+  duration_ms: 641.655292
+  type: 'suite'
+  ...
+1..4
+# tests 16
+# suites 4
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1277.8745
+exit=0

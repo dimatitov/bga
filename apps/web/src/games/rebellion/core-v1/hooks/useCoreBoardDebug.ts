@@ -2,6 +2,7 @@ import type { PlayerViewCore } from '@bga/game-rebellion/schema';
 import type Konva from 'konva';
 import { type RefObject, useEffect, useRef } from 'react';
 import type { Bounds } from '../../board/model/geometry';
+import type { CulledLabels } from '../geometry/labelCulling';
 import type { LabelBox } from '../geometry/labelLayout';
 import type { Scene } from '../geometry/sceneModel';
 
@@ -11,6 +12,8 @@ export interface CoreBoardDebugSnapshot {
   bounds: Bounds | null;
   /** Label box of every system (same numbers as the drawn labels). */
   labelBoxes: ReadonlyMap<string, LabelBox>;
+  /** Captions drawn after collision culling (`null` = all). */
+  shownLabels?: CulledLabels | null;
 }
 
 /**

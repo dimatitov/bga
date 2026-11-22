@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   CS_CORELLIA,
+  CS_CORUSCANT,
+  empireRedactedView,
+  makeCoreEmpireView,
   CS_SULLUST,
   CS_YAVIN,
   L_DODONNA,
@@ -135,5 +138,63 @@ describe('coreUiStore — outcome focus and reset', () => {
       draftActivation: null,
       lastOutcomeSeen: null,
     });
+  });
+});
+
+describe('coreUiStore — Unit Manifest (SWR-009 K-6, plan §3.4)', () => {
+  it('open a system manifest (with / without a group), switch, close', () => {
+    expect(store().manifest).toBeNull();
+    store().openManifest(
+      { kind: 'system', systemId: CS_CORUSCANT },
+      { owner: 'empire', arena: 'space' },
+    );
+    expect(store().manifest).toEqual({
+      target: { kind: 'system', systemId: CS_CORUSCANT },
+      group: { owner: 'empire', arena: 'space' },
+    });
+    store().openManifest({ kind: 'system', systemId: CS_SULLUST });
+    expect(store().manifest).toEqual({
+      target: { kind: 'system', systemId: CS_SULLUST },
+      group: null,
+    });
+    store().closeManifest();
+    expect(store().manifest).toBeNull();
+  });
+
+  it('opening the same request twice / closing twice does not notify subscribers', () => {
+    store().openManifest({ kind: 'zone' }, { owner: 'rebels', arena: 'all' });
+    let calls = 0;
+    const unsub = useCoreUiStore.subscribe(() => calls++);
+    store().openManifest({ kind: 'zone' }, { owner: 'rebels', arena: 'all' });
+    store().closeManifest();
+    store().closeManifest();
+    unsub();
+    expect(calls).toBe(1);
+  });
+
+  it('reconcile keeps a manifest whose system is on the map, drops one whose system is gone', () => {
+    store().openManifest({ kind: 'system', systemId: CS_CORUSCANT });
+    store().reconcile(makeCoreView());
+    expect(store().manifest?.target).toEqual({ kind: 'system', systemId: CS_CORUSCANT });
+    const view = makeCoreView();
+    store().reconcile({
+      ...view,
+      map: { ...view.map, systems: view.map.systems.filter((s) => s.id !== CS_CORUSCANT) },
+    });
+    expect(store().manifest).toBeNull();
+  });
+
+  it('reconcile keeps the zone manifest while the base is hidden and drops it once the base is known', () => {
+    store().openManifest({ kind: 'zone' });
+    store().reconcile(empireRedactedView());
+    expect(store().manifest).toEqual({ target: { kind: 'zone' }, group: null });
+    store().reconcile(makeCoreEmpireView({ rebelBase: { systemId: CS_YAVIN, revealed: true } }));
+    expect(store().manifest).toBeNull();
+  });
+
+  it('reset clears the manifest', () => {
+    store().openManifest({ kind: 'zone' });
+    store().reset();
+    expect(store().manifest).toBeNull();
   });
 });

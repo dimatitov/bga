@@ -27,6 +27,10 @@
 // Module composition additionally fails on any source under `apps/web/src/dev/**` (the strongest proof: even a renamed
 // string cannot hide a bundled module of the diagnostics page).
 //
+// SWR-009 S (A-7): the dev-only UI Kit showcase follows the same rules — no `/dev/ui-kit` path, no `ui-kit-*` testids
+// (`dev-ui-kit-path` / `dev-ui-kit-testid`); its modules live under `apps/web/src/dev/**` and are covered by the module
+// check above.
+//
 // Usage: node scripts/check-web-bundle.mjs [--dist <dir>] [--rebuild] [--modules] [--modules-dir <dir>] [--skip-modules]
 //   Reads apps/web/dist; builds it first (pnpm --filter @bga/web build) if it is missing or --rebuild.
 //   --modules          also print every game-package module of the bundle;
@@ -63,6 +67,17 @@ export const DEV_AI_AND_SECRET_RULES = [
     id: 'dev-ai-testid',
     description: 'dev AI diagnostics testid (`dev-ai-*` / `ai-dev-*`): the `import.meta.env.DEV` guard did not fold',
     regex: /\b(?:dev-ai|ai-dev)-[a-z]/,
+  },
+  // SWR-009 S (A-7): the dev-only UI Kit showcase `/dev/ui-kit` and its `ui-kit-*` testids — same fold-away guard.
+  {
+    id: 'dev-ui-kit-path',
+    description: 'dev UI Kit showcase path (`/dev/ui-kit`) in a production bundle (SWR-009 A-7)',
+    regex: /\/dev\/ui-kit\b/,
+  },
+  {
+    id: 'dev-ui-kit-testid',
+    description: 'dev UI Kit showcase testid (`ui-kit-*`): the `import.meta.env.DEV` guard did not fold',
+    regex: /\bui-kit-[a-z]/,
   },
   {
     id: 'openai-key-name',

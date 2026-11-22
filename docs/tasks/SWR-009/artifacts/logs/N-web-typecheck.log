@@ -1,0 +1,69 @@
+$ tsc -b
+src/games/rebellion/core-v1/canvas/CoreBoardStage.tsx(241,36): error TS2551: Property 'units' does not exist on type 'ZoneScene'. Did you mean 'unitIds'?
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(91,27): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(91,39): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(92,12): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(141,16): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(141,27): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(154,16): error TS2339: Property 'overflow' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(154,30): error TS7006: Parameter 'o' implicitly has an 'any' type.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(175,23): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ readonly empire: "#DD6B59"; readonly rebels: "#91DFA1"; }'.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(188,16): error TS2339: Property 'chips' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/canvas/layers/InteractiveLayer.tsx(188,27): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/games/rebellion/core-v1/canvas/layers/OverlayLayer.tsx(45,30): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/canvas/layers/OverlayLayer.tsx(45,42): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/canvas/nodes/HiddenBaseZone.tsx(73,13): error TS2551: Property 'units' does not exist on type 'ZoneScene'. Did you mean 'unitIds'?
+src/games/rebellion/core-v1/canvas/nodes/HiddenBaseZone.tsx(73,24): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(6,3): error TS2305: Module '"../../geometry/constants"' has no exported member 'CHIP_FONT_PX'.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(7,3): error TS2305: Module '"../../geometry/constants"' has no exported member 'CHIP_GLYPH_PX'.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(8,3): error TS2305: Module '"../../geometry/constants"' has no exported member 'CHIP_HEIGHT_PX'.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(12,15): error TS2305: Module '"../../geometry/sceneModel"' has no exported member 'ChipScene'.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(47,17): error TS7053: Element implicitly has an 'any' type because expression of type 'any' can't be used to index type '{ readonly empire: "#DD6B59"; readonly rebels: "#91DFA1"; }'.
+src/games/rebellion/core-v1/canvas/nodes/UnitGlyphNode.tsx(83,10): error TS2339: Property 'immobile' does not exist on type 'UnitScene'.
+src/games/rebellion/core-v1/geometry/contentBounds.test.ts(9,23): error TS2305: Module '"./sceneModel"' has no exported member 'zoneSlots'.
+src/games/rebellion/core-v1/geometry/labelLayout.ts(10,3): error TS2305: Module '"./constants"' has no exported member 'CHIP_FONT_PX'.
+src/games/rebellion/core-v1/geometry/labelLayout.ts(11,3): error TS2305: Module '"./constants"' has no exported member 'CHIP_GLYPH_PX'.
+src/games/rebellion/core-v1/geometry/labelLayout.ts(12,3): error TS2305: Module '"./constants"' has no exported member 'CHIP_HEIGHT_PX'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(104,33): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(104,44): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(105,36): error TS2339: Property 'movable' does not exist on type '{}'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(106,32): error TS2339: Property 'movable' does not exist on type '{}'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(107,33): error TS2339: Property 'movable' does not exist on type '{}'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(108,33): error TS2339: Property 'immobile' does not exist on type '{}'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(109,29): error TS2339: Property 'movable' does not exist on type '{}'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(110,29): error TS2339: Property 'arena' does not exist on type '{}'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(150,24): error TS2551: Property 'units' does not exist on type 'ZoneScene'. Did you mean 'unitIds'?
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(150,35): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(153,24): error TS2551: Property 'units' does not exist on type 'ZoneScene'. Did you mean 'unitIds'?
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(153,37): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(155,18): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(155,30): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(163,24): error TS2551: Property 'units' does not exist on type 'ZoneScene'. Did you mean 'unitIds'?
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(189,18): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(191,29): error TS2339: Property 'chips' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(191,43): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(201,25): error TS2339: Property 'chips' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(201,39): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(202,23): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(205,19): error TS2339: Property 'chips' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(206,19): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(218,85): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(219,10): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(233,18): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/geometry/sceneModel.test.ts(233,31): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts(70,30): error TS2339: Property 'chips' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts(70,42): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts(88,15): error TS2339: Property 'units' does not exist on type 'Scene'.
+src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts(88,27): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts(88,61): error TS2551: Property 'units' does not exist on type 'ZoneScene'. Did you mean 'unitIds'?
+src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts(88,73): error TS7006: Parameter 'u' implicitly has an 'any' type.
+src/games/rebellion/core-v1/top-bar/CoreTopBar.test.tsx(41,77): error TS2322: Type '{ status: "active" | "setup" | "prototype" | "completed"; saveStatus: "idle"; backHref: string; }' is not assignable to type 'IntrinsicAttributes & { status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; }'.
+  Property 'backHref' does not exist on type 'IntrinsicAttributes & { status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; }'.
+src/games/rebellion/core-v1/top-bar/OutcomeBanner.tsx(94,11): error TS2322: Type '{ children: string; component: ForwardRefExoticComponent<LinkProps & RefAttributes<HTMLAnchorElement>>; to: string; startIcon: Element; "data-testid": string; }' is not assignable to type 'IntrinsicAttributes & Omit<KeyButtonProps, "ref"> & RefAttributes<HTMLButtonElement>'.
+  Property 'to' does not exist on type 'IntrinsicAttributes & Omit<KeyButtonProps, "ref"> & RefAttributes<HTMLButtonElement>'.
+[ELIFECYCLE] Command failed with exit code 2.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /Users/dimatitov/WebstormProjects/Game
+  │ automa/apps/web
+

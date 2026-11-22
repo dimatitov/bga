@@ -2,7 +2,7 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '@/shared/test';
 import { AutomationNotice } from './AutomationNotice';
-import { automationNoticeSx } from './noticeLayout';
+import { automationNoticeSx, NOTICE_BOTTOM, NOTICE_STACK_LIFT } from './noticeLayout';
 import type { SessionAutomationState } from './SessionAutomationContext';
 
 function state(patch: Partial<SessionAutomationState> = {}): SessionAutomationState {
@@ -31,11 +31,15 @@ describe('AutomationNotice placement (SWR-006 QA defect D-1)', () => {
     expect(sx.m).toEqual({ xs: 2, md: 0 });
     expect(sx.maxWidth).toEqual({ xs: 'none', md: 'min(560px, calc(50% - 32px))' });
     expect(sx.left).toEqual({ md: 16 });
-    expect(sx.bottom).toEqual({ md: 16 });
+    // SWR-009: above the console footer and the map housing's legend / zoom strip.
+    expect(sx.bottom).toEqual({ md: NOTICE_BOTTOM });
+    expect(NOTICE_BOTTOM).toBeGreaterThanOrEqual(36 + 38 + 16);
     // The shrink-to-half-viewport bug came from `left: 50%` + `translateX(-50%)` on a fixed box.
     expect(sx).not.toHaveProperty('transform');
     expect(sx).not.toHaveProperty('right');
-    expect((automationNoticeSx(true) as Record<string, unknown>).bottom).toEqual({ md: 72 });
+    expect((automationNoticeSx(true) as Record<string, unknown>).bottom).toEqual({
+      md: NOTICE_BOTTOM + NOTICE_STACK_LIFT,
+    });
   });
 
   it('renders with that layout: static below md, fixed bottom-left from md, no translateX', () => {
@@ -50,6 +54,9 @@ describe('AutomationNotice placement (SWR-006 QA defect D-1)', () => {
     expect(rules).toMatch(/@media \(min-width:\s*0px\)\s*\{[^}]*position:\s*static/);
     expect(rules).toMatch(/@media \(min-width:\s*900px\)\s*\{[^}]*position:\s*fixed/);
     expect(rules).toMatch(/@media \(min-width:\s*900px\)\s*\{[^}]*left:\s*16px/);
+    expect(rules).toMatch(
+      new RegExp(`@media \\(min-width:\\s*900px\\)\\s*\\{[^}]*bottom:\\s*${NOTICE_BOTTOM}px`),
+    );
     expect(notice.ownerDocument.defaultView?.getComputedStyle(notice).transform ?? '').not.toMatch(
       /translate/,
     );
@@ -60,4 +67,27 @@ describe('AutomationNotice placement (SWR-006 QA defect D-1)', () => {
     renderWithProviders({ element: <AutomationNotice automation={state({ phase: 'idle' })} /> });
     expect(screen.queryByTestId('session-automation-notice')).not.toBeInTheDocument();
   });
+});
+
+describe('AutomationNotice look and texts (SWR-009 C1, AC-11)', () => {
+  it.each([
+    ['error', /^Ход AI не завершён: /],
+    ['stalled', /^AI ещё не закончил ход\./],
+  ] as const)(
+    '%s: UI Kit error alert (role=alert), text first, danger key «Продолжить ход AI»',
+    (phase, text) => {
+      const retry = vi.fn();
+      renderWithProviders({ element: <AutomationNotice automation={state({ phase, retry })} /> });
+      const notice = screen.getByTestId('session-automation-notice');
+      expect(notice).toHaveAttribute('role', 'alert');
+      expect(notice).toHaveAttribute('data-reason', phase);
+      expect(notice).toHaveClass('MuiAlert-colorError');
+      expect(notice).toHaveTextContent(text);
+      const button = screen.getByTestId('session-automation-retry');
+      expect(button).toHaveAttribute('data-tone', 'danger');
+      expect(button).toHaveTextContent('Продолжить ход AI');
+      button.click();
+      expect(retry).toHaveBeenCalledTimes(1);
+    },
+  );
 });

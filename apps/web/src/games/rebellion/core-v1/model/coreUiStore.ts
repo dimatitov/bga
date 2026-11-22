@@ -1,6 +1,13 @@
-import type { PlayerViewCore } from '@bga/game-rebellion/schema';
+import type { FactionId, PlayerViewCore } from '@bga/game-rebellion/schema';
 import { create } from 'zustand';
-import { activationKey, canActivateLeader, moveSourceFrom } from './viewModel';
+import type { Arena } from './forces';
+import {
+  activationKey,
+  canActivateLeader,
+  hiddenZone,
+  moveSourceFrom,
+  systemById,
+} from './viewModel';
 
 /**
  * Local UI state of the `core-v1` turn flow (SWR-005 plan-frontend §3.2). Never a copy of the server view:
@@ -8,9 +15,22 @@ import { activationKey, canActivateLeader, moveSourceFrom } from './viewModel';
  *   it in `ACTIVATE_SYSTEM.leaderIds`;
  * - `moveDraft` — checked units per source system (`MOVE_PIECES` panel); dropped when the activation changes,
  *   and per source after a successful move / 409 (`clearDraft`); ids the server no longer lists are filtered out;
- * - `lastOutcomeSeen` — `view.version` at which the game-over banner already took focus (focus once).
+ * - `lastOutcomeSeen` — `view.version` at which the game-over banner already took focus (focus once);
+ * - `manifest` (SWR-009 K-6, plan §3.4) — the Unit Manifest asked for (a system or the hidden zone, optionally one
+ *   group). The caller selects the same target in `selectionStore`; `UnitInspector` shows the manifest only while
+ *   `manifest.target` matches the selection. Dropped when its target disappears from the view.
  */
 export type MoveDraft = Readonly<Record<string, readonly string[]>>;
+
+export type ManifestTarget = { kind: 'system'; systemId: string } | { kind: 'zone' };
+export interface ManifestGroupRef {
+  owner: FactionId;
+  arena: Arena | 'all';
+}
+export interface ManifestRequest {
+  target: ManifestTarget;
+  group: ManifestGroupRef | null;
+}
 
 interface CoreUiState {
   armedLeaderId: string | null;
@@ -18,6 +38,7 @@ interface CoreUiState {
   /** `activationKey(view)` the draft belongs to. */
   draftActivation: string | null;
   lastOutcomeSeen: number | null;
+  manifest: ManifestRequest | null;
   arm(leaderId: string): void;
   disarm(): void;
   /** Checks / unchecks one unit of a source. */
@@ -27,6 +48,9 @@ interface CoreUiState {
   /** Clears one source (after its successful MOVE) or the whole draft (no argument: 409, new activation). */
   clearDraft(fromSystemId?: string): void;
   markOutcomeSeen(version: number): void;
+  /** Opens the Unit Manifest of a system / the hidden zone, optionally highlighting one group. */
+  openManifest(target: ManifestTarget, group?: ManifestGroupRef | null): void;
+  closeManifest(): void;
   /** Aligns the local state with a new server view (call on every view change). */
   reconcile(view: PlayerViewCore): void;
   reset(): void;
@@ -37,7 +61,30 @@ const INITIAL = {
   moveDraft: {},
   draftActivation: null,
   lastOutcomeSeen: null,
+  manifest: null,
 } satisfies Partial<CoreUiState>;
+
+function sameRequest(a: ManifestRequest | null, b: ManifestRequest): boolean {
+  if (a === null) return false;
+  const sameTarget =
+    a.target.kind === b.target.kind &&
+    (a.target.kind === 'zone' ||
+      (b.target.kind === 'system' && a.target.systemId === b.target.systemId));
+  const sameGroup =
+    a.group === b.group ||
+    (a.group !== null &&
+      b.group !== null &&
+      a.group.owner === b.group.owner &&
+      a.group.arena === b.group.arena);
+  return sameTarget && sameGroup;
+}
+
+/** The manifest target still exists in the view (system on the map / the zone still hidden). */
+function targetExists(view: PlayerViewCore, target: ManifestTarget): boolean {
+  return target.kind === 'zone'
+    ? hiddenZone(view) !== null
+    : systemById(view, target.systemId) !== undefined;
+}
 
 function withoutSource(draft: MoveDraft, fromSystemId: string): MoveDraft {
   if (!(fromSystemId in draft)) return draft;
@@ -82,9 +129,21 @@ export const useCoreUiStore = create<CoreUiState>()((set, get) => ({
   markOutcomeSeen: (version) => {
     if (get().lastOutcomeSeen !== version) set({ lastOutcomeSeen: version });
   },
+  openManifest: (target, group = null) => {
+    const next: ManifestRequest = {
+      target:
+        target.kind === 'zone' ? { kind: 'zone' } : { kind: 'system', systemId: target.systemId },
+      group: group ? { owner: group.owner, arena: group.arena } : null,
+    };
+    if (!sameRequest(get().manifest, next)) set({ manifest: next });
+  },
+  closeManifest: () => {
+    if (get().manifest !== null) set({ manifest: null });
+  },
   reconcile: (view) => {
     const s = get();
     const patch: Partial<CoreUiState> = {};
+    if (s.manifest !== null && !targetExists(view, s.manifest.target)) patch.manifest = null;
     if (s.armedLeaderId !== null && !canActivateLeader(view, s.armedLeaderId)) {
       patch.armedLeaderId = null;
     }

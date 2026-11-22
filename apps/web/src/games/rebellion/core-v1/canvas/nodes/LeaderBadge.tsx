@@ -1,11 +1,13 @@
 import type Konva from 'konva';
 import { memo } from 'react';
-import { Circle, Group, Text } from 'react-konva';
-import { rebellionPalette } from '../../../theme/palette';
+import { Group, Line, Text } from 'react-konva';
+import { mapStyle } from '../../../theme/mapStyle';
+import { forceGlyphSpec } from '../../../theme/glyphs';
 import { LEADER_RADIUS } from '../../geometry/constants';
 import type { LeaderScene } from '../../geometry/sceneModel';
 
-const C = rebellionPalette.board;
+const S = mapStyle;
+const D = LEADER_RADIUS + 2;
 
 export interface LeaderBadgeProps {
   leader: LeaderScene;
@@ -14,10 +16,14 @@ export interface LeaderBadgeProps {
   onSelect(id: string, e: Konva.KonvaEventObject<MouseEvent | TouchEvent>): void;
 }
 
-/** Leader on the map (plan-frontend §4): circle in the side's colour (Empire filled, Rebels outlined) + initials. */
+const diamond = (r: number) => [0, -r, r, 0, 0, r, -r, 0];
+
+/**
+ * Leader on the map (SWR-009 R-3): a diamond with an amber contour (Empire filled red, Rebels on the dark plate) and
+ * the initials; activating — an outer solid diamond, selected — an outer dashed amber diamond.
+ */
 function LeaderBadgeImpl({ leader: l, short, onSelect }: LeaderBadgeProps) {
-  const color = rebellionPalette.faction[l.owner];
-  const isEmpire = l.owner === 'empire';
+  const spec = forceGlyphSpec(l.owner, 'leader');
   return (
     <Group
       x={l.pos.x}
@@ -28,27 +34,42 @@ function LeaderBadgeImpl({ leader: l, short, onSelect }: LeaderBadgeProps) {
       onTap={(e) => onSelect(l.id, e)}
     >
       {l.activating && (
-        <Circle radius={LEADER_RADIUS + 5} stroke={color} strokeWidth={2.5} listening={false} />
+        <Line
+          points={diamond(D + 6)}
+          closed
+          stroke={S.faction[l.owner]}
+          strokeWidth={2.5}
+          listening={false}
+        />
       )}
       {l.selected && (
-        <Circle radius={LEADER_RADIUS + 4} stroke={C.selected} strokeWidth={2} listening={false} />
+        <Line
+          points={diamond(D + 11)}
+          closed
+          stroke={S.leader.selected}
+          strokeWidth={2}
+          dash={[4, 3]}
+          listening={false}
+        />
       )}
-      <Circle
-        radius={LEADER_RADIUS}
-        fill={isEmpire ? color : C.systemFill}
-        stroke={color}
-        strokeWidth={isEmpire ? 1.5 : 3}
+      <Line
+        points={diamond(D)}
+        closed
+        fill={spec.filled ? spec.color : S.marker.background}
+        stroke={spec.stroke}
+        strokeWidth={2}
         perfectDrawEnabled={false}
       />
       <Text
         text={short}
-        x={-LEADER_RADIUS}
-        y={-6}
-        width={LEADER_RADIUS * 2}
+        x={-D}
+        y={-5}
+        width={D * 2}
         align="center"
-        fontSize={12}
+        fontSize={10}
+        fontFamily={S.font.family}
         fontStyle="bold"
-        fill={isEmpire ? C.background : C.label}
+        fill={spec.filled ? S.screen.background : S.label.color}
         listening={false}
         perfectDrawEnabled={false}
       />

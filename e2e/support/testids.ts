@@ -139,7 +139,9 @@ export const T = {
   timeTrack: 'time-track',
   /** `data-rebels`, `data-empire` */
   passedIndicator: 'passed-indicator',
-  topBarControls: 'top-bar-controls',
+  // SWR-009: the `top-bar-controls` wrapper is gone (plan §4) — the turn keys live in the console rail.
+  /** SWR-009: primary rail key «Активировать систему»; `data-leader-id`, `data-system-id` when enabled */
+  turnActivate: 'turn-activate',
   turnControls: 'turn-controls',
   finishActivation: 'finish-activation',
   passTurn: 'pass-turn',
@@ -215,13 +217,49 @@ export const T = {
   sessionAutomationNotice: 'session-automation-notice',
   /** «Продолжить ход AI» */
   sessionAutomationRetry: 'session-automation-retry',
+  /** SWR-009: in the map housing bar; `data-expanded` */
   mapLegend: 'map-legend',
+  /** SWR-009: one row of the essential keys (`map-legend-key-<item>`) */
+  mapLegendRow: 'map-legend-row',
+  /** SWR-009: «Легенда» key, `aria-expanded`, `aria-controls` → `map-legend-full` */
+  mapLegendToggle: 'map-legend-toggle',
+  /** SWR-009: full legend (hidden until the toggle), items `map-legend-<item>` */
+  mapLegendFull: 'map-legend-full',
   gameInfo: 'game-info',
   /** hidden machine-readable mirror of the map (Worker M, accepted test hook, Q-37) */
   coreMapState: 'core-map-state',
   /** `data-region|data-remote|data-contested|data-target|data-source|data-activated|data-rebel-base` */
   mapSystem: (id: string) => `map-system-${id}`,
+  /** SWR-009: `data-markers` (`"rebels:space:2,…"`), `data-ai-recent` */
   mapHiddenZone: 'map-hidden-zone',
+  // SWR-009 Galactic Vector Terminal (plan §5.4)
+  consoleHeader: 'console-header',
+  consoleFooter: 'console-footer',
+  /** LEDs of the AI Commander box, `data-state` idle|thinking|stalled|over */
+  aiCommanderLed: 'ai-commander-led',
+  mapHousing: 'map-housing',
+  /** zoom keys + legend under the map screen */
+  mapHousingBar: 'map-housing-bar',
+  /** `data-systems`, `data-routes`, `data-regions`, `data-zoom` */
+  mapDisplayHeader: 'map-display-header',
+  /** DOM group marker of a system panel: `aria-pressed`, `data-count`, `data-owner`, `data-arena` */
+  mapMarker: (systemId: string, side: 'rebels' | 'empire', arena: string) =>
+    `map-marker-${systemId}-${side}-${arena}`,
+  mapMarkerZone: (side: 'rebels' | 'empire', arena: string) => `map-marker-zone-${side}-${arena}`,
+  /** `data-system-id` | `data-zone="hidden"`, `data-restricted`, `data-state`, `data-total`, `data-variant` rail|sheet */
+  unitManifest: 'unit-manifest',
+  /** `data-count`, `data-selected` */
+  unitManifestGroup: (side: 'rebels' | 'empire', arena: string) =>
+    `unit-manifest-group-${side}-${arena}`,
+  /** `data-count` */
+  unitManifestRow: (side: 'rebels' | 'empire', typeKey: string) =>
+    `unit-manifest-row-${side}-${typeKey}`,
+  unitManifestLeader: (leaderId: string) => `unit-manifest-leader-${leaderId}`,
+  unitManifestTotal: 'unit-manifest-total',
+  unitManifestClose: 'unit-manifest-close',
+  /** < 760 px: bottom sheet wrapper and its `aria-expanded` toggle */
+  unitManifestSheet: 'unit-manifest-sheet',
+  unitManifestSheetToggle: 'unit-manifest-sheet-toggle',
   // shared
   notFound: 'not-found',
   feedback: 'feedback',

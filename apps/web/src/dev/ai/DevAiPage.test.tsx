@@ -1,5 +1,6 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { tokens } from '@/app/theme';
 import { i18n } from '@/shared/i18n';
 import { type MockReply, mockFetch, renderWithProviders } from '@/shared/test';
 import { errorBody, makeDecisionResponse, makeMockStatus, makeStatus } from './testFixtures';
@@ -26,6 +27,9 @@ function deferred() {
   });
   return { promise, resolve };
 }
+
+/** Computed `font-family` drops the quotes around family names; compare names only. */
+const unquote = (family: string) => family.replace(/["']/g, '');
 
 const count = (requests: { method: string; path: string }[], key: string) =>
   requests.filter((r) => `${r.method} ${r.path}` === key).length;
@@ -410,7 +414,9 @@ describe('DevAiPage (SWR-005B plan-frontend §11)', () => {
     expect(alert).toHaveTextContent('Выберите провайдер Mock или проверьте apps/api/.env.');
   });
 
-  it('D-3: placeholder words use the regular font; data slots use a Cyrillic-capable mono stack', async () => {
+  // SWR-009 AC-3: PT Mono is the only app font, so «not monospace» can no longer hold. The placeholder keeps the theme
+  // body font (no own override, unlike the `code` data stack) and stays visibly prose — italic, not a code value.
+  it('D-3: placeholder words use the theme body font (italic prose); data slots use a Cyrillic-capable mono stack', async () => {
     await openPage({ [STATUS]: { status: 200, body: makeMockStatus() } });
     await waitFor(() =>
       expect(screen.getByTestId('dev-ai-status')).toHaveAttribute('data-state', 'ready'),
@@ -423,7 +429,10 @@ describe('DevAiPage (SWR-005B plan-frontend §11)', () => {
       expect(el.tagName).not.toBe('CODE');
       expect(el.closest('code')).toBeNull();
       expect(el).toHaveAttribute('data-placeholder', 'true');
-      expect(getComputedStyle(el).fontFamily).not.toMatch(/mono/i);
+      const style = getComputedStyle(el);
+      expect(unquote(style.fontFamily)).toBe(unquote(tokens.fontFamily));
+      expect(style.fontFamily).not.toMatch(/Menlo|Consolas/);
+      expect(style.fontStyle).toBe('italic');
     }
     const codes = screen.getByTestId('dev-ai-page').querySelectorAll('code');
     expect(codes.length).toBeGreaterThan(0);

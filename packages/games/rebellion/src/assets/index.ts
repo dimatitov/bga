@@ -10,6 +10,6 @@ export { empireEmblemSvg, factionEmblems, rebelsEmblemSvg } from './emblems';
 /** Game Assets of Rebellion (`@bga/game-rebellion/assets`): original graphics only. */
 export const rebellionAssets = {
   cover: { svg: rebellionCoverSvg, width: 640, height: 360 },
-  accentColor: '#F5A524',
+  accentColor: rebellionVisualTokens.faction.rebels,
   visualTokens: rebellionVisualTokens,
 } as const satisfies GameAssets & { visualTokens: RebellionVisualTokens };

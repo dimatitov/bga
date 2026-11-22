@@ -1,30 +1,146 @@
 import type Konva from 'konva';
 import { memo } from 'react';
-import { Circle, Group, Line, Path, RegularPolygon } from 'react-konva';
-import { rebellionPalette } from '../../../theme/palette';
-import { CORE_SYSTEM_RADIUS } from '../../geometry/constants';
+import { Circle, Group, Line, Text } from 'react-konva';
+import { mapStyle } from '../../../theme/mapStyle';
+import { CORE_SYSTEM_RADIUS, NODE_RADIUS_PX } from '../../geometry/constants';
 import type { SystemScene } from '../../geometry/sceneModel';
+import { type Mark, type MarkRing, type MarkTone, systemMarks } from '../../geometry/systemMarks';
+import { SCREEN_FIXED } from '../screenScale';
 
-/** MUI Home icon path (24×24), own placeholder graphics (D-V-4). */
-const HOME_PATH = 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z';
-const R = CORE_SYSTEM_RADIUS;
-const C = rebellionPalette.board;
-const F = rebellionPalette.faction;
+const S = mapStyle;
+const R = NODE_RADIUS_PX;
 
 export interface CoreSystemNodeProps {
   system: SystemScene;
+  /** Screen-constant node scale (`screenFixedScale(viewport.scale)`), refreshed imperatively on zoom. */
+  initialScale: number;
+  /** Localised tag of the AI mark («AI»), followed by « · 01». */
+  aiTag: string;
   onSelect(id: string, e: Konva.KonvaEventObject<MouseEvent | TouchEvent>): void;
   onHover(id: string | null): void;
 }
 
+function toneColor(tone: MarkTone, s: SystemScene): string {
+  if (tone === 'side') return s.activatedBy ? S.faction[s.activatedBy] : S.tone.selected;
+  return S.tone[tone];
+}
+
+function RingShape({ ring, color }: { ring: MarkRing; color: string }) {
+  return (
+    <Circle
+      radius={ring.radius}
+      stroke={color}
+      strokeWidth={ring.width}
+      dash={ring.dash ? [...ring.dash] : undefined}
+      listening={false}
+      perfectDrawEnabled={false}
+    />
+  );
+}
+
+/** Extra glyph of a mark (own vector graphics, screen px). */
+function MarkGlyphShape({ mark, color, aiTag }: { mark: Mark; color: string; aiTag: string }) {
+  const common = { listening: false, perfectDrawEnabled: false } as const;
+  switch (mark.glyph) {
+    case 'notch': // remote: small diamond at the lower left of the node
+      return (
+        <Line
+          points={[-R - 4, R - 1, -R - 1, R + 2, -R - 4, R + 5, -R - 7, R + 2]}
+          closed
+          stroke={color}
+          strokeWidth={1}
+          {...common}
+        />
+      );
+    case 'flag': // activated: pole + pennant above the ring
+      return (
+        <>
+          <Line points={[4, -10, 4, -24]} stroke={color} strokeWidth={1.5} {...common} />
+          <Line points={[4, -24, 13, -21, 4, -18]} closed fill={color} {...common} />
+        </>
+      );
+    case 'crosshair': // selected: four ticks across the double ring
+      return (
+        <>
+          <Line points={[-29, 0, -19, 0]} stroke={color} strokeWidth={1} {...common} />
+          <Line points={[19, 0, 29, 0]} stroke={color} strokeWidth={1} {...common} />
+          <Line points={[0, -29, 0, -19]} stroke={color} strokeWidth={1} {...common} />
+          <Line points={[0, 19, 0, 29]} stroke={color} strokeWidth={1} {...common} />
+        </>
+      );
+    case 'chevron': // move source: outward chevron at the lower right
+      return (
+        <Line
+          points={[18, 15, 23, 20, 18, 25]}
+          stroke={color}
+          strokeWidth={1.5}
+          lineCap="round"
+          {...common}
+        />
+      );
+    case 'cross': // contested: two crossed strokes in both sides' colours
+      return (
+        <Group x={R + 4} y={-R - 4} {...common}>
+          <Line points={[-4, -4, 4, 4]} stroke={S.faction.rebels} strokeWidth={2} lineCap="round" />
+          <Line points={[4, -4, -4, 4]} stroke={S.faction.empire} strokeWidth={2} lineCap="round" />
+        </Group>
+      );
+    case 'home': // rebel base: outline house at the upper left
+      return (
+        <Line
+          points={[-R - 9, -R - 1, -R - 9, -R - 7, -R - 5, -R - 11, -R - 1, -R - 7, -R - 1, -R - 1]}
+          closed
+          stroke={color}
+          strokeWidth={1.5}
+          {...common}
+        />
+      );
+    case 'dot': // AI: filled dot + «AI · 01» above the node
+      return (
+        <>
+          <Circle x={10} y={-10} radius={2.5} fill={color} {...common} />
+          {mark.order !== undefined && (
+            <Text
+              text={`${aiTag} · ${String(mark.order).padStart(2, '0')}`}
+              x={-30}
+              y={-44}
+              width={60}
+              align="center"
+              fontSize={10}
+              fontFamily={S.font.family}
+              fontStyle="bold"
+              fill={S.tone.aiText}
+              {...common}
+            />
+          )}
+        </>
+      );
+    case 'xmark': // illegal drop
+      return (
+        <>
+          <Line points={[-5, -5, 5, 5]} stroke={color} strokeWidth={2} {...common} />
+          <Line points={[5, -5, -5, 5]} stroke={color} strokeWidth={2} {...common} />
+        </>
+      );
+    default:
+      return null;
+  }
+}
+
 /**
- * One system of the core map (plan-frontend §4 «CoreSystemNode»). Every state has a non-colour cue (ux §7):
- * remote — dashed outline + small diamond; contested — badge with two crossed strokes; activation target — dashed
- * teal ring + halo; activated — solid ring in the side's colour + flag; move source — thin dashed ring; selected —
- * double white ring; rebel base — Home icon (only when the server shows the base).
+ * One system of the vector map (SWR-009 R-4, AC-5). The world group keeps the old hit area (radius 30, clicks and
+ * drops); the node and its state marks are screen-constant (Console prototype: node r 7, dark fill, phosphor outline).
+ * Marks come from `systemMarks` — every state differs by geometry (radius / dash / width / glyph), not by colour only.
  */
-function CoreSystemNodeImpl({ system: s, onSelect, onHover }: CoreSystemNodeProps) {
-  const sideColor = s.activatedBy ? F[s.activatedBy] : C.legalTarget;
+function CoreSystemNodeImpl({
+  system: s,
+  initialScale,
+  aiTag,
+  onSelect,
+  onHover,
+}: CoreSystemNodeProps) {
+  const marks = systemMarks(s);
+  const remote = marks.find((m) => m.kind === 'remote');
   return (
     <Group
       x={s.center.x}
@@ -36,100 +152,27 @@ function CoreSystemNodeImpl({ system: s, onSelect, onHover }: CoreSystemNodeProp
       onMouseEnter={() => onHover(s.id)}
       onMouseLeave={() => onHover(null)}
     >
-      {s.target && (
+      <Circle radius={CORE_SYSTEM_RADIUS} fill={S.node.hit} perfectDrawEnabled={false} />
+      <Group name={SCREEN_FIXED} scaleX={initialScale} scaleY={initialScale} listening={false}>
         <Circle
-          radius={R + 12}
-          fill={C.legalTarget}
-          opacity={0.12}
-          listening={false}
+          radius={R}
+          fill={S.node.fill}
+          stroke={S.node.stroke}
+          strokeWidth={S.node.strokeWidth}
+          dash={remote?.nodeDash ? [...remote.nodeDash] : undefined}
           perfectDrawEnabled={false}
         />
-      )}
-      <Circle
-        radius={R}
-        fill={C.systemFill}
-        stroke={C.systemStroke}
-        strokeWidth={2}
-        dash={s.remote ? [6, 5] : undefined}
-        perfectDrawEnabled={false}
-      />
-      {s.remote && (
-        <RegularPolygon
-          sides={4}
-          radius={6}
-          x={-R - 2}
-          y={R - 4}
-          fill={C.systemFill}
-          stroke={C.label}
-          strokeWidth={1.5}
-          listening={false}
-        />
-      )}
-      {s.source && (
-        <Circle
-          radius={R + 5}
-          stroke={C.legalTarget}
-          strokeWidth={1.5}
-          dash={[3, 4]}
-          listening={false}
-        />
-      )}
-      {s.target && (
-        <Circle
-          radius={R + 9}
-          stroke={C.legalTarget}
-          strokeWidth={2.5}
-          dash={[8, 6]}
-          listening={false}
-          perfectDrawEnabled={false}
-        />
-      )}
-      {s.activatedBy && (
-        <>
-          <Circle
-            radius={R + 9}
-            stroke={sideColor}
-            strokeWidth={s.dropTarget ? 7 : 4}
-            listening={false}
-          />
-          {/* flag: pole + triangle above the top right of the ring */}
-          <Line
-            points={[R * 0.55, -R - 6, R * 0.55, -R - 30]}
-            stroke={sideColor}
-            strokeWidth={3}
-            listening={false}
-          />
-          <Line
-            points={[R * 0.55, -R - 30, R * 0.55 + 18, -R - 24, R * 0.55, -R - 18]}
-            closed
-            fill={sideColor}
-            listening={false}
-          />
-        </>
-      )}
-      {s.selected && (
-        <>
-          <Circle radius={R + 4} stroke={C.selected} strokeWidth={2} listening={false} />
-          <Circle radius={R + 14} stroke={C.selected} strokeWidth={2} listening={false} />
-        </>
-      )}
-      {s.contested && (
-        <Group x={R * 0.75} y={-R * 0.75} listening={false}>
-          <Circle radius={11} fill={C.systemFill} stroke={C.label} strokeWidth={1} />
-          <Line points={[-6, -6, 6, 6]} stroke={F.rebels} strokeWidth={3} lineCap="round" />
-          <Line points={[6, -6, -6, 6]} stroke={F.empire} strokeWidth={3} lineCap="round" />
-        </Group>
-      )}
-      {s.isBase && (
-        <Path
-          data={HOME_PATH}
-          x={-12}
-          y={-12}
-          fill={C.label}
-          listening={false}
-          perfectDrawEnabled={false}
-        />
-      )}
+        {marks.map((m) => {
+          const color = toneColor(m.tone, s);
+          return (
+            <Group key={m.kind} name={`mark-${m.kind}`}>
+              {m.ring && <RingShape ring={m.ring} color={color} />}
+              {m.outer && <RingShape ring={m.outer} color={color} />}
+              <MarkGlyphShape mark={m} color={color} aiTag={aiTag} />
+            </Group>
+          );
+        })}
+      </Group>
     </Group>
   );
 }

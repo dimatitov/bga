@@ -1,81 +1,120 @@
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
-import { rebellionPalette } from '../../theme/palette';
+import { terminalTokens } from '@/shared/theme';
+import { trackPercent, trackTicks } from './statusBarModel';
 
-const MIN_TICKS = 16;
-const STEP = 8;
-const PAD = 6;
-const H = 20;
+const T = terminalTokens;
+const SR_ONLY = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+  clipPath: 'inset(50%)',
+  whiteSpace: 'pre',
+} as const;
+
+const MARKER = { position: 'absolute', transform: 'translate(-50%, -50%)', top: '50%' } as const;
 
 /**
- * Time / reputation track (SWR-005 plan-frontend §7, D-SW5-12): text «Время 2 · Репутация 14» + a compact scale
- * 1..max(reputation, 16) with two markers of different shape — time = diamond, reputation = ring (not colour
- * only). The scale is decorative (the text and the `aria-label` carry the meaning) and hidden below 600 px.
- * `time-track[data-time][data-reputation]`.
+ * Time / reputation track (SWR-005 D-SW5-12; SWR-009 status bar): the text «Время 1» · «Репутация 14» above a fluid
+ * scale `1..max(reputation, time, 16)` with one tick per step and two markers of different SHAPE — time = red
+ * diamond, reputation = phosphor ring (not colour only). The scale is decorative (`aria-hidden`); the text and the
+ * group's `aria-label` carry the meaning. `time-track[data-time][data-reputation]`, `time-track-scale[data-ticks]`.
  */
 export function TimeTrack({ time, reputation }: { time: number; reputation: number }) {
   const { t } = useTranslation();
-  const ticks = Math.max(reputation, time, MIN_TICKS);
-  const width = PAD * 2 + STEP * (ticks - 1);
-  const x = (n: number) => PAD + STEP * (Math.min(Math.max(n, 1), ticks) - 1);
-  const label = t('rebellion.match:track.aria', { time, reputation });
+  const ticks = trackTicks(time, reputation);
   return (
     <Box
       data-testid="time-track"
       data-time={time}
       data-reputation={reputation}
       role="group"
-      aria-label={label}
-      sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}
+      aria-label={t('rebellion.match:track.aria', { time, reputation })}
+      sx={{ display: 'grid', gap: '6px', minWidth: 0 }}
     >
       <Box
-        component="svg"
-        viewBox={`0 0 ${width} ${H}`}
-        aria-hidden
-        data-testid="time-track-scale"
-        sx={{ display: { xs: 'none', sm: 'block' }, width, height: H, flex: 'none' }}
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          columnGap: 1,
+          fontSize: T.type.meta.size,
+          lineHeight: `${T.type.meta.lineHeight}px`,
+          fontWeight: 700,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          color: T.color.warm,
+          fontVariantNumeric: 'tabular-nums',
+        }}
       >
-        <line
-          x1={PAD}
-          x2={width - PAD}
-          y1={H / 2}
-          y2={H / 2}
-          stroke="currentColor"
-          strokeOpacity={0.35}
+        <Box component="span" data-testid="time-track-time" sx={{ whiteSpace: 'nowrap' }}>
+          {t('rebellion.match:track.time')} {time}
+        </Box>
+        {/* Plain-text separator for copy / text-only readers; the two labels sit at the scale's ends. */}
+        <Box component="span" sx={SR_ONLY}>
+          {' · '}
+        </Box>
+        <Box component="span" data-testid="time-track-reputation" sx={{ whiteSpace: 'nowrap' }}>
+          {t('rebellion.match:track.reputation')} {reputation}
+        </Box>
+      </Box>
+      <Box
+        aria-hidden="true"
+        data-testid="time-track-scale"
+        data-ticks={ticks}
+        sx={{
+          position: 'relative',
+          height: 8,
+          mx: '6px',
+          border: `1px solid ${T.color.bezelLight}`,
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          {Array.from({ length: ticks }, (_, i) => (
+            <Box
+              key={i}
+              component="span"
+              data-testid="time-track-tick"
+              sx={{ width: '1px', height: '100%', bgcolor: T.color.bezelLight }}
+            />
+          ))}
+        </Box>
+        <Box
+          component="span"
+          data-testid="time-track-reputation-marker"
+          data-shape="ring"
+          sx={{
+            ...MARKER,
+            left: `${trackPercent(reputation, ticks)}%`,
+            width: 11,
+            height: 11,
+            borderRadius: '50%',
+            border: `2px solid ${T.color.phosphor}`,
+            bgcolor: T.color.crt,
+          }}
         />
-        {Array.from({ length: ticks }, (_, i) => (
-          <line
-            key={i}
-            x1={x(i + 1)}
-            x2={x(i + 1)}
-            y1={H / 2 - 3}
-            y2={H / 2 + 3}
-            stroke="currentColor"
-            strokeOpacity={0.5}
-          />
-        ))}
-        <circle
-          cx={x(reputation)}
-          cy={H / 2}
-          r={6}
-          fill="none"
-          stroke={rebellionPalette.faction.rebels}
-          strokeWidth={2}
-        />
-        <path
-          d={`M ${x(time)} ${H / 2 - 6} L ${x(time) + 5} ${H / 2} L ${x(time)} ${H / 2 + 6} L ${x(time) - 5} ${H / 2} Z`}
-          fill={rebellionPalette.faction.empire}
-          stroke="currentColor"
-          strokeWidth={1}
+        <Box
+          component="span"
+          data-testid="time-track-time-marker"
+          data-shape="diamond"
+          sx={{
+            ...MARKER,
+            left: `${trackPercent(time, ticks)}%`,
+            width: 8,
+            height: 8,
+            bgcolor: T.color.red,
+            transform: 'translate(-50%, -50%) rotate(45deg)',
+          }}
         />
       </Box>
-      <Typography
-        variant="subtitle1"
-        sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}
-      >
-        {t('rebellion.match:track.text', { time, reputation })}
-      </Typography>
     </Box>
   );
 }

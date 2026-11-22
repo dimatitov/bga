@@ -1,24 +1,36 @@
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import type { TableScreenProps } from '@/games/types';
 import { useSessionAutomation } from '@/platform';
+import { terminalTokens } from '@/shared/theme';
 import { phaseName } from '../../board';
 import { aiSideOf } from '../model/aiCommander';
 import { useCoreBoard } from '../model/coreContext';
 import { hasPassed, isGameOver, markers, visibleRebelBaseSystemId } from '../model/viewModel';
-import { MapLegend } from '../sidebar/MapLegend';
 import { coreFactionName, coreSystemName } from '../sidebar/coreLogMessage';
 
 /**
  * «Партия» tab of the `core-v1` sidebar (SWR-005 plan-frontend §3.4, §7; Worker P2): id, sides, time,
  * reputation, phase, who has passed, the rebel base (only what the server shows — «неизвестна» otherwise), rules
- * slice, platform status (+ the slice disclaimer while `prototype`) and the map legend (`map-legend`, TC-C-19).
+ * slice, platform status (+ the slice disclaimer while `prototype`). SWR-009 K-7: the map legend moved to the map
+ * housing (`MapHousing`).
  * SWR-006 (plan-frontend §6.3): rows «Противник» (`game-info-opponent`) and, in an AI game, «AI Commander»
  * (`game-info-ai-commander[data-strategy]`: bot / OpenAI / «—») replace the old «не активен в прототипе» chip.
  * `game-info`, `game-info-status[data-status]`.
+ * SWR-009 C2: terminal readout list — meta uppercase labels (`muted`), values in `paper`, thin dividers; no legend.
  */
+
+const T = terminalTokens;
+const C = T.color;
+const dtSx = {
+  color: C.muted,
+  textTransform: 'uppercase',
+  letterSpacing: T.letterSpacing.meta,
+  py: '5px',
+  borderBottom: `1px solid ${C.line}`,
+} as const;
+const ddSx = { m: 0, py: '5px', borderBottom: `1px solid ${C.line}`, color: C.paper } as const;
 
 type Row = { label: string; value: string; testId?: string; strategy?: string };
 export function CoreGameInfoPanel({ status }: { status: TableScreenProps['status'] }) {
@@ -83,11 +95,11 @@ export function CoreGameInfoPanel({ status }: { status: TableScreenProps['status
     <Box data-testid="game-info">
       <Box
         component="dl"
-        sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', columnGap: 2, rowGap: 0.75, m: 0 }}
+        sx={{ display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr)', columnGap: 2, m: 0 }}
       >
         {rows.map((row) => (
           <Box key={row.label} sx={{ display: 'contents' }}>
-            <Typography component="dt" variant="body2" sx={{ color: 'text.secondary' }}>
+            <Typography component="dt" variant="meta" sx={dtSx}>
               {row.label}
             </Typography>
             <Typography
@@ -95,28 +107,31 @@ export function CoreGameInfoPanel({ status }: { status: TableScreenProps['status
               variant="body2"
               data-testid={row.testId}
               data-strategy={row.strategy}
-              sx={{ m: 0, overflowWrap: 'anywhere' }}
+              sx={{ ...ddSx, overflowWrap: 'anywhere' }}
             >
               {row.value}
             </Typography>
           </Box>
         ))}
-        <Typography component="dt" variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography component="dt" variant="meta" sx={{ ...dtSx, borderBottom: 0 }}>
           {t('rebellion.session:info.status')}
         </Typography>
-        <Box component="dd" data-testid="game-info-status" data-status={shownStatus} sx={{ m: 0 }}>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+        <Box
+          component="dd"
+          data-testid="game-info-status"
+          data-status={shownStatus}
+          sx={{ ...ddSx, borderBottom: 0 }}
+        >
+          <Typography variant="body2" sx={{ fontWeight: 700, color: C.phosphorText }}>
             {t(`common:sessionStatus.${shownStatus}`)}
           </Typography>
           {(shownStatus === 'prototype' || shownStatus === 'completed') && (
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            <Typography variant="body2" sx={{ color: C.amberText }}>
               {t('rebellion.common:prototype.coreV1')}
             </Typography>
           )}
         </Box>
       </Box>
-      <Divider sx={{ my: 2 }} />
-      <MapLegend />
     </Box>
   );
 }

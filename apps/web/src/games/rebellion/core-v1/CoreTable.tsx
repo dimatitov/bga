@@ -12,17 +12,21 @@ import type { TableScreenProps } from '@/games/types';
 import { type AutomationLastRun, useSessionAutomation } from '@/platform';
 import { announce } from '@/shared/feedback';
 import { useDragStore, useGlobalEscape, useSelectionStore } from '../board';
-import { CoreBoardStage } from './canvas/CoreBoardStage';
+import { terminalTokens } from '@/shared/theme';
+import { MapHousing } from './canvas/MapHousing';
+import { ConsoleFooter } from './console/ConsoleFooter';
+import { ConsoleHeader } from './console/ConsoleHeader';
+import { CONSOLE_AREA, consoleGridSx } from './console/consoleLayout';
 import { useSendCommand } from '../table/hooks/useSendCommand';
 import { aiSideOf, aiSummaryText, coreAutomationFlags } from './model/aiCommander';
 import { CoreBoardContext, type CoreBoardContextValue } from './model/coreContext';
 import { useCoreUiStore } from './model/coreUiStore';
 import { BOARD_LIST_ID, focusWhenReady, TURN_TITLE_ID } from './panels/focus';
-import { TurnControls } from './panels/TurnControls';
 import { responseAnnouncements } from './panels/useTurnCommands';
 import { CoreEventLog } from './sidebar/CoreEventLog';
 import { CoreSidebar } from './sidebar/CoreSidebar';
 import { CoreGameInfoPanel, CoreTopBar, OutcomeBanner } from './top-bar';
+import { isGameOver } from './model/viewModel';
 
 export interface CoreTableProps {
   sessionId: string;
@@ -34,23 +38,20 @@ export interface CoreTableProps {
   focusHeading: boolean;
 }
 
+const T = terminalTokens;
+
 /**
- * Grid of the core table (plan-frontend §3.4, §6 step 5): ≥ 1200 px map | sidebar 384; 900–1199 map | 320;
- * < 900 one column (top bar / map `min(64dvh, 85vw)` / sidebar) with vertical page scroll, never horizontal.
+ * Console root (SWR-009 plan §4): the grid of `consoleLayout` on the console case (double inset bezel of the
+ * design). ≥ 900 px exactly one viewport high (no page scroll, rail modules scroll inside); below — one column with
+ * vertical page scroll and never a horizontal one.
  */
-const GRID = {
-  display: 'grid',
-  gridTemplateRows: { xs: 'auto min(64dvh, 85vw) auto', md: 'auto minmax(0, 1fr)' },
-  gridTemplateColumns: {
-    xs: 'minmax(0, 1fr)',
-    md: 'minmax(0, 1fr) 320px',
-    lg: 'minmax(0, 1fr) 384px',
-  },
-  gridTemplateAreas: { xs: '"top" "board" "side"', md: '"top top" "board side"' },
-  height: { xs: 'auto', md: '100dvh' },
-  overflow: { xs: 'visible', md: 'hidden' },
-  position: 'relative',
-} as const;
+const CONSOLE_SX = {
+  ...consoleGridSx(),
+  bgcolor: T.color.case,
+  color: T.color.paper,
+  boxShadow: `inset 0 0 0 5px ${T.module.inset}, inset 0 0 0 6px ${T.color.bezelLight}`,
+  minWidth: 0,
+};
 
 /** Visually hidden but focusable heading (RouteFocus moves focus to `#main h1`, D-A-8). */
 const SR_ONLY = {
@@ -160,9 +161,12 @@ function useAnnounceAutomationRuns(lastRun: AutomationLastRun | null, view: Play
  * sidebar (turn panel · context · tabs). Everything the player may do comes from `legalActions` via `viewModel`.
  * `game-table[data-rules-engine="core-v1"]` (+ `data-phase`, `data-active-side`, plan-frontend §9).
  *
- * Composition: `CoreTopBar` (P2) with `controls={<TurnControls />}`, `OutcomeBanner` (P2) over the map,
- * sidebar slots `log` (`CoreEventLog`, P2) and `gameInfo` (`CoreGameInfoPanel`, P2).
- * Map: `<CoreBoardStage />` (M) — the `board-canvas` container with the Konva stage, zoom controls and caption.
+ * Game Console (SWR-009 plan §4, K-7). DOM order = Tab order: sr-only h1 → skip links → `ConsoleHeader`
+ * (`console-header`: «← К игре», brand, rules engine, ⚙) → `CoreTopBar` (status bar `table-top-bar`) →
+ * `<MapHousing overlay={<OutcomeBanner />} />` (`map-housing`: map screen with the `board-canvas` Konva stage + the
+ * permanent legend) → `<CoreSidebar log gameInfo />` (rail `core-sidebar`: turn panel → turn controls → inspector →
+ * tabs; slots `log` = `CoreEventLog`, `gameInfo` = `CoreGameInfoPanel`) → `ConsoleFooter` (`console-footer`).
+ * `AutomationNotice` stays in SessionHost above the table (SWR-006 D-1).
  *
  * SWR-006 (plan-frontend §6.2): the automation of the session comes from the platform (`useSessionAutomation`,
  * `null` outside SessionHost). `isPending` = a command in flight or an AI run in flight (every action disabled);
@@ -219,7 +223,7 @@ export function CoreTable({
         data-phase={view.phase}
         data-active-side={view.activeSide}
         data-status={status}
-        sx={GRID}
+        sx={CONSOLE_SX}
       >
         <Typography component="h1" ref={headingRef} tabIndex={-1} sx={SR_ONLY}>
           {t('rebellion.session:page.title')}
@@ -234,19 +238,13 @@ export function CoreTable({
         <Button onClick={focusObjectsList} data-testid="skip-to-list" sx={SKIP_LINK}>
           {t('rebellion.turn:skip.toList')}
         </Button>
-        <CoreTopBar
-          status={status}
-          saveStatus={saveStatus}
-          backHref={backHref}
-          controls={<TurnControls />}
-        />
-        <Box sx={{ gridArea: 'board', minHeight: 0, minWidth: 0, position: 'relative' }}>
-          <OutcomeBanner backHref={backHref} />
-          <CoreBoardStage />
-        </Box>
-        <Box sx={{ gridArea: 'side', minHeight: 0 }}>
+        <ConsoleHeader backHref={backHref} />
+        <CoreTopBar status={status} saveStatus={saveStatus} />
+        <MapHousing overlay={<OutcomeBanner backHref={backHref} />} />
+        <Box sx={{ gridArea: CONSOLE_AREA.side, minHeight: 0, minWidth: 0 }}>
           <CoreSidebar log={<CoreEventLog />} gameInfo={<CoreGameInfoPanel status={status} />} />
         </Box>
+        <ConsoleFooter status={isGameOver(view) ? 'completed' : status} />
       </Box>
     </CoreBoardContext.Provider>
   );

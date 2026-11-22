@@ -1,4 +1,3 @@
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -6,6 +5,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { KeyButton } from '@/shared/ui';
 
 const TITLE_ID = 'core-pass-confirm-title';
 const TEXT_ID = 'core-pass-confirm-text';
@@ -16,6 +16,7 @@ const TEXT_ID = 'core-pass-confirm-text';
  * `autoFocus` alone is not enough in a real browser: the modal focus trap moves the focus to the dialog surface
  * while the enter transition runs (SWR-005 D-1), so «Cancel» is focused again once the transition has entered
  * (and on enter, for reduced motion where the transition is instant).
+ * SWR-009 C2: terminal dialog from the theme; keys — default «Cancel», warning «Pass».
  */
 export function PassConfirmDialog({
   open,
@@ -52,17 +53,12 @@ export function PassConfirmDialog({
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus ref={cancelRef} onClick={onCancel} data-testid="pass-confirm-cancel">
+        <KeyButton autoFocus ref={cancelRef} onClick={onCancel} data-testid="pass-confirm-cancel">
           {t('rebellion.turn:pass.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          color="warning"
-          onClick={onConfirm}
-          data-testid="pass-confirm-ok"
-        >
+        </KeyButton>
+        <KeyButton tone="warning" led="amber" onClick={onConfirm} data-testid="pass-confirm-ok">
           {t('rebellion.turn:pass.confirm')}
-        </Button>
+        </KeyButton>
       </DialogActions>
     </Dialog>
   );

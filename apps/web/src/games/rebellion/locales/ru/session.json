@@ -51,5 +51,25 @@
       "empire": "Я — Империя"
     },
     "trustNote": "Подтверждение не проверяет, кто держит устройство: передавайте его честно."
+  },
+  "console": {
+    "headerLabel": "Навигация стола",
+    "brand": "BGA / GALACTIC OPERATIONS",
+    "engine": "Правила: {{engine}}",
+    "statusLabel": "Статус партии",
+    "currentSide": "Текущая сторона",
+    "sideYou": "{{side}} · Вы",
+    "state": "Состояние",
+    "footerLabel": "Сведения о столе",
+    "systems_one": "{{count}} система",
+    "systems_few": "{{count}} системы",
+    "systems_many": "{{count}} систем",
+    "systems_other": "{{count}} системы",
+    "routes_one": "{{count}} связь",
+    "routes_few": "{{count}} связи",
+    "routes_many": "{{count}} связей",
+    "routes_other": "{{count}} связи",
+    "rulesPartial": "Реальная карта · правила частичные",
+    "autosave": "Автосохранение после каждого хода"
   }
 }

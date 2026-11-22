@@ -7,6 +7,8 @@ export function SessionNotFound() {
   return (
     <SessionMessage
       testId="session-not-found"
+      led="amber"
+      status={t('common:terminal.code404')}
       title={t('sessionHost:notFound.title')}
       text={t('sessionHost:notFound.text')}
     />

@@ -111,4 +111,26 @@ describe('LeaderPool (P1, plan-frontend §5.3 step 1)', () => {
     expect(screen.getByTestId('activation-system-select')).toBeInTheDocument();
     expect(screen.getByTestId('activation-confirm')).toBeDisabled();
   });
+
+  it('SWR-009 C2: header count «03 / 04 доступны», two columns; armed = selected (amber), unavailable = dashed + text', async () => {
+    const { user } = renderCore(<TurnPanel />, makeCoreView());
+    const count = screen.getByTestId('leader-pool-count');
+    expect(count).toHaveTextContent('03 / 04 доступны');
+    expect(count).toHaveAttribute('data-available', '3');
+    expect(count).toHaveAttribute('data-total', '4');
+    expect(screen.getByTestId('leader-pool')).toHaveStyle({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    });
+    const mothma = screen.getByTestId(`leader-${L_MOTHMA}`);
+    expect(mothma).toHaveStyle({ borderStyle: 'dashed' });
+    expect(mothma).toHaveTextContent(i18n.t('rebellion.turn:pool.unavailable'));
+    const leia = screen.getByTestId(`leader-${L_LEIA}`);
+    expect(leia).toHaveStyle({ borderStyle: 'solid' });
+    await user.click(leia);
+    expect(leia).toHaveAttribute('data-selected', 'true');
+    expect(leia).toHaveStyle({ borderWidth: '2px', borderColor: '#E3AD5C' });
+    // A decorative leader glyph (diamond), the name stays text.
+    expect(leia.querySelector('[data-kind="leader"]')).not.toBeNull();
+  });
 });

@@ -44,6 +44,8 @@ function SessionView({ sessionId }: { sessionId: string }) {
     return (
       <SessionMessage
         testId="session-error"
+        led="red"
+        status={t('common:terminal.fault')}
         title={t('sessionHost:error.title')}
         text={translateUnknownError(t, error)}
         actions={

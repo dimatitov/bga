@@ -1,10 +1,9 @@
-import BoltIcon from '@mui/icons-material/Bolt';
 import Autocomplete from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { KeyButton } from '@/shared/ui';
 import { useCoreBoard } from '../model/coreContext';
 import { activationTargets, systemById } from '../model/viewModel';
 import { regionLabel, systemLabel } from './labels';
@@ -23,6 +22,7 @@ interface Option {
  * `ACTIVATE_SYSTEM.systemIds` (grouped by region, filtered by the localized name), then the explicit
  * «Activate <system>» button. Enter inside the field only picks an option — it never sends the command.
  * A 422 reason is shown inline by the turn panel (`activation-error`, `role="alert"`).
+ * SWR-009 C2: terminal field (theme) + primary key; the rail key `turn-activate` is the pointer path for a selected system.
  */
 export function ActivationPicker({ leaderId }: { leaderId: string }) {
   const { t } = useTranslation();
@@ -75,18 +75,18 @@ export function ActivationPicker({ leaderId }: { leaderId: string }) {
           <TextField {...params} label={t('rebellion.turn:activate.select')} />
         )}
       />
-      <Button
-        variant="contained"
-        startIcon={<BoltIcon />}
+      <KeyButton
+        tone="primary"
+        led={selected && !isPending ? 'green' : 'off'}
         data-testid="activation-confirm"
         disabled={!selected || isPending}
         onClick={() => void submit()}
-        sx={{ justifySelf: 'start' }}
+        sx={{ justifySelf: 'start', maxWidth: '100%' }}
       >
         {selected
           ? t('rebellion.turn:activate.confirm', { system: selected.label })
           : t('rebellion.turn:activate.confirmEmpty')}
-      </Button>
+      </KeyButton>
     </Box>
   );
 }

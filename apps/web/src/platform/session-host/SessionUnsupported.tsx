@@ -7,6 +7,8 @@ export function SessionUnsupported() {
   return (
     <SessionMessage
       testId="session-unsupported"
+      led="amber"
+      status={t('common:terminal.unavailable')}
       title={t('sessionHost:unsupported.title')}
       text={t('sessionHost:unsupported.text')}
     />

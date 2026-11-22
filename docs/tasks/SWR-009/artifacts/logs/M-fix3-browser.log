@@ -1,0 +1,8 @@
+# SWR-009 M fix round 3 — fit measurements on dev-5180 (session 46d94157…, Rebels vs bot, no moves), after the change.
+# margins = screen px between the fitted content bounds and the board-canvas edge; culled = labels with getSystemLabelRect() === null
+window   canvas    fit scale  LOD      margins L/R/T/B     culled labels
+375x812  339x526   0.197      compact  12/12/128/155       16 (data-label=hidden; collisions + canvas edge)
+768x1024 711x664   0.419      compact  20/20/59/86         0
+1024x768 635x424   0.295      compact  82/82/13/47         0   (height-bound; insets unchanged = CORE_CONTENT_INSETS)
+1440x900 845x570   0.406      compact  98/98/17/51         0   (height-bound; insets unchanged = CORE_CONTENT_INSETS)
+# before (fix round 1/QA-3): 375 → 0.122 with ~72 px side margins; 768 → ~80 px side padding.

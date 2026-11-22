@@ -1,28 +1,25 @@
 /**
  * Screen rectangles of the screen-constant map labels (SWR-005 plan-frontend §4 «Подписи», §6 criterion). The same
- * numbers drive the Konva nodes (`CoreSystemNode` / `OverlayLayer`) and `__boardDebug.getSystemLabelRect`, so the
+ * numbers drive the Konva nodes (`OverlayLayer`) and `__boardDebug.getSystemLabelRect`, so the
  * fit check («labels inside the canvas and pairwise disjoint») tests what is drawn. Text width is estimated
  * conservatively (no canvas measuring), and the drawn text is centred inside that box. Pure.
  */
 import type { MapPoint } from '@bga/game-rebellion/board';
 import type { Viewport } from '../../board/model/geometry';
 import {
-  CHIP_FONT_PX,
-  CHIP_GLYPH_PX,
-  CHIP_HEIGHT_PX,
-  CORE_SYSTEM_RADIUS,
   LABEL_CHAR_EM,
   LABEL_FONT_PX,
-  LABEL_GAP_PX,
   LABEL_LINE_PX,
   LABEL_MAX_LINES,
   LABEL_MAX_WIDTH_PX,
+  LABEL_OFFSET_COMPACT_PX,
+  LABEL_OFFSET_PX,
   LABEL_PAD_PX,
   REGION_CHAR_EM,
   REGION_FONT_PX,
   REGION_LETTER_SPACING_PX,
 } from './constants';
-import { labelScreenFactor } from './lod';
+import { type Lod, labelScreenFactor, lodFor } from './lod';
 
 export interface Rect {
   x: number;
@@ -69,9 +66,14 @@ export function regionLabelBox(text: string): LabelBox {
   };
 }
 
-/** Offset (px, factor 1) of the label box top below the system centre. */
+/** Label offset (px at factor 1) for a LOD: below the ground marker row (detail) or below the node (compact). */
+export function systemLabelOffsetBase(lod: Lod): number {
+  return lod === 'compact' ? LABEL_OFFSET_COMPACT_PX : LABEL_OFFSET_PX;
+}
+
+/** Offset (screen px) of the label box top below the system centre: screen-constant like the node and markers. */
 export function systemLabelOffsetPx(scale: number): number {
-  return CORE_SYSTEM_RADIUS * scale + LABEL_GAP_PX * labelScreenFactor(scale);
+  return systemLabelOffsetBase(lodFor(scale)) * labelScreenFactor(scale);
 }
 
 /** Stage-relative screen rect of a system label for `viewport`. */
@@ -131,36 +133,4 @@ export function overlappingPairs(
     }
   }
   return pairs;
-}
-
-/** Compact-LOD chip (units glyph + count, optional leaders glyph + count): box at factor 1. */
-export function chipBox(units: number, leaders: number): { width: number; height: number } {
-  const part = (n: number) => CHIP_GLYPH_PX + 2 + estimateTextWidth(String(n), CHIP_FONT_PX, 0.62);
-  const width =
-    6 + (units > 0 ? part(units) : 0) + (leaders > 0 ? (units > 0 ? 4 : 0) + part(leaders) : 0);
-  return { width, height: CHIP_HEIGHT_PX };
-}
-
-/**
- * Stage-relative rect of a side chip: across the system circle (inner edge at half the radius), Empire on the left,
- * Rebels on the right — on the circle's own row, so chips never reach the label rows of neighbouring systems.
- */
-export function chipRect(
-  anchor: MapPoint,
-  owner: 'empire' | 'rebels',
-  box: { width: number; height: number },
-  viewport: Viewport,
-): Rect {
-  const k = labelScreenFactor(viewport.scale);
-  const sx = anchor.x * viewport.scale + viewport.x;
-  const sy = anchor.y * viewport.scale + viewport.y;
-  const w = box.width * k;
-  const h = box.height * k;
-  const reach = (CORE_SYSTEM_RADIUS * viewport.scale) / 2;
-  return {
-    x: owner === 'empire' ? sx - reach - w : sx + reach,
-    y: sy - h / 2,
-    width: w,
-    height: h,
-  };
 }

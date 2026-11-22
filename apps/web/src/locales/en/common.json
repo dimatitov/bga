@@ -50,5 +50,10 @@
     "prototype": "Prototype",
     "active": "In progress",
     "completed": "Completed"
+  },
+  "terminal": {
+    "code404": "Code 404",
+    "fault": "Fault",
+    "unavailable": "Unavailable"
   }
 }

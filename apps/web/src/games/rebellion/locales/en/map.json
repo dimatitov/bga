@@ -10,7 +10,8 @@
     "remote": "remote",
     "contested": "contested",
     "activated": "activated",
-    "base": "Rebel base"
+    "base": "Rebel base",
+    "ai": "AI"
   },
   "zone": {
     "title": "Rebel base — location unknown"
@@ -25,17 +26,44 @@
   },
   "legend": {
     "title": "Map legend",
-    "region": "Region (unofficial names)",
-    "remote": "Remote system (dashed outline)",
-    "contested": "Contested system: units of both sides",
-    "activated": "Activated system",
-    "leader": "Leader on the map",
+    "region": "Region (unofficial)",
+    "remote": "Remote",
+    "contested": "Contested",
+    "activated": "Activated",
+    "leader": "Leader",
     "base": "Rebel base",
     "target": "Can be activated",
     "source": "Move source",
-    "space": "Ship (triangle)",
-    "ground": "Ground unit (square)",
-    "structure": "Structure (diamond)",
-    "chips": "Zoomed out — number of units and leaders of a side"
+    "space": "Fleet",
+    "ground": "Ground",
+    "structure": "Structures — in ground",
+    "chips": "Overview: side marker",
+    "empire": "Empire — filled",
+    "rebels": "Rebels — outlined",
+    "selected": "Selected",
+    "aiRecent": "Recent AI action",
+    "handle": "Drag a unit",
+    "short": {
+      "empire": "Empire",
+      "rebels": "Rebels",
+      "ground": "Ground",
+      "leader": "Leader",
+      "target": "Legal target",
+      "selected": "Selected",
+      "aiRecent": "AI recent"
+    },
+    "toggle": "Legend"
+  },
+  "housing": {
+    "label": "Map tactical display",
+    "display": "Tactical display",
+    "systems_one": "{{count}} system",
+    "systems_other": "{{count}} systems",
+    "routes_one": "{{count}} route",
+    "routes_other": "{{count}} routes",
+    "countKey": "Number = figures in the group",
+    "lodDetail": "Vector mode · detail",
+    "lodCompact": "Vector mode · overview",
+    "zoom": "{{percent}}%"
   }
 }

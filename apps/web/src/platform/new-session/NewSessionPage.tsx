@@ -66,14 +66,14 @@ export function NewSessionPage() {
     <Box
       data-testid="new-session-page"
       data-game-id={definition.id}
-      sx={{ px: 2, py: 4, maxWidth: 960, mx: 'auto' }}
+      sx={{ px: 2, py: { xs: 3, sm: 4 }, maxWidth: 960, mx: 'auto' }}
     >
       <BackToGame gameId={definition.id} />
       {startable ? (
         <SetupHost key={definition.id} entry={entry} />
       ) : (
         <Box sx={{ mt: 2 }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
+          <Typography variant="h1" sx={{ color: 'primary.main', mb: 2 }}>
             {definition.name}
           </Typography>
           <ComingSoonNotice />

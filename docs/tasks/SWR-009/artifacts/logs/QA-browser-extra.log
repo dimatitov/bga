@@ -1,0 +1,129 @@
+# app7: zoom-fit tooltip check (1440x900)
+{
+ "initial": {
+  "visible": false,
+  "count": 0,
+  "vp": {
+   "scale": 0.4075080906148868,
+   "x": 96.49352750809058,
+   "y": 22.865113268608415
+  }
+ },
+ "afterOut": {
+  "visible": false,
+  "vp": {
+   "scale": 0.4,
+   "x": 102.5,
+   "y": 27.713214739517184
+  }
+ },
+ "afterFit": {
+  "visible": true,
+  "vp": {
+   "scale": 0.4075080906148868,
+   "x": 96.49352750809058,
+   "y": 22.865113268608415
+  },
+  "focus": "zoom-fit"
+ },
+ "afterBlur": {
+  "visible": false
+ }
+}
+# app8: reduced motion + 375 touch targets
+{
+ "no-preference": {
+  "pass": "0.25s, 0.25s, 0.25s, 0.25s",
+  "tab": "0s",
+  "zoom": "0.15s",
+  "led": "none,none,none,none"
+ },
+ "reduce": {
+  "pass": "0s",
+  "tab": "0s",
+  "zoom": "0s",
+  "led": "none,none,none,none"
+ },
+ "panelMarkers": [
+  "map-marker-mandalore-empire-space:51x44",
+  "map-marker-mandalore-empire-ground:51x44"
+ ],
+ "objectsRows": [
+  "system-item-felucia:337x44",
+  "system-item-mon-calamari:337x44",
+  "system-item-saleucami:337x44"
+ ],
+ "sheetTargets": [
+  "unit-manifest-sheet-toggle:371x48",
+  "unit-manifest-close:75x44"
+ ],
+ "zoomBtns": [
+  "zoom-in:44x44",
+  "zoom-out:44x44",
+  "zoom-fit:44x44",
+  "zoom-level:48x20"
+ ]
+}
+# app4: 375 scroll/sticky + fit span
+{
+ "600": {
+  "ctrl": [
+   618,
+   662
+  ],
+  "panel": [
+   273,
+   602
+  ],
+  "pos": "static"
+ },
+ "900": {
+  "ctrl": [
+   318,
+   362
+  ],
+  "panel": [
+   -27,
+   302
+  ],
+  "pos": "static"
+ },
+ "1200": {
+  "ctrl": [
+   297,
+   341
+  ],
+  "panel": [
+   -48,
+   281
+  ],
+  "pos": "static"
+ },
+ "activateText": {
+  "text": "АКТИВИРОВАТЬ СИСТЕМУ",
+  "w": 110.328125,
+  "wb": "normal",
+  "ow": "anywhere"
+ },
+ "zoom": "12%",
+ "content": {
+  "canvas": [
+   339,
+   526
+  ],
+  "spanX": 167,
+  "spanY": 129,
+  "bounds": {
+   "minX": 0,
+   "minY": -14,
+   "maxX": 1600,
+   "maxY": 1222
+  }
+ }
+}
+375x812 {"initial":{"vp":{"scale":0.121875,"x":72,"y":172.38750000000002},"lim":{"min":0.121875,"max":2.5},"c":[339,526]},"afterFitClick":{"scale":0.121875,"x":72,"y":172.38750000000002}}
+768x1024 {"initial":{"vp":{"scale":0.35385000000000005,"x":79.92,"y":101.2746},"lim":{"min":0.35385000000000005,"max":2.5},"c":[726,664]},"afterFitClick":{"scale":0.35385000000000005,"x":79.92,"y":101.2746}}
+1440x900 {"initial":{"vp":{"scale":0.4075080906148868,"x":96.49352750809058,"y":22.865113268608415},"lim":{"min":0.4,"max":2.5},"c":[845,572]},"afterFitClick":{"scale":0.4075080906148868,"x":96.49352750809058,"y":22.865113268608415}}
+{"fleetGround":"alderaan","empty":"bespin","fleet":"malastare"}
+empty bespin no DOM marker; panel: ВЫБРАННЫЙ ОБЪЕКТ | Беспин |  | РЕГИОН МУСТАФАР |  | Юнитов нет.
+fleet malastare {"testid":"unit-manifest","systemId":"malastare","restricted":"false","state":"fleet","arenas":"space","total":"1","variant":"rail","text":"МАНИФЕСТ ЮНИТОВ |  | ЗАКРЫТЬ | Маластар | · РЕГИОН КАШИИК | ПОВСТАНЦЫ | Повстанцы · Флот | · выбрано | 1 единица | Кореллианский корвет × 1 | ЛИДЕРЫ | Лидер · Принцесса Лея · Повстанцы | Всего юнитов | 1"}

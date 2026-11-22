@@ -113,6 +113,15 @@
     "infoCommander": "AI Commander",
     "infoCommanderBot": "Бот (детерминированный)",
     "infoCommanderOpenai": "OpenAI (при сбое — бот)",
-    "infoCommanderNone": "—"
+    "infoCommanderNone": "—",
+    "state": {
+      "ready": "Готов",
+      "readySteps_one": "Готов · {{count}} действие",
+      "readySteps_few": "Готов · {{count}} действия",
+      "readySteps_many": "Готов · {{count}} действий",
+      "readySteps_other": "Готов · {{count}} действия",
+      "stalled": "Ход не завершён",
+      "over": "Партия окончена"
+    }
   }
 }

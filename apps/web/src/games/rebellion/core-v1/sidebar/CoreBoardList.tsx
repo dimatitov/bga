@@ -1,11 +1,10 @@
-import BoltIcon from '@mui/icons-material/Bolt';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import type { CoreLeaderView, CoreUnitView, FactionId } from '@bga/game-rebellion/schema';
 import { type KeyboardEvent, type ReactNode, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { rebellionPalette } from '../../theme/palette';
+import { terminalTokens } from '@/shared/theme';
+import { KeyButton } from '@/shared/ui';
 import { useSelectionStore } from '../../board/model/selectionStore';
 import { useCoreBoard } from '../model/coreContext';
 import { useCoreUiStore } from '../model/coreUiStore';
@@ -33,19 +32,33 @@ interface OptionRef {
 
 const SIDES: FactionId[] = ['rebels', 'empire'];
 
+const T = terminalTokens;
+const C = T.color;
+
+/**
+ * Option row (SWR-009 C2, AC-14): hover — key-hover fill; selected — dark amber fill + amber edge; focus-visible — the
+ * amber 2 px ring; ≥ 44 px on touch. Texts stay `paper` / `warm` (pairs checked in `textPairs`).
+ */
 const optionSx = {
   display: 'flex',
   alignItems: 'center',
   gap: 1,
-  minHeight: 40,
-  px: 1.5,
-  borderRadius: 1,
+  minHeight: 36,
+  '@media (pointer: coarse)': { minHeight: T.key.touchMinHeight },
+  px: 1.25,
+  borderRadius: `${T.radius}px`,
+  border: '1px solid transparent',
+  color: C.paper,
   cursor: 'pointer',
-  '&:hover': { bgcolor: 'action.hover' },
+  '&:hover': { backgroundColor: T.key.hover.bg, borderColor: T.key.hover.border },
   '&[aria-selected="true"]': {
-    bgcolor: 'action.selected',
-    outline: '1px solid',
-    outlineColor: rebellionPalette.board.selected,
+    backgroundColor: T.selection.bg,
+    borderColor: C.amber,
+    boxShadow: `inset 2px 0 0 ${C.amber}`,
+  },
+  '&:focus-visible': {
+    outline: `${T.focus.width}px solid ${T.focus.color}`,
+    outlineOffset: T.focus.offset,
   },
 } as const;
 
@@ -56,6 +69,7 @@ const optionSx = {
  * Markers are data attributes + text suffixes from the view: `data-activatable` (armed leader's
  * `ACTIVATE_SYSTEM.systemIds`), `data-activated`, `data-contested`, `data-remote`, `data-region`.
  * With an armed leader and a selected target, `system-item-<id>-activate` sends `ACTIVATE_SYSTEM`.
+ * SWR-009 C2: terminal rows (meta region headers, amber selected row, dashed hidden-zone row), primary key.
  */
 export function CoreBoardList() {
   const { t } = useTranslation();
@@ -122,7 +136,10 @@ export function CoreBoardList() {
 
   const focusOption = (key: string) => {
     setActiveKey(key);
-    listRef.current?.querySelector<HTMLElement>(`[data-option-key="${key}"]`)?.focus();
+    const el = listRef.current?.querySelector<HTMLElement>(`[data-option-key="${key}"]`);
+    el?.focus();
+    // The list lives in a capped, scrolling tab panel: keep the active option visible (jsdom has no scrollIntoView).
+    el?.scrollIntoView?.({ block: 'nearest' });
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -225,7 +242,7 @@ export function CoreBoardList() {
             <Typography
               variant="overline"
               aria-hidden="true"
-              sx={{ color: 'text.secondary', px: 1.5, mt: 1, lineHeight: 1.5 }}
+              sx={{ color: C.muted, px: 1.25, mt: 1, lineHeight: 1.5 }}
             >
               {regionLabel(t, view, r.regionId)}
             </Typography>
@@ -249,7 +266,7 @@ export function CoreBoardList() {
                     data-activatable={isTarget ? 'true' : 'false'}
                     sx={{ ...optionSx, mt: 0.5 }}
                   >
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
                       {t('rebellion.turn:list.system', {
                         name: systemLabel(t, view, s.id),
                         count: units.length,
@@ -285,9 +302,9 @@ export function CoreBoardList() {
               {...optionProps({ key: 'zone', kind: 'zone', id: 'zone' }, selectedKey === 'zone')}
               data-testid="hidden-base-zone"
               data-count={zoneCount}
-              sx={{ ...optionSx, mt: 1, border: '1px dashed', borderColor: 'divider' }}
+              sx={{ ...optionSx, mt: 1, border: `1px dashed ${C.bezelLight}` }}
             >
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              <Typography variant="body2" sx={{ fontWeight: 700 }}>
                 {t('rebellion.turn:list.zone', { count: zoneCount })}
               </Typography>
             </Box>
@@ -311,7 +328,7 @@ export function CoreBoardList() {
               <Typography
                 variant="overline"
                 aria-hidden="true"
-                sx={{ color: 'text.secondary', px: 1.5, mt: 1, lineHeight: 1.5 }}
+                sx={{ color: C.muted, px: 1.25, mt: 1, lineHeight: 1.5 }}
               >
                 {t('rebellion.turn:list.pool', { side: factionLabel(t, side) })}
               </Typography>
@@ -321,11 +338,10 @@ export function CoreBoardList() {
         })}
       </Box>
       {selectedTarget && armed && (
-        <Button
-          sx={{ mt: 2 }}
-          variant="contained"
-          size="small"
-          startIcon={<BoltIcon />}
+        <KeyButton
+          sx={{ mt: 1.5, maxWidth: '100%' }}
+          tone="primary"
+          led={isPending ? 'off' : 'green'}
           data-testid={`system-item-${selectedTarget}-activate`}
           disabled={isPending}
           onClick={() => void activate(armed, selectedTarget)}
@@ -334,7 +350,7 @@ export function CoreBoardList() {
             system: systemLabel(t, view, selectedTarget),
             leader: leaderLabel(t, armed),
           })}
-        </Button>
+        </KeyButton>
       )}
     </Box>
   );

@@ -1,12 +1,13 @@
 import type Konva from 'konva';
 import { memo } from 'react';
-import { Circle, Group, Rect, RegularPolygon } from 'react-konva';
+import { Circle, Group, Rect } from 'react-konva';
 import { PIECE_HIT, PIECE_SIZE } from '../../../board/model/constants';
-import { rebellionPalette } from '../../../theme/palette';
+import { mapStyle } from '../../../theme/mapStyle';
 import type { UnitScene } from '../../geometry/sceneModel';
+import { ForceGlyphShape } from './ForceGlyphShape';
 
 const HALF = PIECE_SIZE / 2;
-const C = rebellionPalette.board;
+const S = mapStyle;
 
 export interface UnitGlyphNodeProps {
   unit: UnitScene;
@@ -20,8 +21,9 @@ export interface UnitGlyphNodeProps {
 }
 
 /**
- * Unit glyph (own graphics): ship = triangle, ground unit = square, structure (immobile) = diamond. Empire filled,
- * Rebels outlined on the dark fill (ux §7). A unit the server lists as movable gets a dashed teal ring.
+ * Single-unit move handle (SWR-009 plan §2 M item 5, R-1/OQ-2): during the viewer's own activation every unit the
+ * server lists in `MOVE_PIECES.pieces` gets a draggable glyph (no number) with a phosphor dashed ring on the inner arc
+ * above its source system; the group counters still show the full composition. Drag = `useCoreMoveDrag` (one unit).
  */
 function UnitGlyphNodeImpl({
   unit: u,
@@ -33,15 +35,6 @@ function UnitGlyphNodeImpl({
   onDragEnd,
   onHover,
 }: UnitGlyphNodeProps) {
-  const color = rebellionPalette.faction[u.owner];
-  const isEmpire = u.owner === 'empire';
-  const shape = {
-    fill: isEmpire ? color : C.systemFill,
-    stroke: color,
-    strokeWidth: isEmpire ? 1.5 : 3,
-    listening: false,
-    perfectDrawEnabled: false,
-  };
   return (
     <Group
       x={u.pos.x}
@@ -65,34 +58,19 @@ function UnitGlyphNodeImpl({
         height={PIECE_HIT}
         fill="transparent"
       />
-      {u.movable && (
-        <Circle
-          radius={HALF + 5}
-          stroke={C.legalTarget}
-          strokeWidth={1.5}
-          dash={[3, 3]}
-          listening={false}
-        />
-      )}
+      <Circle
+        radius={HALF + 3}
+        fill={S.handle.plate}
+        stroke={S.handle.ring}
+        strokeWidth={1.5}
+        dash={[...S.handle.dash]}
+        listening={false}
+        perfectDrawEnabled={false}
+      />
       {u.selected && (
-        <>
-          <Circle radius={HALF + 4} stroke={C.selected} strokeWidth={1.5} listening={false} />
-          <Circle radius={HALF + 8} stroke={C.selected} strokeWidth={1.5} listening={false} />
-        </>
+        <Circle radius={HALF + 7} stroke={S.tone.selected} strokeWidth={2} listening={false} />
       )}
-      {u.immobile ? (
-        <RegularPolygon sides={4} radius={HALF + 1} {...shape} />
-      ) : u.arena === 'space' ? (
-        <RegularPolygon sides={3} radius={HALF + 2} y={2} {...shape} />
-      ) : (
-        <Rect
-          x={-HALF + 1}
-          y={-HALF + 1}
-          width={PIECE_SIZE - 2}
-          height={PIECE_SIZE - 2}
-          {...shape}
-        />
-      )}
+      <ForceGlyphShape owner={u.owner} kind={u.arena} size={PIECE_SIZE - 6} />
     </Group>
   );
 }

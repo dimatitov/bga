@@ -15,7 +15,11 @@ import { SettingsPage } from './pages/SettingsPage';
 // `vite build`, the ternary folds and the dynamic import is dropped — no chunk, no path string in the production bundle
 // (checked by `check:bundle`). Keep the literal check here: a helper function would not be folded reliably.
 const devRoutes: RouteObject[] = import.meta.env.DEV
-  ? [{ path: '/dev/ai', lazy: () => import('@/dev/ai/route') }]
+  ? [
+      { path: '/dev/ai', lazy: () => import('@/dev/ai/route') },
+      // SWR-009 S (A-7): dev-only UI Kit showcase, same fold-away guard as `/dev/ai`.
+      { path: '/dev/ui-kit', lazy: () => import('@/dev/ui-kit/route') },
+    ]
   : [];
 
 /**

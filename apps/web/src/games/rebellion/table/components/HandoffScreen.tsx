@@ -14,11 +14,15 @@ import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
 import { paths } from '@/platform';
 import { translateError } from '@/shared/i18n';
+import { terminalTokens } from '@/shared/theme';
+import { Led } from '@/shared/ui';
 import { REBELLION_ERRORS_NS } from '../../i18n';
 import { IGNORED_CODE } from '../../board/model/commandFeedback';
 import { phaseName, resetBoardState } from '../../board';
 import { useSendCommand } from '../hooks/useSendCommand';
 import { PrototypeBadge } from './PrototypeBadge';
+
+const T = terminalTokens;
 
 /**
  * Hot-seat handoff screen (SWR-004 plan-frontend §5.3, ux-decisions §13.6, D-SW4-20..23). Shown for the server's
@@ -27,6 +31,7 @@ import { PrototypeBadge } from './PrototypeBadge';
  * button (D-SW4-21 / OQ-1): a stray Enter of player A must not accept the turn for player B; the first Tab
  * reaches «Я — <side>». Accept → `ACCEPT_HANDOFF` (actor = `activeSide`, `expectedVersion = view.version` — from
  * `useSendCommand`); the player view of the new side then remounts the table (TableScreen keys it by viewer).
+ * SWR-009 N: console-case header strip, the message in a terminal module framed by the colour of the side.
  */
 export function HandoffScreen({
   sessionId,
@@ -69,9 +74,20 @@ export function HandoffScreen({
         display: 'grid',
         gridTemplateRows: 'auto 1fr',
         minHeight: '100dvh',
+        bgcolor: 'terminal.page',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minHeight: 56 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          pr: 9,
+          minHeight: 56,
+          bgcolor: 'terminal.case',
+          borderBottom: `${T.bezel.module}px solid ${T.color.bezel}`,
+        }}
+      >
         <Button
           component={RouterLink}
           to={backHref}
@@ -99,8 +115,22 @@ export function HandoffScreen({
             gap: 2,
             justifyItems: 'center',
             textAlign: 'center',
+            px: { xs: 2, sm: 4 },
+            py: { xs: 3, sm: 4 },
+            // Terminal module frame; the top bezel is the colour of the side that takes the turn (A-5).
+            border: `${T.bezel.module}px solid ${T.color.bezel}`,
+            borderTop: `${T.bezel.housing}px solid ${visual.color}`,
+            borderRadius: `${T.radius}px`,
+            bgcolor: 'terminal.module',
+            boxShadow: `inset 0 0 0 1px ${T.module.inset}`,
           }}
         >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Led state="amber" />
+            <Typography variant="meta" component="p" sx={{ m: 0 }}>
+              {t('rebellion.common:handoff.status')}
+            </Typography>
+          </Box>
           <Box
             component="img"
             src={`data:image/svg+xml,${encodeURIComponent(visual.emblemSvg)}`}
@@ -113,8 +143,9 @@ export function HandoffScreen({
             ref={titleRef}
             id="handoff-title"
             component="h1"
-            variant="h5"
+            variant="h2"
             data-testid="handoff-title"
+            sx={{ color: 'primary.main' }}
             tabIndex={-1}
           >
             {t(`rebellion.session:handoff.title.${side}`)}
@@ -160,7 +191,7 @@ export function HandoffScreen({
           to={paths.settings}
           aria-label={t('common:nav.settings')}
           data-testid="session-settings"
-          sx={{ position: 'absolute', top: 8, right: 16 }}
+          sx={{ position: 'absolute', top: 7, right: 16 }}
         >
           <SettingsIcon />
         </IconButton>

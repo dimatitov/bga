@@ -43,6 +43,31 @@ describe('PrototypeBadge variants (SWR-005 P2, TC-C-14, AC-11, AC-13)', () => {
     expect(screen.queryByTestId('prototype-badge')).not.toBeInTheDocument();
   });
 
+  it('SWR-009 compact (console footer): «Реальная карта · правила частичные»; only for core-v1', async () => {
+    const { rerender } = render(<PrototypeBadge status="prototype" variant="core-v1" compact />);
+    const badge = screen.getByTestId('prototype-badge');
+    expect(badge).toHaveAttribute('data-variant', 'core-v1');
+    expect(badge).toHaveAttribute('data-compact', 'true');
+    expect(badge).toHaveTextContent(/^Реальная карта · правила частичные$/);
+    rerender(<PrototypeBadge status="completed" variant="core-v1" compact />);
+    expect(screen.getByTestId('prototype-badge')).toHaveAttribute('data-status', 'completed');
+    // Legacy keeps its own text even when asked for compact.
+    rerender(<PrototypeBadge status="prototype" variant="legacy" compact />);
+    expect(screen.getByTestId('prototype-badge')).toHaveAttribute('data-compact', 'false');
+    expect(screen.getByTestId('prototype-badge')).toHaveTextContent('Старый прототип');
+    rerender(<PrototypeBadge status="prototype" variant="core-v1" compact />);
+    await act(() => i18n.changeLanguage('en'));
+    // e2e TC-VA (core-visual-a11y) checks /Real map/ on the core-v1 badge.
+    expect(screen.getByTestId('prototype-badge')).toHaveTextContent('Real map · rules partial');
+  });
+
+  it('SWR-009 look: amber UI Kit badge that wraps (never clipped on a narrow bar)', () => {
+    render(<PrototypeBadge status="prototype" variant="core-v1" />);
+    const badge = screen.getByTestId('prototype-badge');
+    expect(badge).toHaveAttribute('data-tone', 'amber');
+    expect(getComputedStyle(badge).whiteSpace).toBe('normal');
+  });
+
   it('en texts', async () => {
     render(<PrototypeBadge status="prototype" variant="legacy" />);
     await act(() => i18n.changeLanguage('en'));

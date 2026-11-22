@@ -30,7 +30,7 @@ function GamePageContent({ entry }: { entry: WebGameEntry }) {
       data-testid="game-page"
       data-game-id={definition.id}
       data-status={definition.status}
-      sx={{ px: 2, py: 4, maxWidth: 1200, mx: 'auto' }}
+      sx={{ px: 2, py: { xs: 3, sm: 4 }, maxWidth: 1200, mx: 'auto' }}
     >
       <Button
         component={RouterLink}
@@ -54,7 +54,7 @@ function GamePageContent({ entry }: { entry: WebGameEntry }) {
         </GameHero>
         {startable ? <RecentSessions entry={entry} sessions={sessions} /> : null}
         <Typography
-          variant="caption"
+          variant="body2"
           color="text.secondary"
           component="p"
           data-testid="game-disclaimer"

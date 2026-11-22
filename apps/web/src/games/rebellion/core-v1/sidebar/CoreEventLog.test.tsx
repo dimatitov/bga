@@ -74,6 +74,43 @@ describe('CoreEventLog (SWR-005 P2, TC-C-09, AC-08)', () => {
     expect(screen.queryByTestId('log-entry-2-ai')).not.toBeInTheDocument();
   });
 
+  it('SWR-009 C2: data-time = event.at (ISO), <time> shows HH:MM of that instant; AI rows have the 2 px red edge, others not', () => {
+    const view = makeCoreEmpireView();
+    renderCore(view, <CoreEventLog />);
+    for (const e of view.log) {
+      const entry = screen.getByTestId(`log-entry-${e.seq}`);
+      expect(entry).toHaveAttribute('data-time', e.at);
+      const time = entry.querySelector('time');
+      expect(time).toHaveAttribute('datetime', e.at);
+      const expected = new Intl.DateTimeFormat(i18n.language, {
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(new Date(e.at));
+      expect(time).toHaveTextContent(expected);
+    }
+    const ai = screen.getByTestId('log-entry-3');
+    expect(ai).toHaveAttribute('data-edge', 'ai');
+    expect(ai).toHaveStyle({ borderLeftWidth: '2px', borderLeftStyle: 'solid' });
+    expect(ai).toHaveStyle({ borderLeftColor: '#DD6B59' });
+    // QD-8: the red is an edge, not a text colour; the tag uses the light red text shade.
+    expect(ai).not.toHaveStyle({ color: '#DD6B59' });
+    const tag = screen.getByTestId('log-entry-3-ai');
+    expect(tag).toHaveAttribute('data-tone', 'red');
+    expect(tag).toHaveStyle({ color: '#F39788' });
+    const human = screen.getByTestId('log-entry-2');
+    expect(human).not.toHaveAttribute('data-edge');
+    expect(human).not.toHaveStyle({ borderLeftColor: '#DD6B59' });
+  });
+
+  it('SWR-009 C2 (AC-16): no invented clock — every shown time comes from an event of the view', () => {
+    const view = makeCoreView();
+    renderCore(view, <CoreEventLog />);
+    const ats = new Set(view.log.map((e) => e.at));
+    const times = screen.getByTestId('event-log').querySelectorAll('time');
+    expect(times).toHaveLength(view.log.length);
+    times.forEach((el) => expect(ats.has(el.getAttribute('datetime') ?? '')).toBe(true));
+  });
+
   it('every event of the AI Empire is marked (Q-FE-4): activation, move, finish without `auto`; human ones are not', () => {
     const base = makeCoreView();
     renderCore(
@@ -249,7 +286,7 @@ describe('MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19)', () => {
     );
   });
 
-  it('«Партия» tab: time, reputation, phase, passed, base unknown for the Empire, status + slice text, legend', () => {
+  it('«Партия» tab: time, reputation, phase, passed, base unknown for the Empire, status + slice text (legend → map housing, SWR-009)', () => {
     renderCore(makeCoreEmpireView(), <CoreGameInfoPanel status="prototype" />);
     const info = screen.getByTestId('game-info');
     expect(info).toHaveTextContent('Время1');
@@ -260,7 +297,7 @@ describe('MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19)', () => {
     const status = screen.getByTestId('game-info-status');
     expect(status).toHaveAttribute('data-status', 'prototype');
     expect(status).toHaveTextContent('Реальная карта; правила частично');
-    expect(within(info).getByTestId('map-legend')).toBeInTheDocument();
+    expect(within(info).queryByTestId('map-legend')).not.toBeInTheDocument();
     // SWR-006 R-6: the «не активен в прототипе» placeholder is gone in core-v1.
     expect(within(info).queryByTestId('ai-status')).not.toBeInTheDocument();
   });

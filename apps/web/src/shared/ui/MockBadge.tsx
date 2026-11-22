@@ -10,7 +10,10 @@ export interface MockBadgeProps {
   'data-testid'?: string;
 }
 
-/** "MOCK" marker — always text, not only colour (ux-decisions §9). */
+/**
+ * "MOCK" marker — always text, not only colour (ux-decisions §9). SWR-009: the amber terminal badge of the theme
+ * (`Chip color="warning"` = UI Kit badge amber).
+ */
 export function MockBadge({
   labelKey = 'common:mock.badge',
   tooltipKey = 'common:mock.tooltip',
@@ -23,14 +26,10 @@ export function MockBadge({
         label={t(labelKey)}
         size="small"
         variant="outlined"
+        color="warning"
         data-testid={testId}
         tabIndex={0}
-        sx={{
-          color: 'mock.main',
-          borderColor: 'mock.main',
-          fontWeight: 700,
-          letterSpacing: '0.08em',
-        }}
+        sx={{ fontWeight: 700 }}
       />
     </Tooltip>
   );

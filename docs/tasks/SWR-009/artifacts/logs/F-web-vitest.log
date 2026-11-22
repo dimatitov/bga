@@ -1,0 +1,44 @@
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/dev/ai/DevAiPage.test.tsx (30 tests | 1 failed) 2736ms
+   ❯ DevAiPage (SWR-005B plan-frontend §11) (28)
+     × D-3: placeholder words use the regular font; data slots use a Cyrillic-capable mono stack 56ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/dev/ai/DevAiPage.test.tsx > DevAiPage (SWR-005B plan-frontend §11) > D-3: placeholder words use the regular font; data slots use a Cyrillic-capable mono stack
+AssertionError: expected 'PT Mono, ui-monospace, monospace' not to match /mono/i
+
+- Expected:
+/mono/i
+
++ Received:
+"PT Mono, ui-monospace, monospace"
+
+ ❯ src/dev/ai/DevAiPage.test.tsx:426:51
+    424|       expect(el.closest('code')).toBeNull();
+    425|       expect(el).toHaveAttribute('data-placeholder', 'true');
+    426|       expect(getComputedStyle(el).fontFamily).not.toMatch(/mono/i);
+       |                                                   ^
+    427|     }
+    428|     const codes = screen.getByTestId('dev-ai-page').querySelectorAll('…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 86 passed (87)
+      Tests  1 failed | 738 passed (739)
+   Start at  00:49:27
+   Duration  16.00s (environment 33%, tests 23%, import 22%, setup 14%, transform 7%)
+
+Environment  jsdom was created 87 times · 44.53s total, 33% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in /Users/dimatitov/WebstormProjects/Game
+  │ automa/apps/web
+
+EXIT 1

@@ -1,15 +1,14 @@
 import type Konva from 'konva';
 import { useCallback } from 'react';
-import { Group, Layer, Rect, Text } from 'react-konva';
+import { Group, Layer } from 'react-konva';
 import { useDragStore } from '../../../board/model/dragStore';
-import { rebellionPalette } from '../../../theme/palette';
 import type { CoreMoveDrag } from '../../hooks/useCoreMoveDrag';
 import type { Lod } from '../../geometry/lod';
-import type { Scene, UnitScene } from '../../geometry/sceneModel';
+import type { GroupMarkerScene, Scene, UnitScene } from '../../geometry/sceneModel';
 import { CoreSystemNode } from '../nodes/CoreSystemNode';
+import { GroupMarkerNode } from '../nodes/GroupMarkerNode';
 import { HiddenBaseZone } from '../nodes/HiddenBaseZone';
 import { LeaderBadge } from '../nodes/LeaderBadge';
-import { SideCountChip } from '../nodes/SideCountChip';
 import { UnitGlyphNode } from '../nodes/UnitGlyphNode';
 
 type TapEvent = Konva.KonvaEventObject<MouseEvent | TouchEvent>;
@@ -19,18 +18,23 @@ export interface InteractiveLayerProps {
   lod: Lod;
   screenScale: number;
   zoneTitle: string;
+  /** Localised tag of the AI marks. */
+  aiTag: string;
   leaderShort(id: string): string;
   moveDrag: CoreMoveDrag;
   onSystem(systemId: string): void;
   onUnit(unitId: string): void;
   onLeader(leaderId: string): void;
   onZone(): void;
+  /** Click / tap on a group counter (the stage applies QD-5: armed leader → system click, else the manifest). */
+  onMarker(marker: GroupMarkerScene): void;
   setCursor(cursor: string): void;
 }
 
 /**
- * Interactive part of the map (plan-frontend §4): systems, the hidden rebel-base zone, units (detail: glyphs on the
- * orbit, compact: per-side chips) and leaders on the map. Clicks stop at the node (the stage click clears the
+ * Interactive part of the map (plan-frontend §4; SWR-009 plan §2 M): systems with their state marks, the hidden
+ * rebel-base zone, group counter markers (detail: side × arena; compact: per side), leader diamonds and — during the
+ * viewer's own activation — single-unit move handles on top. Clicks stop at the node (the stage click clears the
  * selection); a unit drag never pans the stage.
  */
 export function InteractiveLayer({
@@ -38,19 +42,18 @@ export function InteractiveLayer({
   lod,
   screenScale,
   zoneTitle,
+  aiTag,
   leaderShort,
   moveDrag,
   onSystem,
   onUnit,
   onLeader,
   onZone,
+  onMarker,
   setCursor,
 }: InteractiveLayerProps) {
   const pendingMove = useDragStore((s) => s.pendingMove);
 
-  const stop = (e: TapEvent) => {
-    e.cancelBubble = true;
-  };
   const onSelectSystem = useCallback(
     (id: string, e: TapEvent) => {
       e.cancelBubble = true;
@@ -79,6 +82,13 @@ export function InteractiveLayer({
     },
     [onZone],
   );
+  const onSelectMarker = useCallback(
+    (m: GroupMarkerScene, e: TapEvent) => {
+      e.cancelBubble = true;
+      onMarker(m);
+    },
+    [onMarker],
+  );
   const onHover = useCallback(
     (id: string | null) => {
       if (useDragStore.getState().drag) return;
@@ -88,8 +98,8 @@ export function InteractiveLayer({
   );
 
   const homeOf = useCallback(
-    (id: string) => scene.units.find((u) => u.id === id)?.pos ?? null,
-    [scene.units],
+    (id: string) => scene.handles.find((u) => u.id === id)?.pos ?? null,
+    [scene.handles],
   );
   const onDragStart = useCallback(
     (id: string, e: Konva.KonvaEventObject<DragEvent>) => {
@@ -124,21 +134,46 @@ export function InteractiveLayer({
     <Layer>
       <Group name="systems">
         {scene.systems.map((s) => (
-          <CoreSystemNode key={s.id} system={s} onSelect={onSelectSystem} onHover={onHover} />
+          <CoreSystemNode
+            key={s.id}
+            system={s}
+            initialScale={screenScale}
+            aiTag={aiTag}
+            onSelect={onSelectSystem}
+            onHover={onHover}
+          />
         ))}
       </Group>
       {scene.zone && (
         <HiddenBaseZone
           zone={scene.zone}
           title={zoneTitle}
+          initialScale={screenScale}
           leaderShort={leaderShort}
           onSelectZone={onSelectZone}
-          onSelectUnit={onSelectUnit}
+          onSelectMarker={onSelectMarker}
           onSelectLeader={onSelectLeader}
+          onHover={onHover}
         />
       )}
-      <Group name="units">
-        {scene.units.map((u) => (
+      <Group name="markers">
+        {scene.markers.map((m) => (
+          <GroupMarkerNode
+            key={m.key}
+            marker={m}
+            initialScale={screenScale}
+            onSelect={onSelectMarker}
+            onHover={onHover}
+          />
+        ))}
+      </Group>
+      <Group name="leaders">
+        {scene.leaders.map((l) => (
+          <LeaderBadge key={l.id} leader={l} short={leaderShort(l.id)} onSelect={onSelectLeader} />
+        ))}
+      </Group>
+      <Group name="handles">
+        {scene.handles.map((u) => (
           <UnitGlyphNode
             key={u.id}
             unit={u}
@@ -150,53 +185,6 @@ export function InteractiveLayer({
             onDragEnd={onDragEnd}
             onHover={onHover}
           />
-        ))}
-        {scene.overflow.map((o) => (
-          <Group
-            key={`${o.systemId}-${o.owner}`}
-            x={o.pos.x}
-            y={o.pos.y}
-            onClick={(e) => {
-              stop(e);
-              onSystem(o.systemId);
-            }}
-            onTap={(e) => {
-              stop(e);
-              onSystem(o.systemId);
-            }}
-          >
-            <Rect
-              x={-16}
-              y={-10}
-              width={32}
-              height={20}
-              cornerRadius={10}
-              fill={rebellionPalette.board.systemFill}
-              stroke={rebellionPalette.faction[o.owner]}
-            />
-            <Text
-              text={`+${o.count}`}
-              x={-16}
-              y={-6}
-              width={32}
-              align="center"
-              fontSize={12}
-              fill={rebellionPalette.board.label}
-            />
-          </Group>
-        ))}
-        {scene.chips.map((c) => (
-          <SideCountChip
-            key={`${c.systemId}-${c.owner}`}
-            chip={c}
-            initialScale={screenScale}
-            onSelect={onSelectSystem}
-          />
-        ))}
-      </Group>
-      <Group name="leaders">
-        {scene.leaders.map((l) => (
-          <LeaderBadge key={l.id} leader={l} short={leaderShort(l.id)} onSelect={onSelectLeader} />
         ))}
       </Group>
     </Layer>

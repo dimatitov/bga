@@ -1,0 +1,34 @@
+check-web-bundle: building apps/web (--rebuild)
+$ tsc -b && vite build
+vite v8.3.6 building client environment for production...
+transforming...
+✓ 1309 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                               0.83 kB │ gzip:   0.41 kB
+dist/assets/pt-mono-cyrillic-400-normal-CL2xZ6Bq.woff         7.74 kB
+dist/assets/pt-mono-latin-ext-400-normal-CEnqigeC.woff        7.94 kB
+dist/assets/pt-mono-cyrillic-ext-400-normal-Ca_Kjean.woff     9.68 kB
+dist/assets/pt-mono-latin-400-normal-CW_sYFHq.woff           12.71 kB
+dist/assets/pt-mono-cyrillic-400-normal-CteInIPE.woff2       15.35 kB
+dist/assets/pt-mono-latin-ext-400-normal-59kyaNn9.woff2      16.07 kB
+dist/assets/pt-mono-cyrillic-ext-400-normal-C8TlNz0g.woff2   22.02 kB
+dist/assets/pt-mono-latin-400-normal-3-3stVoC.woff2          27.43 kB
+dist/assets/vendor-FWAQpJ3q.css                               1.37 kB │ gzip:   0.48 kB
+dist/assets/FactionEmblem-CMa97Vw5.js                         0.34 kB │ gzip:   0.27 kB
+dist/assets/rolldown-runtime-XKyaHtl9.js                      0.72 kB │ gzip:   0.42 kB
+dist/assets/SetupScreen-BDBhP3fk.js                           6.87 kB │ gzip:   2.41 kB
+dist/assets/index-ZdPGye5O.js                                40.88 kB │ gzip:  12.38 kB
+dist/assets/ui-Bza-KoLC.js                                  128.51 kB │ gzip:  41.51 kB
+dist/assets/TableScreen-DO6HsKNF.js                         167.82 kB │ gzip:  48.61 kB
+dist/assets/vendor-CmJkq4rP.js                              186.48 kB │ gzip:  54.86 kB
+dist/assets/vendor-react-DRApY6_a.js                        312.72 kB │ gzip:  98.38 kB
+dist/assets/vendor-konva-BaFLGSZD.js                        330.31 kB │ gzip: 100.82 kB
+dist/assets/vendor-mui-CynWKGa2.js                          357.41 kB │ gzip: 111.67 kB
+
+✓ built in 230ms
+OK check-web-bundle: 12 files in apps/web/dist, 14 rules (dev-ai-path, dev-ai-testid, dev-ui-kit-path, dev-ui-kit-testid, openai-key-name, openai-env-name, openai-key-value, openai-api-host, board-debug-hook, rebel-base-choice-symbol, rebel-base-assignment, rebel-base-system, scenario-piece-id, hidden-piece-mapping)
+check-web-bundle: module check — building apps/web with sourcemaps into /var/folders/36/3br5ls7s2c3_8bdl_18c9bx40000gn/T/bga-bundle-modules-9sT7hr
+check-web-bundle: game modules in the bundle: forbidden-stars/assets (1), forbidden-stars/definition (1), rebellion/assets (5), rebellion/board (2), rebellion/definition (1), rebellion/schema (13)
+OK check-web-bundle modules: 880 sources, 23 game modules, only definition/schema/board/assets; 0 apps/web/src/dev modules
+exit=0
