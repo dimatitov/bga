@@ -12,13 +12,21 @@ import type { SxProps, Theme } from '@mui/material/styles';
  * - `md`+ (tables usually fill the viewport): fixed in the bottom-left corner, at most `min(560px, 50% − 32px)` wide,
  *   so it stays clear of controls docked in the bottom-right of the play area (map zoom). Raised above the refetch
  *   warning when both are shown (`stacked`).
+ *
+ * SWR-009 (plan §4): the Game Console docks a footer (≈ 36 px) and the map housing's legend / zoom strip (≈ 38 px) at
+ * the bottom of the viewport, so the notice sits `NOTICE_BOTTOM` px up — over the lower-left of the map screen,
+ * clear of the footer, the legend and the zoom keys (`stacked`: one refetch-warning height higher).
  */
+export const NOTICE_BOTTOM = 104;
+/** Extra lift when the refetch warning is shown under it. */
+export const NOTICE_STACK_LIFT = 56;
+
 export function automationNoticeSx(stacked: boolean): SxProps<Theme> {
   return {
     position: { xs: 'static', md: 'fixed' },
     m: { xs: 2, md: 0 },
     left: { md: 16 },
-    bottom: { md: stacked ? 72 : 16 },
+    bottom: { md: NOTICE_BOTTOM + (stacked ? NOTICE_STACK_LIFT : 0) },
     width: { md: 'max-content' },
     maxWidth: { xs: 'none', md: 'min(560px, calc(50% - 32px))' },
     zIndex: (theme) => theme.zIndex.snackbar,

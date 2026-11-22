@@ -7,12 +7,17 @@ import { SessionStatusSchema, type SessionStatus } from '@bga/platform';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-/** Icon + colour of each platform session status (plan-frontend §3; word from `common:sessionStatus.*`). */
-const LOOK: Record<SessionStatus, { icon: ReactElement; color: string }> = {
-  setup: { icon: <TuneIcon aria-hidden />, color: 'text.secondary' },
-  prototype: { icon: <ScienceIcon aria-hidden />, color: 'mock.main' },
-  active: { icon: <PlayArrowIcon aria-hidden />, color: 'primary.main' },
-  completed: { icon: <FlagIcon aria-hidden />, color: 'text.secondary' },
+type BadgeColor = 'default' | 'warning' | 'success';
+
+/**
+ * Icon + terminal badge tone of each platform session status (plan-frontend §3; word from `common:sessionStatus.*`).
+ * SWR-009: the theme's Chip badges — neutral / amber / green (UI Kit `.badge`).
+ */
+const LOOK: Record<SessionStatus, { icon: ReactElement; color: BadgeColor }> = {
+  setup: { icon: <TuneIcon aria-hidden />, color: 'default' },
+  prototype: { icon: <ScienceIcon aria-hidden />, color: 'warning' },
+  active: { icon: <PlayArrowIcon aria-hidden />, color: 'success' },
+  completed: { icon: <FlagIcon aria-hidden />, color: 'default' },
 };
 
 /**
@@ -30,14 +35,13 @@ export function SessionStatusChip(props: { status: unknown; 'data-testid': strin
       component="span"
       size="small"
       variant="outlined"
+      color={color}
       icon={icon}
       label={t(`common:sessionStatus.${status}`)}
       data-testid={props['data-testid']}
       data-status={status}
       sx={{
-        color,
-        borderColor: color,
-        fontWeight: 600,
+        fontWeight: 700,
         verticalAlign: 'middle',
         '& .MuiChip-icon': { color: 'inherit' },
       }}

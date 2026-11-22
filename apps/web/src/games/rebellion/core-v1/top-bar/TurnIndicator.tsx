@@ -1,15 +1,20 @@
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import type { PlayerViewCore } from '@bga/game-rebellion/schema';
 import { useTranslation } from 'react-i18next';
-import { FactionChip } from '../../ui/FactionChip';
+import { MOBILE_SHEET, mq, terminalTokens } from '@/shared/theme';
+import { StatusBadge } from '@/shared/ui/terminal';
+import { rebellionPalette } from '../../theme/palette';
+import { FactionEmblem } from '../../ui/FactionEmblem';
 import { hasPassed } from '../model/viewModel';
 
+const T = terminalTokens;
+
 /**
- * Sides group of the `core-v1` top bar (SWR-005 plan-frontend §7): «Ход: □ Повстанцы (вы)» — the active side;
- * «(вы)» when it is the viewer's side in an AI game; the opponent text («против AI · Обычная» / «против второго
- * игрока») hides below 600 px. `turn-indicator[data-side][data-mine]`.
+ * Side cell of the status bar (SWR-005 plan-frontend §7; SWR-009 design «Текущая сторона / Повстанцы · Вы»): the
+ * active side's emblem in a ring of its colour, the overline «Текущая сторона» and the side name, «· Вы» when it is the
+ * viewer's side in an AI game. Hot-seat adds «против второго игрока» (an AI game names its opponent in the AI
+ * Commander box). `turn-indicator[data-side][data-mine]`.
  */
 export function TurnIndicator({ view }: { view: PlayerViewCore }) {
   const { t } = useTranslation();
@@ -17,42 +22,72 @@ export function TurnIndicator({ view }: { view: PlayerViewCore }) {
   const ai = settings.opponentType === 'ai';
   const side = view.activeSide;
   const mine = side === view.viewer;
-  let opponent: string;
-  if (!ai) opponent = t('rebellion.match:turn.vsHuman');
-  else if (settings.aiDifficulty !== null)
-    opponent = t('rebellion.match:turn.vsAi', {
-      difficulty: t(`rebellion.common:difficulty.${settings.aiDifficulty}`),
-    });
-  else opponent = t('rebellion.match:turn.vsAiPlain');
+  const sideName = t(`rebellion.common:faction.${side}`);
   return (
     <Box
       data-testid="turn-indicator"
       data-side={side}
       data-mine={mine ? 'true' : 'false'}
-      sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', minWidth: 0 }}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '11px',
+        minWidth: 0,
+        [mq.down(MOBILE_SHEET)]: { gap: '7px' },
+      }}
     >
-      <Typography component="span" variant="body2" sx={{ fontWeight: 600 }}>
-        {t('rebellion.session:topBar.turn')}
-      </Typography>
-      <FactionChip faction={side} />
-      {ai && mine && (
-        <Typography component="span" variant="body2" sx={{ fontWeight: 600 }}>
-          {t('rebellion.match:turn.you')}
-        </Typography>
-      )}
-      <Typography
-        component="span"
-        variant="body2"
-        sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'inline' } }}
+      <Box
+        aria-hidden="true"
+        sx={{
+          flex: 'none',
+          width: 30,
+          height: 30,
+          borderRadius: '50%',
+          border: `2px solid ${rebellionPalette.faction[side]}`,
+          display: 'grid',
+          placeItems: 'center',
+          // Compact mark on phones (fix round 1): 22 px ring, 13 px emblem.
+          [mq.down(MOBILE_SHEET)]: { width: 22, height: 22, '& img': { width: 13, height: 13 } },
+        }}
       >
-        {opponent}
-      </Typography>
+        <FactionEmblem faction={side} size={18} />
+      </Box>
+      <Box sx={{ minWidth: 0 }}>
+        <Typography variant="meta" component="span" sx={{ display: 'block' }}>
+          {t('rebellion.session:console.currentSide')}
+        </Typography>
+        <Typography
+          component="strong"
+          data-testid="turn-indicator-side"
+          sx={{
+            display: 'block',
+            fontSize: 15,
+            fontWeight: 700,
+            color: T.color.paper,
+            // One line: «Повстанцы · Вы» never wraps; ellipsis only if the cell is really too narrow.
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            [mq.down(MOBILE_SHEET)]: { fontSize: 13, lineHeight: '18px' },
+          }}
+        >
+          {ai && mine ? t('rebellion.session:console.sideYou', { side: sideName }) : sideName}
+        </Typography>
+        {!ai && (
+          <Typography
+            component="span"
+            sx={{ display: 'block', fontSize: T.type.meta.size, color: T.color.warm }}
+          >
+            {t('rebellion.match:turn.vsHuman')}
+          </Typography>
+        )}
+      </Box>
     </Box>
   );
 }
 
 /**
- * Who has passed for the rest of the command phase (R-6, `view.passed`): one chip per side «Империя: пас».
+ * Who has passed for the rest of the command phase (R-6, `view.passed`): one badge per side «Империя: пас».
  * Nothing when nobody has passed or the game is over. `passed-indicator[data-rebels][data-empire]`.
  */
 export function PassedIndicator({ view }: { view: PlayerViewCore }) {
@@ -69,13 +104,9 @@ export function PassedIndicator({ view }: { view: PlayerViewCore }) {
       sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}
     >
       {sides.map((s) => (
-        <Chip
-          key={s}
-          data-testid={`passed-${s}`}
-          size="small"
-          variant="outlined"
-          label={t('rebellion.match:passed.side', { side: t(`rebellion.common:faction.${s}`) })}
-        />
+        <StatusBadge key={s} tone="amber" data-testid={`passed-${s}`}>
+          {t('rebellion.match:passed.side', { side: t(`rebellion.common:faction.${s}`) })}
+        </StatusBadge>
       ))}
     </Box>
   );

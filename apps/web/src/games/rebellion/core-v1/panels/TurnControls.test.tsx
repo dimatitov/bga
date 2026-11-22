@@ -1,9 +1,21 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useFeedbackStore } from '@/shared/feedback';
 import { i18n } from '@/shared/i18n';
-import { makeCoreActivationView, makeCoreOutcomeView, makeCoreView } from '../../test/coreFixtures';
-import { TURN_TITLE_ID } from './focus';
+import { useSelectionStore } from '../../board/model/selectionStore';
+import {
+  CS_ALDERAAN,
+  CS_CORELLIA,
+  L_DODONNA,
+  L_LEIA,
+  L_MOTHMA,
+  makeCoreActivationView,
+  makeCoreOutcomeView,
+  makeCoreView,
+  makeSessionAutomationState,
+} from '../../test/coreFixtures';
+import { useCoreUiStore } from '../model/coreUiStore';
+import { MOVE_TITLE_ID, TURN_TITLE_ID } from './focus';
 import { CMD_PATH, commandsOf, ok, rejected, renderCore, resetCoreStores } from './test/harness';
 import { TurnControls } from './TurnControls';
 import { TurnPanel } from './TurnPanel';
@@ -138,5 +150,128 @@ describe('TurnControls (P1, plan-frontend §5.2, §9, Q-FE-3, R-6)', () => {
         t('rebellion.errors:noActivation'),
       ),
     );
+  });
+});
+
+describe('TurnControls keys (SWR-009 C2)', () => {
+  const arm = (leaderId: string) => act(() => useCoreUiStore.getState().arm(leaderId));
+  const select = (systemId: string) =>
+    act(() => useSelectionStore.getState().selectSystem(systemId));
+
+  it('three keys in the group: primary «Активировать систему», warning «Пасовать», finish; names from i18n', () => {
+    renderCore(<TurnControls />, makeCoreView());
+    const group = screen.getByRole('group', { name: t('rebellion.turn:controls.label') });
+    expect(group).toHaveAttribute('data-testid', 'turn-controls');
+    const keys = within(group).getAllByRole('button');
+    expect(keys.map((k) => k.getAttribute('data-testid'))).toEqual([
+      'turn-activate',
+      'pass-turn',
+      'finish-activation',
+    ]);
+    expect(screen.getByTestId('turn-activate')).toHaveTextContent('Активировать систему');
+    expect(screen.getByTestId('turn-activate')).toHaveAttribute('data-tone', 'primary');
+    expect(screen.getByTestId('pass-turn')).toHaveTextContent('Пасовать');
+    expect(screen.getByTestId('pass-turn')).toHaveAttribute('data-tone', 'warning');
+    expect(screen.getByTestId('finish-activation')).toHaveTextContent('Завершить активацию');
+  });
+
+  it('turn-activate is disabled without an armed leader, without a selected system, or for a non-target; the hint describes it', () => {
+    renderCore(
+      <TurnControls />,
+      makeCoreView({
+        legalActions: [
+          { type: 'ACTIVATE_SYSTEM', leaderIds: [L_LEIA, L_DODONNA], systemIds: [CS_CORELLIA] },
+          { type: 'PASS' },
+        ],
+      }),
+    );
+    const key = screen.getByTestId('turn-activate');
+    expect(key).toBeDisabled();
+    expect(key).toHaveAccessibleDescription(t('rebellion.turn:controls.activateHint'));
+    select(CS_CORELLIA);
+    expect(key).toBeDisabled(); // a system, no leader
+    arm(L_LEIA);
+    expect(key).toBeEnabled();
+    expect(key).toHaveAttribute('data-leader-id', L_LEIA);
+    expect(key).toHaveAttribute('data-system-id', CS_CORELLIA);
+    expect(key).not.toHaveAccessibleDescription(t('rebellion.turn:controls.activateHint'));
+    select(CS_ALDERAAN); // not in ACTIVATE_SYSTEM.systemIds
+    expect(key).toBeDisabled();
+    act(() => useSelectionStore.getState().clearSelection());
+    expect(key).toBeDisabled();
+  });
+
+  it('a leader that cannot activate (not in leaderIds) never enables it', () => {
+    renderCore(<TurnControls />, makeCoreView());
+    arm(L_MOTHMA);
+    select(CS_CORELLIA);
+    expect(screen.getByTestId('turn-activate')).toBeDisabled();
+  });
+
+  it('click sends ACTIVATE_SYSTEM with the armed leader and the selected system; focus → move panel heading', async () => {
+    const after = makeCoreActivationView();
+    const { user, api } = renderCore(
+      <>
+        <TurnControls />
+        <TurnPanel />
+      </>,
+      makeCoreView(),
+      { [CMD_PATH]: ok(after) },
+    );
+    arm(L_LEIA);
+    select(CS_CORELLIA);
+    await user.click(screen.getByTestId('turn-activate'));
+    await waitFor(() =>
+      expect(commandsOf(api.requests)).toEqual([
+        { type: 'ACTIVATE_SYSTEM', leaderId: L_LEIA, systemId: CS_CORELLIA },
+      ]),
+    );
+    await waitFor(() =>
+      expect(document.activeElement).toBe(document.getElementById(MOVE_TITLE_ID)),
+    );
+    expect(useCoreUiStore.getState().armedLeaderId).toBeNull();
+    expect(screen.getByTestId('turn-activate')).toBeDisabled();
+  });
+
+  it('a 422 on activation is shown inline in the turn panel (activation-error)', async () => {
+    const { user } = renderCore(
+      <>
+        <TurnControls />
+        <TurnPanel />
+      </>,
+      makeCoreView(),
+      { [CMD_PATH]: rejected('errors.noActivation') },
+    );
+    arm(L_LEIA);
+    select(CS_CORELLIA);
+    await user.click(screen.getByTestId('turn-activate'));
+    expect(await screen.findByTestId('activation-error')).toHaveTextContent(
+      t('rebellion.errors:noActivation'),
+    );
+  });
+
+  it('while the AI moves every key is disabled (even with a leader and a target)', () => {
+    renderCore(
+      <TurnControls />,
+      makeCoreView(),
+      {},
+      {
+        automation: makeSessionAutomationState({ phase: 'running' }),
+      },
+    );
+    arm(L_LEIA);
+    select(CS_CORELLIA);
+    expect(screen.getByTestId('turn-activate')).toBeDisabled();
+    expect(screen.getByTestId('pass-turn')).toBeDisabled();
+    expect(screen.getByTestId('finish-activation')).toBeDisabled();
+  });
+
+  it('activation in progress: finish is the primary key, activate / pass disabled', () => {
+    renderCore(<TurnControls />, makeCoreActivationView());
+    expect(screen.getByTestId('finish-activation')).toHaveAttribute('data-tone', 'primary');
+    expect(screen.getByTestId('finish-activation')).toBeEnabled();
+    expect(screen.getByTestId('turn-activate')).toBeDisabled();
+    fireEvent.click(screen.getByTestId('turn-activate'));
+    expect(screen.getByTestId('pass-turn')).toBeDisabled();
   });
 });

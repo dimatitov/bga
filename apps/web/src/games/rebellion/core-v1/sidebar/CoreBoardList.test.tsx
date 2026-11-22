@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { i18n } from '@/shared/i18n';
 import { useSelectionStore } from '../../board/model/selectionStore';
@@ -113,5 +113,18 @@ describe('CoreBoardList (P1, plan-frontend §5.3 step 3, §9)', () => {
     ).toHaveAttribute('aria-label', t('rebellion.turn:zone.title'));
     await user.click(zone);
     expect(useSelectionStore.getState().selection).toEqual({ kind: 'zone' });
+  });
+
+  it('SWR-009 C2 (AC-14): selected row = amber edge + selection fill; rows in paper text; the activate key is primary', async () => {
+    const { user } = renderCore(<CoreBoardList />, makeCoreView());
+    const row = screen.getByTestId(`system-item-${CS_CORELLIA}`);
+    expect(row).toHaveStyle({ color: '#D8DDD2' });
+    expect(row).not.toHaveStyle({ borderColor: '#E3AD5C' });
+    await user.click(row);
+    expect(row).toHaveAttribute('aria-selected', 'true');
+    expect(row).toHaveStyle({ borderColor: '#E3AD5C', backgroundColor: '#211C13' });
+    act(() => useCoreUiStore.getState().arm(L_LEIA));
+    const key = await screen.findByTestId(`system-item-${CS_CORELLIA}-activate`);
+    expect(key).toHaveAttribute('data-tone', 'primary');
   });
 });

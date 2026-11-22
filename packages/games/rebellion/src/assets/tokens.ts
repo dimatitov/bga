@@ -1,20 +1,31 @@
 /**
- * Visual tokens of Rebellion (FE PA-4): faction and map colours, moved here from the web theme without
- * change (ux-decisions §7). Plain data — the web wraps them into its theme/Konva styles.
+ * Visual tokens of Rebellion (FE PA-4): faction and map colours (ux-decisions §7; SWR-009 values — the
+ * Galactic Vector Terminal palette, implementation-plan §1.5). Plain data — the web wraps them into its theme/Konva styles.
  * Lives in its own module so `emblems.ts`/`factions.ts` can use it without an import cycle via `index.ts`.
  */
 export const rebellionVisualTokens = {
-  faction: { empire: '#7C9CFF', rebels: '#F5A524' },
+  // SWR-009 (Galactic Vector Terminal, spec R-1/A-5): Empire = Signal Red, Rebels = Bright Phosphor. Keys unchanged;
+  // as TEXT the web uses the light shades of its own tokens (QD-8) — these are glyph/border/fill colours.
+  faction: { empire: '#DD6B59', rebels: '#91DFA1' },
   board: {
-    background: '#070A10',
-    star: 'rgba(230,234,242,0.25)',
-    link: 'rgba(154,164,181,0.45)',
-    systemFill: '#1C2536',
-    systemStroke: '#5B6B85',
-    label: '#C9D1DE',
-    selected: '#FFFFFF',
-    legalTarget: '#2DD4BF',
-    invalidTarget: '#F87171',
+    /** CRT map screen. */
+    background: '#030704',
+    /** Screen grid (`grid` role @ 0.35). */
+    star: 'rgba(45,85,53,0.35)',
+    /** Routes. */
+    link: '#456B4D',
+    /** Node fill. */
+    systemFill: '#020806',
+    /** Node outline. */
+    systemStroke: '#91DFA1',
+    /** Map labels. */
+    label: '#B9C2B4',
+    /** Selection (amber). */
+    selected: '#E3AD5C',
+    /** Legal target (phosphor, dashed on the map). */
+    legalTarget: '#91DFA1',
+    /** Invalid drop target. */
+    invalidTarget: '#DD6B59',
   },
 } as const;
 export type RebellionVisualTokens = typeof rebellionVisualTokens;

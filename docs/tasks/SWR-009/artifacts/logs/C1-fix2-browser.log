@@ -1,0 +1,22 @@
+# SWR-009 C1 fix round 2 — browser check after the consoleGridSx fix (disjoint media ranges)
+# dev server http://localhost:5180, session 46d94157-50b9-4773-a525-a4415be5556b (Rebels vs bot), no moves made
+# boxes = getBoundingClientRect [left, top, width, height] px; docScroll = [documentElement.scrollWidth, scrollHeight]
+
+1440x900  game-table cols "867px 530px"  rows "44px 90px 673px 36px"
+          header [18,18,1404,44] bar [18,69,1404,90] housing [18,166,867,673] rail [892,166,530,673] footer [18,846,1404,36]
+          docScroll [1440,900] -> two columns, exactly one viewport, no page scroll
+1280x800  game-table cols "797px 440px"  rows "44px 90px 573px 36px"
+          header [18,18,1244,44] bar [18,69,1244,90] housing [18,166,797,573] rail [822,166,440,573] footer [18,746,1244,36]
+          docScroll [1280,800] -> two columns (defect fixed: was one column), no page scroll
+1024x768  game-table cols "657px 340px"  rows "44px 120px 527px 36px"
+          header [10,10,1004,44] bar [10,61,1004,120] housing [10,188,657,527] rail [674,188,340,527] footer [10,722,1004,36]
+          docScroll [1024,768] -> two columns, no page scroll
+768x1024  game-table cols "733px" (one column)  rows "44px 168px 764.594px 4625.39px 52px"
+          header [10,10,733,44] bar [10,61,733,168] housing [10,236,733,765] rail [10,1008,733,4625] footer [10,5640,733,52]
+          docScroll [753,5702], clientWidth 753 (15 px vertical scrollbar) -> no horizontal scroll, vertical page scroll
+375x812   game-table cols "361px" (one column)  rows "46px 160px 638.797px 5241.69px 72px"
+          header [7,7,361,46] bar [7,60,361,160] housing [7,227,361,639] rail [7,873,361,5242] footer [7,6121,361,72]
+          docScroll [375,6200], clientWidth 375 -> no horizontal scroll
+
+Observation outside C1: on < 900 the rail is 4.6–5.2k px tall; its tab panel (`DIV[role=tabpanel]`) measures 4593 px at 375
+(plan §4: log max 220 px on < 900 — rail/tabs belong to C2).

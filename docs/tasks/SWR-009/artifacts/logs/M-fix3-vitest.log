@@ -1,0 +1,14 @@
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  13 passed (13)
+      Tests  164 passed (164)
+   Start at  02:02:39
+   Duration  2.34s (environment 49%, setup 19%, import 16%, transform 11%, tests 5%)
+
+Environment  jsdom was created 13 times · 7.32s total, 49% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+vitest exit 0

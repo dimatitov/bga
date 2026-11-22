@@ -1,0 +1,10 @@
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  7 passed (7)
+      Tests  70 passed (70)
+   Start at  01:35:49
+   Duration  3.41s (environment 34%, tests 22%, import 20%, setup 16%, transform 8%)
+
+exit 0

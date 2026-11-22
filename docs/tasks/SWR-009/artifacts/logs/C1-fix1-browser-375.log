@@ -1,0 +1,16 @@
+# SWR-009 C1 fix round 1 — browser measurement (dev server http://localhost:5180, session 46d94157-…, viewport 375x812, no moves made)
+# getBoundingClientRect [left, top, width, height], px
+
+## Before fix (status bar + map, measured first)
+game-table gridTemplateRows: "46px 274px 527.797px 697.688px 72px"   (rows: header, status, board, side, footer — all `auto`)
+table-top-bar: h 274
+map-housing: h 528 (= its own `height: max(400px, 65vh)` from MapHousing; grid row is auto and does not constrain it)
+map-housing gridTemplateRows: "27px 160.797px 310px"   (display header / map-screen / legend+zoom bar)
+map-screen: h 161, board-canvas: h 159
+map-housing-bar (legend + zoom): h 310
+
+## After fix (status bar)
+table-top-bar: [7, 60, 361, 160]  -> 160 px (target <= ~170)
+cells: side [18,69,165,34] | phase [193,67,165,38] / track [18,111,339,30] (full width) / ai [18,147,165,66] | save [193,160,165,40]
+turn-indicator-side: "Повстанцы · Вы", scrollWidth 116 = clientWidth 116 (one line, no ellipsis needed)
+document scrollWidth 375 = innerWidth 375 (no horizontal scroll)

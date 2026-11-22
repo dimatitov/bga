@@ -11,9 +11,11 @@ import { Fragment, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
 import type { WebGameEntry } from '@/games/registry';
+import { terminalTokens } from '@/shared/theme';
 import { paths } from '../paths';
 import type { GameSessionsResult } from '../sessions/useGameSessions';
 import { SessionStatusChip } from '../ui/SessionStatusChip';
+import { TerminalPanel } from '../ui/TerminalPanel';
 import {
   SESSION_LINE_SEPARATOR,
   type SessionLine,
@@ -72,6 +74,8 @@ export function SessionMeta({
   );
 }
 
+const T = terminalTokens;
+
 /** "Recent sessions" (D-GP-4..6, Q-13..15): ≤ 5 links, loading skeleton, empty state, inline error + Retry. */
 export function RecentSessions({
   entry,
@@ -124,11 +128,15 @@ export function RecentSessions({
     );
   } else {
     body = (
-      <List disablePadding>
+      <List disablePadding sx={{ borderTop: `1px solid ${T.color.line}` }}>
         {sessions.recent.map((s) => {
           const line = sessionLine(s);
           return (
-            <li key={s.sessionId}>
+            <Box
+              component="li"
+              key={s.sessionId}
+              sx={{ borderBottom: `1px solid ${T.color.line}` }}
+            >
               <ListItemButton
                 component={RouterLink}
                 to={paths.session(s.sessionId)}
@@ -152,7 +160,7 @@ export function RecentSessions({
                 />
                 <ChevronRightIcon aria-hidden />
               </ListItemButton>
-            </li>
+            </Box>
           );
         })}
       </List>
@@ -160,11 +168,25 @@ export function RecentSessions({
   }
 
   return (
-    <Box component="section" aria-labelledby={titleId} data-testid="game-recent-sessions">
-      <Typography id={titleId} variant="overline" component="h2" color="text.secondary">
-        {t('gamePage:recent.title')}
-      </Typography>
-      {body}
-    </Box>
+    <TerminalPanel
+      component="section"
+      aria-labelledby={titleId}
+      data-testid="game-recent-sessions"
+      sx={{ overflow: 'hidden' }}
+    >
+      <Box
+        sx={{
+          px: 1.5,
+          py: 1.25,
+          bgcolor: 'terminal.moduleHead',
+          borderBottom: `1px solid ${T.module.headBorder}`,
+        }}
+      >
+        <Typography id={titleId} variant="meta" component="h2" sx={{ m: 0 }}>
+          {t('gamePage:recent.title')}
+        </Typography>
+      </Box>
+      <Box sx={{ p: 1.5 }}>{body}</Box>
+    </TerminalPanel>
   );
 }

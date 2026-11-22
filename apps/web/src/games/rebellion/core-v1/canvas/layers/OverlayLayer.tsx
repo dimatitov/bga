@@ -2,26 +2,28 @@ import type { MapPoint } from '@bga/game-rebellion/board';
 import { Arrow, Circle, Group, Layer, Text } from 'react-konva';
 import { PIECE_SIZE } from '../../../board/model/constants';
 import { useDragStore } from '../../../board/model/dragStore';
-import { rebellionPalette } from '../../../theme/palette';
+import { mapStyle } from '../../../theme/mapStyle';
 import {
   CORE_SYSTEM_RADIUS,
   LABEL_FONT_PX,
-  LABEL_GAP_PX,
   LABEL_LINE_PX,
   REGION_FONT_PX,
   REGION_LETTER_SPACING_PX,
 } from '../../geometry/constants';
-import type { LabelBox } from '../../geometry/labelLayout';
+import { type LabelBox, systemLabelOffsetBase } from '../../geometry/labelLayout';
+import type { CulledLabels } from '../../geometry/labelCulling';
 import type { Scene } from '../../geometry/sceneModel';
 import { SCREEN_FIXED } from '../screenScale';
 
-const C = rebellionPalette.board;
+const S = mapStyle;
 
 export interface OverlayLayerProps {
   scene: Scene;
   screenScale: number;
   labelBoxes: ReadonlyMap<string, LabelBox>;
   regionLabels: ReadonlyMap<string, LabelBox>;
+  /** Captions left after collision culling (compact LOD); `null`/absent = all. */
+  shown?: CulledLabels | null;
 }
 
 /** End points of an arrow between two system centres, stopping outside both circles. */
@@ -39,10 +41,16 @@ function shortened(from: MapPoint, to: MapPoint, gap: number): number[] {
  * imperatively, see `screenScale.ts`; geometry = `labelLayout`), «source → activated» arrows, the drag ghost and
  * the ring of a move in flight.
  */
-export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: OverlayLayerProps) {
+export function OverlayLayer({
+  scene,
+  screenScale,
+  labelBoxes,
+  regionLabels,
+  shown = null,
+}: OverlayLayerProps) {
   const drag = useDragStore((s) => s.drag);
   const pending = useDragStore((s) => s.pendingMove);
-  const ghost = drag ? scene.units.find((u) => u.id === drag.pieceId)?.pos : undefined;
+  const ghost = drag ? scene.handles.find((u) => u.id === drag.pieceId)?.pos : undefined;
   const pendingCenter = pending ? scene.centers.get(pending.toSystemId) : undefined;
   return (
     <Layer listening={false}>
@@ -50,10 +58,11 @@ export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: O
         <Arrow
           key={`${m.fromSystemId}->${m.toSystemId}`}
           points={shortened(m.from, m.to, CORE_SYSTEM_RADIUS + 14)}
-          stroke={C.legalTarget}
-          fill={C.legalTarget}
-          strokeWidth={2}
-          dash={[8, 6]}
+          stroke={S.move.stroke}
+          fill={S.move.stroke}
+          strokeWidth={S.move.width}
+          strokeScaleEnabled={false}
+          dash={[...S.move.dash]}
           pointerLength={14}
           pointerWidth={12}
           opacity={0.85}
@@ -61,7 +70,7 @@ export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: O
       ))}
       {scene.regions.map((r) => {
         const box = regionLabels.get(r.id);
-        if (!box) return null;
+        if (!box || (shown && !shown.regions.has(r.id))) return null;
         return (
           <Group
             key={`rl-${r.id}`}
@@ -74,9 +83,10 @@ export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: O
             <Text
               text={box.lines[0]}
               fontSize={REGION_FONT_PX}
+              fontFamily={S.font.family}
               letterSpacing={REGION_LETTER_SPACING_PX}
-              fill={C.label}
-              opacity={0.7}
+              fill={S.region.label}
+              opacity={S.region.labelOpacity}
               perfectDrawEnabled={false}
             />
           </Group>
@@ -84,30 +94,31 @@ export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: O
       })}
       {scene.systems.map((s) => {
         const box = labelBoxes.get(s.id);
-        if (!box) return null;
+        if (!box || (shown && !shown.systems.has(s.id))) return null;
         const strong = s.target || s.activatedBy !== null || s.selected;
         return (
           <Group
             key={`label-${s.id}`}
             name={SCREEN_FIXED}
             x={s.center.x}
-            y={s.center.y + CORE_SYSTEM_RADIUS}
+            y={s.center.y}
             scaleX={screenScale}
             scaleY={screenScale}
           >
             <Text
               text={box.lines.join('\n')}
               x={-box.width / 2}
-              y={LABEL_GAP_PX}
+              y={systemLabelOffsetBase(scene.lod)}
               width={box.width}
               height={box.height}
               align="center"
               wrap="none"
               fontSize={LABEL_FONT_PX}
               lineHeight={LABEL_LINE_PX / LABEL_FONT_PX}
+              fontFamily={S.font.family}
               fontStyle={strong ? 'bold' : 'normal'}
-              fill={s.target ? C.legalTarget : C.label}
-              shadowColor={C.background}
+              fill={s.selected ? S.label.selected : s.target ? S.label.target : S.label.color}
+              shadowColor={S.label.halo}
               shadowBlur={4}
               shadowOpacity={0.9}
               perfectDrawEnabled={false}
@@ -120,9 +131,9 @@ export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: O
           x={ghost.x}
           y={ghost.y}
           radius={PIECE_SIZE / 2 + 2}
-          stroke={C.label}
+          stroke={S.ghost.stroke}
           strokeWidth={1.5}
-          dash={[4, 3]}
+          dash={[...S.ghost.dash]}
           opacity={0.5}
         />
       )}
@@ -131,7 +142,7 @@ export function OverlayLayer({ scene, screenScale, labelBoxes, regionLabels }: O
           x={pendingCenter.x}
           y={pendingCenter.y}
           radius={CORE_SYSTEM_RADIUS + 18}
-          stroke={C.legalTarget}
+          stroke={S.move.stroke}
           strokeWidth={3}
           dash={[4, 10]}
           opacity={0.8}

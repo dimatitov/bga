@@ -1,0 +1,9 @@
+$ eslint . --max-warnings=0 && prettier --check .
+Checking formatting...
+[warn] e2e/console-game.spec.ts
+[warn] e2e/console-hidden-base.spec.ts
+[warn] e2e/console-manifest.spec.ts
+[warn] e2e/support/console.ts
+[warn] Code style issues found in 4 files. Run Prettier with --write to fix.
+[ELIFECYCLE] Command failed with exit code 1.
+exit=1

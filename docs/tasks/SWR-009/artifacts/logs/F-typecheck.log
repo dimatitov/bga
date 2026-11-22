@@ -1,0 +1,14 @@
+$ pnpm run build:packages && pnpm -r run typecheck && tsc -p e2e/tsconfig.json
+$ tsc -b packages
+Scope: 5 of 6 workspace projects
+packages/platform typecheck$ tsc -p tsconfig.test.json
+packages/platform typecheck: Done
+packages/games/forbidden-stars typecheck$ tsc -p tsconfig.test.json
+packages/games/rebellion typecheck$ tsc -p tsconfig.test.json
+packages/games/forbidden-stars typecheck: Done
+packages/games/rebellion typecheck: Done
+apps/web typecheck$ tsc -b
+apps/api typecheck$ tsc -p tsconfig.json && tsc -p tsconfig.build.json --noEmit
+apps/api typecheck: Done
+apps/web typecheck: Done
+EXIT 0

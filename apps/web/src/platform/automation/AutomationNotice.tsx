@@ -1,8 +1,8 @@
 import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { translateUnknownError } from '@/shared/i18n';
+import { KeyButton } from '@/shared/ui/terminal';
 import { automationNoticeSx } from './noticeLayout';
 import type { SessionAutomationState } from './SessionAutomationContext';
 
@@ -16,6 +16,8 @@ interface AutomationNoticeProps {
  * Generic notice of SessionHost (SWR-006 plan-frontend §4.4, Q-FE-2): the automated participant did not finish its
  * turn (`error` — the run failed, `stalled` — the server still waits) with «Continue AI turn». Names no game.
  * Placement: `automationNoticeSx` (in flow on `xs`–`sm`, bottom-left on `md`+; QA defect D-1).
+ * SWR-009 (plan §2 C1): a UI Kit error alert (red 4 px edge from the theme) for both reasons — the AI did not finish
+ * its turn — with a danger key «Продолжить ход AI». The text stays the first text of the alert (no title).
  */
 export function AutomationNotice({ automation, stacked = false }: AutomationNoticeProps) {
   const { t } = useTranslation();
@@ -29,20 +31,19 @@ export function AutomationNotice({ automation, stacked = false }: AutomationNoti
   if (reason === null) return null;
   return (
     <Alert
-      severity="warning"
+      severity="error"
       role="alert"
       data-testid="session-automation-notice"
       data-reason={reason}
       action={
-        <Button
-          color="inherit"
-          size="small"
+        <KeyButton
+          tone="danger"
           data-testid="session-automation-retry"
           loading={phase === 'running'}
           onClick={automation.retry}
         >
           {t('sessionHost:automation.retry')}
-        </Button>
+        </KeyButton>
       }
       sx={automationNoticeSx(stacked)}
     >

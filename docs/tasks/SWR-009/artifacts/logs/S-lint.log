@@ -1,0 +1,13 @@
+
+/Users/dimatitov/WebstormProjects/Game automa/scripts/check-web-bundle.mjs
+  0:0  warning  File ignored because of a matching ignore pattern. Use "--no-ignore" to disable file ignore settings or use "--no-warn-ignored" to suppress this warning
+
+/Users/dimatitov/WebstormProjects/Game automa/scripts/check-web-bundle.test.mjs
+  0:0  warning  File ignored because of a matching ignore pattern. Use "--no-ignore" to disable file ignore settings or use "--no-warn-ignored" to suppress this warning
+
+✖ 2 problems (0 errors, 2 warnings)
+
+eslint=0
+Checking formatting...
+All matched files use Prettier code style!
+prettier=0

@@ -51,5 +51,21 @@
       "empire": "I am the Empire"
     },
     "trustNote": "The confirmation does not check who holds the device: pass it on honestly."
+  },
+  "console": {
+    "headerLabel": "Table navigation",
+    "brand": "BGA / GALACTIC OPERATIONS",
+    "engine": "Rules: {{engine}}",
+    "statusLabel": "Game status",
+    "currentSide": "Current side",
+    "sideYou": "{{side}} · You",
+    "state": "State",
+    "footerLabel": "Table details",
+    "systems_one": "{{count}} system",
+    "systems_other": "{{count}} systems",
+    "routes_one": "{{count}} route",
+    "routes_other": "{{count}} routes",
+    "rulesPartial": "Real map · rules partial",
+    "autosave": "Autosave after every move"
   }
 }

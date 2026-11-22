@@ -5,6 +5,9 @@ import { renderWithProviders } from '@/shared/test';
 import { CORE_SESSION_ID, makeCoreOutcomeView, makeCoreView } from '../../test/coreFixtures';
 import { CoreBoardContext, type CoreBoardContextValue } from '../model/coreContext';
 import { useCoreUiStore } from '../model/coreUiStore';
+import { terminalTokens } from '@/shared/theme';
+import { rgb } from '@/shared/ui/terminal/renderKit';
+import { rebellionPalette } from '../../theme/palette';
 import { OutcomeBanner } from './OutcomeBanner';
 
 const BACK = '/games/star-wars-rebellion';
@@ -73,5 +76,18 @@ describe('OutcomeBanner (SWR-005 P2, TC-C-12, AC-07)', () => {
     first.unmount();
     renderBanner({ ...view });
     expect(screen.getByTestId('game-over-title')).not.toHaveFocus();
+  });
+
+  it('SWR-009 look: UI Kit dialog surface with the winner colour on top; «Партия окончена»; default key back link', () => {
+    renderBanner(makeCoreOutcomeView('empire', 'rebelBaseCaptured'));
+    const banner = screen.getByTestId('game-over-banner');
+    const css = getComputedStyle(banner);
+    expect(css.backgroundColor).toBe(rgb(terminalTokens.color.dialog));
+    expect(css.borderTopColor).toBe(rgb(rebellionPalette.faction.empire));
+    expect(css.position).toBe('absolute');
+    expect(banner).toHaveTextContent('Партия окончена');
+    const back = screen.getByTestId('game-over-back');
+    expect(back).toHaveClass('MuiButton-outlined');
+    expect(back).toHaveTextContent('К игре');
   });
 });

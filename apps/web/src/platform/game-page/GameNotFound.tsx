@@ -1,32 +1,25 @@
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
 import { paths } from '../paths';
+import { MessagePanel } from '../ui/MessagePanel';
 
 /** Unknown `gameId` on `/games/:gameId[/new]` (and old SWR-002 URLs) → link to the catalogue. */
 export function GameNotFound() {
   const { t } = useTranslation();
   return (
-    <Box
+    <MessagePanel
       data-testid="game-not-found"
-      sx={{
-        display: 'grid',
-        placeItems: 'center',
-        alignContent: 'center',
-        gap: 2,
-        minHeight: '50vh',
-        px: 2,
-      }}
-    >
-      <Typography variant="h4" component="h1">
-        {t('gamePage:notFound.title')}
-      </Typography>
-      <Typography color="text.secondary">{t('gamePage:notFound.text')}</Typography>
-      <Button component={RouterLink} to={paths.catalog} variant="contained">
-        {t('common:notFound.toCatalog')}
-      </Button>
-    </Box>
+      minHeight="50vh"
+      led="amber"
+      status={t('common:terminal.code404')}
+      title={t('gamePage:notFound.title')}
+      text={t('gamePage:notFound.text')}
+      actions={
+        <Button component={RouterLink} to={paths.catalog} variant="contained">
+          {t('common:notFound.toCatalog')}
+        </Button>
+      }
+    />
   );
 }

@@ -109,6 +109,13 @@
     "infoCommander": "AI Commander",
     "infoCommanderBot": "Bot (deterministic)",
     "infoCommanderOpenai": "OpenAI (bot on failure)",
-    "infoCommanderNone": "—"
+    "infoCommanderNone": "—",
+    "state": {
+      "ready": "Ready",
+      "readySteps_one": "Ready · {{count}} action",
+      "readySteps_other": "Ready · {{count}} actions",
+      "stalled": "Turn not finished",
+      "over": "Game over"
+    }
   }
 }

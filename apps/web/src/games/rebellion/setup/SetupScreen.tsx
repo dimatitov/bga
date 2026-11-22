@@ -4,7 +4,6 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
@@ -12,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
 import type { SetupScreenProps } from '@/games/types';
 import { translateUnknownError } from '@/shared/i18n';
+import { terminalTokens } from '@/shared/theme';
 import { REBELLION_ERRORS_NS } from '../i18n';
 import { DifficultyPicker } from './components/DifficultyPicker';
 import { FactionCards } from './components/FactionCards';
@@ -20,6 +20,8 @@ import { OpponentPicker } from './components/OpponentPicker';
 import { RulesetPicker } from './components/RulesetPicker';
 import { initialSetupForm, type SetupFormValues } from './model/setupForm';
 import { type SetupValidation, validateSetup } from './model/toSetupInput';
+
+const T = terminalTokens;
 
 type ClientError = Extract<SetupValidation, { ok: false }>['reason'];
 
@@ -85,19 +87,37 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
     <Box
       sx={{ px: { xs: 0, sm: 2 }, py: { xs: 2, sm: 4 }, display: 'flex', justifyContent: 'center' }}
     >
-      <Paper
+      <Box
         component="form"
         onSubmit={handleSubmit}
         noValidate
         aria-busy={pending}
         data-testid="setup-form"
-        sx={{ width: '100%', maxWidth: 720, p: { xs: 2, sm: 4 } }}
+        sx={{
+          width: '100%',
+          maxWidth: 720,
+          overflow: 'hidden',
+          // Terminal module frame (SWR-009 N): bezel, module surface, inset line.
+          border: `${T.bezel.module}px solid ${T.color.bezel}`,
+          borderRadius: `${T.radius}px`,
+          bgcolor: 'terminal.module',
+          boxShadow: `inset 0 0 0 1px ${T.module.inset}`,
+        }}
       >
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 700, mb: 3 }}>
-          {t('rebellion.setup:newGame.title')}
-        </Typography>
+        <Box
+          sx={{
+            px: { xs: 2, sm: 4 },
+            py: 2,
+            bgcolor: 'terminal.moduleHead',
+            borderBottom: `1px solid ${T.module.headBorder}`,
+          }}
+        >
+          <Typography variant="h2" component="h1" sx={{ color: 'primary.main' }}>
+            {t('rebellion.setup:newGame.title')}
+          </Typography>
+        </Box>
 
-        <Stack spacing={3}>
+        <Stack spacing={3} sx={{ p: { xs: 2, sm: 4 } }}>
           <FactionCards
             value={form.playerFaction}
             onChange={(v) => update('playerFaction', v)}
@@ -175,7 +195,7 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
             </Button>
           </Stack>
         </Stack>
-      </Paper>
+      </Box>
     </Box>
   );
 }

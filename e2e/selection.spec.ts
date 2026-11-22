@@ -23,9 +23,26 @@ function systemWithUnit(view: CorePlayerView, owner: 'rebels' | 'empire'): strin
   return u.location.systemId;
 }
 
-async function clickUnit(page: Page, unitId: string) {
+/**
+ * SWR-009 (AC-6, plan §5.3): outside the viewer's own activation a unit is drawn only inside its group counter marker,
+ * so a click at `getPieceScreenPos(unit)` hits the marker → the system of the unit is selected and the Unit Manifest of
+ * that system opens with the unit's group highlighted. A single unit is still selectable in «Объекты» (unit panel).
+ */
+async function clickUnitMarker(page: Page, unitId: string, systemId: string) {
   const pos = await dbg.piecePos(page, unitId);
   await page.mouse.click(pos.x, pos.y);
+  await expect.poll(() => dbg.selection(page)).toEqual({ kind: 'system', id: systemId });
+  await expect(page.getByTestId(T.unitManifest)).toHaveAttribute('data-system-id', systemId);
+  await expect(
+    page.getByTestId(T.unitManifest).locator('[data-selected="true"]'),
+    'the group of the clicked unit is highlighted',
+  ).not.toHaveCount(0);
+}
+
+/** Selects a single unit through the «Объекты» list (the unit panel path, SWR-005 TC-E2E-14 intent). */
+async function selectUnitInList(page: Page, unitId: string) {
+  await openSidebarTab(page, 'objects');
+  await page.getByTestId(T.pieceItem(unitId)).click();
   await expect.poll(() => dbg.selection(page)).toEqual({ kind: 'piece', id: unitId });
 }
 
@@ -64,7 +81,8 @@ test('TC-E2E-14 (core-v1): own unit → unit panel; armed leader → exactly the
   await openCore(page, sessionId);
 
   await zoomToDetailAround(page, await dbg.systemPos(page, from));
-  await clickUnit(page, own.id);
+  await clickUnitMarker(page, own.id, from);
+  await selectUnitInList(page, own.id);
   await expect(page.getByTestId(T.unitPanel)).toHaveAttribute('data-unit-id', own.id);
   await expect(page.getByTestId(T.pieceItem(own.id))).toHaveAttribute('aria-selected', 'true');
   expect(await dbg.moveSources(page), 'no activation → no move sources').toEqual([]);
@@ -102,7 +120,9 @@ test('TC-E2E-15 (core-v1): enemy units and the hidden zone offer no commands', a
   const enemy = unitsIn(view, enemySystem).find((u) => u.owner === 'rebels')!;
   await openCore(page, sessionId);
   await zoomToDetailAround(page, await dbg.systemPos(page, enemySystem));
-  await clickUnit(page, enemy.id);
+  await clickUnitMarker(page, enemy.id, enemySystem);
+  await expect(page.getByTestId(T.movePanel)).toHaveCount(0);
+  await selectUnitInList(page, enemy.id);
   await expect(page.getByTestId(T.unitPanel)).toHaveAttribute('data-unit-id', enemy.id);
   await expect(page.getByTestId(T.movePanel)).toHaveCount(0);
   expect(await dbg.highlighted(page)).toEqual([]);

@@ -1,5 +1,5 @@
 import type { PlayerEvent } from '@bga/game-rebellion/schema';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { MockReply } from '@/shared/test';
 import { useFeedbackStore } from '@/shared/feedback';
@@ -15,6 +15,7 @@ import {
   makeCoreView,
   makeSessionAutomationState,
 } from '../../test/coreFixtures';
+import { TURN_PANEL_ID, TURN_TITLE_ID } from './focus';
 import { factionLabel } from './labels';
 import { CMD_PATH, commandsOf, ok, renderCore, resetCoreStores } from './test/harness';
 import { TurnControls } from './TurnControls';
@@ -31,8 +32,12 @@ describe('TurnPanel states (P1, plan-frontend §5.1, §9)', () => {
     expect(screen.getByTestId('turn-panel')).toHaveAttribute('data-state', 'idle');
     expect(screen.getByTestId('turn-status')).toHaveTextContent(t('rebellion.turn:panel.yourTurn'));
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
-      t('rebellion.turn:panel.title'),
+      t('rebellion.turn:panel.label', { phase: t('rebellion.common:phase.command') }),
     );
+    expect(screen.getByTestId('turn-panel')).toHaveAccessibleName('Ваша задача · Приказы');
+    expect(screen.getByTestId('turn-task')).toHaveTextContent('Выберите лидера');
+    expect(screen.getByTestId('turn-led-line')).toHaveAttribute('data-led', 'green');
+    expect(screen.getByTestId('turn-led-line')).toHaveTextContent('Ваш ход · Повстанцы');
     expect(screen.queryByTestId('move-panel')).not.toBeInTheDocument();
   });
 
@@ -76,6 +81,71 @@ describe('TurnPanel states (P1, plan-frontend §5.1, §9)', () => {
     expect(screen.getByTestId('turn-panel')).toHaveAttribute('data-state', 'over');
     expect(screen.getByTestId('turn-status')).toHaveTextContent(t('rebellion.turn:panel.gameOver'));
     expect(screen.queryByTestId('leader-pool')).not.toBeInTheDocument();
+  });
+});
+
+describe('TurnPanel «Your task» module (SWR-009 C2)', () => {
+  it('the header span is the focus target (TURN_TITLE_ID) inside the h2; the section is turn-panel with the panel id', () => {
+    renderCore(<TurnPanel />, makeCoreView());
+    const title = document.getElementById(TURN_TITLE_ID);
+    expect(title).not.toBeNull();
+    expect(title).toHaveAttribute('tabindex', '-1');
+    expect(title?.closest('h2')).not.toBeNull();
+    expect(screen.getByTestId('turn-panel').id).toBe(TURN_PANEL_ID);
+    expect(screen.getByTestId('turn-panel').tagName).toBe('SECTION');
+  });
+
+  it('task line per state: armed → «Выберите систему», activation → «Переместите юниты», waiting, over', async () => {
+    const { user, unmount } = renderCore(<TurnPanel />, makeCoreView());
+    await user.click(screen.getByTestId(`leader-${L_LEIA}`));
+    expect(screen.getByTestId('turn-panel')).toHaveAttribute('data-state', 'armed');
+    expect(screen.getByTestId('turn-task')).toHaveTextContent('Выберите систему');
+    unmount();
+    resetCoreStores();
+
+    const a = renderCore(<TurnPanel />, makeCoreActivationView());
+    expect(screen.getByTestId('turn-task')).toHaveTextContent('Переместите юниты');
+    expect(screen.getByTestId('turn-led-line')).toHaveAttribute('data-led', 'green');
+    a.unmount();
+
+    const w = renderCore(<TurnPanel />, makeCoreView({ activeSide: 'empire', legalActions: [] }));
+    expect(screen.getByTestId('turn-task')).toHaveTextContent('Ожидайте свой ход');
+    expect(screen.getByTestId('turn-led-line')).toHaveAttribute('data-led', 'off');
+    expect(screen.getByTestId('turn-led-line')).toHaveTextContent('Ход: Империя');
+    w.unmount();
+
+    renderCore(<TurnPanel />, makeCoreOutcomeView());
+    expect(screen.getByTestId('turn-task')).toHaveTextContent('Партия завершена');
+    expect(screen.getByTestId('turn-led-line')).toHaveAttribute('data-led', 'off');
+  });
+
+  it('LED line: AI running → amber «AI выполняет ход · Империя»; stalled → red', () => {
+    const { unmount } = renderCore(
+      <TurnPanel />,
+      makeCoreView(),
+      {},
+      { automation: makeSessionAutomationState({ phase: 'running' }) },
+    );
+    expect(screen.getByTestId('turn-led-line')).toHaveAttribute('data-led', 'amber');
+    expect(screen.getByTestId('turn-led-line')).toHaveTextContent('AI выполняет ход · Империя');
+    unmount();
+    renderCore(
+      <TurnPanel />,
+      makeCoreView({ activeSide: 'empire', legalActions: [] }),
+      {},
+      { automation: makeSessionAutomationState({ phase: 'stalled', pending: true }) },
+    );
+    expect(screen.getByTestId('turn-led-line')).toHaveAttribute('data-led', 'red');
+  });
+
+  it('en: header and LED line without Cyrillic', async () => {
+    renderCore(<TurnPanel />, makeCoreView());
+    await act(() => i18n.changeLanguage('en'));
+    await waitFor(() =>
+      expect(screen.getByTestId('turn-panel')).toHaveAccessibleName('Your task · Command'),
+    );
+    expect(screen.getByTestId('turn-led-line')).toHaveTextContent('Your turn · Rebels');
+    expect(screen.getByTestId('turn-panel').textContent).not.toMatch(/[А-Яа-яЁё]/);
   });
 });
 

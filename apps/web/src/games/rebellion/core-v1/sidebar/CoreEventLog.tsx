@@ -1,19 +1,26 @@
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { terminalTokens } from '@/shared/theme';
+import { StatusBadge } from '@/shared/ui';
 import { useCoreBoard } from '../model/coreContext';
 import { coreLogMessage, isAiEvent, isAutoEvent } from './coreLogMessage';
+
+const T = terminalTokens;
+const C = T.color;
 
 /**
  * Event log of the `core-v1` table (SWR-005 plan-frontend §7, D-SW5-13; tab «Журнал» of `CoreSidebar`): newest
  * first; `role="log"` with `aria-live="off"` — announcements go through the table live region.
- * SWR-006 (Q-FE-4): every event of the AI side reads «Империя (AI): …» and carries the chip «AI»
+ * SWR-006 (Q-FE-4): every event of the AI side reads «Империя (AI): …» and carries the tag «AI»
  * (`log-entry-<seq>-ai`, `aria-hidden` — the line already says «(AI)»). Events arrive redacted by the server:
  * the AI Rebels' moves to / from the hidden base read «скрытая зона» for the Empire.
- * `log-entry-<seq>[data-type][data-actor][data-auto][data-ai]`.
+ * SWR-009 C2: terminal rows (time column + text, thin divider); an AI row has a 2 px red left edge (`data-edge="ai"`)
+ * and a faint red wash, the tag is a red badge (light text shade, QD-8). The time is the event's own `at`
+ * (`data-time` = ISO), formatted HH:MM in the UI language — never an invented clock.
+ * `log-entry-<seq>[data-type][data-actor][data-auto][data-ai][data-time]`.
  */
 export function CoreEventLog() {
   const { t, i18n } = useTranslation();
@@ -26,7 +33,7 @@ export function CoreEventLog() {
 
   if (events.length === 0) {
     return (
-      <Typography data-testid="event-log-empty" variant="body2" sx={{ color: 'text.secondary' }}>
+      <Typography data-testid="event-log-empty" variant="body2" sx={{ color: C.warm }}>
         {t('rebellion.match:log.empty')}
       </Typography>
     );
@@ -43,6 +50,8 @@ export function CoreEventLog() {
     >
       {events.map((e) => {
         const ai = isAiEvent(e, view.settings);
+        const time = new Date(e.at);
+        const validTime = !Number.isNaN(time.getTime());
         return (
           <Box
             component="li"
@@ -53,46 +62,47 @@ export function CoreEventLog() {
             data-actor={e.actor}
             data-auto={isAutoEvent(e) ? 'true' : 'false'}
             data-ai={ai ? 'true' : 'false'}
+            data-time={e.at}
+            data-edge={ai ? 'ai' : undefined}
             sx={{
-              py: 0.75,
-              borderBottom: 1,
-              borderColor: 'divider',
-              display: 'flex',
-              gap: 1,
-              alignItems: 'flex-start',
+              display: 'grid',
+              gridTemplateColumns: '44px minmax(0, 1fr) auto',
+              columnGap: '6px',
+              alignItems: 'start',
+              py: '7px',
+              borderBottom: `1px solid ${C.line}`,
+              ...(ai && {
+                borderLeft: `2px solid ${C.red}`,
+                pl: '6px',
+                background: `linear-gradient(90deg, ${alpha(C.red, 0.07)}, transparent 72%)`,
+              }),
             }}
           >
             <Typography
               component="time"
               dateTime={e.at}
-              variant="caption"
-              sx={{
-                color: 'text.secondary',
-                fontVariantNumeric: 'tabular-nums',
-                minWidth: 40,
-                pt: 0.25,
-              }}
+              variant="meta"
+              sx={{ color: C.muted, fontVariantNumeric: 'tabular-nums', pt: '2px' }}
             >
-              {fmt.format(new Date(e.at))}
+              {validTime ? fmt.format(time) : ''}
             </Typography>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography variant="body2">{coreLogMessage(e, t, view)}</Typography>
-            </Box>
-            {ai && (
-              <Chip
+            <Typography
+              variant="body2"
+              sx={{ color: C.paper, fontSize: 12, lineHeight: 1.45, overflowWrap: 'anywhere' }}
+            >
+              {coreLogMessage(e, t, view)}
+            </Typography>
+            {ai ? (
+              <StatusBadge
+                tone="red"
                 data-testid={`log-entry-${e.seq}-ai`}
-                icon={<SmartToyOutlinedIcon aria-hidden />}
-                label={t('rebellion.match:log.aiTag')}
-                size="small"
-                variant="outlined"
                 aria-hidden
-                sx={{
-                  color: 'text.secondary',
-                  borderColor: 'divider',
-                  height: 20,
-                  '& .MuiChip-icon': { color: 'inherit' },
-                }}
-              />
+                sx={{ padding: '1px 5px', mt: '1px' }}
+              >
+                {t('rebellion.match:log.aiTag')}
+              </StatusBadge>
+            ) : (
+              <span />
             )}
           </Box>
         );

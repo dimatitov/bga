@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useTranslation } from 'react-i18next';
 
-/** Suspense fallback of lazy pages. */
+/** Suspense fallback of lazy pages (the spinner takes the phosphor `primary` colour of the terminal theme). */
 export function PageFallback() {
   const { t } = useTranslation();
   return (

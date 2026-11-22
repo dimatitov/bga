@@ -1,0 +1,11 @@
+$ vitest run
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+
+ Test Files  71 passed (71)
+      Tests  875 passed (875)
+   Start at  00:48:52
+   Duration  19.73s (tests 91%, import 7%, transform 1%)
+
+EXIT 0

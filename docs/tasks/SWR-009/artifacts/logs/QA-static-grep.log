@@ -1,0 +1,91 @@
+# QA static greps — 2026-11-20T22:53:56Z, HEAD 5b83e35 + working tree
+
+$ G-1 grep -rnIE "DEMO|SECTOR SCAN|DESIGN ITERATION|OPEN DEMO|16:47|Состав не додумываю|ДЕМО|PLAYER VIEW ·|board-source|rebellion-source|fonts\.googleapis|fonts\.gstatic" apps/web/src packages/games/rebellion/src --exclude="*.test.ts" --exclude="*.test.tsx"
+exit=1
+
+$ G-2 grep -rnIE "(32|69|56)" apps/web/src/i18n apps/web/src/games/rebellion apps/web/src/app/theme --exclude="*.test.ts" --exclude="*.test.tsx"
+ugrep: warning: apps/web/src/i18n: No such file or directory
+apps/web/src/games/rebellion/ui/FactionEmblem.tsx:8:  /** Pixel size; a responsive object (`{ xs: 40, sm: 56 }`) is allowed. Default 56. */
+apps/web/src/games/rebellion/ui/FactionEmblem.tsx:16:export function FactionEmblem({ faction, size = 56 }: FactionEmblemProps) {
+apps/web/src/games/rebellion/core-v1/sidebar/CoreSidebar.tsx:30: * ≥ 900 px the rail fills its grid cell and every module scrolls inside (turn ≤ 42 %, inspector ≤ 32 % of the
+apps/web/src/games/rebellion/core-v1/manifest/ManifestSheet.tsx:12:export const SHEET_COLLAPSED_PX = 56;
+apps/web/src/games/rebellion/core-v1/manifest/ManifestSheet.tsx:17: * only while a manifest is open; a 48 px toggle (`aria-expanded`) collapses it to 56 px; Esc inside closes the
+apps/web/src/games/rebellion/core-v1/canvas/MapHousing.tsx:30:/** «ТАКТИЧЕСКИЙ ДИСПЛЕЙ · 32 системы · 69 связей · ЧИСЛО = ФИГУРЫ В ГРУППЕ · <LOD> · 56%» — real numbers only. */
+apps/web/src/games/rebellion/core-v1/canvas/CoreBoardStage.tsx:69: * (`view.map` + `coreMapLayout` / `coreRegionShapes`: 32 systems, 69 routes, 8 regions) in the Galactic Vector
+apps/web/src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts:61:  /** Undirected routes of `view.map` (base game: 69). */
+apps/web/src/games/rebellion/core-v1/model/mapStats.ts:10:/** Real map counters for the display header and the footer (SWR-009 K-5, plan §3.3; base game: 32 / 69 / 8). */
+apps/web/src/games/rebellion/core-v1/console/ConsoleFooter.tsx:15: * Console footer (SWR-009 plan §2 C1; design-analysis §3): rules engine «CORE-V1» · «32 системы · 69 связей» (counted
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:13:/** Bar keys: 32 px on a fine pointer, 44 px touch targets on a coarse one (AC-14). */
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:15:  width: 32,
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:16:  height: 32,
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:17:  minHeight: 32,
+apps/web/src/games/rebellion/board/canvas/layers/PiecesLayer.tsx:164:                  width={32}
+apps/web/src/games/rebellion/board/canvas/layers/PiecesLayer.tsx:174:                  width={32}
+apps/web/src/games/rebellion/setup/components/FactionCards.tsx:42:            icon: <FactionEmblem faction={id} size={{ xs: 40, sm: 56 }} />,
+apps/web/src/games/rebellion/table/components/HandoffScreen.tsx:86:          minHeight: 56,
+apps/web/src/games/rebellion/table/components/SessionTopBar.tsx:64:        minHeight: 56,
+exit=2
+
+$ G-3 grep -rnIE "stateData|unit-hit|inspectMarker|DEMO SYSTEM|6\+3|Звёздный разрушитель',\s*2|TIE-истребитель',\s*4|Фелуция.*Мон-Каламари" apps/web/src
+exit=1
+
+$ G-5 grep -rnIE "#[0-9A-Fa-f]{6}" apps/web/src --exclude="*.test.ts" --exclude="*.test.tsx" | grep -v shared/theme/tokens.ts
+apps/web/src/platform/ui/placeholderCover.ts:4:  '<rect width="640" height="360" fill="#141A24"/>',
+apps/web/src/platform/ui/placeholderCover.ts:5:  '<g fill="none" stroke="#5B6B85" stroke-width="2" opacity="0.6">',
+apps/web/src/shared/ui/terminal/renderKit.tsx:11:/** '#AABBCC' → 'rgb(170, 187, 204)' (jsdom colour serialisation). */
+exit=0
+
+$ AC-2 git diff 5b83e35 -- package.json apps/*/package.json packages/*/package.json packages/games/*/package.json
+diff --git a/apps/web/package.json b/apps/web/package.json
+index 04013bd..07b50a9 100644
+--- a/apps/web/package.json
++++ b/apps/web/package.json
+@@ -14,6 +14,7 @@
+   "dependencies": {
+     "@emotion/react": "11.14.0",
+     "@emotion/styled": "11.14.1",
++    "@fontsource/pt-mono": "5.3.0",
+     "@mui/icons-material": "9.5.0",
+     "@mui/material": "9.5.0",
+     "@bga/game-forbidden-stars": "workspace:*",
+exit=0
+
+$ AC-2 raster files added under apps/web (untracked + diff)
+exit=1
+
+$ AC-2 license of @fontsource/pt-mono
+@fontsource/pt-mono 5.3.0 OFL-1.1
+400.css
+CHANGELOG.md
+LICENSE
+README.md
+cyrillic-400.css
+cyrillic-ext-400.css
+cyrillic-ext.css
+cyrillic.css
+files
+index.css
+index.d.css.ts
+latin-400.css
+latin-ext-400.css
+latin-ext.css
+latin.css
+metadata.json
+package.json
+scss
+unicode.json
+
+# 2026-11-20T22:54:11Z after integration-verify (EXIT 0) built apps/web/dist
+$ G-4 grep -rlIE "SECTOR SCAN|DESIGN ITERATION|DEMO DATA|OPEN DEMO|16:47|fonts\.googleapis|board-source|rebellion-source|/dev/ui-kit" apps/web/dist
+exit=1
+$ ls apps/web/dist/assets | grep -i pt-mono
+pt-mono-cyrillic-400-normal-CL2xZ6Bq.woff
+pt-mono-cyrillic-400-normal-CteInIPE.woff2
+pt-mono-cyrillic-ext-400-normal-C8TlNz0g.woff2
+pt-mono-cyrillic-ext-400-normal-Ca_Kjean.woff
+pt-mono-latin-400-normal-3-3stVoC.woff2
+pt-mono-latin-400-normal-CW_sYFHq.woff
+pt-mono-latin-ext-400-normal-59kyaNn9.woff2
+pt-mono-latin-ext-400-normal-CEnqigeC.woff
+$ raster in dist
+exit=1

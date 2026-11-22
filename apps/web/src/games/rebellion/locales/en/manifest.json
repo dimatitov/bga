@@ -1,0 +1,32 @@
+{
+  "label": "Unit manifest",
+  "close": "Close",
+  "closeLabel": "Close the manifest and return to the object",
+  "base": "Rebel base",
+  "arena": {
+    "space": "Fleet",
+    "ground": "Ground forces"
+  },
+  "units_one": "{{count}} unit",
+  "units_other": "{{count}} units",
+  "row": "{{name}} × {{count}}",
+  "leaders": "Leaders",
+  "leader": "Leader · {{name}}",
+  "total": "Total units",
+  "empty": "No markers · visible units: 0",
+  "groupSelected": "selected",
+  "markers": {
+    "label": "Forces",
+    "open": "{{side}} · {{arena}} · {{units}}. Open the manifest",
+    "plain": "{{side}} · {{arena}} · {{units}}"
+  },
+  "restricted": {
+    "title": "Access restricted · base location unknown",
+    "heading": "Rebel base",
+    "note": "Only what the server tells your side is shown."
+  },
+  "sheet": {
+    "expand": "Expand the manifest",
+    "collapse": "Collapse the manifest"
+  }
+}

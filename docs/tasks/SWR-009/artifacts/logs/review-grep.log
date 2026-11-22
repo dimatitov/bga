@@ -1,0 +1,36 @@
+### hex literals in apps/web/src (excluding tests, shared/theme/tokens.ts, app/theme/tokens.ts)
+apps/web/src/platform/ui/placeholderCover.ts:4:  '<rect width="640" height="360" fill="#141A24"/>',
+apps/web/src/platform/ui/placeholderCover.ts:5:  '<g fill="none" stroke="#5B6B85" stroke-width="2" opacity="0.6">',
+apps/web/src/shared/ui/terminal/renderKit.tsx:11:/** '#AABBCC' → 'rgb(170, 187, 204)' (jsdom colour serialisation). */
+### rgb/rgba literals
+apps/web/src/shared/ui/terminal/renderKit.tsx:11:/** '#AABBCC' → 'rgb(170, 187, 204)' (jsdom colour serialisation). */
+apps/web/src/shared/ui/terminal/renderKit.tsx:12:export function rgb(hex: string): string {
+apps/web/src/shared/ui/terminal/renderKit.tsx:14:  return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
+apps/web/src/games/rebellion/board/canvas/MapCaption.tsx:17:        bgcolor: 'rgba(7,10,16,0.7)',
+apps/web/src/games/rebellion/board/canvas/layers/MapBackgroundLayer.tsx:66:          ctx.strokeStyle = 'rgba(154,164,181,0.06)';
+### AC-16 demo strings
+apps/web/src/games/rebellion/core-v1/console/ConsoleHeader.tsx:19: * «SECTOR SCAN») and ⚙ (`session-settings`). `console-header[data-rules-engine]`. Below 600 px «К игре» is an icon
+### hardcoded 32/69/56 counts (non-test, non-dev)
+apps/web/src/app/layout/AppHeader.tsx:28:        minHeight: 56,
+apps/web/src/platform/automation/noticeLayout.ts:22:export const NOTICE_STACK_LIFT = 56;
+apps/web/src/shared/ui/terminal/Led.tsx:19:  56%, 100% { opacity: 0.25; }
+apps/web/src/shared/theme/tokens.ts:78:  alpha: { grid: 0.32, scanline: 0.18, backdrop: 0.78 },
+apps/web/src/games/rebellion/ui/FactionEmblem.tsx:8:  /** Pixel size; a responsive object (`{ xs: 40, sm: 56 }`) is allowed. Default 56. */
+apps/web/src/games/rebellion/ui/FactionEmblem.tsx:16:export function FactionEmblem({ faction, size = 56 }: FactionEmblemProps) {
+apps/web/src/games/rebellion/core-v1/sidebar/CoreSidebar.tsx:30: * ≥ 900 px the rail fills its grid cell and every module scrolls inside (turn ≤ 42 %, inspector ≤ 32 % of the
+apps/web/src/games/rebellion/core-v1/manifest/ManifestSheet.tsx:12:export const SHEET_COLLAPSED_PX = 56;
+apps/web/src/games/rebellion/core-v1/manifest/ManifestSheet.tsx:17: * only while a manifest is open; a 48 px toggle (`aria-expanded`) collapses it to 56 px; Esc inside closes the
+apps/web/src/games/rebellion/core-v1/canvas/CoreBoardStage.tsx:69: * (`view.map` + `coreMapLayout` / `coreRegionShapes`: 32 systems, 69 routes, 8 regions) in the Galactic Vector
+apps/web/src/games/rebellion/core-v1/canvas/MapHousing.tsx:30:/** «ТАКТИЧЕСКИЙ ДИСПЛЕЙ · 32 системы · 69 связей · ЧИСЛО = ФИГУРЫ В ГРУППЕ · <LOD> · 56%» — real numbers only. */
+apps/web/src/games/rebellion/core-v1/hooks/coreBoardDebugImpl.ts:61:  /** Undirected routes of `view.map` (base game: 69). */
+apps/web/src/games/rebellion/core-v1/model/mapStats.ts:10:/** Real map counters for the display header and the footer (SWR-009 K-5, plan §3.3; base game: 32 / 69 / 8). */
+apps/web/src/games/rebellion/core-v1/console/ConsoleFooter.tsx:15: * Console footer (SWR-009 plan §2 C1; design-analysis §3): rules engine «CORE-V1» · «32 системы · 69 связей» (counted
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:13:/** Bar keys: 32 px on a fine pointer, 44 px touch targets on a coarse one (AC-14). */
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:15:  width: 32,
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:16:  height: 32,
+apps/web/src/games/rebellion/board/canvas/ZoomControls.tsx:17:  minHeight: 32,
+apps/web/src/games/rebellion/board/canvas/layers/PiecesLayer.tsx:164:                  width={32}
+apps/web/src/games/rebellion/board/canvas/layers/PiecesLayer.tsx:174:                  width={32}
+apps/web/src/games/rebellion/setup/components/FactionCards.tsx:42:            icon: <FactionEmblem faction={id} size={{ xs: 40, sm: 56 }} />,
+apps/web/src/games/rebellion/table/components/HandoffScreen.tsx:86:          minHeight: 56,
+apps/web/src/games/rebellion/table/components/SessionTopBar.tsx:64:        minHeight: 56,

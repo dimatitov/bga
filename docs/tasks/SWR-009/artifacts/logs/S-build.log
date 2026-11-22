@@ -1,0 +1,34 @@
+$ tsc -b && vite build
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(6,3): error TS2305: Module '"../../geometry/constants"' has no exported member 'CHIP_FONT_PX'.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(7,3): error TS2305: Module '"../../geometry/constants"' has no exported member 'CHIP_GLYPH_PX'.
+src/games/rebellion/core-v1/canvas/nodes/SideCountChip.tsx(8,3): error TS2305: Module '"../../geometry/constants"' has no exported member 'CHIP_HEIGHT_PX'.
+src/games/rebellion/core-v1/CoreTable.tsx(237,61): error TS2322: Type '{ status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; backHref: string; }' is not assignable to type 'IntrinsicAttributes & { status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; }'.
+  Property 'backHref' does not exist on type 'IntrinsicAttributes & { status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; }'.
+src/games/rebellion/core-v1/geometry/labelLayout.ts(10,3): error TS2305: Module '"./constants"' has no exported member 'CHIP_FONT_PX'.
+src/games/rebellion/core-v1/geometry/labelLayout.ts(11,3): error TS2305: Module '"./constants"' has no exported member 'CHIP_GLYPH_PX'.
+src/games/rebellion/core-v1/geometry/labelLayout.ts(12,3): error TS2305: Module '"./constants"' has no exported member 'CHIP_HEIGHT_PX'.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(19,1): error TS6133: 'AiRecentMarks' is declared but its value is never read.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(20,1): error TS6133: 'ManifestRequest' is declared but its value is never read.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(21,1): error TS6192: All imports in import declaration are unused.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(32,3): error TS6133: 'HANDLE_ARC_RADIUS' is declared but its value is never read.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(33,3): error TS6133: 'HANDLE_STEP_DEG' is declared but its value is never read.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(41,1): error TS6192: All imports in import declaration are unused.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(168,45): error TS2304: Cannot find name 'CoreUnitView'.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(169,13): error TS2304: Cannot find name 'unitTypeOf'.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(285,41): error TS2304: Cannot find name 'CoreUnitView'.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(316,39): error TS2304: Cannot find name 'layoutPiecesInSystem'.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(330,18): error TS2304: Cannot find name 'isMovable'.
+src/games/rebellion/core-v1/geometry/sceneModel.ts(340,16): error TS2304: Cannot find name 'overflowChipPosition'.
+src/games/rebellion/core-v1/geometry/systemMarks.ts(177,17): error TS2339: Property 'aiRecent' does not exist on type 'SystemScene'.
+src/games/rebellion/core-v1/geometry/systemMarks.ts(181,20): error TS2339: Property 'dropIllegal' does not exist on type 'SystemScene'.
+src/games/rebellion/core-v1/geometry/systemMarks.ts(186,53): error TS2339: Property 'aiRecent' does not exist on type 'SystemScene'.
+src/games/rebellion/core-v1/top-bar/CoreTopBar.test.tsx(41,77): error TS2322: Type '{ status: "active" | "setup" | "prototype" | "completed"; saveStatus: "idle"; backHref: string; }' is not assignable to type 'IntrinsicAttributes & { status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; }'.
+  Property 'backHref' does not exist on type 'IntrinsicAttributes & { status: "active" | "setup" | "prototype" | "completed"; saveStatus: SaveStatus; }'.
+src/games/rebellion/core-v1/top-bar/OutcomeBanner.tsx(94,11): error TS2322: Type '{ children: string; component: ForwardRefExoticComponent<LinkProps & RefAttributes<HTMLAnchorElement>>; to: string; startIcon: Element; "data-testid": string; }' is not assignable to type 'IntrinsicAttributes & Omit<KeyButtonProps, "ref"> & RefAttributes<HTMLButtonElement>'.
+  Property 'to' does not exist on type 'IntrinsicAttributes & Omit<KeyButtonProps, "ref"> & RefAttributes<HTMLButtonElement>'.
+[ELIFECYCLE] Command failed with exit code 2.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in /Users/dimatitov/WebstormProjects/Game
+  │ automa/apps/web
+

@@ -1,0 +1,150 @@
+{
+  "title": "UI Kit",
+  "devBadge": "DEV",
+  "intro": "Development only. Every element below is a real UI Kit component with the app theme; the sample values are placeholders, not game data.",
+  "navLabel": "UI Kit sections",
+  "sample": "sample",
+  "section": {
+    "palette": {
+      "id": "01 / COLOR",
+      "title": "Palette and colour roles",
+      "note": "Colour values come from the design tokens."
+    },
+    "type": {
+      "id": "02 / TYPE",
+      "title": "Type scale",
+      "note": "One font for Cyrillic, Latin, numbers and labels."
+    },
+    "controls": {
+      "id": "03 / INPUT",
+      "title": "Keys, fields and switches",
+      "note": "Hover, pressed and focus are pinned here for comparison; in the app they follow the pointer and keyboard."
+    },
+    "signals": { "id": "04 / SIGNAL", "title": "LED indicators and statuses" },
+    "panels": { "id": "05 / MODULES", "title": "Tabs, modules and log" },
+    "dialogs": { "id": "06 / FEEDBACK", "title": "Dialogs, notices and errors" },
+    "markers": {
+      "id": "07 / MARKERS",
+      "title": "Counter markers and glyphs",
+      "note": "The number on a marker is the count of figures shown by that glyph."
+    },
+    "legend": { "id": "08 / LEGEND", "title": "Legend keys" }
+  },
+  "palette": {
+    "crt": "Display base",
+    "display": "Display field",
+    "route": "Ordinary routes",
+    "region": "Region borders",
+    "signal": "Permanent signal",
+    "phosphor": "Available action",
+    "amber": "Selection · focus",
+    "red": "Critical",
+    "case": "Console case",
+    "bezel": "Bezel",
+    "warm": "Secondary text",
+    "paper": "Primary text"
+  },
+  "type": {
+    "module": "Type scale",
+    "display": { "role": "Screen title", "example": "Screen title" },
+    "title": { "role": "Module title", "example": "Module title" },
+    "body": {
+      "role": "Body text",
+      "example": "Body text: one or two sentences explaining the next step."
+    },
+    "metric": { "role": "Value / metric", "example": "01 / 10" },
+    "meta": { "role": "Service label", "example": "Service label · meta" }
+  },
+  "keys": {
+    "normal": { "state": "Normal", "label": "Key" },
+    "hover": { "state": "Hover", "label": "Key" },
+    "primary": { "state": "Primary · available", "label": "Confirm" },
+    "selected": { "state": "Selected", "label": "Selected" },
+    "pressed": { "state": "Pressed", "label": "Pressed" },
+    "disabled": { "state": "Disabled", "label": "Unavailable" },
+    "warning": { "state": "Warning · confirmation", "label": "Proceed" },
+    "danger": { "state": "Danger · critical only", "label": "Critical" },
+    "focus": { "state": "Focus visible · keyboard", "label": "Focused" }
+  },
+  "fields": {
+    "module": "Input / select / switch",
+    "input": "Text field",
+    "inputValue": "Text value",
+    "select": "Select",
+    "optionA": "First option",
+    "optionB": "Second option",
+    "switchGroup": "Accessibility",
+    "switch": "Reduce motion"
+  },
+  "leds": {
+    "module": "LEDs",
+    "green": { "label": "On", "note": "Active" },
+    "amber": { "label": "Recent", "note": "Attention" },
+    "red": { "label": "Alert", "note": "Critical" },
+    "off": { "label": "Off", "note": "Inactive" },
+    "blink": { "label": "Blinking", "note": "Working (off with reduced motion)" }
+  },
+  "status": {
+    "module": "AI status · save",
+    "ready": { "title": "AI ready", "text": "Waiting for the player." },
+    "thinking": { "title": "AI is moving", "text": "Commands are locked while it works." },
+    "failed": { "title": "AI did not finish", "text": "The reason is shown with a retry key." },
+    "saved": "Saved",
+    "saving": "Saving",
+    "saveError": "Save error",
+    "neutral": "Neutral"
+  },
+  "tabs": {
+    "label": "Sample tabs",
+    "first": "First",
+    "second": "Second",
+    "third": "Third",
+    "panel": "Panel of the «{{tab}}» tab. The selected tab has a phosphor line; the others stay readable."
+  },
+  "modules": {
+    "default": "Module",
+    "defaultBody": "A module with a header strip and a 2 px bezel.",
+    "restricted": "Restricted module",
+    "restrictedBody": "A dashed bezel marks limited visibility.",
+    "readout": "Readout",
+    "readoutLabel": "Value"
+  },
+  "log": {
+    "module": "Log · newest first",
+    "entry": "Log entry {{n}}",
+    "badge": "Tag"
+  },
+  "dialog": {
+    "preview": "Dialog (inline preview)",
+    "title": "Confirm the action?",
+    "body": "A confirmation dialog explains the consequence before the player commits.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "open": "Open dialog"
+  },
+  "alerts": {
+    "info": { "title": "Notice", "text": "An information alert." },
+    "warning": { "title": "Warning", "text": "A warning alert." },
+    "error": { "title": "Error", "text": "An error alert with an action.", "action": "Retry" }
+  },
+  "markers": {
+    "module": "Counter markers",
+    "filledTriangle": "Filled triangle · {{count}}",
+    "outlinedTriangle": "Outlined triangle · {{count}}",
+    "filledSquare": "Filled square · {{count}}",
+    "outlinedSquare": "Outlined square · {{count}}",
+    "pressed": "Pressed marker · {{count}}",
+    "glyphs": "Glyphs"
+  },
+  "legend": {
+    "module": "Legend",
+    "filledTriangle": "Filled triangle",
+    "outlinedTriangle": "Outlined triangle",
+    "filledSquare": "Filled square",
+    "outlinedSquare": "Outlined square",
+    "diamond": "Diamond",
+    "circle": "Circle",
+    "dashed": "Dashed outline",
+    "ring": "Amber ring"
+  }
+}

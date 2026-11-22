@@ -39,14 +39,14 @@ export function FeedbackHost() {
         {current ? (
           <Alert
             severity={current.severity}
-            variant="filled"
+            // SWR-009: the terminal Alert of the theme (bezel + coloured left edge), not MUI's filled block.
+            variant="standard"
             onClose={() => handleClose()}
             // The live region below announces the text; avoid double announcement.
             role="presentation"
             action={
               current.action ? (
                 <Button
-                  color="inherit"
                   size="small"
                   onClick={() => {
                     current.action?.onClick();

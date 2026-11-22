@@ -1,31 +1,24 @@
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router';
 import { paths } from '@/platform/paths';
+import { MessagePanel } from '@/platform/ui/MessagePanel';
 
+/** Unknown address (`not-found`): terminal message panel with the way back to the catalogue. */
 export function NotFoundPage() {
   const { t } = useTranslation();
   return (
-    <Box
+    <MessagePanel
       data-testid="not-found"
-      sx={{
-        display: 'grid',
-        placeItems: 'center',
-        alignContent: 'center',
-        gap: 2,
-        minHeight: '60vh',
-        px: 2,
-      }}
-    >
-      <Typography variant="h4" component="h1">
-        {t('common:notFound.title')}
-      </Typography>
-      <Typography color="text.secondary">{t('common:notFound.text')}</Typography>
-      <Button component={RouterLink} to={paths.catalog} variant="contained">
-        {t('common:notFound.toCatalog')}
-      </Button>
-    </Box>
+      led="amber"
+      status={t('common:terminal.code404')}
+      title={t('common:notFound.title')}
+      text={t('common:notFound.text')}
+      actions={
+        <Button component={RouterLink} to={paths.catalog} variant="contained">
+          {t('common:notFound.toCatalog')}
+        </Button>
+      }
+    />
   );
 }

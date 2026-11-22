@@ -27,6 +27,9 @@ describe('FeedbackHost', () => {
     expect(snackbar).toHaveTextContent('Сбой');
     expect(snackbar).toHaveAttribute('data-severity', 'error');
     expect(screen.getByTestId('live-region')).toHaveTextContent('Сбой');
+    // SWR-009 N: the terminal Alert of the theme (standard variant), not MUI's filled block.
+    expect(snackbar.querySelector('.MuiAlert-standard')).not.toBeNull();
+    expect(snackbar.querySelector('.MuiAlert-filled')).toBeNull();
 
     await user.click(screen.getByRole('button', { name: 'Повторить' }));
     expect(onRetry).toHaveBeenCalledOnce();

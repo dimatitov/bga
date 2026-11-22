@@ -1,0 +1,12 @@
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+
+ Test Files  13 passed (13)
+      Tests  125 passed (125)
+   Start at  02:00:17
+   Duration  4.21s (import 30%, tests 26%, environment 24%, transform 10%, setup 9%)
+
+    Isolate  13 workers spawned · ~659ms startup each (spawn + environment, per file)
+             at least ~293ms faster with isolate: false — reuses workers across files instead of one per file
+

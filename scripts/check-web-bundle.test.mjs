@@ -229,6 +229,10 @@ describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18
       ['e("button",{"data-testid":"dev-ai-submit"})', 'dev-ai-testid'],
       ['{"data-testid":"settings-dev-ai-link"}', 'dev-ai-testid'],
       ['{"data-testid":"ai-dev-status"}', 'dev-ai-testid'],
+      ['{path:"/dev/ui-kit",lazy:()=>import("./route-y.js")}', 'dev-ui-kit-path'],
+      ['location.assign(`/dev/ui-kit#palette`)', 'dev-ui-kit-path'],
+      ['e("div",{"data-testid":"ui-kit-page"})', 'dev-ui-kit-testid'],
+      ['{"data-testid":`ui-kit-section-${s}`}', 'dev-ui-kit-testid'],
       ['const k=process.env.OPENAI_API_KEY;', 'openai-key-name'],
       ['{"OPENAI_ENABLED":"true"}', 'openai-env-name'],
       ['const m="OPENAI_TACTICAL_MODEL";', 'openai-env-name'],
@@ -247,6 +251,9 @@ describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18
       '{"risk-assessment":1,"desk-lamp-with-a-very-long-name":2,"task-list-item-abcdefghijklmnopqrstu":3}',
       'const s="dev-diagnostics";const devAi=1;',
       'const OPENAIX=1;',
+      // SWR-009 S: look-alikes of the UI Kit rules — MUI class names, other paths, a word ending in «ui-kit».
+      'const c="MuiButton-root MuiTabs-indicator";fetch("/dev/ui");const p="/dev/ui-kitchen";',
+      'const s="gui-kit-x";const k="ui-kit";const u="UI Kit";',
     ].join('\n');
     assert.deepEqual(scan(content), []);
   });
@@ -258,6 +265,8 @@ describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18
         '../../src/dev/ai/route.tsx',
         '/abs/repo/apps/web/src/dev/ai/locales/ru.json',
         '..\\..\\src\\dev\\ai\\api.ts',
+        '../../src/dev/ui-kit/UiKitPage.tsx',
+        '../../src/dev/ui-kit/locales/en.json',
         'apps/web/src/app/router.tsx',
         '../../src/app/router.tsx',
         '../../src/devices/x.ts',
@@ -268,6 +277,8 @@ describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18
         '../../src/dev/ai/route.tsx',
         '/abs/repo/apps/web/src/dev/ai/locales/ru.json',
         '../../src/dev/ai/api.ts',
+        '../../src/dev/ui-kit/UiKitPage.tsx',
+        '../../src/dev/ui-kit/locales/en.json',
       ],
     );
   });
@@ -286,6 +297,8 @@ describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18
       for (const [content, rule] of [
         ['fetch("/api/dev/ai/status")', 'dev-ai-path'],
         ['{"data-testid":"ai-dev-status"}', 'dev-ai-testid'],
+        ['{path:"/dev/ui-kit"}', 'dev-ui-kit-path'],
+        ['{"data-testid":"ui-kit-page"}', 'dev-ui-kit-testid'],
         ['const k="OPENAI_API_KEY";', 'openai-key-name'],
       ]) {
         fs.writeFileSync(path.join(dist, 'assets', 'leak.js'), content);

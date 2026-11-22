@@ -45,7 +45,15 @@ const TABLE_NAMESPACES = [
   'rebellion.data',
   'rebellion.map',
   'rebellion.turn',
+  // SWR-009: Worker MF `manifest` (registered empty by F; MF fills it).
+  'rebellion.manifest',
 ] as const;
+
+/**
+ * Namespaces registered ahead of their content (SWR-009 F → MF): they must exist in ru and en with the same keys, but
+ * may still be empty. Remove an entry once its worker fills the namespace.
+ */
+const MAY_BE_EMPTY: ReadonlySet<string> = new Set(['rebellion.manifest']);
 
 /** Exhaustive list of announcement kinds (FE-0 contract `rebellion.match:announce.<kind>`). */
 const ANNOUNCEMENT_KINDS = Object.keys({
@@ -87,7 +95,9 @@ describe('Rebellion locales (rebellion.*)', () => {
     (ns) => {
       const norm = (lng: 'ru' | 'en') =>
         [...new Set(flatKeys(resources[lng]?.[ns]).map((k) => k.replace(PLURAL, '')))].sort();
-      expect(norm('ru').length).toBeGreaterThan(0);
+      expect(resources.ru?.[ns], `ru ${ns}`).toBeDefined();
+      expect(resources.en?.[ns], `en ${ns}`).toBeDefined();
+      if (!MAY_BE_EMPTY.has(ns)) expect(norm('ru').length).toBeGreaterThan(0);
       expect(norm('en')).toEqual(norm('ru'));
       for (const lng of ['ru', 'en'] as const) {
         for (const key of flatKeys(resources[lng]?.[ns])) {

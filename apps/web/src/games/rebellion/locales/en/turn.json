@@ -4,8 +4,22 @@
     "toList": "To the object list"
   },
   "panel": {
-    "title": "Turn",
-    "yourTurn": "Your turn: pick a leader and activate a system, or pass.",
+    "label": "Your task · {{phase}}",
+    "task": {
+      "idle": "Pick a leader",
+      "armed": "Pick a system",
+      "activation": "Move units",
+      "waiting": "Wait for your turn",
+      "over": "Game over"
+    },
+    "led": {
+      "own": "Your turn · {{side}}",
+      "other": "{{side}} to play",
+      "thinking": "AI is moving · {{side}}",
+      "stalled": "AI turn not finished · {{side}}",
+      "over": "No more turns"
+    },
+    "yourTurn": "Activate a system with a leader, or pass.",
     "opponentPassed": {
       "rebels": "The Rebels passed for the rest of the phase: you take consecutive turns until you pass.",
       "empire": "The Empire passed for the rest of the phase: you take consecutive turns until you pass."
@@ -19,6 +33,7 @@
   },
   "pool": {
     "label": "Your leader pool",
+    "count": "{{available}} / {{total}} available",
     "empty": "All your leaders are on the map.",
     "hint": "Pick a leader, then a highlighted system on the map or in the field below.",
     "unavailable": "cannot activate",
@@ -57,6 +72,8 @@
   },
   "controls": {
     "label": "Turn actions",
+    "activate": "Activate system",
+    "activateHint": "Pick a leader and a highlighted system on the map or in the Objects tab.",
     "finish": "Finish activation",
     "pass": "Pass"
   },

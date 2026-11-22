@@ -1,0 +1,113 @@
+# QA re-check after C1 fix4 / C2 fix3 / M fix3 — 2026-11-20T23:03:37Z, dev-5180, session 9ea01f61-4ca9-4dca-bbdd-1ffb4d9539b7
+## app3 responsive matrix
+1440x900 hs false 1440 cols two rail 530 canvas 845x570 fit 32/32 ovl 0 pass {"x":1074,"y":491,"w":167,"h":44} man null tog null null small null
+1280x800 hs false 1280 cols two rail 440 canvas 775x470 fit 32/32 ovl 0 pass {"x":974,"y":481,"w":137,"h":44} man null tog null null small null
+1024x768 hs false 1024 cols two rail 340 canvas 635x424 fit 32/32 ovl 0 pass {"x":847,"y":420,"w":158,"h":44} man null tog null null small null
+768x1024 hs false 768 cols one rail 748 canvas 726x664 fit 32/32 ovl 0 pass {"x":264,"y":1019,"w":239,"h":42} man {"variant":"rail","state":"fleetGround","total":"8"} tog null null small null
+375x812 hs false 375 cols one rail 361 canvas 339x526 fit 32/32 ovl 0 pass {"x":16,"y":932,"w":169,"h":44} man {"variant":"sheet","state":"fleetGround","total":"8"} tog {"box":{"x":2,"y":247.609375,"width":371,"height":48},"exp":"true"} {"exp":"gone","manifest":0} small ["skip-to-turn:К ходу:1x44","skip-to-list:К списку объектов:1x44"]
+1399x900 hs false 1399 cols two rail 440 canvas 894x570 fit 32/32 ovl 0 pass {"x":1093,"y":491,"w":137,"h":44} man null tog null null small null
+1400x900 hs false 1400 cols two rail 530 canvas 805x570 fit 32/32 ovl 0 pass {"x":1034,"y":491,"w":167,"h":44} man null tog null null small null
+1199x800 hs false 1199 cols two rail 340 canvas 810x456 fit 32/32 ovl 0 pass {"x":1022,"y":452,"w":158,"h":44} man null tog null null small null
+1200x800 hs false 1200 cols two rail 440 canvas 695x470 fit 32/32 ovl 0 pass {"x":894,"y":481,"w":137,"h":44} man null tog null null small null
+1099x800 hs false 1099 cols two rail 340 canvas 710x456 fit 32/32 ovl 0 pass {"x":922,"y":452,"w":158,"h":44} man null tog null null small null
+1100x800 hs false 1100 cols two rail 340 canvas 711x456 fit 32/32 ovl 0 pass {"x":923,"y":452,"w":158,"h":44} man null tog null null small null
+899x900 hs false 899 cols one rail 879 canvas 857x583 fit 32/32 ovl 0 pass {"x":308,"y":938,"w":283,"h":42} man null tog null null small null
+900x900 hs false 900 cols two rail 340 canvas 511x556 fit 32/32 ovl 0 pass {"x":723,"y":523,"w":158,"h":44} man null tog null null small null
+759x900 hs false 759 cols one rail 745 canvas 723x583 fit 32/32 ovl 0 pass {"x":260,"y":911,"w":238,"h":42} man {"variant":"sheet","state":"fleetGround","total":"8"} tog {"box":{"x":2,"y":284,"width":755,"height":48},"exp":"true"} {"exp":"gone","manifest":0} small null
+760x900 hs false 760 cols one rail 740 canvas 718x583 fit 32/32 ovl 0 pass {"x":262,"y":938,"w":237,"h":42} man {"variant":"rail","state":"fleetGround","total":"8"} tog null null small null
+812x375 hs false 812 cols one rail 792 canvas 770x398 fit 32/32 ovl 0 pass {"x":279,"y":753,"w":254,"h":42} man null tog null null small null
+## app4 375 scroll + activate key + fit span
+{
+ "600": {
+  "ctrl": [
+   618,
+   712
+  ],
+  "panel": [
+   273,
+   602
+  ],
+  "pos": "static"
+ },
+ "900": {
+  "ctrl": [
+   318,
+   412
+  ],
+  "panel": [
+   -27,
+   302
+  ],
+  "pos": "static"
+ },
+ "1200": {
+  "ctrl": [
+   247,
+   341
+  ],
+  "panel": [
+   -98,
+   231
+  ],
+  "pos": "static"
+ },
+ "activateText": {
+  "text": "АКТИВИРОВАТЬ СИСТЕМУ",
+  "w": 343,
+  "wb": "normal",
+  "ow": "normal"
+ },
+ "zoom": "20%",
+ "content": {
+  "canvas": [
+   339,
+   526
+  ],
+  "spanX": 270,
+  "spanY": 209,
+  "bounds": {
+   "minX": 0,
+   "minY": -14,
+   "maxX": 1600,
+   "maxY": 1222
+  }
+ }
+}
+## app9 fit initial vs zoom-fit
+375x812 {"initial":{"vp":{"scale":0.196875,"x":12,"y":130.5875},"lim":{"min":0.196875,"max":2.5},"c":[339,526]},"afterFitClick":{"scale":0.196875,"x":12,"y":130.5875}}
+768x1024 {"initial":{"vp":{"scale":0.42885000000000006,"x":19.919999999999998,"y":59.47460000000001},"lim":{"min":0.4,"max":2.5},"c":[726,664]},"afterFitClick":{"scale":0.42885000000000006,"x":19.919999999999998,"y":59.47460000000001}}
+1440x900 {"initial":{"vp":{"scale":0.4059870550161812,"x":97.71035598705501,"y":22.783818770226535},"lim":{"min":0.4,"max":2.5},"c":[845,570]},"afterFitClick":{"scale":0.4059870550161812,"x":97.71035598705501,"y":22.783818770226535}}
+## app8 reduced motion + 375 touch targets
+{
+ "no-preference": {
+  "pass": "0.25s, 0.25s, 0.25s, 0.25s",
+  "tab": "0s",
+  "zoom": "0.15s",
+  "led": "none,none,none,none"
+ },
+ "reduce": {
+  "pass": "0s",
+  "tab": "0s",
+  "zoom": "0s",
+  "led": "none,none,none,none"
+ },
+ "panelMarkers": [
+  "map-marker-mandalore-empire-space:51x44",
+  "map-marker-mandalore-empire-ground:51x44"
+ ],
+ "objectsRows": [
+  "system-item-felucia:337x44",
+  "system-item-mon-calamari:337x44",
+  "system-item-saleucami:337x44"
+ ],
+ "sheetTargets": [
+  "unit-manifest-sheet-toggle:371x48",
+  "unit-manifest-close:75x44"
+ ],
+ "zoomBtns": [
+  "zoom-in:44x44",
+  "zoom-out:44x44",
+  "zoom-fit:44x44",
+  "zoom-level:48x20"
+ ]
+}

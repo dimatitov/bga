@@ -52,5 +52,10 @@
     "prototype": "Прототип",
     "active": "Идёт",
     "completed": "Завершена"
+  },
+  "terminal": {
+    "code404": "Код 404",
+    "fault": "Сбой",
+    "unavailable": "Недоступно"
   }
 }

@@ -1,0 +1,3013 @@
+{
+ "note": "QA manual browser run (Playwright chromium 1.65, standalone scripts outside repo) against dev server http://localhost:5180 (api :3000), reducedMotion=reduce unless stated. Sessions created by QA: rebels-vs-bot 9ea01f61-4ca9-4dca-bbdd-1ffb4d9539b7, empire-vs-bot 479161fd-cd74-4514-bf82-d888b9cf46af",
+ "app1_console_idle_manifest_legend": {
+  "out": {
+   "sessionId": "9ea01f61-4ca9-4dca-bbdd-1ffb4d9539b7",
+   "viewer": "rebels",
+   "boxes": {
+    "console-header": {
+     "x": 18,
+     "y": 18,
+     "width": 1404,
+     "height": 44
+    },
+    "table-top-bar": {
+     "x": 18,
+     "y": 69,
+     "width": 1404,
+     "height": 90
+    },
+    "map-housing": {
+     "x": 18,
+     "y": 166,
+     "width": 867,
+     "height": 673
+    },
+    "core-sidebar": {
+     "x": 892,
+     "y": 166,
+     "width": 530,
+     "height": 673
+    },
+    "console-footer": {
+     "x": 18,
+     "y": 846,
+     "width": 1404,
+     "height": 36
+    },
+    "map-display-header": {
+     "x": 28,
+     "y": 176,
+     "width": 847,
+     "height": 27
+    },
+    "turn-panel": {
+     "x": 892,
+     "y": 166,
+     "width": 530,
+     "height": 307.390625
+    },
+    "turn-controls": {
+     "x": 901,
+     "y": 489.390625,
+     "width": 512,
+     "height": 44
+    },
+    "leader-pool": {
+     "x": 906,
+     "y": 329.5,
+     "width": 502,
+     "height": 81.890625
+    },
+    "map-legend": {
+     "x": 37,
+     "y": 794,
+     "width": 665,
+     "height": 28
+    }
+   },
+   "metrics": {
+    "sw": 1440,
+    "iw": 1440,
+    "sh": 900,
+    "ih": 900,
+    "font": "\"PT Mono\", ui-monospace, monospace",
+    "ptmono": true,
+    "bg": "rgb(17, 21, 16)"
+   },
+   "display": {
+    "text": "ТАКТИЧЕСКИЙ ДИСПЛЕЙ\n32 СИСТЕМЫ\n69 СВЯЗЕЙ\nЧИСЛО = ФИГУРЫ В ГРУППЕ\nВЕКТОРНЫЙ РЕЖИМ · ОБЗОР · 41%",
+    "sys": "32",
+    "routes": "69",
+    "regions": "8",
+    "zoom": "41"
+   },
+   "footer": "CORE-V1\n32 СИСТЕМЫ · 69 СВЯЗЕЙ\nРЕАЛЬНАЯ КАРТА · ПРАВИЛА ЧАСТИЧНЫЕ\nАВТОСОХРАНЕНИЕ ПОСЛЕ КАЖДОГО ХОДА",
+   "status": "ТЕКУЩАЯ СТОРОНА\nПовстанцы · Вы\nВРЕМЯ 1\n · \nРЕПУТАЦИЯ 14\nРАУНД 1\nПРИКАЗЫ\nAI COMMANDER · БОТ · ОБЫЧНАЯ\nГОТОВ\nСОСТОЯНИЕ\nАВТОСОХРАНЕНИЕ",
+   "header": "К ИГРЕ\nBGA / GALACTIC OPERATIONS\nПРАВИЛА: CORE-V1",
+   "rail": "ВАША ЗАДАЧА · ПРИКАЗЫ\n\nВыберите лидера\n\nАктивируйте систему лидером или пасуйте.\n\nВАШ ХОД · ПОВСТАНЦЫ\nВАШ ПУЛ ЛИДЕРОВ\n03 / 04 ДОСТУПНЫ\nМон Мотма\nне может активировать\nПринцесса Лея\nЯн Додонна\nГенерал Рикан\n\nВыберите лидера, затем подсвеченную систему на карте или в поле ниже.\n\nАКТИВИРОВАТЬ СИСТЕМУ\nПАСОВАТЬ\nЗАВЕРШИТЬ АКТИВАЦИЮ\nВЫБРАННЫЙ ОБЪЕКТ\n\nВыберите систему, лидера или юнит на карте или во вкладке «Объекты».\n\nЖУРНАЛ\nОБЪЕКТЫ\nПАРТИЯ\n01:46\n\nРаунд 1: фаза «Приказы»\n\n01:46\n\nРаунд 1: фаза «Назначение»\n\n01:46\n\nПартия создана",
+   "legend": {
+    "afterClick": "true",
+    "afterEscMouse": "false",
+    "focusAfterEscMouse": "map-legend-toggle",
+    "afterEnter": "true",
+    "afterEscKbd": "false",
+    "focusAfterEscKbd": "map-legend-toggle",
+    "selBefore": {
+     "kind": "system",
+     "id": "mandalore"
+    },
+    "selAfter": {
+     "kind": "system",
+     "id": "mandalore"
+    }
+   },
+   "mandaloreId": "mandalore",
+   "markers": [
+    {
+     "id": "map-marker-mandalore-empire-space",
+     "count": "5",
+     "label": "Империя · Флот · 5 единиц. Открыть манифест"
+    },
+    {
+     "id": "map-marker-mandalore-empire-ground",
+     "count": "3",
+     "label": "Империя · Наземные силы · 3 единицы. Открыть манифест"
+    }
+   ],
+   "manifest": {
+    "testid": "unit-manifest",
+    "systemId": "mandalore",
+    "restricted": "false",
+    "state": "fleetGround",
+    "arenas": "space,ground",
+    "total": "8",
+    "variant": "rail",
+    "text": "МАНИФЕСТ ЮНИТОВ\n\nЗАКРЫТЬ\nМандалор\n· РЕГИОН КАШИИК\nИМПЕРИЯ\nИмперия · Флот\n· выбрано\n5 единиц\nЗвезда Смерти × 1\nИстребитель TIE × 4\nИмперия · Наземные силы\n3 единицы\nШтурмовик × 2\nAT-ST × 1\nВсего юнитов\n8"
+   },
+   "manifestGroups": [
+    {
+     "id": "unit-manifest-group-empire-space",
+     "count": "5",
+     "sel": "true"
+    },
+    {
+     "id": "unit-manifest-group-empire-ground",
+     "count": "3",
+     "sel": "false"
+    }
+   ],
+   "afterClose": {
+    "manifest": 0,
+    "focus": "map-marker-mandalore-empire-space",
+    "ctx": 1
+   },
+   "expectedMandalore": [
+    "empire:space:unit.empire.death-star",
+    "empire:space:unit.empire.tie-fighter",
+    "empire:space:unit.empire.tie-fighter",
+    "empire:space:unit.empire.tie-fighter",
+    "empire:space:unit.empire.tie-fighter",
+    "empire:ground:unit.empire.stormtrooper",
+    "empire:ground:unit.empire.stormtrooper",
+    "empire:ground:unit.empire.at-st"
+   ]
+  },
+  "ext": [],
+  "errors": []
+ },
+ "app2_states_map_aiTurn": {
+  "out": {
+   "manifestScroll": [],
+   "totalVisible": true,
+   "totalText": "8",
+   "states": {
+    "pass-turn": {
+     "normal": {
+      "bg": "rgb(68, 53, 31)",
+      "border": "rgb(177, 131, 65)",
+      "color": "rgb(255, 218, 155)",
+      "outline": "none 0px rgb(255, 218, 155)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "hover": {
+      "bg": "rgb(79, 62, 36)",
+      "border": "rgb(177, 131, 65)",
+      "color": "rgb(255, 218, 155)",
+      "outline": "none 0px rgb(255, 218, 155)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "box": {
+      "x": 1073.65625,
+      "y": 489.390625,
+      "width": 166.671875,
+      "height": 44
+     },
+     "focusVisible": {
+      "bg": "rgb(79, 62, 36)",
+      "border": "rgb(177, 131, 65)",
+      "color": "rgb(255, 218, 155)",
+      "outline": "solid 2px rgb(227, 173, 92)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "matchesFocusVisible": true
+    },
+    "tab-log": {
+     "normal": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgb(173, 184, 170)",
+      "color": "rgb(173, 184, 170)",
+      "outline": "none 0px rgb(173, 184, 170)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "hover": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgb(173, 184, 170)",
+      "color": "rgb(173, 184, 170)",
+      "outline": "none 0px rgb(173, 184, 170)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "box": {
+      "x": 894,
+      "y": 647.390625,
+      "width": 175.328125,
+      "height": 48
+     },
+     "focusVisible": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "border": "rgb(173, 184, 170)",
+      "color": "rgb(173, 184, 170)",
+      "outline": "solid 2px rgb(227, 173, 92)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "matchesFocusVisible": true
+    },
+    "zoom-in": {
+     "normal": {
+      "bg": "rgb(48, 54, 45)",
+      "border": "rgb(107, 116, 101)",
+      "color": "rgb(216, 221, 210)",
+      "outline": "none 0px rgb(216, 221, 210)",
+      "shadow": "rgb(84, 93, 78) 0px 1px 0px 0px inset",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "hover": {
+      "bg": "rgb(58, 66, 54)",
+      "border": "rgb(160, 175, 153)",
+      "color": "rgb(216, 221, 210)",
+      "outline": "none 0px rgb(216, 221, 210)",
+      "shadow": "rgb(84, 93, 78) 0px 1px 0px 0px inset",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "box": {
+      "x": 710,
+      "y": 792,
+      "width": 32,
+      "height": 32
+     },
+     "focusVisible": {
+      "bg": "rgb(58, 66, 54)",
+      "border": "rgb(160, 175, 153)",
+      "color": "rgb(216, 221, 210)",
+      "outline": "solid 2px rgb(227, 173, 92)",
+      "shadow": "rgb(84, 93, 78) 0px 1px 0px 0px inset",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "matchesFocusVisible": true
+    },
+    "legend-toggle": {
+     "normal": {
+      "bg": "rgb(48, 54, 45)",
+      "border": "rgb(107, 116, 101)",
+      "color": "rgb(216, 221, 210)",
+      "outline": "none 0px rgb(216, 221, 210)",
+      "shadow": "rgb(84, 93, 78) 0px 1px 0px 0px inset",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "hover": {
+      "bg": "rgb(58, 66, 54)",
+      "border": "rgb(160, 175, 153)",
+      "color": "rgb(216, 221, 210)",
+      "outline": "none 0px rgb(216, 221, 210)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "box": {
+      "x": 638,
+      "y": 794,
+      "width": 64,
+      "height": 28
+     },
+     "focusVisible": {
+      "bg": "rgb(58, 66, 54)",
+      "border": "rgb(160, 175, 153)",
+      "color": "rgb(216, 221, 210)",
+      "outline": "solid 2px rgb(227, 173, 92)",
+      "shadow": "none",
+      "transform": "none",
+      "tdur": "0s",
+      "cursor": "pointer",
+      "op": "1"
+     },
+     "matchesFocusVisible": true
+    },
+    "zoomOutPressed": {
+     "bg": "rgb(21, 26, 20)",
+     "border": "rgb(160, 175, 153)",
+     "color": "rgb(216, 221, 210)",
+     "outline": "none 0px rgb(216, 221, 210)",
+     "shadow": "rgba(0, 0, 0, 0.6) 0px 2px 4px 0px inset",
+     "transform": "none",
+     "tdur": "0s",
+     "cursor": "pointer",
+     "op": "1"
+    },
+    "leaderSelected": {
+     "bg": "rgb(59, 48, 30)",
+     "border": "rgb(227, 173, 92)",
+     "color": "rgb(255, 218, 153)",
+     "outline": "none 0px rgb(255, 218, 153)",
+     "shadow": "none",
+     "transform": "none",
+     "tdur": "0s",
+     "cursor": "grab",
+     "op": "1"
+    }
+   },
+   "leaderIds": [
+    "mon-mothma",
+    "leia",
+    "dodonna",
+    "rieekan"
+   ],
+   "clickFocusVisible": false,
+   "disabled": {
+    "activate": true,
+    "finish": true,
+    "activateStyle": {
+     "bg": "rgb(37, 42, 36)",
+     "border": "rgb(68, 75, 64)",
+     "color": "rgb(135, 145, 133)",
+     "outline": "none 0px rgb(135, 145, 133)",
+     "shadow": "none",
+     "transform": "none",
+     "tdur": "0s",
+     "cursor": "default",
+     "op": "0.62"
+    }
+   },
+   "debug": {
+    "routes": 69,
+    "regions": 8,
+    "lod": "compact"
+   },
+   "plan": {
+    "leaderId": "leia",
+    "systemId": "malastare",
+    "from": "bothawui",
+    "pieceId": "u-01"
+   },
+   "armed": {
+    "highlighted": [
+     "alderaan",
+     "bespin",
+     "bothawui",
+     "cato-neimoidia",
+     "corellia",
+     "coruscant",
+     "dagobah",
+     "dantooine",
+     "dathomir",
+     "endor",
+     "felucia",
+     "geonosis",
+     "hoth",
+     "ilum",
+     "kashyyyk",
+     "kessel",
+     "malastare",
+     "mandalore",
+     "mon-calamari",
+     "mustafar",
+     "mygeeto",
+     "naboo",
+     "nal-hutta",
+     "ord-mantell",
+     "rodia",
+     "ryloth",
+     "saleucami",
+     "sullust",
+     "tatooine",
+     "toydaria",
+     "utapau",
+     "yavin"
+    ],
+    "legal": [
+     "alderaan",
+     "bespin",
+     "bothawui",
+     "cato-neimoidia",
+     "corellia",
+     "coruscant",
+     "dagobah",
+     "dantooine",
+     "dathomir",
+     "endor",
+     "felucia",
+     "geonosis",
+     "hoth",
+     "ilum",
+     "kashyyyk",
+     "kessel",
+     "malastare",
+     "mandalore",
+     "mon-calamari",
+     "mustafar",
+     "mygeeto",
+     "naboo",
+     "nal-hutta",
+     "ord-mantell",
+     "rodia",
+     "ryloth",
+     "saleucami",
+     "sullust",
+     "tatooine",
+     "toydaria",
+     "utapau",
+     "yavin"
+    ]
+   },
+   "ai": {
+    "summary": {
+     "steps": "3",
+     "text": "Ход AI: 3 действия"
+    },
+    "led": "idle",
+    "statusText": "AI COMMANDER · БОТ · ОБЫЧНАЯ\nГОТОВ · 3 ДЕЙСТВИЯ",
+    "recentDom": [
+     "map-system-alderaan",
+     "map-system-corellia"
+    ],
+    "recentDbg": [
+     "alderaan",
+     "corellia"
+    ],
+    "aiLog": 3,
+    "apiAfter": [
+     {
+      "path": "/api/sessions/9ea01f61-4ca9-4dca-bbdd-1ffb4d9539b7/commands",
+      "status": 200,
+      "steps": 3,
+      "events": [
+       {
+        "t": "SYSTEM_ACTIVATED",
+        "p": {
+         "leaderId": "palpatine",
+         "systemId": "alderaan"
+        }
+       },
+       {
+        "t": "PIECES_MOVED",
+        "p": {
+         "pieceIds": [
+          "u-38",
+          "u-39"
+         ],
+         "fromSystemId": "corellia",
+         "toSystemId": "alderaan"
+        }
+       },
+       {
+        "t": "ACTIVATION_FINISHED",
+        "p": {
+         "auto": true
+        }
+       }
+      ]
+     }
+    ]
+   },
+   "passFocus": "pass-confirm-cancel"
+  },
+  "errors": []
+ },
+ "app3_responsive": {
+  "1440x900": {
+   "page": {
+    "sw": 1440,
+    "iw": 1440,
+    "sh": 900,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 18,
+    "y": 18,
+    "w": 1404,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 18,
+    "y": 69,
+    "w": 1404,
+    "h": 90
+   },
+   "map-housing": {
+    "x": 18,
+    "y": 166,
+    "w": 867,
+    "h": 673
+   },
+   "board-canvas": {
+    "x": 29,
+    "y": 209,
+    "w": 845,
+    "h": 572
+   },
+   "core-sidebar": {
+    "x": 892,
+    "y": 166,
+    "w": 530,
+    "h": 673
+   },
+   "console-footer": {
+    "x": 18,
+    "y": 846,
+    "w": 1404,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 901,
+    "y": 489,
+    "w": 512,
+    "h": 44
+   },
+   "pass-turn": {
+    "x": 1074,
+    "y": 489,
+    "w": 167,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 1246,
+    "y": 489,
+    "w": 167,
+    "h": 44
+   },
+   "turn-activate": {
+    "x": 901,
+    "y": 489,
+    "w": 167,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 34,
+    "y": 95,
+    "w": 220,
+    "h": 38
+   },
+   "time-track": {
+    "x": 280,
+    "y": 99,
+    "w": 500,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 964,
+    "y": 78,
+    "w": 260,
+    "h": 72
+   },
+   "save-status": {
+    "x": 1250,
+    "y": 114,
+    "w": 156,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 31,
+    "y": 24,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1367,
+    "y": 19,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 710,
+    "y": 792,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 782,
+    "y": 792,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 638,
+    "y": 794,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1280x800": {
+   "page": {
+    "sw": 1280,
+    "iw": 1280,
+    "sh": 800,
+    "ih": 800
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 18,
+    "y": 18,
+    "w": 1244,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 18,
+    "y": 69,
+    "w": 1244,
+    "h": 90
+   },
+   "map-housing": {
+    "x": 18,
+    "y": 166,
+    "w": 797,
+    "h": 573
+   },
+   "board-canvas": {
+    "x": 29,
+    "y": 209,
+    "w": 775,
+    "h": 472
+   },
+   "core-sidebar": {
+    "x": 822,
+    "y": 166,
+    "w": 440,
+    "h": 573
+   },
+   "console-footer": {
+    "x": 18,
+    "y": 746,
+    "w": 1244,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 831,
+    "y": 480,
+    "w": 422,
+    "h": 44
+   },
+   "pass-turn": {
+    "x": 974,
+    "y": 480,
+    "w": 137,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 1116,
+    "y": 480,
+    "w": 137,
+    "h": 44
+   },
+   "turn-activate": {
+    "x": 831,
+    "y": 480,
+    "w": 137,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 34,
+    "y": 95,
+    "w": 220,
+    "h": 38
+   },
+   "time-track": {
+    "x": 280,
+    "y": 99,
+    "w": 340,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 804,
+    "y": 78,
+    "w": 260,
+    "h": 72
+   },
+   "save-status": {
+    "x": 1090,
+    "y": 114,
+    "w": 156,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 31,
+    "y": 24,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1207,
+    "y": 19,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 640,
+    "y": 692,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 712,
+    "y": 692,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 568,
+    "y": 694,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1024x768": {
+   "page": {
+    "sw": 1024,
+    "iw": 1024,
+    "sh": 768,
+    "ih": 768
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 1004,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 1004,
+    "h": 120
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 188,
+    "w": 657,
+    "h": 527
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 231,
+    "w": 635,
+    "h": 426
+   },
+   "core-sidebar": {
+    "x": 674,
+    "y": 188,
+    "w": 340,
+    "h": 527
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 722,
+    "w": 1004,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 683,
+    "y": 420,
+    "w": 322,
+    "h": 92
+   },
+   "pass-turn": {
+    "x": 847,
+    "y": 420,
+    "w": 158,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 683,
+    "y": 470,
+    "w": 322,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 683,
+    "y": 420,
+    "w": 158,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 316,
+    "h": 38
+   },
+   "time-track": {
+    "x": 354,
+    "y": 74,
+    "w": 316,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 26,
+    "y": 116,
+    "w": 316,
+    "h": 56
+   },
+   "save-status": {
+    "x": 354,
+    "y": 144,
+    "w": 316,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 959,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 492,
+    "y": 668,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 564,
+    "y": 668,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 420,
+    "y": 670,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "768x1024": {
+   "page": {
+    "sw": 768,
+    "iw": 768,
+    "sh": 1787,
+    "ih": 1024
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 748,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 748,
+    "h": 168
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 236,
+    "w": 748,
+    "h": 765
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 279,
+    "w": 726,
+    "h": 664
+   },
+   "core-sidebar": {
+    "x": 10,
+    "y": 1008,
+    "w": 748,
+    "h": 710
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 1725,
+    "w": 748,
+    "h": 52
+   },
+   "turn-controls": {
+    "x": 19,
+    "y": 1017,
+    "w": 730,
+    "h": 42
+   },
+   "pass-turn": {
+    "x": 264,
+    "y": 1017,
+    "w": 239,
+    "h": 42
+   },
+   "finish-activation": {
+    "x": 510,
+    "y": 1017,
+    "w": 239,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 19,
+    "y": 1017,
+    "w": 239,
+    "h": 42
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 352,
+    "h": 38
+   },
+   "time-track": {
+    "x": 390,
+    "y": 74,
+    "w": 352,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 390,
+    "y": 116,
+    "w": 352,
+    "h": 56
+   },
+   "save-status": {
+    "x": 26,
+    "y": 200,
+    "w": 352,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 703,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 583,
+    "y": 954,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 655,
+    "y": 954,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 511,
+    "y": 956,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "one",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ],
+   "manifest": {
+    "variant": "rail",
+    "state": "fleetGround",
+    "total": "8"
+   },
+   "sheetToggle": null,
+   "sheetBox": null,
+   "manHscroll": false
+  },
+  "375x812": {
+   "page": {
+    "sw": 375,
+    "iw": 375,
+    "sh": 1733,
+    "ih": 812
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 7,
+    "y": 7,
+    "w": 361,
+    "h": 46
+   },
+   "table-top-bar": {
+    "x": 7,
+    "y": 60,
+    "w": 361,
+    "h": 160
+   },
+   "map-housing": {
+    "x": 7,
+    "y": 227,
+    "w": 361,
+    "h": 639
+   },
+   "board-canvas": {
+    "x": 18,
+    "y": 270,
+    "w": 339,
+    "h": 526
+   },
+   "core-sidebar": {
+    "x": 7,
+    "y": 873,
+    "w": 361,
+    "h": 775
+   },
+   "console-footer": {
+    "x": 7,
+    "y": 1654,
+    "w": 361,
+    "h": 72
+   },
+   "turn-controls": {
+    "x": 16,
+    "y": 882,
+    "w": 343,
+    "h": 44
+   },
+   "pass-turn": {
+    "x": 132,
+    "y": 882,
+    "w": 110,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 249,
+    "y": 882,
+    "w": 110,
+    "h": 44
+   },
+   "turn-activate": {
+    "x": 16,
+    "y": 882,
+    "w": 110,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 18,
+    "y": 69,
+    "w": 165,
+    "h": 34
+   },
+   "time-track": {
+    "x": 18,
+    "y": 111,
+    "w": 339,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 18,
+    "y": 147,
+    "w": 165,
+    "h": 66
+   },
+   "save-status": {
+    "x": 193,
+    "y": 180,
+    "w": 165,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 12,
+    "y": 8,
+    "w": 36,
+    "h": 44
+   },
+   "session-settings": {
+    "x": 319,
+    "y": 8,
+    "w": 44,
+    "h": 44
+   },
+   "zoom-in": {
+    "x": 157,
+    "y": 807,
+    "w": 44,
+    "h": 44
+   },
+   "zoom-fit": {
+    "x": 253,
+    "y": 807,
+    "w": 44,
+    "h": 44
+   },
+   "map-legend-toggle": {
+    "x": 26,
+    "y": 807,
+    "w": 64,
+    "h": 44
+   },
+   "hidden-base-zone": null,
+   "columns": "one",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ],
+   "small": [
+    "skip-to-turn:К ходу:1x44",
+    "skip-to-list:К списку объектов:1x44",
+    "session-back-to-game:К игре:36x44"
+   ],
+   "manifest": {
+    "variant": "sheet",
+    "state": "fleetGround",
+    "total": "8"
+   },
+   "sheetToggle": {
+    "box": {
+     "x": 2,
+     "y": 247.609375,
+     "width": 371,
+     "height": 48
+    },
+    "exp": "true"
+   },
+   "sheetBox": {
+    "x": 0,
+    "y": 243.609375,
+    "width": 375,
+    "height": 568.390625
+   },
+   "manHscroll": false,
+   "afterToggle": "false",
+   "passVisibleCollapsed": true,
+   "afterEsc": {
+    "exp": "gone",
+    "manifest": 0
+   }
+  },
+  "1399x900": {
+   "page": {
+    "sw": 1399,
+    "iw": 1399,
+    "sh": 900,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 18,
+    "y": 18,
+    "w": 1363,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 18,
+    "y": 69,
+    "w": 1363,
+    "h": 90
+   },
+   "map-housing": {
+    "x": 18,
+    "y": 166,
+    "w": 916,
+    "h": 673
+   },
+   "board-canvas": {
+    "x": 29,
+    "y": 209,
+    "w": 894,
+    "h": 572
+   },
+   "core-sidebar": {
+    "x": 941,
+    "y": 166,
+    "w": 440,
+    "h": 673
+   },
+   "console-footer": {
+    "x": 18,
+    "y": 846,
+    "w": 1363,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 950,
+    "y": 489,
+    "w": 422,
+    "h": 44
+   },
+   "pass-turn": {
+    "x": 1093,
+    "y": 489,
+    "w": 137,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 1235,
+    "y": 489,
+    "w": 137,
+    "h": 44
+   },
+   "turn-activate": {
+    "x": 950,
+    "y": 489,
+    "w": 137,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 34,
+    "y": 95,
+    "w": 220,
+    "h": 38
+   },
+   "time-track": {
+    "x": 280,
+    "y": 99,
+    "w": 459,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 923,
+    "y": 78,
+    "w": 260,
+    "h": 72
+   },
+   "save-status": {
+    "x": 1209,
+    "y": 114,
+    "w": 156,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 31,
+    "y": 24,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1326,
+    "y": 19,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 759,
+    "y": 792,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 831,
+    "y": 792,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 687,
+    "y": 794,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1400x900": {
+   "page": {
+    "sw": 1400,
+    "iw": 1400,
+    "sh": 900,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 18,
+    "y": 18,
+    "w": 1364,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 18,
+    "y": 69,
+    "w": 1364,
+    "h": 90
+   },
+   "map-housing": {
+    "x": 18,
+    "y": 166,
+    "w": 827,
+    "h": 673
+   },
+   "board-canvas": {
+    "x": 29,
+    "y": 209,
+    "w": 805,
+    "h": 572
+   },
+   "core-sidebar": {
+    "x": 852,
+    "y": 166,
+    "w": 530,
+    "h": 673
+   },
+   "console-footer": {
+    "x": 18,
+    "y": 846,
+    "w": 1364,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 861,
+    "y": 489,
+    "w": 512,
+    "h": 44
+   },
+   "pass-turn": {
+    "x": 1034,
+    "y": 489,
+    "w": 167,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 1206,
+    "y": 489,
+    "w": 167,
+    "h": 44
+   },
+   "turn-activate": {
+    "x": 861,
+    "y": 489,
+    "w": 167,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 34,
+    "y": 95,
+    "w": 220,
+    "h": 38
+   },
+   "time-track": {
+    "x": 280,
+    "y": 99,
+    "w": 460,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 924,
+    "y": 78,
+    "w": 260,
+    "h": 72
+   },
+   "save-status": {
+    "x": 1210,
+    "y": 114,
+    "w": 156,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 31,
+    "y": 24,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1327,
+    "y": 19,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 670,
+    "y": 792,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 742,
+    "y": 792,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 598,
+    "y": 794,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1199x800": {
+   "page": {
+    "sw": 1199,
+    "iw": 1199,
+    "sh": 800,
+    "ih": 800
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 1179,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 1179,
+    "h": 120
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 188,
+    "w": 832,
+    "h": 559
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 231,
+    "w": 810,
+    "h": 458
+   },
+   "core-sidebar": {
+    "x": 849,
+    "y": 188,
+    "w": 340,
+    "h": 559
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 754,
+    "w": 1179,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 858,
+    "y": 452,
+    "w": 322,
+    "h": 92
+   },
+   "pass-turn": {
+    "x": 1022,
+    "y": 452,
+    "w": 158,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 858,
+    "y": 502,
+    "w": 322,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 858,
+    "y": 452,
+    "w": 158,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 374,
+    "h": 38
+   },
+   "time-track": {
+    "x": 412,
+    "y": 74,
+    "w": 374,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 26,
+    "y": 116,
+    "w": 374,
+    "h": 56
+   },
+   "save-status": {
+    "x": 412,
+    "y": 144,
+    "w": 374,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1134,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 667,
+    "y": 700,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 739,
+    "y": 700,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 595,
+    "y": 702,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1200x800": {
+   "page": {
+    "sw": 1200,
+    "iw": 1200,
+    "sh": 800,
+    "ih": 800
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 18,
+    "y": 18,
+    "w": 1164,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 18,
+    "y": 69,
+    "w": 1164,
+    "h": 90
+   },
+   "map-housing": {
+    "x": 18,
+    "y": 166,
+    "w": 717,
+    "h": 573
+   },
+   "board-canvas": {
+    "x": 29,
+    "y": 209,
+    "w": 695,
+    "h": 472
+   },
+   "core-sidebar": {
+    "x": 742,
+    "y": 166,
+    "w": 440,
+    "h": 573
+   },
+   "console-footer": {
+    "x": 18,
+    "y": 746,
+    "w": 1164,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 751,
+    "y": 480,
+    "w": 422,
+    "h": 44
+   },
+   "pass-turn": {
+    "x": 894,
+    "y": 480,
+    "w": 137,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 1036,
+    "y": 480,
+    "w": 137,
+    "h": 44
+   },
+   "turn-activate": {
+    "x": 751,
+    "y": 480,
+    "w": 137,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 34,
+    "y": 95,
+    "w": 220,
+    "h": 38
+   },
+   "time-track": {
+    "x": 280,
+    "y": 99,
+    "w": 260,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 724,
+    "y": 78,
+    "w": 260,
+    "h": 72
+   },
+   "save-status": {
+    "x": 1010,
+    "y": 114,
+    "w": 156,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 31,
+    "y": 24,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1127,
+    "y": 19,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 560,
+    "y": 692,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 632,
+    "y": 692,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 488,
+    "y": 694,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1099x800": {
+   "page": {
+    "sw": 1099,
+    "iw": 1099,
+    "sh": 800,
+    "ih": 800
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 1079,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 1079,
+    "h": 120
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 188,
+    "w": 732,
+    "h": 559
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 231,
+    "w": 710,
+    "h": 458
+   },
+   "core-sidebar": {
+    "x": 749,
+    "y": 188,
+    "w": 340,
+    "h": 559
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 754,
+    "w": 1079,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 758,
+    "y": 452,
+    "w": 322,
+    "h": 92
+   },
+   "pass-turn": {
+    "x": 922,
+    "y": 452,
+    "w": 158,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 758,
+    "y": 502,
+    "w": 322,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 758,
+    "y": 452,
+    "w": 158,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 341,
+    "h": 38
+   },
+   "time-track": {
+    "x": 379,
+    "y": 74,
+    "w": 341,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 26,
+    "y": 116,
+    "w": 341,
+    "h": 56
+   },
+   "save-status": {
+    "x": 379,
+    "y": 144,
+    "w": 341,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1034,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 567,
+    "y": 700,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 639,
+    "y": 700,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 495,
+    "y": 702,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "1100x800": {
+   "page": {
+    "sw": 1100,
+    "iw": 1100,
+    "sh": 800,
+    "ih": 800
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 1080,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 1080,
+    "h": 120
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 188,
+    "w": 733,
+    "h": 559
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 231,
+    "w": 711,
+    "h": 458
+   },
+   "core-sidebar": {
+    "x": 750,
+    "y": 188,
+    "w": 340,
+    "h": 559
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 754,
+    "w": 1080,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 759,
+    "y": 452,
+    "w": 322,
+    "h": 92
+   },
+   "pass-turn": {
+    "x": 923,
+    "y": 452,
+    "w": 158,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 759,
+    "y": 502,
+    "w": 322,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 759,
+    "y": 452,
+    "w": 158,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 341,
+    "h": 38
+   },
+   "time-track": {
+    "x": 379,
+    "y": 74,
+    "w": 341,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 26,
+    "y": 116,
+    "w": 341,
+    "h": 56
+   },
+   "save-status": {
+    "x": 379,
+    "y": 144,
+    "w": 341,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 1035,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 568,
+    "y": 700,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 640,
+    "y": 700,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 496,
+    "y": 702,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "899x900": {
+   "page": {
+    "sw": 899,
+    "iw": 899,
+    "sh": 1690,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 879,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 879,
+    "h": 168
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 236,
+    "w": 879,
+    "h": 684
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 279,
+    "w": 857,
+    "h": 583
+   },
+   "core-sidebar": {
+    "x": 10,
+    "y": 927,
+    "w": 879,
+    "h": 710
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 1644,
+    "w": 879,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 19,
+    "y": 936,
+    "w": 861,
+    "h": 42
+   },
+   "pass-turn": {
+    "x": 308,
+    "y": 936,
+    "w": 283,
+    "h": 42
+   },
+   "finish-activation": {
+    "x": 597,
+    "y": 936,
+    "w": 283,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 19,
+    "y": 936,
+    "w": 283,
+    "h": 42
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 418,
+    "h": 38
+   },
+   "time-track": {
+    "x": 456,
+    "y": 74,
+    "w": 418,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 456,
+    "y": 116,
+    "w": 418,
+    "h": 56
+   },
+   "save-status": {
+    "x": 26,
+    "y": 200,
+    "w": 418,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 834,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 714,
+    "y": 873,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 786,
+    "y": 873,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 642,
+    "y": 875,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "one",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "900x900": {
+   "page": {
+    "sw": 900,
+    "iw": 900,
+    "sh": 900,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 880,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 880,
+    "h": 120
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 188,
+    "w": 533,
+    "h": 659
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 231,
+    "w": 511,
+    "h": 558
+   },
+   "core-sidebar": {
+    "x": 550,
+    "y": 188,
+    "w": 340,
+    "h": 659
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 854,
+    "w": 880,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 559,
+    "y": 522,
+    "w": 322,
+    "h": 92
+   },
+   "pass-turn": {
+    "x": 723,
+    "y": 522,
+    "w": 158,
+    "h": 44
+   },
+   "finish-activation": {
+    "x": 559,
+    "y": 572,
+    "w": 322,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 559,
+    "y": 522,
+    "w": 158,
+    "h": 44
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 275,
+    "h": 38
+   },
+   "time-track": {
+    "x": 313,
+    "y": 74,
+    "w": 275,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 26,
+    "y": 116,
+    "w": 275,
+    "h": 56
+   },
+   "save-status": {
+    "x": 313,
+    "y": 144,
+    "w": 275,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 835,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 368,
+    "y": 800,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 440,
+    "y": 800,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 296,
+    "y": 802,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "two",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  },
+  "759x900": {
+   "page": {
+    "sw": 759,
+    "iw": 759,
+    "sh": 1676,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 7,
+    "y": 7,
+    "w": 745,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 7,
+    "y": 58,
+    "w": 745,
+    "h": 144
+   },
+   "map-housing": {
+    "x": 7,
+    "y": 209,
+    "w": 745,
+    "h": 684
+   },
+   "board-canvas": {
+    "x": 18,
+    "y": 252,
+    "w": 723,
+    "h": 583
+   },
+   "core-sidebar": {
+    "x": 7,
+    "y": 900,
+    "w": 745,
+    "h": 710
+   },
+   "console-footer": {
+    "x": 7,
+    "y": 1617,
+    "w": 745,
+    "h": 52
+   },
+   "turn-controls": {
+    "x": 16,
+    "y": 909,
+    "w": 727,
+    "h": 42
+   },
+   "pass-turn": {
+    "x": 260,
+    "y": 909,
+    "w": 238,
+    "h": 42
+   },
+   "finish-activation": {
+    "x": 505,
+    "y": 909,
+    "w": 238,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 16,
+    "y": 909,
+    "w": 238,
+    "h": 42
+   },
+   "turn-indicator": {
+    "x": 23,
+    "y": 67,
+    "w": 352,
+    "h": 34
+   },
+   "time-track": {
+    "x": 23,
+    "y": 109,
+    "w": 713,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 23,
+    "y": 145,
+    "w": 352,
+    "h": 50
+   },
+   "save-status": {
+    "x": 385,
+    "y": 170,
+    "w": 352,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 20,
+    "y": 13,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 697,
+    "y": 8,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 577,
+    "y": 846,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 649,
+    "y": 846,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 505,
+    "y": 848,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "one",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ],
+   "manifest": {
+    "variant": "sheet",
+    "state": "fleetGround",
+    "total": "8"
+   },
+   "sheetToggle": {
+    "box": {
+     "x": 2,
+     "y": 284,
+     "width": 755,
+     "height": 48
+    },
+    "exp": "true"
+   },
+   "sheetBox": {
+    "x": 0,
+    "y": 280,
+    "width": 759,
+    "height": 620
+   },
+   "manHscroll": false,
+   "afterToggle": "false",
+   "passVisibleCollapsed": true,
+   "afterEsc": {
+    "exp": "gone",
+    "manifest": 0
+   }
+  },
+  "760x900": {
+   "page": {
+    "sw": 760,
+    "iw": 760,
+    "sh": 1706,
+    "ih": 900
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 740,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 740,
+    "h": 168
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 236,
+    "w": 740,
+    "h": 684
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 279,
+    "w": 718,
+    "h": 583
+   },
+   "core-sidebar": {
+    "x": 10,
+    "y": 927,
+    "w": 740,
+    "h": 710
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 1644,
+    "w": 740,
+    "h": 52
+   },
+   "turn-controls": {
+    "x": 19,
+    "y": 936,
+    "w": 722,
+    "h": 42
+   },
+   "pass-turn": {
+    "x": 262,
+    "y": 936,
+    "w": 237,
+    "h": 42
+   },
+   "finish-activation": {
+    "x": 504,
+    "y": 936,
+    "w": 237,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 19,
+    "y": 936,
+    "w": 237,
+    "h": 42
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 348,
+    "h": 38
+   },
+   "time-track": {
+    "x": 386,
+    "y": 74,
+    "w": 348,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 386,
+    "y": 116,
+    "w": 348,
+    "h": 56
+   },
+   "save-status": {
+    "x": 26,
+    "y": 200,
+    "w": 348,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 695,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 575,
+    "y": 873,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 647,
+    "y": 873,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 503,
+    "y": 875,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "one",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ],
+   "manifest": {
+    "variant": "rail",
+    "state": "fleetGround",
+    "total": "8"
+   },
+   "sheetToggle": null,
+   "sheetBox": null,
+   "manHscroll": false
+  },
+  "812x375": {
+   "page": {
+    "sw": 812,
+    "iw": 812,
+    "sh": 1505,
+    "ih": 375
+   },
+   "hscroll": false,
+   "console-header": {
+    "x": 10,
+    "y": 10,
+    "w": 792,
+    "h": 44
+   },
+   "table-top-bar": {
+    "x": 10,
+    "y": 61,
+    "w": 792,
+    "h": 168
+   },
+   "map-housing": {
+    "x": 10,
+    "y": 236,
+    "w": 792,
+    "h": 499
+   },
+   "board-canvas": {
+    "x": 21,
+    "y": 279,
+    "w": 770,
+    "h": 398
+   },
+   "core-sidebar": {
+    "x": 10,
+    "y": 742,
+    "w": 792,
+    "h": 710
+   },
+   "console-footer": {
+    "x": 10,
+    "y": 1459,
+    "w": 792,
+    "h": 36
+   },
+   "turn-controls": {
+    "x": 19,
+    "y": 751,
+    "w": 774,
+    "h": 42
+   },
+   "pass-turn": {
+    "x": 279,
+    "y": 751,
+    "w": 254,
+    "h": 42
+   },
+   "finish-activation": {
+    "x": 539,
+    "y": 751,
+    "w": 254,
+    "h": 42
+   },
+   "turn-activate": {
+    "x": 19,
+    "y": 751,
+    "w": 254,
+    "h": 42
+   },
+   "turn-indicator": {
+    "x": 26,
+    "y": 70,
+    "w": 374,
+    "h": 38
+   },
+   "time-track": {
+    "x": 412,
+    "y": 74,
+    "w": 374,
+    "h": 30
+   },
+   "ai-commander-status": {
+    "x": 412,
+    "y": 116,
+    "w": 374,
+    "h": 56
+   },
+   "save-status": {
+    "x": 26,
+    "y": 200,
+    "w": 374,
+    "h": 20
+   },
+   "session-back-to-game": {
+    "x": 23,
+    "y": 16,
+    "w": 82,
+    "h": 32
+   },
+   "session-settings": {
+    "x": 747,
+    "y": 11,
+    "w": 42,
+    "h": 42
+   },
+   "zoom-in": {
+    "x": 627,
+    "y": 688,
+    "w": 32,
+    "h": 32
+   },
+   "zoom-fit": {
+    "x": 699,
+    "y": 688,
+    "w": 32,
+    "h": 32
+   },
+   "map-legend-toggle": {
+    "x": 555,
+    "y": 690,
+    "w": 64,
+    "h": 28
+   },
+   "hidden-base-zone": null,
+   "columns": "one",
+   "fit": {
+    "total": 32,
+    "inside": 32
+   },
+   "statusOverlap": 0,
+   "skip": [
+    "Перейти к содержимому"
+   ]
+  }
+ },
+ "app5_empire_hidden_zone": {
+  "sid": "479161fd-cd74-4514-bf82-d888b9cf46af",
+  "1440x900": {
+   "viewer": "empire",
+   "rebelBase": {
+    "systemId": null,
+    "revealed": false
+   },
+   "zoneUnits": [
+    "unit.rebels.x-wing",
+    "unit.rebels.y-wing",
+    "unit.rebels.rebel-trooper",
+    "unit.rebels.rebel-trooper",
+    "unit.rebels.rebel-trooper",
+    "unit.rebels.airspeeder"
+   ],
+   "zoneLocKeys": [
+    "kind"
+   ],
+   "dbgBase": null,
+   "dataRebelBase": 0,
+   "zoneMirror": {
+    "testid": "map-hidden-zone",
+    "count": "6",
+    "aiRecent": "false",
+    "markers": "rebels:space:2,rebels:ground:4"
+   },
+   "aiRecent": [],
+   "aiState": "AI COMMANDER · БОТ · ОБЫЧНАЯ\nГОТОВ",
+   "zoneMarkers": [
+    "map-marker-zone-rebels-space:2:Повстанцы · Флот · 2 единицы. Открыть манифест",
+    "map-marker-zone-rebels-ground:4:Повстанцы · Наземные силы · 4 единицы. Открыть манифест"
+   ],
+   "manifest": {
+    "testid": "unit-manifest",
+    "zone": "hidden",
+    "restricted": "true",
+    "state": "restricted",
+    "arenas": "space,ground",
+    "total": "6",
+    "variant": "rail",
+    "text": "МАНИФЕСТ ЮНИТОВ\n\nЗАКРЫТЬ\nБаза Повстанцев\nПОВСТАНЦЫ\nДоступ ограничен · местоположение базы неизвестно\nПоказано только то, что сервер сообщает вашей стороне.\nПовстанцы · Флот\n· выбрано\n2 единицы\nКрестокрыл × 1\nИгрекокрыл × 1\nПовстанцы · Наземные силы\n4 единицы\nСолдат повстанцев × 3\nАэроспидер × 1\nВсего юнитов\n6"
+   },
+   "zoneNameHits": [],
+   "zoneIdHits": [],
+   "storage": "{}{}",
+   "url": "http://localhost:5180/sessions/479161fd-cd74-4514-bf82-d888b9cf46af",
+   "apiBaseLeak": 0,
+   "apiCount": 1
+  },
+  "375x812": {
+   "viewer": "empire",
+   "rebelBase": {
+    "systemId": null,
+    "revealed": false
+   },
+   "zoneUnits": [
+    "unit.rebels.x-wing",
+    "unit.rebels.y-wing",
+    "unit.rebels.rebel-trooper",
+    "unit.rebels.rebel-trooper",
+    "unit.rebels.rebel-trooper",
+    "unit.rebels.airspeeder"
+   ],
+   "zoneLocKeys": [
+    "kind"
+   ],
+   "dbgBase": null,
+   "dataRebelBase": 0,
+   "zoneMirror": {
+    "testid": "map-hidden-zone",
+    "count": "6",
+    "aiRecent": "false",
+    "markers": "rebels:space:2,rebels:ground:4"
+   },
+   "aiRecent": [],
+   "aiState": "AI COMMANDER · БОТ · ОБЫЧНАЯ\nГОТОВ",
+   "zoneMarkers": [
+    "map-marker-zone-rebels-space:2:Повстанцы · Флот · 2 единицы. Открыть манифест",
+    "map-marker-zone-rebels-ground:4:Повстанцы · Наземные силы · 4 единицы. Открыть манифест"
+   ],
+   "manifest": {
+    "testid": "unit-manifest",
+    "zone": "hidden",
+    "restricted": "true",
+    "state": "restricted",
+    "arenas": "space,ground",
+    "total": "6",
+    "variant": "sheet",
+    "text": "▾\nСВЕРНУТЬ МАНИФЕСТ\n\nМАНИФЕСТ ЮНИТОВ\n\nЗАКРЫТЬ\nБаза Повстанцев\nПОВСТАНЦЫ\nДоступ ограничен · местоположение базы неизвестно\nПоказано только то, что сервер сообщает вашей стороне.\nПовстанцы · Флот\n· выбрано\n2 единицы\nКрестокрыл × 1\nИгрекокрыл × 1\nПовстанцы · Наземные силы\n4 единицы\nСолдат повстанцев × 3\nАэроспидер × 1\nВсего юнитов\n6"
+   },
+   "zoneNameHits": [],
+   "zoneIdHits": [],
+   "storage": "{}{}",
+   "url": "http://localhost:5180/sessions/479161fd-cd74-4514-bf82-d888b9cf46af",
+   "apiBaseLeak": 0,
+   "apiCount": 1
+  }
+ },
+ "app6_uikit_nav": {
+  "uikit": {
+   "palette": 1,
+   "type": 1,
+   "controls": 1,
+   "signals": 1,
+   "panels": 1,
+   "dialogs": 1,
+   "markers": 1,
+   "legend": 1
+  },
+  "nav": {
+   "catalog-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | Игры |  | Выберите игру, чтобы начать или продолжить партию против AI",
+    "forbidden": null
+   },
+   "game-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | ВСЕ ИГРЫ | Star Wars: Rebellion | ДОСТУПНА |  | 2 игрока |  | AI-противник ✓ | ",
+    "forbidden": null
+   },
+   "new-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | К ИГРЕ | Новая партия | 1. ВАША СТОРОНА | Повстанцы | Прячут базу, тянут ",
+    "forbidden": null
+   },
+   "settings-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | НАЗАД | Настройки | ЯЗЫК ИНТЕРФЕЙСА | РУССКИЙ | ENGLISH | ДОСТУПНОСТЬ | Умень",
+    "forbidden": null
+   },
+   "notfound-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK |  | КОД 404 |  | Страница не найдена |  | Такого адреса в приложении нет. |  | В",
+    "forbidden": null
+   },
+   "gameunknown-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK |  | КОД 404 |  | Игра не найдена |  | Такой игры нет в каталоге. |  | В КАТАЛОГ",
+    "forbidden": null
+   },
+   "sessionunknown-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ |  | КОД 404 |  | Партия не найдена |  | Возможно, ссылка неверна или партия удалена. |  | В КАТАЛОГ",
+    "forbidden": null
+   },
+   "tableReb-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | Игровой стол | К ХОДУ | К СПИСКУ ОБЪЕКТОВ | К ИГРЕ | BGA / GALACTIC OPERATIONS | ПРАВИЛА: CORE-V1 | ТЕКУЩАЯ СТ",
+    "forbidden": null
+   },
+   "tableEmp-d": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | Игровой стол | К ХОДУ | К СПИСКУ ОБЪЕКТОВ | К ИГРЕ | BGA / GALACTIC OPERATIONS | ПРАВИЛА: CORE-V1 | ТЕКУЩАЯ СТ",
+    "forbidden": null
+   },
+   "catalog-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | Игры |  | Выберите игру, чтобы начать или продолжить партию против AI",
+    "forbidden": null
+   },
+   "game-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | ВСЕ ИГРЫ | Star Wars: Rebellion | ДОСТУПНА |  | 2 игрока |  | AI-противник ✓ | ",
+    "forbidden": null
+   },
+   "new-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | К ИГРЕ | Новая партия | 1. ВАША СТОРОНА | Повстанцы | Прячут базу, тянут ",
+    "forbidden": null
+   },
+   "settings-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK | НАЗАД | Настройки | ЯЗЫК ИНТЕРФЕЙСА | РУССКИЙ | ENGLISH | ДОСТУПНОСТЬ | Умень",
+    "forbidden": null
+   },
+   "notfound-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK |  | КОД 404 |  | Страница не найдена |  | Такого адреса в приложении нет. |  | В",
+    "forbidden": null
+   },
+   "gameunknown-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | AI-КОМПАНЬОН НАСТОЛЬНЫХ ИГР | MOCK |  | КОД 404 |  | Игра не найдена |  | Такой игры нет в каталоге. |  | В КАТАЛОГ",
+    "forbidden": null
+   },
+   "sessionunknown-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": null,
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ |  | КОД 404 |  | Партия не найдена |  | Возможно, ссылка неверна или партия удалена. |  | В КАТАЛОГ",
+    "forbidden": null
+   },
+   "tableReb-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | Игровой стол | К ХОДУ | К СПИСКУ ОБЪЕКТОВ | ПРАВИЛА: CORE-V1 | ТЕКУЩАЯ СТОРОНА | Повстанцы · Вы | ВРЕМЯ 1 |  ·  | ",
+    "forbidden": null
+   },
+   "tableEmp-m": {
+    "font": "\"PT Mono\"",
+    "h1": "\"PT Mono\"",
+    "bg": "rgb(17, 21, 16)",
+    "radius": "1px",
+    "hs": false,
+    "ptm": true,
+    "text": "ПЕРЕЙТИ К СОДЕРЖИМОМУ | Игровой стол | К ХОДУ | К СПИСКУ ОБЪЕКТОВ | ПРАВИЛА: CORE-V1 | ТЕКУЩАЯ СТОРОНА | Империя · Вы | ВРЕМЯ 1 |  ·  | РЕ",
+    "forbidden": null
+   }
+  },
+  "demo": {},
+  "uikitText": false
+ }
+}

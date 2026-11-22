@@ -4,9 +4,23 @@ import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
+import { terminalTokens } from '@/shared/theme';
 import type { SaveStatus as SaveStatusValue } from '../hooks/useSendCommand';
 
-/** Autosave indicator (D-P-9); `data-status` ∈ idle | saving | saved | error (Q-3). */
+const C = terminalTokens.color;
+
+/** Text colour per state (SWR-009: phosphor «сохранено», amber «сохранение…», light red «не сохранено»). */
+const COLOR: Readonly<Record<SaveStatusValue, string>> = {
+  idle: C.phosphor,
+  saved: C.phosphor,
+  saving: C.amberText,
+  error: C.redText,
+};
+
+/**
+ * Autosave indicator (D-P-9); `data-status` ∈ idle | saving | saved | error (Q-3). The state is said in words, the
+ * icon only repeats it (not colour-only).
+ */
 export function SaveStatus({ status }: { status: SaveStatusValue }) {
   const { t } = useTranslation();
   return (
@@ -17,13 +31,20 @@ export function SaveStatus({ status }: { status: SaveStatusValue }) {
         display: 'flex',
         alignItems: 'center',
         gap: 0.5,
-        color: status === 'error' ? 'error.main' : 'text.secondary',
+        minWidth: 0,
+        color: COLOR[status],
       }}
     >
-      {status === 'saving' && <CircularProgress size={14} aria-hidden />}
-      {(status === 'saved' || status === 'idle') && <CheckIcon fontSize="small" aria-hidden />}
-      {status === 'error' && <WarningAmberIcon fontSize="small" aria-hidden />}
-      <Typography variant="body2">{t(`rebellion.session:save.${status}`)}</Typography>
+      {status === 'saving' && <CircularProgress size={12} color="inherit" aria-hidden />}
+      {(status === 'saved' || status === 'idle') && <CheckIcon sx={{ fontSize: 16 }} aria-hidden />}
+      {status === 'error' && <WarningAmberIcon sx={{ fontSize: 16 }} aria-hidden />}
+      <Typography
+        variant="body2"
+        component="span"
+        sx={{ color: 'inherit', fontWeight: 700, textTransform: 'uppercase', fontSize: 11 }}
+      >
+        {t(`rebellion.session:save.${status}`)}
+      </Typography>
     </Box>
   );
 }

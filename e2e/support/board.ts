@@ -38,6 +38,20 @@ export interface BoardDebug {
   getRebelBaseSystemId?(): string | null;
   getContestedSystemIds?(): string[];
   hasHiddenZone?(): boolean;
+  // SWR-009 (plan §5.3): group counter markers (detail: side × arena; compact: per side, arena 'all';
+  // `systemId: null` = the hidden zone), «recent AI» systems, map stats. Never return the hidden base system.
+  getGroupMarkers?(): DebugGroupMarker[];
+  getAiRecentSystemIds?(): string[];
+  getRouteCount?(): number;
+  getRegionCount?(): number;
+}
+
+export interface DebugGroupMarker {
+  systemId: string | null;
+  side: 'empire' | 'rebels';
+  arena: 'space' | 'ground' | 'all';
+  count: number;
+  screen: Point;
 }
 
 declare global {
@@ -241,6 +255,9 @@ export async function emptyCoreCanvasPoint(
     );
     if (r) occupied.push({ x: r.x + r.width / 2, y: r.y + r.height / 2 });
   }
+  // SWR-009: group counter markers (and the hidden-zone markers) are clickable too.
+  for (const m of await page.evaluate(() => window.__boardDebug!.getGroupMarkers?.() ?? []))
+    occupied.push(m.screen);
   const overlays: Rect[] = [];
   for (const id of [T.zoomIn, T.zoomOut, T.zoomFit, T.zoomLevel, T.gameOverBanner, 'map-caption']) {
     for (const handle of await page.getByTestId(id).all()) {

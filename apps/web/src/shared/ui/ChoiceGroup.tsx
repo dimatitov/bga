@@ -1,7 +1,10 @@
 import ButtonBase from '@mui/material/ButtonBase';
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import { type KeyboardEvent, type ReactNode, useRef } from 'react';
+import { terminalTokens } from '@/shared/theme';
+
+const T = terminalTokens;
+const K = terminalTokens.key;
 
 export interface ChoiceOption<V extends string> {
   value: V;
@@ -44,7 +47,9 @@ export interface ChoiceGroupProps<V extends string> {
 /**
  * Accessible single choice: `role="radiogroup"` with `role="radio"` + `aria-checked` items,
  * roving tabindex and arrow-key navigation (WAI-ARIA radio group pattern). The checked item carries
- * `data-selected="true"` (state is not shown by colour only).
+ * `data-selected="true"` (state is not shown by colour only). SWR-009 look: segments are hardware keys (default /
+ * hover / pressed; selected = amber key), cards are inner panels with an amber edge when selected; unavailable
+ * options get a dashed edge.
  */
 export function ChoiceGroup<V extends string>({
   options,
@@ -133,17 +138,43 @@ export function ChoiceGroup<V extends string>({
               px: isCard ? 2.5 : 2,
               py: isCard ? 2 : 1,
               pt: isCard && option.accentColor ? 2.5 : undefined,
-              borderRadius: 1,
-              border: 2,
-              borderColor: checked ? 'primary.main' : 'divider',
-              // Selected tint keeps text.secondary ≥ 4.5:1 (action.selected gave 4.24:1, SWR-004 TC-VA-11).
-              bgcolor: (theme) =>
-                checked ? alpha(theme.palette.primary.main, 0.08) : theme.palette.background.paper,
-              color: unavailable ? 'text.secondary' : 'text.primary',
+              borderRadius: `${T.radius}px`,
+              borderWidth: 2,
+              borderStyle: unavailable ? 'dashed' : 'solid',
+              // SWR-009: selected = amber edge (UI Kit `selected` key / manifest selection), not colour only —
+              // `aria-checked` + the ✓ badge of the caller carry it too.
+              borderColor: checked
+                ? K.selected.border
+                : unavailable
+                  ? K.disabled.border
+                  : K.default.border,
+              bgcolor: checked
+                ? isCard
+                  ? T.selection.bg
+                  : K.selected.bg
+                : isCard
+                  ? T.color.panel
+                  : K.default.bg,
+              boxShadow: isCard || checked ? 'none' : `inset 0 1px 0 ${K.default.bevel}`,
+              color: checked ? K.selected.text : unavailable ? 'text.secondary' : 'text.primary',
               cursor: unavailable ? 'not-allowed' : undefined,
-              '&:hover': {
-                borderColor: checked ? 'primary.main' : unavailable ? 'divider' : 'text.secondary',
-              },
+              ...(isCard
+                ? {}
+                : {
+                    fontSize: T.type.key.size + 1,
+                    fontWeight: T.type.key.weight,
+                    letterSpacing: T.letterSpacing.key,
+                    textTransform: 'uppercase',
+                  }),
+              '&:hover':
+                checked || unavailable
+                  ? {}
+                  : {
+                      borderColor: K.hover.border,
+                      ...(isCard ? {} : { bgcolor: K.hover.bg }),
+                    },
+              '&:active': checked || unavailable || isCard ? {} : { bgcolor: K.pressed.bg },
+              '&.Mui-disabled': { opacity: K.disabled.opacity },
               ...(isCard && option.accentColor
                 ? {
                     '&::before': {
@@ -164,11 +195,14 @@ export function ChoiceGroup<V extends string>({
               component="span"
               sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, minWidth: 0, flex: 1 }}
             >
-              <Box component="span" sx={{ fontWeight: 600, fontSize: isCard ? 16 : 14 }}>
+              <Box
+                component="span"
+                sx={isCard ? { fontWeight: 700, fontSize: T.type.subtitle.size } : undefined}
+              >
                 {option.label}
               </Box>
               {option.description ? (
-                <Box component="span" sx={{ color: 'text.secondary', fontSize: 13 }}>
+                <Box component="span" sx={{ color: 'text.secondary', fontSize: T.type.small.size }}>
                   {option.description}
                 </Box>
               ) : null}
@@ -182,9 +216,13 @@ export function ChoiceGroup<V extends string>({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: 0.5,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: unavailable ? 'text.secondary' : 'primary.main',
+                  fontSize: T.type.small.size,
+                  fontWeight: 700,
+                  color: unavailable
+                    ? 'text.secondary'
+                    : checked
+                      ? K.selected.text
+                      : 'primary.main',
                 }}
               >
                 {option.badge}

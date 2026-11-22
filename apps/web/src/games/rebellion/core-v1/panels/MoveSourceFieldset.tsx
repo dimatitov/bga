@@ -1,11 +1,11 @@
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Typography from '@mui/material/Typography';
 import { useTranslation } from 'react-i18next';
+import { terminalTokens } from '@/shared/theme';
+import { KeyButton } from '@/shared/ui';
 import { useCoreBoard } from '../model/coreContext';
 import { useCoreUiStore } from '../model/coreUiStore';
 import { capacityPreview, type MoveSource } from '../model/viewModel';
@@ -14,12 +14,16 @@ import { useTurnErrorStore } from './turnErrorStore';
 import { useTurnCommands } from './useTurnCommands';
 
 const EMPTY: readonly string[] = [];
+const T = terminalTokens;
+const C = T.color;
 
 /**
  * One `MOVE_PIECES` source of the current activation (plan-frontend §5.3 step 4): a `fieldset` with a checkbox per
  * unit the server listed (`pieces`), «select all», the capacity PREVIEW «Capacity N/M» from the server's numbers
  * (Q-FE-2; never a gate — the server decides `insufficientCapacity`), and «Move (n) to <system>» which sends
  * exactly the checked set. A rejection is shown inline (`move-error-<from>`) and the draft is kept.
+ * SWR-009 C2: an inner terminal panel (1 px bezel, meta legend), capacity in phosphor / amber text (+ text note when
+ * over), key «Move».
  */
 export function MoveSourceFieldset({ source }: { source: MoveSource }) {
   const { t } = useTranslation();
@@ -45,9 +49,23 @@ export function MoveSourceFieldset({ source }: { source: MoveSource }) {
       data-testid={`move-source-${from}`}
       data-to={source.toSystemId}
       aria-labelledby={legendId}
-      sx={{ border: 1, borderColor: 'divider', borderRadius: 1, m: 0, px: 1.5, pb: 1.5, pt: 0.5 }}
+      sx={{
+        border: `1px solid ${T.statusCard.border}`,
+        borderRadius: `${T.radius}px`,
+        backgroundColor: C.panel,
+        m: 0,
+        minWidth: 0,
+        px: 1.5,
+        pb: 1.5,
+        pt: 0.5,
+      }}
     >
-      <Typography id={legendId} component="legend" variant="subtitle2" sx={{ px: 0.5 }}>
+      <Typography
+        id={legendId}
+        component="legend"
+        variant="meta"
+        sx={{ px: 0.5, color: C.paper, textTransform: 'uppercase', fontWeight: 700 }}
+      >
         {t('rebellion.turn:move.source', { system: systemLabel(t, view, from) })}
       </Typography>
       <FormControlLabel
@@ -71,12 +89,12 @@ export function MoveSourceFieldset({ source }: { source: MoveSource }) {
               <Box component="span" sx={{ display: 'inline-flex', gap: 1, flexWrap: 'wrap' }}>
                 <span>{unitLabel(t, view, p.pieceId)}</span>
                 {p.requiresTransport && (
-                  <Box component="span" sx={{ color: 'text.secondary', fontSize: 13 }}>
+                  <Box component="span" sx={{ color: C.warm, fontSize: 13 }}>
                     {t('rebellion.turn:move.needsTransport')}
                   </Box>
                 )}
                 {p.transportCapacity > 0 && (
-                  <Box component="span" sx={{ color: 'text.secondary', fontSize: 13 }}>
+                  <Box component="span" sx={{ color: C.warm, fontSize: 13 }}>
                     {t('rebellion.turn:move.carries', { count: p.transportCapacity })}
                   </Box>
                 )}
@@ -105,7 +123,11 @@ export function MoveSourceFieldset({ source }: { source: MoveSource }) {
             required: preview.required,
             capacity: preview.capacity,
           })}
-          sx={{ mt: 0.5, fontWeight: preview.fits ? 400 : 600 }}
+          sx={{
+            mt: 0.5,
+            fontWeight: preview.fits ? 400 : 700,
+            color: preview.fits ? C.phosphorText : C.amberText,
+          }}
         >
           {t('rebellion.turn:move.capacity', {
             required: preview.required,
@@ -114,22 +136,20 @@ export function MoveSourceFieldset({ source }: { source: MoveSource }) {
         </Typography>
       )}
       {showCapacity && !preview.fits && (
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <Typography variant="body2" sx={{ color: C.amberText }}>
           {t('rebellion.turn:move.capacityOver')}
         </Typography>
       )}
-      <Button
-        variant="outlined"
-        size="small"
-        startIcon={<ArrowForwardIcon />}
+      <KeyButton
+        tone="primary"
         data-testid={`move-submit-${from}`}
         data-to={source.toSystemId}
         disabled={selected.length === 0 || isPending}
         onClick={() => void move(source, selected)}
-        sx={{ mt: 1 }}
+        sx={{ mt: 1, maxWidth: '100%' }}
       >
         {t('rebellion.turn:move.submit', { count: selected.length, system: toName })}
-      </Button>
+      </KeyButton>
       {error && (
         <Alert severity="error" role="alert" data-testid={`move-error-${from}`} sx={{ mt: 1 }}>
           {error}

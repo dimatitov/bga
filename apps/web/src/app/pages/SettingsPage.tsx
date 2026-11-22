@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
@@ -11,10 +10,15 @@ import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useNavigate } from 'react-router';
 import { paths } from '@/platform/paths';
+import { TerminalPanel } from '@/platform/ui/TerminalPanel';
 import { announce } from '@/shared/feedback';
 import { i18n } from '@/shared/i18n';
 import { type Language, LANGUAGES, useSettingsStore } from '@/shared/settings';
+import { terminalTokens } from '@/shared/theme';
 import { ChoiceGroup } from '@/shared/ui';
+
+/** Section label of the settings panel (terminal `meta`, block so it sits above its control). */
+const SECTION_LABEL = { display: 'block', mt: 0, mb: 1 } as const;
 
 /** `/settings` — applied instantly, stored in localStorage `bga.settings.v1` (D-ST-1..3, R-13). */
 export function SettingsPage() {
@@ -48,8 +52,19 @@ export function SettingsPage() {
 
   return (
     <Box sx={{ px: 2, py: 4, display: 'flex', justifyContent: 'center' }}>
-      <Paper sx={{ width: '100%', maxWidth: 640, p: { xs: 2, sm: 4 } }}>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: 2, mb: 3 }}>
+      <TerminalPanel sx={{ width: '100%', maxWidth: 640, overflow: 'hidden' }}>
+        <Stack
+          direction="row"
+          sx={{
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2,
+            px: { xs: 2, sm: 4 },
+            py: 1.5,
+            bgcolor: 'terminal.moduleHead',
+            borderBottom: `1px solid ${terminalTokens.module.headBorder}`,
+          }}
+        >
           <Button
             startIcon={<ArrowBackIcon />}
             size="small"
@@ -58,19 +73,14 @@ export function SettingsPage() {
           >
             {t('settings:back')}
           </Button>
-          <Typography variant="h5" component="h1" sx={{ fontWeight: 700 }}>
+          <Typography variant="h2" component="h1" sx={{ color: 'primary.main' }}>
             {t('settings:title')}
           </Typography>
         </Stack>
 
-        <Stack spacing={4}>
+        <Stack spacing={4} sx={{ p: { xs: 2, sm: 4 } }}>
           <section>
-            <Typography
-              id={languageLabelId}
-              variant="overline"
-              component="h2"
-              color="text.secondary"
-            >
+            <Typography id={languageLabelId} variant="meta" component="h2" sx={SECTION_LABEL}>
               {t('settings:language.title')}
             </Typography>
             <ChoiceGroup
@@ -87,7 +97,7 @@ export function SettingsPage() {
           </section>
 
           <section>
-            <Typography variant="overline" component="h2" color="text.secondary">
+            <Typography variant="meta" component="h2" sx={SECTION_LABEL}>
               {t('settings:accessibility.title')}
             </Typography>
             <FormControlLabel
@@ -118,7 +128,7 @@ export function SettingsPage() {
           {/* SWR-005B D-FE-2: dev-only entry to the AI diagnostics; the literal guard folds away in `vite build`. */}
           {import.meta.env.DEV ? (
             <section data-testid="settings-dev">
-              <Typography variant="overline" component="h2" color="text.secondary">
+              <Typography variant="meta" component="h2" sx={SECTION_LABEL}>
                 {t('settings:dev.title')}
               </Typography>
               <Box>
@@ -129,7 +139,7 @@ export function SettingsPage() {
             </section>
           ) : null}
         </Stack>
-      </Paper>
+      </TerminalPanel>
     </Box>
   );
 }

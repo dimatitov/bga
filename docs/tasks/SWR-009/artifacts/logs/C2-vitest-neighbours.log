@@ -1,0 +1,37 @@
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ❯ src/games/rebellion/core-v1/manifest/UnitManifest.test.tsx (14 tests | 1 failed) 446ms
+   ❯ UnitManifest — states (SWR-009 MF, AC-7) (8)
+     × en plural: 2 units 17ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/games/rebellion/core-v1/manifest/UnitManifest.test.tsx > UnitManifest — states (SWR-009 MF, AC-7) > en plural: 2 units
+Error: [2mexpect([22m[31melement[39m[2m).toHaveTextContent()[22m
+
+Expected element to have text content:
+[32m  2 units[39m
+Received:
+[31m  Империя · Флот2 единицыЗвёздный разрушитель × 1Истребитель TIE × 1[39m
+ ❯ src/games/rebellion/core-v1/manifest/UnitManifest.test.tsx:146:68
+    147|
+    148|   it('Close calls onClose', async () => {
+    149|     const { user, onClose } = renderManifest();
+       |                   ^
+    150|     await user.click(screen.getByTestId('unit-manifest-close'));
+    151|     expect(onClose).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 64 passed (65)
+   Start at  01:01:16
+   Duration  2.71s (tests 34%, environment 29%, import 17%, setup 11%, transform 9%)
+
+Error: ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL
+
+  × "pnpm recursive exec" failed in /Users/dimatitov/WebstormProjects/Game
+  │ automa/apps/web
+
