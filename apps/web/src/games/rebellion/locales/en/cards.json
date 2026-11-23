@@ -1,0 +1,58 @@
+{
+  "hand": {
+    "label": "Cards",
+    "own": "Your cards",
+    "opponent": "Opponent: {{side}}",
+    "shared": "Shared",
+    "deferred": "Not tracked yet",
+    "deferredHint": "These card types exist in the game, but the app does not track them yet.",
+    "deckCount_one": "{{zone}}: {{count}} card",
+    "deckCount_other": "{{zone}}: {{count}} cards",
+    "hiddenCount_one": "{{count}} card (hidden)",
+    "hiddenCount_other": "{{count}} cards (hidden)",
+    "empty": "No cards",
+    "notRegistered": "Base card not registered",
+    "register": "Register the base card",
+    "noBaseHere": "The base is not here",
+    "paramSystem": "System: {{system}} · {{region}}"
+  },
+  "legacy": {
+    "title": "Cards are not tracked in this game",
+    "text": "The game was created before the app started tracking cards. Use the cards on the table as usual."
+  },
+  "availability": {
+    "inHand": "In hand",
+    "secret": "Secret, only you",
+    "physical": "Physical card",
+    "reference": "Out of the game",
+    "revealed": "Revealed"
+  },
+  "detail": {
+    "label": "Card",
+    "type": "Type",
+    "usage": "Usage",
+    "usageCurrent": "Now",
+    "effect": "Effect",
+    "where": "Where now",
+    "authorityLabel": "Tracking",
+    "authority": {
+      "digital": "Tracked by the app",
+      "physical": "Physical card on your table"
+    },
+    "sources": "Rule source",
+    "sourceBook": "{{source}}, p. {{page}}",
+    "sourceBookSection": "{{source}}, p. {{page}} · {{section}}",
+    "verificationLabel": "Verification",
+    "close": "Close",
+    "effectStatus": {
+      "none": "Not played",
+      "not-implemented": "Effect not supported by the app",
+      "implemented": "Supported"
+    }
+  },
+  "verification": {
+    "verified": "Verified",
+    "needs-review": "Needs review",
+    "unverified": "Unverified"
+  }
+}

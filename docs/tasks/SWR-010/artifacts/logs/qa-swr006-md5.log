@@ -1,0 +1,61 @@
+# SWR-006 screenshots md5 — before verify (00:50Z) vs after verify (01:01Z), 2026-11-23
+## before
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-en-1440.png) = 446d7d058f4869971d7856a8db7d5da9
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-en-375.png) = b6edbcb620de023823193809543c7041
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-ru-1440.png) = 4c614fb08b29238ae723bf4f094b3126
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-ru-375.png) = 6bbcd715b7173b983c4f221ba2d9ab3d
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-en-1440.png) = e96a90a7482b5da17ebf70aa75c7ca30
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-en-375.png) = 00a4bb4226f5339d61dcaa9eb9c30e02
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-ru-1440.png) = 460809975ca15ee841f42b4f703d7673
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-ru-375.png) = c7254f161bbc83e7aaf39429e8e545ee
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-en-1440.png) = bd2ec17fd10ec0fd2092a191626d639c
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-en-375.png) = af0f315c85ab664f4c07d3d54cfd428e
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-ru-1440.png) = fcdfb1d2b3383d6d3dbe09cda2ae3f54
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-ru-375.png) = 85f4dbcc7e2bb920feb0468f218107a8
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-en-1440.png) = 3d1a32911e99bd246e89e9a2e7bed661
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-en-375.png) = 19a69e1386fdf1826d019b84cc805d5d
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-ru-1440.png) = 2c689ff9cbe8128fbe91b85fcad73615
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-ru-375.png) = 69fbf7c4277b9e99ea388581145ed5e7
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-en-1440.png) = 70b27206b1551768262387d8993b3f00
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-en-375.png) = 8d2e0b734deb66636a0b91bf3364f0bd
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-ru-1440.png) = 601f4bf6f930847aca491bb6b3d52d72
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-ru-375.png) = 77961d0120b2722ad1804c7a847e9921
+## after
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-en-1440.png) = 446d7d058f4869971d7856a8db7d5da9
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-en-375.png) = b6edbcb620de023823193809543c7041
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-ru-1440.png) = 4c614fb08b29238ae723bf4f094b3126
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-continue-ru-375.png) = 6bbcd715b7173b983c4f221ba2d9ab3d
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-en-1440.png) = e96a90a7482b5da17ebf70aa75c7ca30
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-en-375.png) = 00a4bb4226f5339d61dcaa9eb9c30e02
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-ru-1440.png) = 460809975ca15ee841f42b4f703d7673
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-ai-fallback-notice-ru-375.png) = c7254f161bbc83e7aaf39429e8e545ee
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-en-1440.png) = bd2ec17fd10ec0fd2092a191626d639c
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-en-375.png) = af0f315c85ab664f4c07d3d54cfd428e
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-ru-1440.png) = fcdfb1d2b3383d6d3dbe09cda2ae3f54
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-empire-vs-ai-hidden-base-ru-375.png) = 85f4dbcc7e2bb920feb0468f218107a8
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-en-1440.png) = 3d1a32911e99bd246e89e9a2e7bed661
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-en-375.png) = 19a69e1386fdf1826d019b84cc805d5d
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-ru-1440.png) = 2c689ff9cbe8128fbe91b85fcad73615
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-after-turn-ru-375.png) = 69fbf7c4277b9e99ea388581145ed5e7
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-en-1440.png) = 70b27206b1551768262387d8993b3f00
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-en-375.png) = 8d2e0b734deb66636a0b91bf3364f0bd
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-ru-1440.png) = 601f4bf6f930847aca491bb6b3d52d72
+MD5 (docs/tasks/SWR-006/artifacts/screenshots/swr006-rebels-vs-ai-thinking-ru-375.png) = 77961d0120b2722ad1804c7a847e9921
+## diff
+IDENTICAL (20 files, no change during the QA run)
+
+# apps/api/prisma/*.db md5 — during verify (00:52Z) vs after (01:02Z)
+MD5 (apps/api/prisma/dev.db) = 48b3d4eab2da21345b831e1c33467253
+MD5 (apps/api/prisma/dev.pre-run-20261120.db) = 37a2bd6733a2c45a08d09892b9a91259
+MD5 (apps/api/prisma/dev.pre-swr003.db) = a439cb150e0cdce52b93960c3b6682ea
+MD5 (apps/api/prisma/dev.pre-swr004.db) = afa75823ff0ad0e232e50a981ff9b69b
+MD5 (apps/api/prisma/dev.pre-swr005.db) = 2cb98ccb532949a954e5ab132fe7e6f0
+MD5 (apps/api/prisma/dev.pre-swr005b.db) = 8e48703974bf7f76497acd6658ca42a1
+MD5 (apps/api/prisma/dev.pre-swr008.db) = 37a2bd6733a2c45a08d09892b9a91259
+IDENTICAL
+
+# Run 2 (final-verify-2.log): SWR-006 md5 before (01:08Z) vs after (01:19Z)
+IDENTICAL (20 files)
+IDENTICAL also to the run-1 baseline (00:50Z)
+# apps/api/prisma/*.db md5 before run 2 vs after
+IDENTICAL

@@ -1,0 +1,693 @@
+# vitest --reporter=verbose over the SWR-010 test files — 2026-11-23T01:01:57Z — node v22.23.5
+
+## packages/platform test/cards
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/packages/platform
+
+ ✓ test/cards/shuffle.test.ts > seedFromString: FNV-1a 32 over UTF-16 code units > matches the published FNV-1a 32 vectors 1ms
+ ✓ test/cards/shuffle.test.ts > seedFromString: FNV-1a 32 over UTF-16 code units > hashes code units (not bytes) and stays unsigned 0ms
+ ✓ test/cards/shuffle.test.ts > TC-DECK-10: seededShuffle > frozen test vector (changing it breaks the replay of saved game creation) 1ms
+ ✓ test/cards/shuffle.test.ts > TC-DECK-10: seededShuffle > same seed → same order; result is a permutation; input untouched 0ms
+ ✓ test/cards/shuffle.test.ts > TC-DECK-10: seededShuffle > 100 seeds give ≥ 95 different orders of 10 cards 0ms
+ ✓ test/cards/shuffle.test.ts > TC-DECK-10: seededShuffle > shuffleZone = seededShuffle of the stored order 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > viewer alpha: every layout zone, in layout order, with counts; views satisfy the view schema 4ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > viewer beta: every layout zone, in layout order, with counts; views satisfy the view schema 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > viewer null: every layout zone, in layout order, with counts; views satisfy the view schema 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > owner alpha 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > opponent beta 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > public (null) 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > a hidden deck: only the count, for everyone — its ids never appear in any projection 1ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > a secret zone is shown to everyone once revealed (revealZoneIds), never before 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > unordered listings are sorted by instance id (stored / draw order does not leak); ordered public keep order 1ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > an ordered owner zone is never listed, not even to its owner or when "revealed" 0ms
+ ✓ test/cards/visibility.test.ts > TC-DECK-12: projectZones matrix > projection does not mutate the pile and is deterministic 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-01: valid card contracts parse > card definition carries every AC-2 field 4ms
+ ✓ test/cards/schema.test.ts > TC-REG-01: valid card contracts parse > type definition, effect (none / not-implemented / implemented), instance, zone policy, pile, catalog 4ms
+ ✓ test/cards/schema.test.ts > TC-REG-01: valid card contracts parse > instance ids: <card id>#<1..999> 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: no id 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: no sources 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: empty sources 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: no verification status 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: unknown verification status 1ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: extra field (strict) 1ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: empty name key 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: name key without a namespace 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: upper-case id 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: non-primitive param 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > card definition: book source with page 0 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > effect: mechanicId iff implemented 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > zone policy: owner visibility needs an owner; a deck is ordered 0ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > catalog: duplicate card / type / effect ids 1ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > catalog: unresolved type / effect, foreign game or edition, cards of a deferred type 1ms
+ ✓ test/cards/schema.test.ts > TC-REG-02: broken inputs are rejected > zone view: cards length must equal count; an ordered non-public zone never lists cards 1ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > has the planned source files 1ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > engine.ts: no game names or concepts; imports only zod and relative modules 1ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > index.ts: no game names or concepts; imports only zod and relative modules 0ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > invariants.ts: no game names or concepts; imports only zod and relative modules 0ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > schema.ts: no game names or concepts; imports only zod and relative modules 0ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > shuffle.ts: no game names or concepts; imports only zod and relative modules 0ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > visibility.ts: no game names or concepts; imports only zod and relative modules 0ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > exports the frozen API of plan-backend §11.1 1ms
+ ✓ test/cards/boundaries.test.ts > cards boundaries > is a subpath only: not re-exported from the package root; package.json exports ./cards 1ms
+ ✓ test/cards/ops.test.ts > TC-DECK-01: create → shuffle → draw 3 → discard 1 > moves the top 3 in order, keeps invariants 3ms
+ ✓ test/cards/ops.test.ts > TC-DECK-02: move / play / reveal / return move exactly one instance to the expected position > moveCard appends to an unordered zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-02: move / play / reveal / return move exactly one instance to the expected position > 'top' is honoured only by an ordered destination 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-02: move / play / reveal / return move exactly one instance to the expected position > playCard → inPlay, revealCard → revealed, discardCard → discard 1ms
+ ✓ test/cards/ops.test.ts > TC-DECK-02: move / play / reveal / return move exactly one instance to the expected position > returnCard to the top / bottom (default) of a deck; a reshuffle is a separate shuffleZone 1ms
+ ✓ test/cards/ops.test.ts > TC-DECK-02: move / play / reveal / return move exactly one instance to the expected position > drawCards with count 0 is a no-op result (new value) 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-02: move / play / reveal / return move exactly one instance to the expected position > registerCard takes the instance of a definition from any position into a physical zone 1ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > insufficientCards unless allowShort; allowShort takes what is there 1ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"draw","to":"hand-alpha","count":-1,"allowShort":true} → {"code":"invalidCount","zoneId":"draw"} 1ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"draw","to":"hand-alpha","count":1.5,"allowShort":true} → {"code":"invalidCount","zoneId":"draw"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"draw","to":"draw","count":1,"allowShort":false} → {"code":"sameZone","zoneId":"draw"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"hand-alpha","to":"hand-beta","count":1,"allowShort":true} → {"code":"zoneNotOrdered","zoneId":"hand-alpha"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"nowhere","to":"hand-beta","count":1,"allowShort":true} → {"code":"unknownZone","zoneId":"nowhere"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"draw","to":"nowhere","count":1,"allowShort":true} → {"code":"unknownZone","zoneId":"nowhere"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"draw","to":"orders","count":1,"allowShort":false} → {"code":"typeNotAccepted","zoneId":"orders","instanceId":"card-a#1","definitionId":"card-a"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-03: drawing from a short or empty deck > drawCards {"from":"draw","to":"secret","count":2,"allowShort":false} → {"code":"zoneFull","zoneId":"secret"} 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-04 card not in the source zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-04 unknown instance 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-04 discard of a card that is not in hand 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-04 unknown source zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-05 capacity 1 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-05 type not accepted 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-05 order card into a scout-only hand 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-06 reveal of an already revealed card 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-06 return into a non-deck zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > DECK-06 play into a hand 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > shuffle of an unordered zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > shuffle of an unknown zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > register into a digital zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > register of a definition not in the source 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > register into an unknown zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-04 / 05 / 06: illegal single-card transitions > a zone only in the layout (not stored) is unknown 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > duplicate instance id 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > unknown definition 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > one instance in two zones 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > one instance twice in a zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > placed instance not declared 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > declared instance not placed 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > unknown zone in placement 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > no authority for a layout zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > type not accepted 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > capacity exceeded 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-07: createPile rejects broken setups > a valid setup: zones in layout order, authority per zone, input arrays not shared 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > instance placed twice 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > instance lost 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > unknown instance placed 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > instance with an unknown definition 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > duplicate declared instance id 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > type not accepted 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > over capacity 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > missing zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > extra zone 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-08: invariants detect each hand-made corruption separately > zone stored twice 0ms
+ ✓ test/cards/ops.test.ts > TC-DECK-11: transition table — wrapper × destination kind (every source/destination pair) > moveCard 9ms
+ ✓ test/cards/ops.test.ts > TC-DECK-11: transition table — wrapper × destination kind (every source/destination pair) > playCard 3ms
+ ✓ test/cards/ops.test.ts > TC-DECK-11: transition table — wrapper × destination kind (every source/destination pair) > discardCard 4ms
+ ✓ test/cards/ops.test.ts > TC-DECK-11: transition table — wrapper × destination kind (every source/destination pair) > revealCard 3ms
+ ✓ test/cards/ops.test.ts > TC-DECK-11: transition table — wrapper × destination kind (every source/destination pair) > returnCard 3ms
+ ✓ test/cards/ops.test.ts > TC-DECK-13 (AC-17): restore from JSON and continue = continuous run > restorePile(JSON) resumes byte-identically 2ms
+ ✓ test/cards/ops.test.ts > TC-DECK-13 (AC-17): restore from JSON and continue = continuous run > restorePile rejects schema and invariant violations as issues (never throws) 1ms
+ ✓ test/cards/property.test.ts > TC-DECK-09: seeded random operation sequences keep the invariants > 1000 sequences × 20 operations 201ms
+
+ Test Files  6 passed (6)
+      Tests  106 passed (106)
+   Start at  04:01:57
+   Duration  397ms (import 54%, tests 30%, transform 14%, worker 2%)
+
+EXIT=0
+
+## packages/games/rebellion (SWR-010 files)
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/packages/games/rebellion
+
+ ✓ test/rules/core/table-tasks.test.ts > human Rebels vs AI Empire > own commands create no task; AI activation and AI move create one task each (AQ-8); FINISH/PASS none 14ms
+ ✓ test/rules/core/table-tasks.test.ts > human Rebels vs AI Empire > Refresh after the human pass: ONE refresh task — return leaders, opponent drew N (no card ids, S2), advance time 7ms
+ ✓ test/rules/core/table-tasks.test.ts > human Rebels vs AI Empire > W3 draws 2 probes in Refresh: the human Rebels are told only the count (A-9) 3ms
+ ✓ test/rules/core/table-tasks.test.ts > human Rebels vs AI Empire > the reveal of the human Rebels' base by the AI Empire: baseRevealed → revealOwnBase + moveBaseUnits 7ms
+ ✓ test/rules/core/table-tasks.test.ts > human Empire vs AI Rebels (S1: the AI base is never named before the reveal) > AI activation of its base and AI move into it: the system is null ("Rebel Base" space) 2ms
+ ✓ test/rules/core/table-tasks.test.ts > human Empire vs AI Rebels (S1: the AI base is never named before the reveal) > TC-TT-09: two games that differ only in the base give byte-equal tasks (metamorphic) 6ms
+ ✓ test/rules/core/table-tasks.test.ts > human Empire vs AI Rebels (S1: the AI base is never named before the reveal) > public AI activation names the system; the human Empire's own Refresh draw names exactly its cards 3ms
+ ✓ test/rules/core/table-tasks.test.ts > human Empire vs AI Rebels (S1: the AI base is never named before the reveal) > the human Empire reveals the base: the task names it (allowed now); none before (TC-TT-07) 5ms
+ ✓ test/rules/core/table-tasks.test.ts > tasksFromEvents (unit) > events of the human side and pure markers create nothing 1ms
+ ✓ test/rules/core/table-tasks.test.ts > tasksFromEvents (unit) > ids are t-<version>-<n> in event order; a Refresh without returned leaders / draw has only advanceTime 0ms
+ ✓ test/rules/core/table-tasks.test.ts > tasksFromEvents (unit) > the input events and state are not mutated 0ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > accepted registration > TC-PH-01 + AQ-7: registered while initialSetup is still the head; base = card system; queue keeps initialSetup 11ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > accepted registration > registering the provisional base itself keeps the units and the base 5ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > accepted registration > every eligible system can be registered (TC-PH-09: the eligible list = eligibleRebelBaseSystemIds) 9ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > accepted registration > completeRegistration only touches the table 1ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > 409 comes first (even for a wrong actor / no table) 3ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-04: no table (digital, either human side) → registrationUnavailable 7ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-07: the AI side or the auto origin → notYourSide 2ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > after the end of the game → gameOver (before any card check) 1ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-04: human Empire (no registration expected) → registrationUnavailable; same answer for every AI base 6ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > wrong zone → registrationUnavailable (before the card checks) 3ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-02: not a probe card of the catalog → unknownCard 4ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-02: a probe card whose system cannot hold the base → cardNotEligible 3ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-03: a second registration → registrationUnavailable (same or other system) 2ms
+ ✓ test/rules/core/table-register-pipeline.test.ts > rejections in §5.5 order (state unchanged, details echo the request only) > TC-PH-05: before the registration every other Rebel command is blocked (tableSyncPending) 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > a legacy core-v1 state (no cards, no table) is valid and stays without the fields 8ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > valid: rebels / digital with cards 4ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > valid: empire / digital with cards 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > valid: rebels / physical_companion with cards 5ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > valid: empire / physical_companion with cards 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > null is not a stored representation 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > table ⇔ physical_companion 3ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > physical_companion ⇒ AI opponent and cards 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > cards: exactly 31 instances and no platform invariant issue 7ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > the Location card names the base; at most one card 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > reveal: Location empty and the base card on the Rebel Base space; nothing revealed before 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > registration: baseRegistration ⇔ registerBase task ⇔ empty Location before the reveal; Rebels only 3ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > table task ids are unique 1ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > FIX-R1: completion matches kind (register iff registerBase) 2ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > FIX-R1: at most one registerBase task 1ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > FIX-R1: titleKey is table.tasks.<kind> 1ms
+ ✓ test/schema/cards-state.test.ts > state: optional cards / table (§3.1) > FIX-R1: valid fixtures and engine-created physical games still pass 3ms
+ ✓ test/schema/cards-state.test.ts > table schemas (§11.3) > kinds and step keys are frozen 0ms
+ ✓ test/schema/cards-state.test.ts > table schemas (§11.3) > task shape 0ms
+ ✓ test/schema/cards-state.test.ts > table schemas (§11.3) > state and view 0ms
+ ✓ test/schema/cards-state.test.ts > cards state / view schemas (§11.2) > state: catalog id literal + platform pile 1ms
+ ✓ test/schema/cards-state.test.ts > cards state / view schemas (§11.2) > view: zones with hidden order never listed 1ms
+ ✓ test/schema/cards-state.test.ts > events (§4.1) > state forms are accepted by every union 1ms
+ ✓ test/schema/cards-state.test.ts > events (§4.1) > CARDS_DRAWN: count === definitionIds.length; actor system; count > 0 0ms
+ ✓ test/schema/cards-state.test.ts > events (§4.1) > redacted (null) forms only in the view schemas 0ms
+ ✓ test/schema/cards-state.test.ts > events (§4.1) > FIX-R1: CARDS_DRAWN view form keeps count === definitionIds.length when not redacted 0ms
+ ✓ test/schema/cards-state.test.ts > commands, errors, view fields (§11.4) > CONFIRM_TABLE_TASK / REGISTER_CARD parse; core-only 1ms
+ ✓ test/schema/cards-state.test.ts > commands, errors, view fields (§11.4) > R5: the new commands on a mock-v1 game → 422 commandUnavailable 2ms
+ ✓ test/schema/cards-state.test.ts > commands, errors, view fields (§11.4) > error keys appended last, in order 0ms
+ ✓ test/schema/cards-state.test.ts > commands, errors, view fields (§11.4) > view: cards / table are required and nullable 4ms
+ ✓ test/schema/cards-state.test.ts > commands, errors, view fields (§11.4) > the real projection (W3 / W4): cards for every side, the table only for the human side 2ms
+ ✓ test/rules/core/table-confirm.test.ts > confirming the head task > TC-CF-01/12: version +1, one TABLE_TASK_CONFIRMED, the head leaves the queue — nothing else changes 12ms
+ ✓ test/rules/core/table-confirm.test.ts > confirming the head task > a queue of 2+ tasks: only the head goes, the order of the rest is kept 4ms
+ ✓ test/rules/core/table-confirm.test.ts > confirming the head task > applyConfirmTask is pure (deep-frozen input) and validateConfirmTask accepts the head 5ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-02/C-6: the exact repeat (stale expectedVersion) → 409 3ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-03/C-6: the repeat with the fresh version → 422 tableTaskNotFound (the effect is not repeated) 4ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-04: not the head → tableTaskNotHead 4ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-05: unknown ids → tableTaskNotFound 3ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > a registerBase head is completed by REGISTER_CARD only → tableTaskNeedsRegistration 2ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-06: an older version → 409 (checked first) 2ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-11: the AI side or the server's auto origin → notYourSide 3ms
+ ✓ test/rules/core/table-confirm.test.ts > rejections (each leaves the state unchanged) > TC-CF-10: digital games (no table) → commandUnavailable, both sides 3ms
+ ✓ test/rules/core/table-confirm.test.ts > after the end of the game (C-5, AQ-3) > the remaining tasks stay confirmable; other commands are still gameOver 22ms
+ ✓ test/server/automation-cards.test.ts > a pending table task blocks the AI (AC-13) > human Empire vs AI Rebels: the initial setup task blocks; confirming it lets the AI move 10ms
+ ✓ test/server/automation-cards.test.ts > a pending table task blocks the AI (AC-13) > human Rebels vs AI Empire: blocked until the Location card is registered 6ms
+ ✓ test/server/automation-cards.test.ts > a pending table task blocks the AI (AC-13) > a drain stops after the AI step that created a task; it resumes after the confirmation 37ms
+ ✓ test/server/automation-cards.test.ts > decision points never carry card / table commands (§8.2, A-11) > AI Empire and AI Rebels points after Refreshes 5ms
+ ✓ test/server/automation-cards.test.ts > decision points are invariant to secrets the AI must not see (S3, S4) > AI Rebels: the human Empire’s probe hand and the deck order do not change the point 3ms
+ ✓ test/server/automation-cards.test.ts > decision points are invariant to secrets the AI must not see (S3, S4) > AI Empire: the deck order does not change the point (its own hand is in the situation) 8ms
+ ✓ test/server/automation-cards.test.ts > S5 (review #6): the registered Location is invisible to the AI Empire before a reveal > every eligible registration gives a byte-identical Empire view and decision point (no card token of the base) 14ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > TC-VIS-01: the Empire sees its 2 probes, the deck and the Location as counts, the box publicly 7ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > TC-VIS-02: the Rebels see their Location, the Empire hand and the deck as counts 2ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > S2/S4/S1 tokens: none in the JSON of the side views (whole view: log, legal actions…) 3ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > TC-VIS-04 (AC-8): 10 deck permutations → identical views for both sides 17ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > swapHand: the Rebels view does not depend on which probes the Empire holds (S2) 2ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > S1/AC-15: before the first Refresh the Empire view is invariant to the base (Location swapped with the deck) 23ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > TC-VIS-05 (AC-9): the public projection lists only public zones and is contained in every side view 1ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > the AI side view uses the same projection (other viewer); legacy / mini states → cards null 1ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > physical games: the human view carries the card zones; the AI view has no table 2ms
+ ✓ test/rules/core/cards-visibility.test.ts > side views of the cards (AC-7, AC-8) > TC-VIS-09 (rules level): over whole games no step leaks S2 to the Rebels, S4 to anybody, S1 to the Empire 111ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > all scripted sessions put the base in Rodia (deterministic by sessionId, R-10) 1ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > TC-G-01/02: hot-seat, 2 rounds, reveal on FINISH_ACTIVATION, Empire wins after the Rebel evacuation 65ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > TC-G-04: an illegal command in the middle is rejected (unchanged state) and the result equals the golden 33ms
+ ✓ test/server/golden.test.ts > golden scripted games (real data) > TC-G-03 / TC-AI-08: Rebels vs AI Empire, 13 passes → time 14 = reputation → Rebels win 51ms
+ ✓ test/server/golden.test.ts > golden game with cards (SWR-010 §10.3 R3, AC-6, A-8) > Rebels vs AI Empire, 13 passes: 2 probes per Refresh, the 13th Refresh draws the last card 61ms
+ ✓ test/server/golden.test.ts > reference views for FE/QA (test/fixtures/core/views) > rebels-command / handoff / empire-prereveal / empire-revealed / game-over 23ms
+ ✓ test/server/golden.test.ts > seedable core-v1 states for e2e (Q-35, scenarios 4 / 5b) > scenario 4: AI game (player Empire), one activation before the reveal 3ms
+ ✓ test/server/golden.test.ts > seedable core-v1 states for e2e (Q-35, scenarios 4 / 5b) > scenario 5b: hot-seat, Empire to move, the Rebels evacuated the hidden base — one activation before the win 4ms
+ ✓ test/server/golden.test.ts > seedable core-v1 states for e2e (Q-35, scenarios 4 / 5b) > TC-G-07: golden files are only rewritten with UPDATE_GOLDEN=1 0ms
+ ✓ test/rules/core/table-init.test.ts > initialTableState (§5.3) > human Rebels: t-1-1 initialSetup → t-1-2 registerBase, registration expected over the eligible systems 4ms
+ ✓ test/rules/core/table-init.test.ts > initialTableState (§5.3) > human Empire: one initialSetup with the Location placeholder (never a system), no registration 1ms
+ ✓ test/rules/core/table-init.test.ts > initialTableState (§5.3) > the initial tasks never depend on the base (the same for every eligible base) 34ms
+ ✓ test/rules/core/table-init.test.ts > initialTableState (§5.3) > a created physical game is a valid stored state with the table; the input settings are not mutated 1ms
+ ✓ test/rules/core/table-init.test.ts > initialTableState (§5.3) > digital games have no table (AC-11: no tasks in digital) 1ms
+ ✓ test/rules/core/table-init.test.ts > tableViewFor (§4.2, §11.3) > human Rebels before the registration: tasks, registration with the eligible probe cards (TC-PH-09) 1ms
+ ✓ test/rules/core/table-init.test.ts > tableViewFor (§4.2, §11.3) > human Empire at creation: the AI Rebels are to move and wait for the initial setup 1ms
+ ✓ test/rules/core/table-init.test.ts > tableViewFor (§4.2, §11.3) > the AI side never gets a table; the view is a copy (mutating it leaves the state intact) 1ms
+ ✓ test/rules/core/table-init.test.ts > tableViewFor (§4.2, §11.3) > coreSideView carries the projection for the human and null for the AI side 2ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-01 digital, Rebels vs AI: box 5, Location = base card, deck 25, Empire hand 0 8ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-01 digital, Empire vs AI: box 5, Location = base card, deck 25, Empire hand 0 2ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-01 hot-seat: box 5, Location = base card, deck 25, Empire hand 0 1ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-01 physical, human Empire: box 5, Location = base card, deck 25, Empire hand 0 2ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > zones keep the layout order; authority digital everywhere outside physical Rebels 2ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-07: physical_companion + human Rebels → Location empty and physical, deck 26 (base card inside) 6ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-02: the base is still chooseRebelBase(gameId, eligible) for 20 fixed ids 27ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-03: same input → byte-identical state (deck order and instance ids included) 1ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-04: no global RNG / clock is used 1ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-05: the deck order depends on the game id (50 ids → ≥ 45 orders), multiset = 31 − box − Location 25ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > the shuffle seed is `<gameId>|probe-deck|init` (initCoreCards = createCoreGame) 1ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > initCoreCards rejects a base without a probe card / a first-game-removed base (programming error) 0ms
+ ✓ test/rules/core/cards-init.test.ts > initCoreCards in createCoreGame (AC-4) > TC-INIT-06: a map other than the base-game map tracks no cards (mini data: as before SWR-010) 0ms
+ ✓ test/rules/core/table-blocking.test.ts > a non-empty queue blocks the game > TC-BL-04: human commands → tableSyncPending (own turn or not); legal actions [] for both viewers 14ms
+ ✓ test/rules/core/table-blocking.test.ts > a non-empty queue blocks the game > the AI side (origin auto) is blocked too — the runner never gets a legal step 11ms
+ ✓ test/rules/core/table-blocking.test.ts > a non-empty queue blocks the game > order: gameOver → 409 → commandUnavailable → notYourSide come before tableSyncPending; it comes before notYourTurn 21ms
+ ✓ test/rules/core/table-blocking.test.ts > a non-empty queue blocks the game > TC-PH-06/C-3: REGISTER_CARD is allowed while initialSetup is pending; CONFIRM is the other exception 5ms
+ ✓ test/rules/core/table-blocking.test.ts > a non-empty queue blocks the game > TC-BL-01 (rules part): after the last confirmation the AI side has legal actions again 15ms
+ ✓ test/rules/core/table-blocking.test.ts > a non-empty queue blocks the game > human Rebels: registration + confirmation unblock the game in either order 5ms
+ ✓ test/rules/core/table-blocking.test.ts > digital games are never blocked > no table → the same checks and legal actions as before SWR-010 3ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > 9 eligible bases; Bothawui neighbours exist for the "entered the base" variant 1ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > easy: the Rebels did not touch the base (pass / public activation) — every base gives the same decisions 338ms
+ ✓ test/server/physical-seeds.test.ts > SWR-010 e2e seeds (physical table / cards) > every seed session puts the (provisional) base in Rodia 1ms
+ ✓ test/server/physical-seeds.test.ts > SWR-010 e2e seeds (physical table / cards) > physical-rebels-registration: human Rebels, initial setup confirmed, registerBase at the head 17ms
+ ✓ test/server/physical-seeds.test.ts > SWR-010 e2e seeds (physical table / cards) > physical-empire-ai-task-pending: human Empire, the AI Rebels activated their hidden base — AI waits 37ms
+ ✓ test/server/physical-seeds.test.ts > SWR-010 e2e seeds (physical table / cards) > physical-empire-refresh-pending: human Empire, head = refresh with takeProbeCards (the drawn cards) 10ms
+ ✓ test/server/physical-seeds.test.ts > SWR-010 e2e seeds (physical table / cards) > digital-empire-after-refresh: digital, human Empire to move in round 2 with 2 probe cards 14ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > TC-RF-01: the two TOP deck cards go to the Empire; event between LEADERS_RETURNED and TIME_ADVANCED 9ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > TC-RF-02: 3 Refreshes → hand 6, deck 19, draw order = deck order 2ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > TC-RF-03 (A-8): 1 card left → draws 1; empty deck → draws 0, no event, no error 2ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > TC-RF-04 / R2: a legacy state (no cards) draws nothing; the card field never appears 1ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > TC-RF-05: one pass is not a Refresh — nothing drawn 1ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > the input state is never mutated by the draw 1ms
+ ✓ test/rules/core/cards-refresh.test.ts > Refresh step 3 (AC-6) > determinism (AC-17): the same 13 rounds twice → byte-identical states and logs 2ms
+ ✓ test/schema/legacy-core.test.ts > R1: legacy core-v1 states parse byte-identically > golden-empire-win finalState 10ms
+ ✓ test/schema/legacy-core.test.ts > R1: legacy core-v1 states parse byte-identically > golden-rebels-time finalState 9ms
+ ✓ test/schema/legacy-core.test.ts > R1: legacy core-v1 states parse byte-identically > seed ai-empire-before-reveal 2ms
+ ✓ test/schema/legacy-core.test.ts > R1: legacy core-v1 states parse byte-identically > seed hotseat-empire-before-win 1ms
+ ✓ test/schema/legacy-core.test.ts > R5: mock-v1 and v1/v2 upcasts unchanged > v1/state.v1.empire-ai.json → mock-v1 v3, stable on re-parse, no card fields 6ms
+ ✓ test/schema/legacy-core.test.ts > R5: mock-v1 and v1/v2 upcasts unchanged > v1/state.v1.rebellion-human.json → mock-v1 v3, stable on re-parse, no card fields 2ms
+ ✓ test/schema/legacy-core.test.ts > R5: mock-v1 and v1/v2 upcasts unchanged > v2/state.v2.empire-ai.json → mock-v1 v3, stable on re-parse, no card fields 1ms
+ ✓ test/schema/legacy-core.test.ts > R5: mock-v1 and v1/v2 upcasts unchanged > v2/state.v2.rebels-human-handoff.json → mock-v1 v3, stable on re-parse, no card fields 5ms
+ ✓ test/schema/legacy-core.test.ts > R5: mock-v1 and v1/v2 upcasts unchanged > mock-v1 states reject the card fields (strict) 1ms
+ ✓ test/schema/card-catalog.test.ts > catalog identity (AC-2) > id / game / edition (W1-Q1: editionId "base") 1ms
+ ✓ test/schema/card-catalog.test.ts > catalog identity (AC-2) > TC-REG-04: the whole catalog and every record pass the platform schemas 3ms
+ ✓ test/schema/card-catalog.test.ts > catalog identity (AC-2) > TC-REG-05: id snapshot (types + sorted card ids are stable) 5ms
+ ✓ test/schema/card-catalog.test.ts > probe cards (AC-3) > TC-REG-06: exactly 31, one per core-v1 system except Coruscant, no duplicates, verified, no-play 3ms
+ ✓ test/schema/card-catalog.test.ts > probe cards (AC-3) > TC-REG-07: mission / project / action / objective / tactic are deferred types without cards 0ms
+ ✓ test/schema/card-catalog.test.ts > probe cards (AC-3) > TC-REG-08: no Coruscant card; every probe system is on the core-v1 map 0ms
+ ✓ test/schema/card-catalog.test.ts > probe cards (AC-3) > the platform catalog validator rejects a card of a deferred type or with an unknown effect 1ms
+ ✓ test/schema/card-catalog.test.ts > probe cards (AC-3) > first game: the 5 removed probe systems = start-setup base-ineligible systems − Coruscant 0ms
+ ✓ test/schema/card-catalog.test.ts > probe cards (AC-3) > helpers: probeDefinitionId / probeInstanceId / probeSystemOf 1ms
+ ✓ test/schema/card-catalog.test.ts > i18n keys (plan-backend §9, FQ-4) > type names cards.types.<id>, descriptions cards.typeInfo.<id> 0ms
+ ✓ test/schema/card-catalog.test.ts > i18n keys (plan-backend §9, FQ-4) > full list of catalog key strings (for the web locales) 0ms
+ ✓ test/schema/card-catalog.test.ts > zones (plan-backend §3.3) > five zones in order, each a valid platform policy 0ms
+ ✓ test/schema/card-catalog.test.ts > zones (plan-backend §3.3) > policy table 0ms
+ ✓ test/schema/card-catalog.test.ts > zones (plan-backend §3.3) > engine context: layout + catalog type lookup 0ms
+ ✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > same sessionId + same human script → byte-identical final state, log and every intermediate state 482ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARDS_DRAWN > the Empire sees its definition ids; the Rebels see side + count only 4ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARDS_DRAWN > the redaction does not alias the stored event (fresh payload arrays) 0ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARDS_DRAWN > metamorphic: the Rebels log is identical whatever probes the Empire drew 0ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARDS_DRAWN > the count stays public after the end of the game; ids stay hidden from the Rebels (forever in v0) 4ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARDS_DRAWN > command events (the response channel) are redacted the same way 1ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARD_REGISTERED > the Rebels (owner) see the card; the Empire gets null while the base is hidden 2ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARD_REGISTERED > metamorphic (S5): the Empire log is identical whichever system the Rebels registered 6ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > CARD_REGISTERED > after the reveal / the end of the game the Empire sees the registered card 1ms
+ ✓ test/rules/core/cards-events-redaction.test.ts > TABLE_TASK_CONFIRMED > is public (copied as is for both sides) 1ms
+ ✓ test/rules/core/cards-reveal.test.ts > base reveal and the Location card (§3.6) > BASE_REVEALED moves the Location card to rebels-base-revealed; the state stays valid 9ms
+ ✓ test/rules/core/cards-reveal.test.ts > base reveal and the Location card (§3.6) > revealLocationCard is a no-op without cards (legacy reveal unchanged) 1ms
+ ✓ test/rules/core/cards-reveal.test.ts > base reveal and the Location card (§3.6) > time victory without a reveal: the card stays in the Location, visible to the Empire after the end 4ms
+ ✓ test/rules/core/cards-register.test.ts > validateRegisterLocation (§5.5 REGISTER branch, rules part) > accepts every eligible system card while the registration is pending 3ms
+ ✓ test/rules/core/cards-register.test.ts > validateRegisterLocation (§5.5 REGISTER branch, rules part) > order: gameOver → registrationUnavailable → unknownCard → cardNotEligible; details echo the request 2ms
+ ✓ test/rules/core/cards-register.test.ts > validateRegisterLocation (§5.5 REGISTER branch, rules part) > digital, human Empire, the Empire as actor → registrationUnavailable 3ms
+ ✓ test/rules/core/cards-register.test.ts > applyRegisterLocation (§5.6) > another system: card → Location, deck reshuffled (seed `<id>|probe-deck|registered`), base and units move, event 3ms
+ ✓ test/rules/core/cards-register.test.ts > applyRegisterLocation (§5.6) > the provisional system itself: units stay, card registered 1ms
+ ✓ test/rules/core/cards-register.test.ts > applyRegisterLocation (§5.6) > deterministic: same state + command → identical result 2ms
+ ✓ test/rules/core/cards-register.test.ts > applyRegisterLocation (§5.6) > a second registration (Location already filled / digital game) is a programming error → throws 7ms
+ ✓ test/rules/core/cards-register.test.ts > applyRegisterLocation (§5.6) > a board changed before the registration is a corrupt state → throws 1ms
+ ✓ test/schema/setup.test.ts > REBELLION_SETUP_DEFAULTS (TC-U-03, AC-02) > is exactly the PO defaults, frozen, and a valid input 2ms
+ ✓ test/schema/setup.test.ts > REBELLION_SETUP_DEFAULTS (TC-U-03, AC-02) > supported lists: only base; digital + physical_companion (SWR-010, frozen) 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-04: rebels vs AI easy 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-04: rebels vs AI normal 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-04: rebels vs AI hard 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-04: empire vs AI easy 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-04: empire vs AI normal 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-04: empire vs AI hard 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-05: AI without aiDifficulty → normal 1ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — valid input (TC-U-04..06) > TC-U-06: human without difficulty or with null → aiDifficulty null, opponent derived 1ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-07: human + aiDifficulty easy → issue at aiDifficulty 1ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-07: human + aiDifficulty normal → issue at aiDifficulty 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-08 (Q-6): AI + aiDifficulty null → issue at aiDifficulty 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-09: unknown playerFaction = "rebellion" → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-09: unknown opponentType = "robot" → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-09: unknown aiDifficulty = "insane" → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-09: unknown ruleset = "expansion" → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-09: unknown gameMode = "vr" → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-10: extra field aiFaction = "empire" → unrecognized_keys 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-10: extra field opponentFaction = "empire" → unrecognized_keys 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-10: extra field opponentFaction = "rebels" → unrecognized_keys 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-10: extra field humanFaction = "rebels" → unrecognized_keys 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-10: extra field opponent = {"kind":"ai"} → unrecognized_keys 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-10: extra field schemaVersion = 2 → unrecognized_keys 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-11 (Q-7): missing playerFaction → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-11 (Q-7): missing opponentType → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-11 (Q-7): missing ruleset → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > TC-U-11 (Q-7): missing gameMode → issue at that field 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > non-object undefined → invalid, never throws 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > non-object null → invalid, never throws 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > non-object "rebels" → invalid, never throws 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > non-object undefined → invalid, never throws 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — invalid input → kind invalid (400) > non-object 42 → invalid, never throws 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8; SWR-010 AC-22) > the schema accepts the values; availability rejects them 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8; SWR-010 AC-22) > physical_companion vs AI (rebels) → supported settings (SWR-010 AC-22, TC-SET-04 unit part) 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8; SWR-010 AC-22) > physical_companion vs AI (empire) → supported settings (SWR-010 AC-22, TC-SET-04 unit part) 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8; SWR-010 AC-22) > isSupportedGameModeFor: physical_companion ⇒ AI opponent; digital for both 0ms
+ ✓ test/schema/setup.test.ts > parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8; SWR-010 AC-22) > schema errors win over availability (400 before 422) 0ms
+ ✓ test/ai/describe-cards.test.ts > round 1 and legacy games: byte-identical SWR-008 situation (R6) > AI Empire game at creation: no card line; equal to the same game without cards 4ms
+ ✓ test/ai/describe-cards.test.ts > round 1 and legacy games: byte-identical SWR-008 situation (R6) > AI Rebels game at creation: no card line; equal to the same game without cards 1ms
+ ✓ test/ai/describe-cards.test.ts > round 1 and legacy games: byte-identical SWR-008 situation (R6) > a legacy game after Refreshes (cards: null) never prints a card line 1ms
+ ✓ test/ai/describe-cards.test.ts > after a Refresh > the Empire sees its own probe systems and the deck count 1ms
+ ✓ test/ai/describe-cards.test.ts > after a Refresh > the Rebels see only the public counts, never the Empire’s systems 0ms
+ ✓ test/ai/describe-cards.test.ts > after a Refresh > S2/S3: the Rebel situation is invariant to the Empire’s hand (same counts, other cards) 1ms
+ ✓ test/ai/describe-cards.test.ts > after a Refresh > S4: both situations are invariant to the deck order 1ms
+ ✓ test/ai/describe-cards.test.ts > after a Refresh > every text stays ASCII and within the section / total limits on the largest hand (RK-7) 0ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > normal: the Rebels did not touch the base (pass / public activation) — every base gives the same decisions 233ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > hard: the Rebels did not touch the base (pass / public activation) — every base gives the same decisions 191ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > easy: the Rebels activated the base and moved in from Bothawui (adjacent to both bases of the pair) 22ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > normal: the Rebels activated the base and moved in from Bothawui (adjacent to both bases of the pair) 22ms
+ ✓ test/server/automation-hidden-base.test.ts > AI Empire decisions are invariant to the hidden base (§9.3, AC-04) > hard: the Rebels activated the base and moved in from Bothawui (adjacent to both bases of the pair) 23ms
+stdout | test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > TC-DET-03: the seed depends on the version — easy chooses differently in ≥ 1 of 20 DIFF_SEEDS states
+[w8-determinism] TC-DET-03 easy picks differing after version+1: 19/20
+
+ ✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > another sessionId gives another game (seed and base depend on the session) 91ms
+ ✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > TC-DET-03: the seed depends on the version — easy chooses differently in ≥ 1 of 20 DIFF_SEEDS states 613ms
+stdout | test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > TC-DET-05: golden hash of bot-vs-bot swr006-p01 (normal / normal)
+[w8-determinism] TC-DET-05 swr006-p01 normal/normal hash=c0dcc415 version=114 outcome={"winner":"rebels","reason":"timeReachedReputation"}
+
+ ✓ test/ai/sim/determinism.test.ts > AC-05 — determinism of simulated games > TC-DET-05: golden hash of bot-vs-bot swr006-p01 (normal / normal) 24ms
+
+ Test Files  21 passed (21)
+      Tests  235 passed (235)
+   Start at  04:01:58
+   Duration  1.55s (tests 50%, import 34%, transform 15%, worker 1%)
+
+EXIT=0
+
+## apps/web (SWR-010 files)
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/web
+
+ ✓ src/games/rebellion/core-v1/cards/CardDetail.test.tsx > CardDetail (SWR-010 FE-A, AC-20) > TC-DET-01 (ru): name, type, type info, usage, effect, where, authority, sources, verification 124ms
+ ✓ src/games/rebellion/core-v1/cards/CardDetail.test.tsx > CardDetail (SWR-010 FE-A, AC-20) > TC-DET-01 (en): English texts, physical authority 29ms
+ ✓ src/games/rebellion/core-v1/cards/CardDetail.test.tsx > CardDetail (SWR-010 FE-A, AC-20) > FIX-QA1 D-1: a probe in the Rebel Location lists the base-location usage first; no zone kind = no mark 28ms
+ ✓ src/games/rebellion/core-v1/cards/CardDetail.test.tsx > CardDetail (SWR-010 FE-A, AC-20) > TC-DET-02: no «Play» button — the only button is «Закрыть» 16ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-01 (ru): own Location with name, type, parameter, availability, description; Empire only counts 131ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-01 (en): English texts, no Cyrillic 52ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-02: human Empire sees its probes («базы здесь нет»), the Rebel Location is a count only 22ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-02 (TC-C-01/02): PO defaults — Rebels, AI, Normal, Base, Digital; caption; prototype note; Start enabled 195ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > after the reveal the Empire sees the base card in the public revealed zone 33ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreBoardList.test.tsx > CoreBoardList (P1, plan-frontend §5.3 step 3, §9) > systems carry region / remote / contested / activated markers from the view 80ms
+ ✓ src/games/rebellion/core-v1/cards/CardDetail.test.tsx > CardDetail (SWR-010 FE-A, AC-20) > TC-DET-03: Esc and «Закрыть» close the detail and return the focus to the card 187ms
+ ✓ src/games/rebellion/core-v1/cards/CardDetail.test.tsx > CardDetail (SWR-010 FE-A, AC-20) > TC-DET-04 (FQ-5): a catalog entry not `verified` shows an amber «требует проверки» badge 6ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-03: select by mouse and keyboard (aria-pressed), Card Detail opens; click again closes 199ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > PhysicalExecutionPanel (AC-21) > TC-PX-10: AI task — header, region with three blocks, numbered steps, text status «AI waits» 173ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > PhysicalExecutionPanel (AC-21) > initial setup (ru) without AI waiting: «Синхронизируйте стол…»; en texts without Cyrillic 42ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > PhysicalExecutionPanel (AC-21) > initialSetup head: no registration form yet (FD-3) 17ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-02 / Q-19: defaults again on every mount (change → leave → come back) 248ms
+ ✓ src/games/rebellion/core-v1/table/useTableCommands.test.tsx > useTableCommands — CONFIRM_TABLE_TASK (AC-21, AC-12) > TC-PX-04: a double click sends exactly one command with the head id and the cached version 218ms
+ ✓ src/games/rebellion/core-v1/table/useTableCommands.test.tsx > useTableCommands — CONFIRM_TABLE_TASK (AC-21, AC-12) > TC-PX-05: two synchronous confirms (click + Enter before the re-render) → one request 74ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-04: digital — the only buttons are the cards themselves (no play / action keys) 29ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-04: physical before the registration — «не зарегистрирована» and the only action key 59ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-07: legacy game → «В этой партии карты не отслеживаются» (ru, en) 17ms
+ ✓ src/games/rebellion/core-v1/table/LocationRegisterForm.test.tsx > LocationRegisterForm (AC-10, AC-21) > TC-PX-02: options = only the eligible systems from the server, sorted by name, none preselected 201ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreBoardList.test.tsx > CoreBoardList (P1, plan-frontend §5.3 step 3, §9) > armed leader: targets are data-activatable; selecting one offers system-item-<id>-activate 205ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > PhysicalExecutionPanel (AC-21) > registerBase head: the registration form, no «Done on the table» key 65ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > PhysicalExecutionPanel (AC-21) > after the game is over the queue is still shown and confirmable (C-5) 49ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > TC-HAND-08: a new view (Refresh: +2 probes) updates the counts without a reload 60ms
+ ✓ src/games/rebellion/core-v1/cards/CardHandPanel.test.tsx > CardHandPanel (SWR-010 FE-A, AC-19) > the selection is dropped when the selected card leaves the view 88ms
+ ✓ src/games/rebellion/core-v1/table/useTableCommands.test.tsx > useTableCommands — CONFIRM_TABLE_TASK (AC-21, AC-12) > 422 → inline text under the head task (role=alert), no snackbar 80ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-03 (TC-C-03/04): Empire ↔ Rebels flips the caption for AI and for a second player; one card checked 190ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > PhysicalExecutionPanel (AC-21) > an inline error belongs to its task: shown for the head only 66ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > hidden information (AC-15, TC-PX-08, plan-frontend §5.4) > human Empire: an AI move into the base names only the «Rebel Base» space, never the base system 17ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > hidden information (AC-15, TC-PX-08, plan-frontend §5.4) > human Empire Refresh: «take X and Y» names exactly the drawn probe cards 27ms
+ ✓ src/games/rebellion/core-v1/table/PhysicalExecutionPanel.test.tsx > hidden information (AC-15, TC-PX-08, plan-frontend §5.4) > human Rebels Refresh: the Empire draw is a count only — no card of the opponent in the DOM 17ms
+ ✓ src/games/rebellion/core-v1/table/useTableCommands.test.tsx > useTableCommands — CONFIRM_TABLE_TASK (AC-21, AC-12) > 409 (stale version) → snackbar, no inline error, no second request 75ms
+ ✓ src/games/rebellion/core-v1/table/useTableCommands.test.tsx > useTableCommands — CONFIRM_TABLE_TASK (AC-21, AC-12) > the last task confirmed → «Стол синхронизирован», no new head 37ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreBoardList.test.tsx > CoreBoardList (P1, plan-frontend §5.3 step 3, §9) > keyboard: one Tab stop, arrows move, Enter selects 127ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreBoardList.test.tsx > CoreBoardList (P1, plan-frontend §5.3 step 3, §9) > Empire before the reveal: the hidden zone comes only from the view (no base system marked) 60ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreBoardList.test.tsx > CoreBoardList (P1, plan-frontend §5.3 step 3, §9) > SWR-009 C2 (AC-14): selected row = amber edge + selection fill; rows in paper text; the activate key is primary 58ms
+ ✓ src/games/rebellion/core-v1/table/LocationRegisterForm.test.tsx > LocationRegisterForm (AC-10, AC-21) > choose → Register → dialog; Cancel sends nothing; Confirm sends REGISTER_CARD 500ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar rail (SWR-009 C2) > order: turn panel → turn keys → inspector → tabs; aside named 259ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar rail (SWR-009 C2) > fix 1: data-manifest-open follows the inspector rule (request matches the selection, no armed leader) 258ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar — SWR-010 FE-B: console mode and the Cards tab (plan-frontend §2.2) > tabs Log · Cards · Objects · Game; the Cards panel mounts the Card Hand 136ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar — SWR-010 FE-B: console mode and the Cards tab (plan-frontend §2.2) > turn mode: TurnPanel + TurnControls; physical mode: Physical Execution + «Done on the table» 102ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar — SWR-010 FE-B: console mode and the Cards tab (plan-frontend §2.2) > turn → physical from the view (the pass started a Refresh): focus on the PX heading + «Задача стола» 141ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > console: header, status bar, map housing, rail with turn controls / context / tabs, footer 616ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-04 (TC-C-05): human hides difficulty, back to AI restores the last one (Q-19); POST without difficulty 772ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-11): Empire + AI hard → POST { gameId, setup } with Idempotency-Key, cached, replace to /sessions/:id 98ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar — SWR-010 FE-B: console mode and the Cards tab (plan-frontend §2.2) > physical → turn when the last task is confirmed: focus on the turn heading 103ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > SWR-009 §4: DOM order = Tab order — h1 → skip links → header → status → map → rail → footer 176ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-05 client (TC-C-06, TC-SET-05): RotE is shown «скоро», aria-disabled, described, not selectable by click or arrows 43ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.meta: ru and en have the same keys (plural forms normalised), no empty texts 3ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.common: ru and en have the same keys (plural forms normalised), no empty texts 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.setup: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.session: ru and en have the same keys (plural forms normalised), no empty texts 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.board: ru and en have the same keys (plural forms normalised), no empty texts 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.gameData: ru and en have the same keys (plural forms normalised), no empty texts 4ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.errors: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.list: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.match: ru and en have the same keys (plural forms normalised), no empty texts 3ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.data: ru and en have the same keys (plural forms normalised), no empty texts 11ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.map: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.turn: ru and en have the same keys (plural forms normalised), no empty texts 3ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.manifest: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.cards: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > rebellion.table: ru and en have the same keys (plural forms normalised), no empty texts 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > ru plural keys have one/few/many/other, en plural keys have one/other 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > every system, region and piece type of the scenario has ru and en names (A-12, R-14) 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > en texts contain no Cyrillic (TC-E2E-26) 5ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > every Rebellion error messageKey has ru and en text in rebellion.errors (PA-5) 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > definition descriptionKey/coverAltKey resolve to non-empty ru and en texts (R-1) 3ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > Rebellion locales (rebellion.*) > SWR-004 setup form: keys for every FactionId, OpponentType, GameRuleset, GameMode (TC-C-22) 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > rebellion.match exists in ru and en 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > rebellion.data exists in ru and en 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > rebellion.map exists in ru and en 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > rebellion.turn exists in ru and en 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > every core data id has ru and en names in rebellion.data (systems, regions, leaders, unit types) 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > every core event type has match:log.<TYPE> (ru, en); auto variants for PASSED / ACTIVATION_FINISHED 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > announcements, outcome winners/reasons, phases have texts; side grammar variants exist for both factions 1ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-005 core-v1 locales (TC-C-08, plan-frontend §8) > Q-FE-8: phase `command` is «Приказы» in ru (also for old sessions and the handoff screen) 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-006 AI Commander locales (R-7, AC-10, plan-frontend §7.2) > ai.* / turn panel keys exist in ru and en; the old «авто» chip and hint are gone 0ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-006 AI Commander locales (R-7, AC-10, plan-frontend §7.2) > no ru/en text contains «ещё не реализован» / «not implemented yet» (except gamePage:comingSoon) 2ms
+ ✓ src/games/rebellion/locales.i18n.test.ts > SWR-006 AI Commander locales (R-7, AC-10, plan-frontend §7.2) > no ru/en text contains «AI не ходит» / «AI does not move»; difficulty hint is about AI Commander 1ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-22 (TC-SET-01 client): rebels vs AI — physical_companion available, hint shown, POST with gameMode physical_companion 111ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > SWR-009 §4: console grid — areas per width (mobile-first media queries on game-table), case background 108ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar — SWR-010 FE-B: console mode and the Cards tab (plan-frontend §2.2) > «Register the base card» in the Card Hand focuses the system select of the registration form 153ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > card fixtures (plan-frontend §10) > rebels digital parses with PlayerViewSchema and lists every zone in order 15ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > card fixtures (plan-frontend §10) > empire with probes parses with PlayerViewSchema and lists every zone in order 2ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > card fixtures (plan-frontend §10) > empire revealed parses with PlayerViewSchema and lists every zone in order 5ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > card fixtures (plan-frontend §10) > rebels physical unregistered parses with PlayerViewSchema and lists every zone in order 2ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > card fixtures (plan-frontend §10) > empire game over parses with PlayerViewSchema and lists every zone in order 1ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > card fixtures (plan-frontend §10) > the opponent cards never appear in the JSON of a view (hidden zones are counts only) 1ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > handModel (plan-frontend §4.1) > legacy game (cards: null) → tracked false, nothing else 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > handModel (plan-frontend §4.1) > human Rebels: own Location (Yavin); Empire probes are a count; deck is a count; removed are public 1ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > handModel (plan-frontend §4.1) > human Empire: own probes, the Location of the Rebels is a count only 1ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > handModel (plan-frontend §4.1) > human Empire after the reveal: the base card is visible in the public revealed zone 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > handModel (plan-frontend §4.1) > physical, before the registration → notRegistered; the Location is empty and physical 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > handModel (plan-frontend §4.1) > hot-seat: the viewer decides own / opponent 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > cardUiStore (plan-frontend §3.1) > a new session drops the selection; a still-visible card stays selected 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/handModel.test.ts > cardUiStore (plan-frontend §3.1) > a card that moved (base revealed) or is no longer visible (viewer switch) is dropped 0ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > consoleMode / queue selectors (plan-frontend §2.1) > turn without a table (digital / legacy) and with an empty queue; physical while tasks exist 3ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > consoleMode / queue selectors (plan-frontend §2.1) > stays physical after the game is over while tasks remain (C-5) 3ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > consoleMode / queue selectors (plan-frontend §2.1) > head = first task; aiWaiting and registration straight from the view 1ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > the sample covers every TABLE_STEP_KEYS entry 1ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > ru: every step key has a text, no raw key, no «{{», no «—» 9ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > en: every step key has a text, no raw key, no «{{», no «—» 1ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > names: cards, leaders, grouped units, systems; numbers as is 1ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > a null system is the «Rebel Base» space (ru and en) 0ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > a missing or malformed parameter becomes «—», without throwing 1ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > stepValues / stepText (plan-frontend §8.3) > opponentDrewProbeCards: a count only, RU plural 0ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > affectedItems > lists names; a null system is the «Rebel Base» space; the hidden base is never named 0ms
+ ✓ src/games/rebellion/core-v1/table/model/tableModel.test.ts > affectedItems > refresh of the human Empire names its drawn probe cards; of the human Rebels — nothing but the count 0ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > coreLogMessage (SWR-005 P2, TC-C-09) > every core event type has a localized text (ru, en), no keys / «undefined» leak 7ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > coreLogMessage (SWR-005 P2, TC-C-09) > exact ru texts: activation, move, phase, time, leaders, reveal, game over 1ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > coreLogMessage (SWR-005 P2, TC-C-09) > AI auto-pass / auto-finish (AM-BE-4, AC-08): «Империя (AI) пасует», side grammar per faction; isAutoEvent 1ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > coreLogMessage (SWR-005 P2, TC-C-09) > hidden rebel-base zone (AC-10): a null system is «скрытая зона», never an id lookup 8ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > coreLogMessage (SWR-005 P2, TC-C-09) > unknown event type → rebellion.match:log.unknown; unknown leader / system fall back to the id 1ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > SWR-006 L-1: every event of the AI side reads «(AI)» (Q-FE-4) > activation and move of the AI Empire (Rebels game) → «Империя (AI): …»; the human side has no «(AI)» 0ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > SWR-006 L-1: every event of the AI side reads «(AI)» (Q-FE-4) > AI Rebels moving out of the hidden base (human Empire) → «Повстанцы (AI): юнит — скрытая зона → …» 0ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > SWR-006 L-1: every event of the AI side reads «(AI)» (Q-FE-4) > a pass / finish of the AI side without `payload.auto` still reads «(AI)»; hot-seat — never 1ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > announcementText (FE-0 contract rebellion.match:announce.*) > every announcement kind renders a full sentence in ru and en 2ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > SWR-010 FE-0: card and physical-table events > own draw names the cards; the opponent sees only the count (ru, en) 1ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > SWR-010 FE-0: card and physical-table events > registration names the system only when the server sent the card 0ms
+ ✓ src/games/rebellion/core-v1/sidebar/coreLogMessage.test.ts > SWR-010 FE-0: card and physical-table events > every confirmed task kind has its own text (ru, en), no key leaks 1ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreSidebar.test.tsx > CoreSidebar — SWR-010 FE-B: console mode and the Cards tab (plan-frontend §2.2) > … while the initial setup is still the head, it focuses the Physical Execution heading 160ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > SWR-009 K-7 skeleton: map housing (screen + legend) and rail order turn panel → controls → inspector → tabs 107ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-22 (TC-SET-01 client): empire vs AI — physical_companion available, hint shown, POST with gameMode physical_companion 123ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsInitial parses with PlayerViewSchema 12ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsRegistered parses with PlayerViewSchema 1ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsAiTasks parses with PlayerViewSchema 1ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsEmptyQueue parses with PlayerViewSchema 1ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > empireInitial parses with PlayerViewSchema 1ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > empireTasks parses with PlayerViewSchema 1ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsInitial: task ids are t-<version>-<n> 0ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsRegistered: task ids are t-<version>-<n> 0ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsAiTasks: task ids are t-<version>-<n> 1ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > rebelsEmptyQueue: task ids are t-<version>-<n> 0ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > empireInitial: task ids are t-<version>-<n> 0ms
+ ✓ src/games/rebellion/core-v1/table/tableFixtures.test.ts > tableFixtures > empireTasks: task ids are t-<version>-<n> 0ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-22 (TC-SET-02 client): second player — physical «только против AI», aria-disabled, described; a chosen physical resets to digital with an announcement 118ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-22: EN texts of the physical mode (hint, «AI only» badge and description) 127ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > skip links focus the turn panel heading and the object list 276ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > skip links are clipped until focused, not hidden by a negative offset (SWR-006 D-1: content above the table) 95ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-05 client (TC-C-06): validateSetup rejects → alert with the game text, no POST, focus stays on Start 94ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-10 (TC-C-08): pending — busy form and button, «Создание партии…», groups/cancel disabled; double click + Enter → 1 POST 60ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > AI auto-pass entry (SWR-006 L-2): data attrs, «Повстанцы (AI) пасуют» + chip «AI»; no «авто» / hint 99ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): 400 VALIDATION → alert, values kept, not busy, focus on Start; retry → 201 → table 123ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > SWR-009 C2: data-time = event.at (ISO), <time> shows HH:MM of that instant; AI rows have the 2 px red edge, others not 18ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > SWR-009 C2 (AC-16): no invented clock — every shown time comes from an event of the view 9ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > every event of the AI Empire is marked (Q-FE-4): activation, move, finish without `auto`; human ones are not 17ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > hot-seat: no event is marked as the AI's 16ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > L-4 hidden base: AI Rebels moving in/out of the base read «скрытая зона» for the human Empire; the base system never shows 12ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > hidden zone, base reveal, game over entries; en texts without Cyrillic 20ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > CoreEventLog (SWR-005 P2, TC-C-09, AC-08) > empty log → «Событий пока нет» 7ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable composition (P1, plan-frontend §3.4) > Esc first drops the armed leader (selection kept), then clears the selection 232ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19) > legend: remote, contested, activated, hidden base zone (and the rest) with text 64ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19) > «Партия» tab: time, reputation, phase, passed, base unknown for the Empire, status + slice text (legend → map housing, SWR-009) 24ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19) > SWR-006 R-6: rows «Противник» and «AI Commander» (bot / OpenAI / none); hot-seat — no AI Commander row 40ms
+ ✓ src/games/rebellion/core-v1/sidebar/CoreEventLog.test.tsx > MapLegend + CoreGameInfoPanel (SWR-005 P2, TC-C-19) > «Партия» tab after the game: status «Завершена» from view.outcome, base visible (Q-14) 8ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): 422 SETUP_UNSUPPORTED → alert, values kept, not busy, focus on Start; retry → 201 → table 138ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable — AI Commander through SessionHost (SWR-006 R-5, R-8) > pending AI turn on load: one run; «ИИ думает…» + actions blocked while it runs; summary read out once 144ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable — AI Commander through SessionHost (SWR-006 R-5, R-8) > hot-seat core-v1: no AI Commander, no summary, no «ИИ думает…», no run (R-8) 93ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > sources are found 2ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./CardDetail.tsx: no hex colours, no <img>, no rebelBase 1ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./CardHandPanel.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./CardItem.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./CardZoneSection.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./CardsNotTracked.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./OpponentCounts.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./cardHelpers.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./index.ts: no hex colours, no <img>, no rebelBase 1ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./model/cardUiStore.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./model/cardUsage.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./model/catalog.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > ./model/handModel.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/cards.static.test.ts > core-v1/cards static checks > the components use the UI Kit (TerminalModule, StatusBadge, KeyButton, Readout) 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > sources are found 2ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./LocationRegisterForm.tsx: no hex colours, no <img>, no rebelBase 1ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./PhysicalExecutionPanel.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./RegisterConfirmDialog.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./TableTaskCard.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./TableTaskKeys.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./TableTaskWaiting.tsx: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./index.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./model/tableErrorStore.ts: no hex colours, no <img>, no rebelBase 1ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./model/tableModel.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./useConsoleModeFocus.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/table/table.static.test.ts > core-v1/table static checks > ./useTableCommands.ts: no hex colours, no <img>, no rebelBase 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/catalog.test.ts > card catalog lookups (SWR-010 FE-A) > indexes every card, type and effect of the catalog 3ms
+ ✓ src/games/rebellion/core-v1/cards/model/catalog.test.ts > card catalog lookups (SWR-010 FE-A) > probe cards name their system; other ids → null 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/catalog.test.ts > card catalog lookups (SWR-010 FE-A) > deferred types have no cards; probe is tracked 1ms
+ ✓ src/games/rebellion/core-v1/cards/model/catalog.test.ts > card catalog lookups (SWR-010 FE-A) > every catalog / zone i18n key has a non-empty ru and en text in rebellion.data 3ms
+ ✓ src/games/rebellion/core-v1/cards/model/catalog.test.ts > card catalog lookups (SWR-010 FE-A) > names: card = system name, type and zone names localized; unknown ids fall back to the id 2ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > DEFAULT_SETUP = PO defaults (AC-02) and is frozen; each opening gets its own copy 3ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > AI: rebels / easy → full body with difficulty, valid for the game schema 1ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > AI: rebels / normal → full body with difficulty, valid for the game schema 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > AI: rebels / hard → full body with difficulty, valid for the game schema 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > AI: empire / easy → full body with difficulty, valid for the game schema 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > AI: empire / normal → full body with difficulty, valid for the game schema 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > AI: empire / hard → full body with difficulty, valid for the game schema 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > human: rebels (remembered difficulty easy) → no aiDifficulty at all 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > human: rebels (remembered difficulty normal) → no aiDifficulty at all 1ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > human: rebels (remembered difficulty hard) → no aiDifficulty at all 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > human: empire (remembered difficulty easy) → no aiDifficulty at all 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > human: empire (remembered difficulty normal) → no aiDifficulty at all 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > human: empire (remembered difficulty hard) → no aiDifficulty at all 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > validateSetup: defaults ok; unavailable ruleset/mode rejected (ruleset first, Q-8); garbage → invalid 0ms
+ ✓ src/games/rebellion/setup/model/setupForm.test.ts > setup form model (TC-U-03, TC-C-07, TR-12) > withOpponentType (SWR-010 §7): human resets physical_companion → digital (announced); other changes keep the mode 0ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): 409 IDEMPOTENCY_KEY_REUSED → alert, values kept, not busy, focus on Start; retry → 201 → table 117ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): 500 INTERNAL → alert, values kept, not busy, focus on Start; retry → 201 → table 81ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a probe in the Empire hand: refresh-draw first 2ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a probe in the special zone (Location): base-location first 1ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a probe in the revealed zone (Location): base-location first 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a probe in deck: no current role, catalog order 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a probe in removed: no current role, catalog order 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a probe in undefined: no current role, catalog order 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a card type without zone roles keeps its first usage as the current one 0ms
+ ✓ src/games/rebellion/core-v1/cards/model/cardUsage.test.ts > usageForZone > a preferred key missing from the catalog entry is not invented 0ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): 500 without body → alert, values kept, not busy, focus on Start; retry → 201 → table 71ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable — SWR-010 FE-B Physical Execution mode (plan-frontend §2, §9) > digital legacy game: data-console-mode="turn", data-cards-tracked="false" 58ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable — SWR-010 FE-B Physical Execution mode (plan-frontend §2, §9) > TC-RST-04 / TC-PX-06: the mode is restored from the view after a remount (reload), same task, same status 135ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): 502 non-JSON proxy error → alert, values kept, not busy, focus on Start; retry → 201 → table 72ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > AC-07 (TC-C-12/13): network failure → alert, values kept, not busy, focus on Start; retry → 201 → table 68ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > «Отмена» (setup-cancel) leads to backHref (the game page) 20ms
+ ✓ src/games/rebellion/core-v1/CoreTable.test.tsx > CoreTable — SWR-010 FE-B Physical Execution mode (plan-frontend §2, §9) > before the registration Game info says «base not registered»; the skip link goes to the PX heading 104ms
+ ✓ src/games/rebellion/setup/SetupScreen.test.tsx > Rebellion SetupScreen (SWR-004 §2) > real routes: lazy form under «← К игре»; Tab order back link → faction group → … → Start → Cancel 397ms
+
+ Test Files  20 passed (20)
+      Tests  226 passed (226)
+   Start at  04:02:00
+   Duration  5.47s (environment 30%, tests 27%, import 21%, setup 12%, transform 10%)
+
+Environment  jsdom was created 20 times · 12.42s total, 30% of tracked time
+             create it once per worker with pool: 'vmThreads' (keeps per-file isolation) or isolate: false (shares it across files)
+             learn more: https://vitest.dev/guide/improving-performance#test-environments
+
+EXIT=0
+
+## apps/api (SWR-010 files)
+
+ RUN  v5.1.1 /Users/dimatitov/WebstormProjects/Game automa/apps/api
+
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-01: defaults → 201 {sessionId, gameId, status, settings, view}; row status/key/v2 state; GAME_CREATED 233ms
+ ✓ test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-06 / TC-AI-16: Empire vs AI — the AI Rebels pass at creation (version 2); idempotent replay does not repeat it 295ms
+ ✓ test/legacy-core-cards.int.test.ts > legacy core-v1 rows without cards (R4) > GET answers cards / table null and does not rewrite the row 276ms
+ ✓ test/legacy-core-cards.int.test.ts > legacy core-v1 rows without cards (R4) > commands (reveal, Refresh) work as before; the stored state stays without cards; no CARDS_DRAWN 143ms
+ ✓ test/core-hotseat.int.test.ts > core-v1 hot-seat over HTTP (AC-09) > TC-HS-07 (+01..05a, 10): a full round for two — handoff only when the side changes 394ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-02 / TC-I-05 / TC-I-06: opponentFaction = opponentOf(playerFaction) in POST, GET and list details 110ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-03: human opponent — aiDifficulty omitted or null → stored and returned as null 30ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > legacy faction 16ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown faction 29ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown opponentType 13ms
+ ✓ test/physical-sync.int.test.ts > human Empire vs AI Rebels (physical): the AI waits for every confirmation > initial setup blocks the runner; CONFIRM lets the AI act in the same response; its task blocks again 375ms
+ ✓ test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-03 / TC-AI-04 / TC-AI-05 / TC-AI-10 / TC-AI-11: Rebels vs AI — auto pass in the same response, versions 179ms
+ ✓ test/core-hotseat.int.test.ts > core-v1 hot-seat over HTTP (AC-09) > TC-HS-06 / TC-HS-08 / TC-H-14: the inactive side and engine-foreign commands → 422, nothing changes 80ms
+ ✓ test/core-hotseat.int.test.ts > core-v1 hot-seat over HTTP (AC-09) > TC-HS-09: two parallel ACCEPT_HANDOFF → one 200, one 409; the acceptance is recorded once 43ms
+ ✓ test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-07 / TC-AI-07a: Empire vs AI — the AI passed, the Empire acts again; PASS → new round with the AI pass 60ms
+ ✓ test/core-ai-autopass.int.test.ts > core-v1 AI auto-pass over HTTP (AC-08) > TC-AI-15: two parallel player commands with one expectedVersion → one 200, one 409; the auto pass is stored once 40ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown difficulty 19ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown ruleset 13ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > unknown mode 15ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > aiFaction 22ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > opponentFaction 18ms
+ ✓ test/physical-sync.int.test.ts > human Empire vs AI Rebels (physical): the AI waits for every confirmation > CONFIRM repeat: stale expectedVersion → 409; fresh version → 422 tableTaskNotFound; nothing changes 104ms
+ ✓ test/physical-sync.int.test.ts > human Empire vs AI Rebels (physical): the AI waits for every confirmation > restart: a new app instance on the same DB restores the table; the AI still waits until the confirmation 96ms
+ ✓ test/cards-hidden-info.int.test.ts > card leak matrix (W5 channels) > human Rebels vs AI Empire (digital): S2 / S4 never reach the client; S4 / S5 never reach the AI channels 485ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > legacy humanFaction 26ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > legacy opponent 19ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > human + difficulty (TC-I-09) 8ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > ai + null difficulty (Q-6) 12ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > no ruleset (Q-7) 15ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > no gameMode (Q-7) 11ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > no playerFaction 10ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-07 / TC-I-08 / TC-I-09 / TC-I-10: invalid setup → 400 VALIDATION under setup.*, nothing stored > extra top-level field (aiFaction) → 400 from the body schema 8ms
+ ✓ test/physical-sync.int.test.ts > human Rebels vs AI Empire (physical): Location registration > REGISTER_CARD over HTTP: errors echo the request; success; repeat → 409 / 422 registrationUnavailable 87ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-11 / TC-I-12 / TC-I-13: unsupported ruleset / mode → 422 SETUP_UNSUPPORTED; schema errors first 17ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-14: order 400 body → 404 → 422 GAME_UNAVAILABLE → idempotency → 400 setup → 422 SETUP_UNSUPPORTED 23ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > Rebellion idempotency: replay 200 + header; another faction → 409; key not burnt by 400/422 (TC-I-15/16/22/23) 38ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-20 (Rebellion): 10 parallel identical POSTs → one session, never 500 28ms
+ ✓ test/cards-hidden-info.int.test.ts > card leak matrix (W5 channels) > human Empire vs AI Rebels (digital): S1 / S4 never reach the client; S3 / S4 never reach the AI channels 255ms
+ ✓ test/automation-hidden-info.int.test.ts > SWR-006 W9: hidden base in OpenAI mode (AC-04) > TC-H-04 / TC-H-06 / TC-H-07 / Q-BE-9: AI Empire — prompts are byte-identical for two games differing only in the base; no session id; logs and AiUsage never name the base 756ms
+ ✓ test/physical-sync.int.test.ts > replay determinism over HTTP (AC-17) > the same session id and the same commands on two DBs give byte-equal stored states (cards, table) 255ms
+ ✓ test/automation-hidden-info.int.test.ts > SWR-006 W9: hidden base in OpenAI mode (AC-04) > TC-H-05 / TC-H-08 (OpenAI mode): human Empire vs AI Rebels — Empire-addressed bodies clean before the reveal; requests without session id; logs and AiUsage never name the base 255ms
+ ✓ test/cards-hidden-info.int.test.ts > card leak matrix (W5 channels) > human Rebels vs AI Empire (physical): no AI call before the registration; S5 never reaches the AI; tasks carry no Imperial probe 489ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-PASSIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal
+[swr008-w10-h01] R-PASSIVE commands=8 identicalRequests=50 requestsA=51 requestsB=55 bases=ryloth/tatooine diverged=false
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-PASSIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal 1281ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-38 (creation): status is prototype in the POST / GET / list responses and in the row 31ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion (SWR-004 contract) > TC-I-35 (creation): no forbidden field in POST / replay / 409 / GET / list / setup errors 38ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion — commands on seeded mock-v1 rows > TC-I-38 / TC-M-14: status is prototype in every response and does not change after commands (Q-9) 679ms
+ ✓ test/rebellion-contract.int.test.ts > Session API × Rebellion — commands on seeded mock-v1 rows > TC-I-35 (commands): no forbidden field in command responses incl. errors and handoff 38ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-ACTIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal
+[swr008-w10-h01] R-ACTIVE commands=31 identicalRequests=49 requestsA=49 requestsB=49 bases=ryloth/tatooine diverged=false
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-01 / TC-H-05: AI Empire, human Rebels R-ACTIVE — two copies differing only in the base send byte-identical raw requests (rules block included) until a reveal 852ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-03 / TC-H-05 (QD-6): AI Rebels — another session id / budget key, spent budget and clock outside the Rebels view → byte-identical raw requests
+[swr008-w10-h03] commands=19 identicalRequests=13 base=endor idB=swr008-w10-h03-b-4
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-03 / TC-H-05 (QD-6): AI Rebels — another session id / budget key, spent budget and clock outside the Rebels view → byte-identical raw requests 322ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-04 / TC-H-05 / TC-H-08: AI Empire games to the end (2 ids × R-ACTIVE / R-PASSIVE) — no request names the base outside the Empire’s own public context before the reveal
+[swr008-w10-h04] scannedBeforeReveal=196 swr008-w10-h04-a:R-ACTIVE:requests=105:beforeReveal=13:outcome=rebels swr008-w10-h04-a2:R-PASSIVE:requests=81:beforeReveal=50:outcome=rebels swr008-w10-h04-b:R-PASSIVE:requests=69:beforeReveal=69:outcome=rebels swr008-w10-h04-b2:R-ACTIVE:requests=64:beforeReveal=64:outcome=rebels
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-04 / TC-H-05 / TC-H-08: AI Empire games to the end (2 ids × R-ACTIVE / R-PASSIVE) — no request names the base outside the Empire’s own public context before the reveal 2201ms
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-06: AI Empire inside its activation of X — base = X vs base = Y: equal decision points, rules query and request; the reveal happens only on FINISH and only where X is the base 62ms
+stdout | test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-07 (QD-7, Q-BE-1): AI Rebels, human Empire, two copies with the base elsewhere — Empire-addressed bodies and dev diagnostics clean; diagnostics rules / fallbacks / tokens / cost equal
+[swr008-w10-h07] decisions=13 scannedEmpireBodies=72 bases=rodia/ryloth
+
+ ✓ test/rules-hidden-info.int.test.ts > SWR-008 W10: hidden information with the rules context on (AC-6) > TC-H-07 (QD-7, Q-BE-1): AI Rebels, human Empire, two copies with the base elsewhere — Empire-addressed bodies and dev diagnostics clean; diagnostics rules / fallbacks / tokens / cost equal 386ms
+
+ Test Files  8 passed (8)
+      Tests  52 passed (52)
+   Start at  04:02:06
+   Duration  7.01s (tests 59%, import 33%, transform 7%)
+
+EXIT=0

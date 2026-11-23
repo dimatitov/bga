@@ -3,6 +3,7 @@ import {
   type FactionId,
   type GameMode,
   type GameRuleset,
+  isSupportedGameModeFor,
   type OpponentType,
   REBELLION_SETUP_DEFAULTS,
 } from '@bga/game-rebellion/schema';
@@ -29,4 +30,20 @@ export const DEFAULT_SETUP: Readonly<SetupFormValues> = REBELLION_SETUP_DEFAULTS
 /** A fresh, mutable copy of the defaults for one opening of the form. */
 export function initialSetupForm(): SetupFormValues {
   return { ...DEFAULT_SETUP };
+}
+
+/**
+ * Opponent change (SWR-010 §7, AC-22): a mode that is not available for the new opponent (`physical_companion`
+ * with a second player) falls back to `digital`; `modeReset` tells the screen to announce it (no form error).
+ */
+export function withOpponentType(
+  form: SetupFormValues,
+  opponentType: OpponentType,
+): { form: SetupFormValues; modeReset: boolean } {
+  if (form.opponentType === opponentType) return { form, modeReset: false };
+  const modeReset = !isSupportedGameModeFor(form.gameMode, opponentType);
+  return {
+    form: { ...form, opponentType, ...(modeReset ? { gameMode: 'digital' as const } : {}) },
+    modeReset,
+  };
 }

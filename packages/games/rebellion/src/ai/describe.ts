@@ -5,7 +5,7 @@
  * nothing here depends on the base location (Rebel pieces in the base are "the hidden zone"; base guesses come
  * from `intel`, which is itself invariant). ASCII only; every text is cut deterministically to its limit.
  */
-import type { CorePlayerView, Faction } from '../schema';
+import { probeSystemOf, type CorePlayerView, type Faction } from '../schema';
 import { possibleBaseSystems, type BaseIntel } from './intel';
 import type { BotCandidate } from './types';
 import { buildViewModel, type ForceSummary, type ViewModel } from './view-model';
@@ -123,6 +123,34 @@ function baseLines(view: CorePlayerView, intel: BaseIntel | null, model: ViewMod
 }
 
 /**
+ * SWR-010 (plan-backend §8.1, AQ-5): card knowledge of the actor, ONLY from its own `view.cards` (own cards +
+ * public counts; the opponent's cards are never in the view). Lines appear only when a count is > 0, so round 1
+ * and legacy games (`cards: null`) keep the SWR-008 text byte for byte. The Rebels' single Location card is a
+ * constant and is not printed.
+ */
+function cardLines(view: CorePlayerView): string[] {
+  const cards = view.cards;
+  if (cards === null) return [];
+  const zone = (id: string) => cards.zones.find((z) => z.id === id);
+  const probes = zone('empire-probes');
+  const deckCount = zone('probe-deck')?.count ?? 0;
+  if (probes === undefined || probes.count === 0) return [];
+  if (view.viewer === 'empire') {
+    const systems = (probes.cards ?? []).map(
+      (c) => probeSystemOf(c.definitionId) ?? c.definitionId,
+    );
+    return [
+      `Your probe cards (the Rebel base is NOT in these systems): ${list(systems)}. ` +
+        `Probe deck: ${count(deckCount, 'card')} left.`,
+    ];
+  }
+  return [
+    `The Empire holds ${count(probes.count, 'probe card')} (each names a system that is not your base); ` +
+      `probe deck: ${count(deckCount, 'card')} left.`,
+  ];
+}
+
+/**
  * Compact situation of the actor (≤ 4000): round, time/reputation, passes, leaders, base knowledge, forces,
  * the hidden zone, the current activation. Sections in a fixed order, each cut to its own budget.
  */
@@ -147,6 +175,7 @@ export function situationFor(
     `Your leaders: ${leadersText(view, me)}.`,
     `${SIDE_ADJECTIVE[other]} leaders: ${leadersText(view, other)}.`,
     ...baseLines(view, intel, model),
+    ...cardLines(view),
     `Your forces: ${list(forcesSection(model, 'own'), 'none', '; ')}.`,
     `Visible ${SIDE_ADJECTIVE[other]} forces: ${list(forcesSection(model, 'enemy'), 'none', '; ')}.`,
   ];

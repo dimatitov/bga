@@ -7,7 +7,13 @@ import { terminalTokens } from '@/shared/theme';
 import { phaseName } from '../../board';
 import { aiSideOf } from '../model/aiCommander';
 import { useCoreBoard } from '../model/coreContext';
-import { hasPassed, isGameOver, markers, visibleRebelBaseSystemId } from '../model/viewModel';
+import {
+  baseRegistrationPending,
+  hasPassed,
+  isGameOver,
+  markers,
+  visibleRebelBaseSystemId,
+} from '../model/viewModel';
 import { coreFactionName, coreSystemName } from '../sidebar/coreLogMessage';
 
 /**
@@ -84,9 +90,13 @@ export function CoreGameInfoPanel({ status }: { status: TableScreenProps['status
     },
     {
       label: t('rebellion.session:info.base'),
+      testId: 'game-info-base',
+      // SWR-010 (plan-frontend §5.3): a physical game before the Location card is registered says so instead of «unknown».
       value: baseSystemId
         ? t('rebellion.session:info.baseKnown', { system: coreSystemName(t, baseSystemId, view) })
-        : t('rebellion.session:info.baseUnknown'),
+        : baseRegistrationPending(view)
+          ? t('rebellion.table:register.notRegistered')
+          : t('rebellion.session:info.baseUnknown'),
     },
     { label: t('rebellion.match:info.rules'), value: t('rebellion.match:info.rulesValue') },
     { label: t('rebellion.session:info.version'), value: String(view.version) },

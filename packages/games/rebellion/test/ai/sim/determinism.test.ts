@@ -14,7 +14,13 @@ import { DIFF_SEEDS } from './seeds';
 const TIMEOUT = 60_000;
 
 /** TC-DET-05: hash of the final state (incl. the full log) of bot-vs-bot `swr006-p01`, normal / normal. */
-const GOLDEN_P01_NORMAL = '2669f596';
+/**
+ * SWR-010 (W5): updated from `2669f596` — new games now carry `cards` (probe deck, Location) and every Refresh logs
+ * `CARDS_DRAWN`. The bot's choices are unchanged: the same game without the card state and those events (`seq`
+ * renumbered) still hashes to the previous golden (`GOLDEN_P01_NORMAL_WITHOUT_CARDS`).
+ */
+const GOLDEN_P01_NORMAL = 'c0dcc415';
+const GOLDEN_P01_NORMAL_WITHOUT_CARDS = '2669f596';
 
 const fingerprint = (s: CoreGameState) => JSON.stringify(s);
 
@@ -101,6 +107,17 @@ describe('AC-05 — determinism of simulated games', () => {
           `outcome=${JSON.stringify(r.final.outcome)}`,
       );
       expect(hash).toBe(GOLDEN_P01_NORMAL);
+      // SWR-010: the bot's behaviour is unchanged — without the card state and the CARDS_DRAWN events the same
+      // game hashes to the SWR-006..009 golden (event `seq` renumbered).
+      const { cards: _cards, ...withoutCards } = r.final;
+      const legacy = {
+        ...withoutCards,
+        log: r.final.log
+          .filter((e) => e.type !== 'CARDS_DRAWN')
+          .map((e, i) => ({ ...e, seq: i + 1 })),
+      };
+      const legacyHash = hash32(fingerprint(legacy)).toString(16).padStart(8, '0');
+      expect(legacyHash).toBe(GOLDEN_P01_NORMAL_WITHOUT_CARDS);
     },
   );
 });

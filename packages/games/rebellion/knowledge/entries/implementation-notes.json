@@ -6,7 +6,7 @@
     "product": "base",
     "category": "general",
     "title": "What the core-v1 engine can do",
-    "text": "The engine plays only the Command Phase: on a turn a side activates a system with a leader from its pool, moves its own units into it, finishes the activation, or passes. Combat, missions, production, deployment, recruiting, probe droids, objectives, loyalty and subjugation are not implemented: rules about them do not apply, and only the actions listed by the engine exist.",
+    "text": "The engine plays only the Command Phase: on a turn a side activates a system with a leader from its pool, moves its own units into it, finishes the activation, or passes. Where a game tracks cards, the Empire draws 2 probe cards in each Refresh while the deck lasts; no other rules for probe droids exist. Combat, missions, production, deployment, recruiting, other card mechanics, objectives, loyalty and subjugation are not implemented: rules about them do not apply, and only the actions listed by the engine exist.",
     "sources": [
       { "sourceId": "RR", "page": 2, "section": "Activating Systems" },
       { "sourceId": "RR", "page": 3, "section": "Assignment Phase" }
@@ -58,8 +58,8 @@
     "status": "verified",
     "product": "base",
     "category": "refresh",
-    "title": "core-v1 Refresh: only retrieve leaders and advance time",
-    "text": "The core-v1 Refresh Phase runs only step 1 (all leaders return) and the time advance of step 5. Drawing missions, probe droids, objectives, recruiting, building and deploying are not implemented.",
+    "title": "core-v1 Refresh: retrieve leaders, draw probes, advance time",
+    "text": "The core-v1 Refresh Phase runs step 1 (all leaders return), the probe draw of step 3 (only where a game tracks cards: the Empire takes 2 probe cards while the deck lasts) and the time advance of step 5. Drawing missions and objectives, recruiting, building and deploying are not implemented.",
     "sources": [{ "sourceId": "RR", "page": 12, "section": "Refresh Phase" }],
     "discrepancyIds": ["DISC-003"],
     "related": ["rebellion:refresh.steps"],

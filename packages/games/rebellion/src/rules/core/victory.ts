@@ -9,6 +9,7 @@
  * The end of the game: `outcome` set, no activation, no handoff, event `GAME_OVER` (no system in it).
  */
 import type { CoreGameState, Outcome } from '../../schema';
+import { revealLocationCard } from './cards';
 import type { Transition } from './helpers';
 
 /** R-9 (Empire): revealed base with ≥1 Imperial unit and no Rebel unit in it. */
@@ -18,16 +19,20 @@ export function empireCapturedBase(state: CoreGameState): boolean {
   return here.some((u) => u.owner === 'empire') && !here.some((u) => u.owner === 'rebels');
 }
 
-/** Reveal the base: `revealed = true`, `BASE_REVEALED{systemId}` (public from now on). Called only by `runStateChecks`. */
+/**
+ * Reveal the base: `revealed = true`, `BASE_REVEALED{systemId}` (public from now on), the Location card onto the
+ * "Rebel Base" space when the game tracks cards. Called only by `runStateChecks`.
+ */
 export function revealBase(transition: Transition): Transition {
   const { state } = transition;
-  return {
+  // SWR-010 §3.6: the Location card goes onto the public "Rebel Base" space (no-op without cards).
+  return revealLocationCard({
     state: { ...state, rebelBase: { ...state.rebelBase, revealed: true } },
     drafts: [
       ...transition.drafts,
       { type: 'BASE_REVEALED', actor: 'system', payload: { systemId: state.rebelBase.systemId } },
     ],
-  };
+  });
 }
 
 /** End the game: `outcome`, no activation, no handoff (Q-14), `GAME_OVER`. `activeSide` is unchanged. */

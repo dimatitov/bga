@@ -104,6 +104,23 @@ export interface Played {
  */
 export function start(settings: RebellionSettings, sessionId: string): Played {
   const created = createCoreInitialState(toStoredSetup(settings), { sessionId, now: NOW });
+  const auto = drain(passModule, asLegacy(created.state), NOW);
+  return { state: auto.state, events: [...created.events, ...auto.events] };
+}
+
+/**
+ * SWR-010 (plan-backend §10.3 R3): the golden games are LEGACY games — a new state without the card / table
+ * fields, i.e. exactly what a game created before SWR-010 stores. Their files stay byte-identical; Refresh draws
+ * nothing in them. Games with cards: `startWithCards` (separate golden files).
+ */
+export function asLegacy(state: CoreGameState): CoreGameState {
+  const { cards: _cards, table: _table, ...legacy } = state;
+  return legacy;
+}
+
+/** A new session WITH cards (as `POST /sessions` stores it since SWR-010) + the AI's automated moves. */
+export function startWithCards(settings: RebellionSettings, sessionId: string): Played {
+  const created = createCoreInitialState(toStoredSetup(settings), { sessionId, now: NOW });
   const auto = drain(passModule, created.state, NOW);
   return { state: auto.state, events: [...created.events, ...auto.events] };
 }

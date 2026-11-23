@@ -1,0 +1,62 @@
+{
+  "hand": {
+    "label": "Карты",
+    "own": "Ваши карты",
+    "opponent": "Соперник: {{side}}",
+    "shared": "Общее",
+    "deferred": "Пока не отслеживаются",
+    "deferredHint": "Эти типы карт есть в игре, но приложение их пока не ведёт.",
+    "deckCount_one": "{{zone}}: {{count}} карта",
+    "deckCount_few": "{{zone}}: {{count}} карты",
+    "deckCount_many": "{{zone}}: {{count}} карт",
+    "deckCount_other": "{{zone}}: {{count}} карты",
+    "hiddenCount_one": "{{count}} карта (скрыта)",
+    "hiddenCount_few": "{{count}} карты (скрыты)",
+    "hiddenCount_many": "{{count}} карт (скрыты)",
+    "hiddenCount_other": "{{count}} карты (скрыты)",
+    "empty": "Карт нет",
+    "notRegistered": "Карта базы не зарегистрирована",
+    "register": "Зарегистрировать карту базы",
+    "noBaseHere": "Базы здесь нет",
+    "paramSystem": "Система: {{system}} · {{region}}"
+  },
+  "legacy": {
+    "title": "В этой партии карты не отслеживаются",
+    "text": "Партия создана до появления учёта карт в приложении. Используйте карты на столе как обычно."
+  },
+  "availability": {
+    "inHand": "В руке",
+    "secret": "Секретная, только у вас",
+    "physical": "Физическая карта",
+    "reference": "Вне игры",
+    "revealed": "Раскрыта"
+  },
+  "detail": {
+    "label": "Карта",
+    "type": "Тип",
+    "usage": "Условия использования",
+    "usageCurrent": "Сейчас",
+    "effect": "Эффект",
+    "where": "Где сейчас",
+    "authorityLabel": "Учёт",
+    "authority": {
+      "digital": "Ведётся приложением",
+      "physical": "Физическая карта на вашем столе"
+    },
+    "sources": "Источник правила",
+    "sourceBook": "{{source}}, с. {{page}}",
+    "sourceBookSection": "{{source}}, с. {{page}} · {{section}}",
+    "verificationLabel": "Статус проверки",
+    "close": "Закрыть",
+    "effectStatus": {
+      "none": "Без розыгрыша",
+      "not-implemented": "Эффект не поддерживается приложением",
+      "implemented": "Поддерживается"
+    }
+  },
+  "verification": {
+    "verified": "Проверено",
+    "needs-review": "Требует проверки",
+    "unverified": "Не проверено"
+  }
+}

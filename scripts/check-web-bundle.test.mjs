@@ -8,9 +8,11 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import {
+  CARD_SERVER_RULES,
   DEV_AI_AND_SECRET_RULES,
   forbiddenFromScenario,
   forbiddenGameModules,
+  forbiddenPlatformCardModules,
   forbiddenWebModules,
   gameModules,
   readMapSources,
@@ -323,6 +325,134 @@ describe('check-web-bundle: SWR-005B dev AI diagnostics and OpenAI secrets (T-18
       res = spawnSync(process.execPath, [CLI, '--dist', dist, '--modules-dir', maps], { encoding: 'utf8' });
       assert.equal(res.status, 1, res.stdout + res.stderr);
       assert.match(res.stdout, /FORBIDDEN module \.\.\/\.\.\/src\/dev\/ai\/DevAiPage\.tsx \[web-dev\]/);
+    } finally {
+      fs.rmSync(dist, { recursive: true, force: true });
+      fs.rmSync(maps, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('check-web-bundle: SWR-010 card decks are server-only (AC-23, TC-LK-17, TC-BND-02)', () => {
+  const PLATFORM = '../../../../packages/platform';
+
+  test('card rules are part of every rule set', () => {
+    const ids = rules.map((r) => r.id);
+    for (const r of CARD_SERVER_RULES) assert.ok(ids.includes(r.id), r.id);
+    // existing base-choice rules stay intact
+    assert.ok(ids.includes('rebel-base-choice-symbol'));
+  });
+
+  test('deck seed literal and server card/table symbols are found (names, strings, keys)', () => {
+    for (const [content, rule] of [
+      ['const s=`${e}|probe-deck|init`;', 'card-deck-seed'],
+      ['seedFromString(t+"|probe-deck|init")', 'card-deck-seed'],
+      ['{"seed":"g-1|probe-deck|refresh-3"}', 'card-deck-seed'],
+      ['function initCoreCards(e){return e}', 'rebellion-card-server-symbol'],
+      ['const k="drawProbeCards";', 'rebellion-card-server-symbol'],
+      ['{applyRegisterLocation:1}', 'rebellion-card-server-symbol'],
+      ['{"tasksFromEvents":[]}', 'rebellion-card-server-symbol'],
+      ['export{initialTableState as i};', 'rebellion-card-server-symbol'],
+      ['const n="chooseRebelBase";', 'rebellion-card-server-symbol'],
+    ]) {
+      assert.ok(scan(content).includes(rule), `${rule}: ${content}`);
+    }
+  });
+
+  test('no false positives on the public catalog, zone ids and card texts', () => {
+    const content = [
+      'const Z=["probe-deck","probe-box","rebels-location","rebels-base-revealed","empire-probes"];',
+      '{"cards":{"zones":{"probe-deck":"Колода зондов"}}}',
+      'e("div",{"data-testid":"card-zone-probe-deck","data-count":3});',
+      'const c={id:"probe-yavin",zone:"probe-deck",usageKeys:["cards.usage.probe-refresh-draw"]};',
+      'const t={"tasks":{"refresh":"Обновление"},"steps":{"takeProbeCards":"Возьмите {{cards}}"}};',
+      'const a="CARDS_DRAWN",b="CARD_REGISTERED",d="REGISTER_CARD",f="CONFIRM_TABLE_TASK";',
+    ].join('\n');
+    assert.deepEqual(
+      scan(content).filter((r) => CARD_SERVER_RULES.some((c) => c.id === r)),
+      [],
+    );
+  });
+
+  test('module check: platform card engine/shuffle/visibility are forbidden; cards/schema and cards/invariants are allowed', () => {
+    // Analyst Q1: invariants.ts is pure validation reached via the game state schema (no secrets/seed/ordering).
+    assert.deepEqual(
+      forbiddenPlatformCardModules([
+        `${PLATFORM}/src/cards/invariants.ts`,
+        '/abs/repo/packages/platform/dist/cards/invariants.js',
+      ]),
+      [],
+    );
+    assert.deepEqual(
+      forbiddenPlatformCardModules([
+        `${PLATFORM}/src/cards/schema.ts`,
+        `${PLATFORM}/src/cards/index.ts`,
+        `${PLATFORM}/src/errors.ts`,
+        `${PLATFORM}/src/cards/engine.ts`,
+        `${PLATFORM}/src/cards/shuffle.ts`,
+        `${PLATFORM}/src/cards/visibility.ts`,
+        '/abs/repo/packages/platform/dist/cards/engine.js',
+        '..\\..\\packages\\platform\\src\\cards\\shuffle.ts',
+        '../../src/games/rebellion/core-v1/cards/engine.ts',
+        '../../../../packages/games/rebellion/src/schema/cards.ts',
+      ]),
+      [
+        `${PLATFORM}/src/cards/engine.ts`,
+        `${PLATFORM}/src/cards/shuffle.ts`,
+        `${PLATFORM}/src/cards/visibility.ts`,
+        '/abs/repo/packages/platform/dist/cards/engine.js',
+        '../../packages/platform/src/cards/shuffle.ts',
+      ],
+    );
+    // rules/core/{cards,table}.ts are covered by the game sub-path rule
+    assert.deepEqual(
+      forbiddenGameModules([
+        '../../../../packages/games/rebellion/src/rules/core/cards.ts',
+        '../../../../packages/games/rebellion/src/rules/core/table.ts',
+        '../../../../packages/games/rebellion/src/schema/card-catalog.ts',
+      ]).map((m) => m.subpath),
+      ['rules', 'rules'],
+    );
+  });
+
+  test('CLI: seed / server symbol in dist → exit 1; card engine module in maps → exit 1; schema only → exit 0', (t) => {
+    const scenarioDist = path.resolve(path.dirname(CLI), '..', 'packages', 'games', 'rebellion', 'dist', 'scenario', 'index.js');
+    if (!fs.existsSync(scenarioDist)) {
+      t.skip('packages/games/rebellion/dist missing (run pnpm run build:packages)');
+      return;
+    }
+    const dist = fs.mkdtempSync(path.join(os.tmpdir(), 'bga-bundle-'));
+    const maps = fs.mkdtempSync(path.join(os.tmpdir(), 'bga-bundle-maps-'));
+    try {
+      fs.writeFileSync(path.join(dist, 'index.html'), '<!doctype html><div id="root"></div>');
+      fs.mkdirSync(path.join(dist, 'assets'));
+      for (const [content, rule] of [
+        ['const s=e+"|probe-deck|init";', 'card-deck-seed'],
+        ['const k="initCoreCards";', 'rebellion-card-server-symbol'],
+      ]) {
+        fs.writeFileSync(path.join(dist, 'assets', 'leak.js'), content);
+        const res = spawnSync(process.execPath, [CLI, '--dist', dist, '--skip-modules'], { encoding: 'utf8' });
+        assert.equal(res.status, 1, res.stdout + res.stderr);
+        assert.match(res.stdout, new RegExp(`FORBIDDEN assets/leak\\.js \\[${rule}\\]`));
+      }
+      fs.writeFileSync(path.join(dist, 'assets', 'leak.js'), 'const z=["probe-deck"];');
+      const sources = [
+        '../../../../packages/games/rebellion/src/schema/card-catalog.ts',
+        `${PLATFORM}/src/cards/schema.ts`,
+        `${PLATFORM}/src/cards/invariants.ts`,
+        '../../src/app/router.tsx',
+      ];
+      const writeMap = (src) =>
+        fs.writeFileSync(path.join(maps, 'index.js.map'), JSON.stringify({ version: 3, sources: src, mappings: '' }));
+      writeMap(sources);
+      let res = spawnSync(process.execPath, [CLI, '--dist', dist, '--modules-dir', maps], { encoding: 'utf8' });
+      assert.equal(res.status, 0, res.stdout + res.stderr);
+      assert.match(res.stdout, /0 platform card engine modules/);
+
+      writeMap([...sources, `${PLATFORM}/src/cards/shuffle.ts`]);
+      res = spawnSync(process.execPath, [CLI, '--dist', dist, '--modules-dir', maps], { encoding: 'utf8' });
+      assert.equal(res.status, 1, res.stdout + res.stderr);
+      assert.match(res.stdout, /FORBIDDEN module .*cards\/shuffle\.ts \[platform-cards-engine\]/);
+      assert.match(res.stdout, /1 card engine module\(s\)/);
     } finally {
       fs.rmSync(dist, { recursive: true, force: true });
       fs.rmSync(maps, { recursive: true, force: true });

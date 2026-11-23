@@ -308,6 +308,8 @@ export function makeCoreView(overrides: Partial<PlayerViewCore> = {}): PlayerVie
       },
       { type: 'PASS' },
     ],
+    cards: null,
+    table: null,
     ...overrides,
   };
 }

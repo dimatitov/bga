@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CardIdSchema } from '@bga/platform/cards';
 import { FactionSchema } from './enums';
 
 /**
@@ -57,6 +58,21 @@ export const PassCommandSchema = z.strictObject({
 });
 export type PassCommand = z.infer<typeof PassCommandSchema>;
 
+/** SWR-010 `core-v1` (`physical_companion`): the human confirms the head physical-table task. */
+export const ConfirmTableTaskCommandSchema = z.strictObject({
+  type: z.literal('CONFIRM_TABLE_TASK'),
+  taskId: z.string().min(1).max(32),
+});
+export type ConfirmTableTaskCommand = z.infer<typeof ConfirmTableTaskCommandSchema>;
+
+/** SWR-010 `core-v1` (`physical_companion`, human Rebels): register the physical Location card (Physical Hand). */
+export const RegisterCardCommandSchema = z.strictObject({
+  type: z.literal('REGISTER_CARD'),
+  zoneId: CardIdSchema,
+  definitionId: CardIdSchema,
+});
+export type RegisterCardCommand = z.infer<typeof RegisterCardCommandSchema>;
+
 /**
  * Commands of BOTH engines (AM-BE-3): a command of the other engine passes the schema and is rejected by
  * the rules with 422 `commandUnavailable`, never 400.
@@ -69,6 +85,8 @@ export const CommandSchema = z.discriminatedUnion('type', [
   ActivateSystemCommandSchema,
   FinishActivationCommandSchema,
   PassCommandSchema,
+  ConfirmTableTaskCommandSchema,
+  RegisterCardCommandSchema,
 ]);
 export type Command = z.infer<typeof CommandSchema>;
 export type CommandType = Command['type'];
@@ -86,6 +104,8 @@ export const CORE_COMMAND_TYPES = Object.freeze([
   'FINISH_ACTIVATION',
   'PASS',
   'ACCEPT_HANDOFF',
+  'CONFIRM_TABLE_TASK',
+  'REGISTER_CARD',
 ] as const satisfies readonly CommandType[]);
 export type MockCommandType = (typeof MOCK_COMMAND_TYPES)[number];
 export type CoreCommandType = (typeof CORE_COMMAND_TYPES)[number];

@@ -52,7 +52,21 @@ describe('core-v1 commands over HTTP: every rejection key (422 + nothing changed
   afterAll(() => {
     // Every game key a core-v1 session can return over HTTP is exercised here, except:
     // setup keys (session creation), `gameOver` (core-victory) and `wrongPhase` (unreachable, Q-6).
-    const elsewhere = new Set(['rulesetUnavailable', 'modeUnavailable', 'gameOver', 'wrongPhase']);
+    // SWR-010 W2: the physical-table keys are reachable only after W4 (table branch); their HTTP coverage is W5's
+    // (plan-backend §13, physical-sync int tests) — listed here so this core-commands matrix stays exhaustive.
+    const elsewhere = new Set([
+      'rulesetUnavailable',
+      'modeUnavailable',
+      'gameOver',
+      'wrongPhase',
+      'tableSyncPending',
+      'tableTaskNotFound',
+      'tableTaskNotHead',
+      'tableTaskNeedsRegistration',
+      'registrationUnavailable',
+      'unknownCard',
+      'cardNotEligible',
+    ]);
     const expected = Object.keys(REBELLION_ERROR_MESSAGE_KEYS).filter((k) => !elsewhere.has(k));
     expect([...covered].sort()).toEqual(expected.sort());
   });

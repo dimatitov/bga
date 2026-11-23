@@ -15,6 +15,7 @@ import { hasOwnLeaderIn, systemById, typeOf } from './helpers';
 export function coreLegalActions(state: CoreGameState, viewer: Faction): CoreLegalAction[] {
   if (
     state.outcome !== null ||
+    (state.table?.tasks.length ?? 0) > 0 ||
     state.handoffPending ||
     state.phase !== 'command' ||
     viewer !== state.activeSide ||

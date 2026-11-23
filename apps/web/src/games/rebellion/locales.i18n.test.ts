@@ -47,6 +47,9 @@ const TABLE_NAMESPACES = [
   'rebellion.turn',
   // SWR-009: Worker MF `manifest` (registered empty by F; MF fills it).
   'rebellion.manifest',
+  // SWR-010 FE-A: Card Hand / Card Detail chrome (`rebellion.table` is added with FE-B's `table.json`).
+  'rebellion.cards',
+  'rebellion.table',
 ] as const;
 
 /**

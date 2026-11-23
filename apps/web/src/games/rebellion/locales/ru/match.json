@@ -66,7 +66,21 @@
     "hiddenZone": "скрытая зона",
     "unknownUnit": "юнит",
     "aiActor": "{{actor}} (AI)",
-    "aiTag": "AI"
+    "aiTag": "AI",
+    "CARDS_DRAWN": "{{side}}: добор карт ({{from}}) — {{cards}}",
+    "CARDS_DRAWN_count_one": "{{side}}: добрана {{count}} карта ({{from}})",
+    "CARDS_DRAWN_count_few": "{{side}}: добраны {{count}} карты ({{from}})",
+    "CARDS_DRAWN_count_many": "{{side}}: добрано {{count}} карт ({{from}})",
+    "CARDS_DRAWN_count_other": "{{side}}: добрано {{count}} карты ({{from}})",
+    "CARD_REGISTERED": "{{actor}}: карта базы зарегистрирована — {{card}}",
+    "CARD_REGISTERED_hidden": "{{actor}}: карта базы зарегистрирована (скрыта)",
+    "TABLE_TASK_CONFIRMED": "Стол синхронизирован",
+    "TABLE_TASK_CONFIRMED_initialSetup": "Стол синхронизирован: начальная расстановка",
+    "TABLE_TASK_CONFIRMED_registerBase": "Стол синхронизирован: карта базы",
+    "TABLE_TASK_CONFIRMED_aiActivation": "Стол синхронизирован: активация AI",
+    "TABLE_TASK_CONFIRMED_aiMove": "Стол синхронизирован: перемещение AI",
+    "TABLE_TASK_CONFIRMED_refresh": "Стол синхронизирован: фаза Обновления",
+    "TABLE_TASK_CONFIRMED_baseRevealed": "Стол синхронизирован: раскрытие базы"
   },
   "announce": {
     "autoPass": "Пас AI ({{side}})",

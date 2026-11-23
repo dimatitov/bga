@@ -951,21 +951,24 @@
           {
             "seq": 13,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-kashyyyk", "probe-toydaria"]
             }
           },
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -975,11 +978,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 16,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 17,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -989,7 +1002,7 @@
             }
           },
           {
-            "seq": 17,
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "rebels",
@@ -997,7 +1010,195 @@
               "auto": false
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-felucia#1",
+                  "probe-kessel#1",
+                  "probe-hoth#1",
+                  "probe-naboo#1",
+                  "probe-yavin#1",
+                  "probe-utapau#1",
+                  "probe-ord-mantell#1",
+                  "probe-bothawui#1",
+                  "probe-tatooine#1",
+                  "probe-endor#1",
+                  "probe-mon-calamari#1",
+                  "probe-rodia#1",
+                  "probe-dathomir#1",
+                  "probe-dagobah#1",
+                  "probe-geonosis#1",
+                  "probe-ilum#1",
+                  "probe-nal-hutta#1",
+                  "probe-bespin#1",
+                  "probe-dantooine#1",
+                  "probe-alderaan#1",
+                  "probe-mygeeto#1",
+                  "probe-malastare#1",
+                  "probe-cato-neimoidia#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-ryloth#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": ["probe-kashyyyk#1", "probe-toydaria#1"]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -1936,7 +2137,197 @@
               "systemId": "naboo"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-mygeeto#1",
+                  "probe-bothawui#1",
+                  "probe-ryloth#1",
+                  "probe-yavin#1",
+                  "probe-dagobah#1",
+                  "probe-endor#1",
+                  "probe-alderaan#1",
+                  "probe-ord-mantell#1",
+                  "probe-tatooine#1",
+                  "probe-naboo#1",
+                  "probe-hoth#1",
+                  "probe-rodia#1",
+                  "probe-utapau#1",
+                  "probe-dantooine#1",
+                  "probe-bespin#1",
+                  "probe-mon-calamari#1",
+                  "probe-dathomir#1",
+                  "probe-kashyyyk#1",
+                  "probe-felucia#1",
+                  "probe-malastare#1",
+                  "probe-geonosis#1",
+                  "probe-nal-hutta#1",
+                  "probe-toydaria#1",
+                  "probe-kessel#1",
+                  "probe-cato-neimoidia#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-ilum#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": []
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -2860,7 +3251,197 @@
               "toSystemId": "kashyyyk"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-toydaria#1",
+                  "probe-mon-calamari#1",
+                  "probe-naboo#1",
+                  "probe-nal-hutta#1",
+                  "probe-felucia#1",
+                  "probe-ord-mantell#1",
+                  "probe-bothawui#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-endor#1",
+                  "probe-kashyyyk#1",
+                  "probe-malastare#1",
+                  "probe-dantooine#1",
+                  "probe-alderaan#1",
+                  "probe-ryloth#1",
+                  "probe-dagobah#1",
+                  "probe-bespin#1",
+                  "probe-tatooine#1",
+                  "probe-utapau#1",
+                  "probe-dathomir#1",
+                  "probe-kessel#1",
+                  "probe-hoth#1",
+                  "probe-rodia#1",
+                  "probe-geonosis#1",
+                  "probe-yavin#1",
+                  "probe-mygeeto#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-ilum#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": []
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -3784,7 +4365,197 @@
               "toSystemId": "cato-neimoidia"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-alderaan#1",
+                  "probe-mygeeto#1",
+                  "probe-hoth#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-dagobah#1",
+                  "probe-bespin#1",
+                  "probe-felucia#1",
+                  "probe-mon-calamari#1",
+                  "probe-utapau#1",
+                  "probe-kessel#1",
+                  "probe-malastare#1",
+                  "probe-dathomir#1",
+                  "probe-tatooine#1",
+                  "probe-naboo#1",
+                  "probe-bothawui#1",
+                  "probe-endor#1",
+                  "probe-kashyyyk#1",
+                  "probe-dantooine#1",
+                  "probe-nal-hutta#1",
+                  "probe-toydaria#1",
+                  "probe-ord-mantell#1",
+                  "probe-geonosis#1",
+                  "probe-rodia#1",
+                  "probe-ryloth#1",
+                  "probe-yavin#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-ilum#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": []
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -4733,7 +5504,197 @@
               "auto": false
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-ord-mantell#1",
+                  "probe-bothawui#1",
+                  "probe-ryloth#1",
+                  "probe-yavin#1",
+                  "probe-alderaan#1",
+                  "probe-rodia#1",
+                  "probe-kashyyyk#1",
+                  "probe-tatooine#1",
+                  "probe-bespin#1",
+                  "probe-nal-hutta#1",
+                  "probe-ilum#1",
+                  "probe-felucia#1",
+                  "probe-geonosis#1",
+                  "probe-dathomir#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-dantooine#1",
+                  "probe-hoth#1",
+                  "probe-naboo#1",
+                  "probe-toydaria#1",
+                  "probe-kessel#1",
+                  "probe-malastare#1",
+                  "probe-mon-calamari#1",
+                  "probe-utapau#1",
+                  "probe-mygeeto#1",
+                  "probe-dagobah#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-endor#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": []
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -5717,21 +6678,24 @@
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-yavin", "probe-naboo"]
             }
           },
           {
             "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -5741,11 +6705,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 17,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -5754,7 +6728,7 @@
             }
           },
           {
-            "seq": 18,
+            "seq": 19,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -5764,7 +6738,7 @@
             }
           },
           {
-            "seq": 19,
+            "seq": 20,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "empire",
@@ -5775,7 +6749,7 @@
             }
           },
           {
-            "seq": 20,
+            "seq": 21,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -5784,7 +6758,7 @@
             }
           },
           {
-            "seq": 21,
+            "seq": 22,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "BASE_REVEALED",
             "actor": "system",
@@ -5793,7 +6767,7 @@
             }
           },
           {
-            "seq": 22,
+            "seq": 23,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -5802,7 +6776,7 @@
             }
           },
           {
-            "seq": 23,
+            "seq": 24,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -5812,7 +6786,7 @@
             }
           },
           {
-            "seq": 24,
+            "seq": 25,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -5821,7 +6795,20 @@
             }
           },
           {
-            "seq": 25,
+            "seq": 26,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-dantooine", "probe-mygeeto"]
+            }
+          },
+          {
+            "seq": 27,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -5831,7 +6818,7 @@
             }
           },
           {
-            "seq": 26,
+            "seq": 28,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -5841,7 +6828,7 @@
             }
           },
           {
-            "seq": 27,
+            "seq": 29,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -5851,7 +6838,7 @@
             }
           },
           {
-            "seq": 28,
+            "seq": 30,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -5860,7 +6847,7 @@
             }
           },
           {
-            "seq": 29,
+            "seq": 31,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -5870,7 +6857,7 @@
             }
           },
           {
-            "seq": 30,
+            "seq": 32,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "empire",
@@ -5881,7 +6868,7 @@
             }
           },
           {
-            "seq": 31,
+            "seq": 33,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -5890,7 +6877,7 @@
             }
           },
           {
-            "seq": 32,
+            "seq": 34,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -5899,7 +6886,7 @@
             }
           },
           {
-            "seq": 33,
+            "seq": 35,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -5909,7 +6896,7 @@
             }
           },
           {
-            "seq": 34,
+            "seq": 36,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -5918,7 +6905,20 @@
             }
           },
           {
-            "seq": 35,
+            "seq": 37,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-felucia", "probe-cato-neimoidia"]
+            }
+          },
+          {
+            "seq": 38,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -5928,7 +6928,7 @@
             }
           },
           {
-            "seq": 36,
+            "seq": 39,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -5938,7 +6938,7 @@
             }
           },
           {
-            "seq": 37,
+            "seq": 40,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -5948,7 +6948,7 @@
             }
           },
           {
-            "seq": 38,
+            "seq": 41,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -5958,7 +6958,7 @@
             }
           },
           {
-            "seq": 39,
+            "seq": 42,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "rebels",
@@ -5969,7 +6969,7 @@
             }
           },
           {
-            "seq": 40,
+            "seq": 43,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "rebels",
@@ -5977,7 +6977,198 @@
               "auto": false
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-endor#1",
+                  "probe-malastare#1",
+                  "probe-ryloth#1",
+                  "probe-bothawui#1",
+                  "probe-hoth#1",
+                  "probe-geonosis#1",
+                  "probe-nal-hutta#1",
+                  "probe-toydaria#1",
+                  "probe-utapau#1",
+                  "probe-tatooine#1",
+                  "probe-ord-mantell#1",
+                  "probe-dagobah#1",
+                  "probe-ilum#1",
+                  "probe-dathomir#1",
+                  "probe-kashyyyk#1",
+                  "probe-mon-calamari#1",
+                  "probe-kessel#1",
+                  "probe-bespin#1",
+                  "probe-alderaan#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": [
+                  "probe-yavin#1",
+                  "probe-naboo#1",
+                  "probe-dantooine#1",
+                  "probe-mygeeto#1",
+                  "probe-felucia#1",
+                  "probe-cato-neimoidia#1"
+                ]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -6960,21 +8151,24 @@
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-mygeeto", "probe-ilum"]
             }
           },
           {
             "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -6984,11 +8178,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 17,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -6997,7 +8201,7 @@
             }
           },
           {
-            "seq": 18,
+            "seq": 19,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -7007,7 +8211,7 @@
             }
           },
           {
-            "seq": 19,
+            "seq": 20,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "empire",
@@ -7018,7 +8222,7 @@
             }
           },
           {
-            "seq": 20,
+            "seq": 21,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -7027,7 +8231,7 @@
             }
           },
           {
-            "seq": 21,
+            "seq": 22,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "BASE_REVEALED",
             "actor": "system",
@@ -7036,7 +8240,7 @@
             }
           },
           {
-            "seq": 22,
+            "seq": 23,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -7045,7 +8249,7 @@
             }
           },
           {
-            "seq": 23,
+            "seq": 24,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -7055,7 +8259,7 @@
             }
           },
           {
-            "seq": 24,
+            "seq": 25,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -7064,7 +8268,20 @@
             }
           },
           {
-            "seq": 25,
+            "seq": 26,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-kessel", "probe-ord-mantell"]
+            }
+          },
+          {
+            "seq": 27,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -7074,7 +8291,7 @@
             }
           },
           {
-            "seq": 26,
+            "seq": 28,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -7084,7 +8301,7 @@
             }
           },
           {
-            "seq": 27,
+            "seq": 29,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -7094,7 +8311,7 @@
             }
           },
           {
-            "seq": 28,
+            "seq": 30,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -7103,7 +8320,7 @@
             }
           },
           {
-            "seq": 29,
+            "seq": 31,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -7113,7 +8330,7 @@
             }
           },
           {
-            "seq": 30,
+            "seq": 32,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "empire",
@@ -7124,7 +8341,7 @@
             }
           },
           {
-            "seq": 31,
+            "seq": 33,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -7133,7 +8350,7 @@
             }
           },
           {
-            "seq": 32,
+            "seq": 34,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -7142,7 +8359,7 @@
             }
           },
           {
-            "seq": 33,
+            "seq": 35,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -7152,7 +8369,7 @@
             }
           },
           {
-            "seq": 34,
+            "seq": 36,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -7161,7 +8378,20 @@
             }
           },
           {
-            "seq": 35,
+            "seq": 37,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-hoth", "probe-mon-calamari"]
+            }
+          },
+          {
+            "seq": 38,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -7171,7 +8401,7 @@
             }
           },
           {
-            "seq": 36,
+            "seq": 39,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -7181,7 +8411,7 @@
             }
           },
           {
-            "seq": 37,
+            "seq": 40,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -7191,7 +8421,7 @@
             }
           },
           {
-            "seq": 38,
+            "seq": 41,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -7201,7 +8431,7 @@
             }
           },
           {
-            "seq": 39,
+            "seq": 42,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "rebels",
@@ -7212,7 +8442,7 @@
             }
           },
           {
-            "seq": 40,
+            "seq": 43,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "rebels",
@@ -7221,7 +8451,7 @@
             }
           },
           {
-            "seq": 41,
+            "seq": 44,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -7230,7 +8460,198 @@
               "systemId": "rodia"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-tatooine#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-endor#1",
+                  "probe-yavin#1",
+                  "probe-bothawui#1",
+                  "probe-malastare#1",
+                  "probe-dantooine#1",
+                  "probe-utapau#1",
+                  "probe-bespin#1",
+                  "probe-alderaan#1",
+                  "probe-geonosis#1",
+                  "probe-ryloth#1",
+                  "probe-dathomir#1",
+                  "probe-naboo#1",
+                  "probe-kashyyyk#1",
+                  "probe-felucia#1",
+                  "probe-toydaria#1",
+                  "probe-dagobah#1",
+                  "probe-nal-hutta#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": [
+                  "probe-mygeeto#1",
+                  "probe-ilum#1",
+                  "probe-kessel#1",
+                  "probe-ord-mantell#1",
+                  "probe-hoth#1",
+                  "probe-mon-calamari#1"
+                ]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -8115,7 +9536,197 @@
               "auto": false
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-geonosis#1",
+                  "probe-endor#1",
+                  "probe-naboo#1",
+                  "probe-yavin#1",
+                  "probe-kessel#1",
+                  "probe-dathomir#1",
+                  "probe-mon-calamari#1",
+                  "probe-bothawui#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-dantooine#1",
+                  "probe-rodia#1",
+                  "probe-ilum#1",
+                  "probe-malastare#1",
+                  "probe-dagobah#1",
+                  "probe-felucia#1",
+                  "probe-tatooine#1",
+                  "probe-nal-hutta#1",
+                  "probe-kashyyyk#1",
+                  "probe-bespin#1",
+                  "probe-alderaan#1",
+                  "probe-toydaria#1",
+                  "probe-utapau#1",
+                  "probe-hoth#1",
+                  "probe-ord-mantell#1",
+                  "probe-mygeeto#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-ryloth#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": []
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -9093,21 +10704,24 @@
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-endor", "probe-hoth"]
             }
           },
           {
             "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -9117,11 +10731,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 17,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -9130,7 +10754,7 @@
             }
           },
           {
-            "seq": 18,
+            "seq": 19,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -9140,7 +10764,7 @@
             }
           },
           {
-            "seq": 19,
+            "seq": 20,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "empire",
@@ -9151,7 +10775,7 @@
             }
           },
           {
-            "seq": 20,
+            "seq": 21,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -9160,7 +10784,7 @@
             }
           },
           {
-            "seq": 21,
+            "seq": 22,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "BASE_REVEALED",
             "actor": "system",
@@ -9169,7 +10793,7 @@
             }
           },
           {
-            "seq": 22,
+            "seq": 23,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -9178,7 +10802,7 @@
             }
           },
           {
-            "seq": 23,
+            "seq": 24,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -9188,7 +10812,7 @@
             }
           },
           {
-            "seq": 24,
+            "seq": 25,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -9197,7 +10821,20 @@
             }
           },
           {
-            "seq": 25,
+            "seq": 26,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-nal-hutta", "probe-bespin"]
+            }
+          },
+          {
+            "seq": 27,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -9207,7 +10844,7 @@
             }
           },
           {
-            "seq": 26,
+            "seq": 28,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -9217,7 +10854,7 @@
             }
           },
           {
-            "seq": 27,
+            "seq": 29,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -9227,7 +10864,7 @@
             }
           },
           {
-            "seq": 28,
+            "seq": 30,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -9236,7 +10873,193 @@
               "systemId": "tatooine"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-naboo#1",
+                  "probe-bothawui#1",
+                  "probe-ilum#1",
+                  "probe-yavin#1",
+                  "probe-utapau#1",
+                  "probe-dathomir#1",
+                  "probe-geonosis#1",
+                  "probe-mon-calamari#1",
+                  "probe-dantooine#1",
+                  "probe-ord-mantell#1",
+                  "probe-tatooine#1",
+                  "probe-ryloth#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-alderaan#1",
+                  "probe-kessel#1",
+                  "probe-kashyyyk#1",
+                  "probe-toydaria#1",
+                  "probe-malastare#1",
+                  "probe-felucia#1",
+                  "probe-mygeeto#1",
+                  "probe-dagobah#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": ["probe-endor#1", "probe-hoth#1", "probe-nal-hutta#1", "probe-bespin#1"]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -10228,21 +12051,24 @@
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-geonosis", "probe-hoth"]
             }
           },
           {
             "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -10252,11 +12078,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 17,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -10265,7 +12101,195 @@
               "systemId": "tatooine"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-mon-calamari#1",
+                  "probe-kessel#1",
+                  "probe-kashyyyk#1",
+                  "probe-mygeeto#1",
+                  "probe-yavin#1",
+                  "probe-dagobah#1",
+                  "probe-naboo#1",
+                  "probe-ord-mantell#1",
+                  "probe-ryloth#1",
+                  "probe-malastare#1",
+                  "probe-tatooine#1",
+                  "probe-endor#1",
+                  "probe-bespin#1",
+                  "probe-felucia#1",
+                  "probe-ilum#1",
+                  "probe-dantooine#1",
+                  "probe-alderaan#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-dathomir#1",
+                  "probe-nal-hutta#1",
+                  "probe-utapau#1",
+                  "probe-toydaria#1",
+                  "probe-bothawui#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": ["probe-geonosis#1", "probe-hoth#1"]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -11254,21 +13278,24 @@
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-felucia", "probe-mon-calamari"]
             }
           },
           {
             "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -11278,11 +13305,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 17,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -11292,7 +13329,7 @@
             }
           },
           {
-            "seq": 18,
+            "seq": 19,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "rebels",
@@ -11303,7 +13340,7 @@
             }
           },
           {
-            "seq": 19,
+            "seq": 20,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "rebels",
@@ -11312,7 +13349,7 @@
             }
           },
           {
-            "seq": 20,
+            "seq": 21,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -11322,7 +13359,7 @@
             }
           },
           {
-            "seq": 21,
+            "seq": 22,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -11330,7 +13367,195 @@
               "auto": false
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-kessel#1",
+                  "probe-ord-mantell#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-geonosis#1",
+                  "probe-bothawui#1",
+                  "probe-endor#1",
+                  "probe-malastare#1",
+                  "probe-nal-hutta#1",
+                  "probe-naboo#1",
+                  "probe-ilum#1",
+                  "probe-ryloth#1",
+                  "probe-yavin#1",
+                  "probe-utapau#1",
+                  "probe-bespin#1",
+                  "probe-tatooine#1",
+                  "probe-toydaria#1",
+                  "probe-hoth#1",
+                  "probe-dagobah#1",
+                  "probe-dathomir#1",
+                  "probe-dantooine#1",
+                  "probe-mygeeto#1",
+                  "probe-alderaan#1",
+                  "probe-kashyyyk#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": ["probe-felucia#1", "probe-mon-calamari#1"]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -12314,21 +14539,24 @@
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-nal-hutta", "probe-felucia"]
             }
           },
           {
             "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -12338,11 +14566,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 17,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -12352,7 +14590,7 @@
             }
           },
           {
-            "seq": 18,
+            "seq": 19,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PIECES_MOVED",
             "actor": "rebels",
@@ -12363,7 +14601,7 @@
             }
           },
           {
-            "seq": 19,
+            "seq": 20,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "rebels",
@@ -12372,7 +14610,7 @@
             }
           },
           {
-            "seq": 20,
+            "seq": 21,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "empire",
@@ -12382,7 +14620,7 @@
             }
           },
           {
-            "seq": 21,
+            "seq": 22,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "ACTIVATION_FINISHED",
             "actor": "empire",
@@ -12391,7 +14629,7 @@
             }
           },
           {
-            "seq": 22,
+            "seq": 23,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -12400,7 +14638,195 @@
               "systemId": "rodia"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-mygeeto#1",
+                  "probe-mon-calamari#1",
+                  "probe-naboo#1",
+                  "probe-ryloth#1",
+                  "probe-kessel#1",
+                  "probe-alderaan#1",
+                  "probe-tatooine#1",
+                  "probe-utapau#1",
+                  "probe-bespin#1",
+                  "probe-endor#1",
+                  "probe-ilum#1",
+                  "probe-bothawui#1",
+                  "probe-yavin#1",
+                  "probe-malastare#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-dathomir#1",
+                  "probe-kashyyyk#1",
+                  "probe-geonosis#1",
+                  "probe-dantooine#1",
+                  "probe-ord-mantell#1",
+                  "probe-toydaria#1",
+                  "probe-dagobah#1",
+                  "probe-hoth#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": ["probe-nal-hutta#1", "probe-felucia#1"]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -13315,21 +15741,24 @@
           {
             "seq": 8,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-nal-hutta", "probe-mon-calamari"]
             }
           },
           {
             "seq": 9,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -13339,11 +15768,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 11,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 12,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13352,7 +15791,7 @@
             }
           },
           {
-            "seq": 12,
+            "seq": 13,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13361,7 +15800,7 @@
             }
           },
           {
-            "seq": 13,
+            "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13371,7 +15810,7 @@
             }
           },
           {
-            "seq": 14,
+            "seq": 15,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13380,7 +15819,20 @@
             }
           },
           {
-            "seq": 15,
+            "seq": 16,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-dantooine", "probe-bothawui"]
+            }
+          },
+          {
+            "seq": 17,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13390,7 +15842,7 @@
             }
           },
           {
-            "seq": 16,
+            "seq": 18,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13400,7 +15852,7 @@
             }
           },
           {
-            "seq": 17,
+            "seq": 19,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13410,7 +15862,7 @@
             }
           },
           {
-            "seq": 18,
+            "seq": 20,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13419,7 +15871,7 @@
             }
           },
           {
-            "seq": 19,
+            "seq": 21,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13428,7 +15880,7 @@
             }
           },
           {
-            "seq": 20,
+            "seq": 22,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13438,7 +15890,7 @@
             }
           },
           {
-            "seq": 21,
+            "seq": 23,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13447,7 +15899,20 @@
             }
           },
           {
-            "seq": 22,
+            "seq": 24,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-hoth", "probe-cato-neimoidia"]
+            }
+          },
+          {
+            "seq": 25,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13457,41 +15922,13 @@
             }
           },
           {
-            "seq": 23,
+            "seq": 26,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
             "payload": {
               "round": 4,
               "phase": "assignment"
-            }
-          },
-          {
-            "seq": 24,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
-            "actor": "system",
-            "payload": {
-              "round": 4,
-              "phase": "command"
-            }
-          },
-          {
-            "seq": 25,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PASSED",
-            "actor": "rebels",
-            "payload": {
-              "auto": true
-            }
-          },
-          {
-            "seq": 26,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PASSED",
-            "actor": "empire",
-            "payload": {
-              "auto": false
             }
           },
           {
@@ -13501,11 +15938,39 @@
             "actor": "system",
             "payload": {
               "round": 4,
-              "phase": "refresh"
+              "phase": "command"
             }
           },
           {
             "seq": 28,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PASSED",
+            "actor": "rebels",
+            "payload": {
+              "auto": true
+            }
+          },
+          {
+            "seq": 29,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PASSED",
+            "actor": "empire",
+            "payload": {
+              "auto": false
+            }
+          },
+          {
+            "seq": 30,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 4,
+              "phase": "refresh"
+            }
+          },
+          {
+            "seq": 31,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13514,7 +15979,20 @@
             }
           },
           {
-            "seq": 29,
+            "seq": 32,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-felucia", "probe-ryloth"]
+            }
+          },
+          {
+            "seq": 33,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13524,7 +16002,7 @@
             }
           },
           {
-            "seq": 30,
+            "seq": 34,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13534,7 +16012,7 @@
             }
           },
           {
-            "seq": 31,
+            "seq": 35,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13544,7 +16022,7 @@
             }
           },
           {
-            "seq": 32,
+            "seq": 36,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13553,7 +16031,7 @@
             }
           },
           {
-            "seq": 33,
+            "seq": 37,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13562,7 +16040,7 @@
             }
           },
           {
-            "seq": 34,
+            "seq": 38,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13572,7 +16050,7 @@
             }
           },
           {
-            "seq": 35,
+            "seq": 39,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13581,7 +16059,20 @@
             }
           },
           {
-            "seq": 36,
+            "seq": 40,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-kashyyyk", "probe-ord-mantell"]
+            }
+          },
+          {
+            "seq": 41,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13591,7 +16082,7 @@
             }
           },
           {
-            "seq": 37,
+            "seq": 42,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13601,7 +16092,7 @@
             }
           },
           {
-            "seq": 38,
+            "seq": 43,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13611,7 +16102,7 @@
             }
           },
           {
-            "seq": 39,
+            "seq": 44,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13620,7 +16111,7 @@
             }
           },
           {
-            "seq": 40,
+            "seq": 45,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13629,7 +16120,7 @@
             }
           },
           {
-            "seq": 41,
+            "seq": 46,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13639,7 +16130,7 @@
             }
           },
           {
-            "seq": 42,
+            "seq": 47,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13648,7 +16139,20 @@
             }
           },
           {
-            "seq": 43,
+            "seq": 48,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-toydaria", "probe-utapau"]
+            }
+          },
+          {
+            "seq": 49,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13658,7 +16162,7 @@
             }
           },
           {
-            "seq": 44,
+            "seq": 50,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13668,7 +16172,7 @@
             }
           },
           {
-            "seq": 45,
+            "seq": 51,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13678,7 +16182,7 @@
             }
           },
           {
-            "seq": 46,
+            "seq": 52,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13687,7 +16191,7 @@
             }
           },
           {
-            "seq": 47,
+            "seq": 53,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13696,7 +16200,7 @@
             }
           },
           {
-            "seq": 48,
+            "seq": 54,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13706,7 +16210,7 @@
             }
           },
           {
-            "seq": 49,
+            "seq": 55,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13715,7 +16219,20 @@
             }
           },
           {
-            "seq": 50,
+            "seq": 56,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-bespin", "probe-endor"]
+            }
+          },
+          {
+            "seq": 57,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13725,79 +16242,12 @@
             }
           },
           {
-            "seq": 51,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
-            "actor": "system",
-            "payload": {
-              "round": 8,
-              "phase": "assignment"
-            }
-          },
-          {
-            "seq": 52,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
-            "actor": "system",
-            "payload": {
-              "round": 8,
-              "phase": "command"
-            }
-          },
-          {
-            "seq": 53,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PASSED",
-            "actor": "rebels",
-            "payload": {
-              "auto": true
-            }
-          },
-          {
-            "seq": 54,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PASSED",
-            "actor": "empire",
-            "payload": {
-              "auto": false
-            }
-          },
-          {
-            "seq": 55,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
-            "actor": "system",
-            "payload": {
-              "round": 8,
-              "phase": "refresh"
-            }
-          },
-          {
-            "seq": 56,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "LEADERS_RETURNED",
-            "actor": "system",
-            "payload": {
-              "leaderIds": []
-            }
-          },
-          {
-            "seq": 57,
-            "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
-            "actor": "system",
-            "payload": {
-              "from": 8,
-              "to": 9
-            }
-          },
-          {
             "seq": 58,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
             "payload": {
-              "round": 9,
+              "round": 8,
               "phase": "assignment"
             }
           },
@@ -13807,7 +16257,7 @@
             "type": "PHASE_STARTED",
             "actor": "system",
             "payload": {
-              "round": 9,
+              "round": 8,
               "phase": "command"
             }
           },
@@ -13835,7 +16285,7 @@
             "type": "PHASE_STARTED",
             "actor": "system",
             "payload": {
-              "round": 9,
+              "round": 8,
               "phase": "refresh"
             }
           },
@@ -13851,6 +16301,99 @@
           {
             "seq": 64,
             "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-kessel", "probe-yavin"]
+            }
+          },
+          {
+            "seq": 65,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "TIME_ADVANCED",
+            "actor": "system",
+            "payload": {
+              "from": 8,
+              "to": 9
+            }
+          },
+          {
+            "seq": 66,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 9,
+              "phase": "assignment"
+            }
+          },
+          {
+            "seq": 67,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 9,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 68,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PASSED",
+            "actor": "rebels",
+            "payload": {
+              "auto": true
+            }
+          },
+          {
+            "seq": 69,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PASSED",
+            "actor": "empire",
+            "payload": {
+              "auto": false
+            }
+          },
+          {
+            "seq": 70,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 9,
+              "phase": "refresh"
+            }
+          },
+          {
+            "seq": 71,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "LEADERS_RETURNED",
+            "actor": "system",
+            "payload": {
+              "leaderIds": []
+            }
+          },
+          {
+            "seq": 72,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-geonosis", "probe-dagobah"]
+            }
+          },
+          {
+            "seq": 73,
+            "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
@@ -13859,7 +16402,7 @@
             }
           },
           {
-            "seq": 65,
+            "seq": 74,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13869,7 +16412,7 @@
             }
           },
           {
-            "seq": 66,
+            "seq": 75,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13879,7 +16422,7 @@
             }
           },
           {
-            "seq": 67,
+            "seq": 76,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13888,7 +16431,7 @@
             }
           },
           {
-            "seq": 68,
+            "seq": 77,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13897,7 +16440,7 @@
             }
           },
           {
-            "seq": 69,
+            "seq": 78,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13907,7 +16450,7 @@
             }
           },
           {
-            "seq": 70,
+            "seq": 79,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13916,7 +16459,20 @@
             }
           },
           {
-            "seq": 71,
+            "seq": 80,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-naboo", "probe-alderaan"]
+            }
+          },
+          {
+            "seq": 81,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13926,7 +16482,7 @@
             }
           },
           {
-            "seq": 72,
+            "seq": 82,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13936,7 +16492,7 @@
             }
           },
           {
-            "seq": 73,
+            "seq": 83,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13946,7 +16502,7 @@
             }
           },
           {
-            "seq": 74,
+            "seq": 84,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -13955,7 +16511,7 @@
             }
           },
           {
-            "seq": 75,
+            "seq": 85,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -13964,7 +16520,7 @@
             }
           },
           {
-            "seq": 76,
+            "seq": 86,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -13974,7 +16530,7 @@
             }
           },
           {
-            "seq": 77,
+            "seq": 87,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -13983,7 +16539,20 @@
             }
           },
           {
-            "seq": 78,
+            "seq": 88,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-ilum", "probe-tatooine"]
+            }
+          },
+          {
+            "seq": 89,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -13993,7 +16562,7 @@
             }
           },
           {
-            "seq": 79,
+            "seq": 90,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -14003,7 +16572,7 @@
             }
           },
           {
-            "seq": 80,
+            "seq": 91,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -14013,7 +16582,7 @@
             }
           },
           {
-            "seq": 81,
+            "seq": 92,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "rebels",
@@ -14022,7 +16591,7 @@
             }
           },
           {
-            "seq": 82,
+            "seq": 93,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PASSED",
             "actor": "empire",
@@ -14031,7 +16600,7 @@
             }
           },
           {
-            "seq": 83,
+            "seq": 94,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -14041,7 +16610,7 @@
             }
           },
           {
-            "seq": 84,
+            "seq": 95,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "LEADERS_RETURNED",
             "actor": "system",
@@ -14050,7 +16619,20 @@
             }
           },
           {
-            "seq": 85,
+            "seq": 96,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "CARDS_DRAWN",
+            "actor": "system",
+            "payload": {
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-mygeeto", "probe-malastare"]
+            }
+          },
+          {
+            "seq": 97,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "TIME_ADVANCED",
             "actor": "system",
@@ -14060,7 +16642,7 @@
             }
           },
           {
-            "seq": 86,
+            "seq": 98,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -14070,7 +16652,7 @@
             }
           },
           {
-            "seq": 87,
+            "seq": 99,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "PHASE_STARTED",
             "actor": "system",
@@ -14079,7 +16661,196 @@
               "phase": "command"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": ["probe-dathomir#1"]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": [
+                  "probe-nal-hutta#1",
+                  "probe-mon-calamari#1",
+                  "probe-dantooine#1",
+                  "probe-bothawui#1",
+                  "probe-hoth#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-felucia#1",
+                  "probe-ryloth#1",
+                  "probe-kashyyyk#1",
+                  "probe-ord-mantell#1",
+                  "probe-toydaria#1",
+                  "probe-utapau#1",
+                  "probe-bespin#1",
+                  "probe-endor#1",
+                  "probe-kessel#1",
+                  "probe-yavin#1",
+                  "probe-geonosis#1",
+                  "probe-dagobah#1",
+                  "probe-naboo#1",
+                  "probe-alderaan#1",
+                  "probe-ilum#1",
+                  "probe-tatooine#1",
+                  "probe-mygeeto#1",
+                  "probe-malastare#1"
+                ]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [
@@ -15052,21 +17823,24 @@
           {
             "seq": 13,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "TIME_ADVANCED",
+            "type": "CARDS_DRAWN",
             "actor": "system",
             "payload": {
-              "from": 1,
-              "to": 2
+              "side": "empire",
+              "fromZoneId": "probe-deck",
+              "toZoneId": "empire-probes",
+              "count": 2,
+              "definitionIds": ["probe-hoth", "probe-ord-mantell"]
             }
           },
           {
             "seq": 14,
             "at": "2026-11-20T10:00:00.000Z",
-            "type": "PHASE_STARTED",
+            "type": "TIME_ADVANCED",
             "actor": "system",
             "payload": {
-              "round": 2,
-              "phase": "assignment"
+              "from": 1,
+              "to": 2
             }
           },
           {
@@ -15076,11 +17850,21 @@
             "actor": "system",
             "payload": {
               "round": 2,
-              "phase": "command"
+              "phase": "assignment"
             }
           },
           {
             "seq": 16,
+            "at": "2026-11-20T10:00:00.000Z",
+            "type": "PHASE_STARTED",
+            "actor": "system",
+            "payload": {
+              "round": 2,
+              "phase": "command"
+            }
+          },
+          {
+            "seq": 17,
             "at": "2026-11-20T10:00:00.000Z",
             "type": "SYSTEM_ACTIVATED",
             "actor": "rebels",
@@ -15089,7 +17873,195 @@
               "systemId": "geonosis"
             }
           }
-        ]
+        ],
+        "cards": {
+          "catalogId": "rebellion-cards-v1",
+          "pile": {
+            "instances": [
+              {
+                "id": "probe-alderaan#1",
+                "definitionId": "probe-alderaan"
+              },
+              {
+                "id": "probe-bespin#1",
+                "definitionId": "probe-bespin"
+              },
+              {
+                "id": "probe-bothawui#1",
+                "definitionId": "probe-bothawui"
+              },
+              {
+                "id": "probe-cato-neimoidia#1",
+                "definitionId": "probe-cato-neimoidia"
+              },
+              {
+                "id": "probe-corellia#1",
+                "definitionId": "probe-corellia"
+              },
+              {
+                "id": "probe-dagobah#1",
+                "definitionId": "probe-dagobah"
+              },
+              {
+                "id": "probe-dantooine#1",
+                "definitionId": "probe-dantooine"
+              },
+              {
+                "id": "probe-dathomir#1",
+                "definitionId": "probe-dathomir"
+              },
+              {
+                "id": "probe-endor#1",
+                "definitionId": "probe-endor"
+              },
+              {
+                "id": "probe-felucia#1",
+                "definitionId": "probe-felucia"
+              },
+              {
+                "id": "probe-geonosis#1",
+                "definitionId": "probe-geonosis"
+              },
+              {
+                "id": "probe-hoth#1",
+                "definitionId": "probe-hoth"
+              },
+              {
+                "id": "probe-ilum#1",
+                "definitionId": "probe-ilum"
+              },
+              {
+                "id": "probe-kashyyyk#1",
+                "definitionId": "probe-kashyyyk"
+              },
+              {
+                "id": "probe-kessel#1",
+                "definitionId": "probe-kessel"
+              },
+              {
+                "id": "probe-malastare#1",
+                "definitionId": "probe-malastare"
+              },
+              {
+                "id": "probe-mandalore#1",
+                "definitionId": "probe-mandalore"
+              },
+              {
+                "id": "probe-mon-calamari#1",
+                "definitionId": "probe-mon-calamari"
+              },
+              {
+                "id": "probe-mustafar#1",
+                "definitionId": "probe-mustafar"
+              },
+              {
+                "id": "probe-mygeeto#1",
+                "definitionId": "probe-mygeeto"
+              },
+              {
+                "id": "probe-naboo#1",
+                "definitionId": "probe-naboo"
+              },
+              {
+                "id": "probe-nal-hutta#1",
+                "definitionId": "probe-nal-hutta"
+              },
+              {
+                "id": "probe-ord-mantell#1",
+                "definitionId": "probe-ord-mantell"
+              },
+              {
+                "id": "probe-rodia#1",
+                "definitionId": "probe-rodia"
+              },
+              {
+                "id": "probe-ryloth#1",
+                "definitionId": "probe-ryloth"
+              },
+              {
+                "id": "probe-saleucami#1",
+                "definitionId": "probe-saleucami"
+              },
+              {
+                "id": "probe-sullust#1",
+                "definitionId": "probe-sullust"
+              },
+              {
+                "id": "probe-tatooine#1",
+                "definitionId": "probe-tatooine"
+              },
+              {
+                "id": "probe-toydaria#1",
+                "definitionId": "probe-toydaria"
+              },
+              {
+                "id": "probe-utapau#1",
+                "definitionId": "probe-utapau"
+              },
+              {
+                "id": "probe-yavin#1",
+                "definitionId": "probe-yavin"
+              }
+            ],
+            "zones": [
+              {
+                "id": "probe-deck",
+                "authority": "digital",
+                "cards": [
+                  "probe-malastare#1",
+                  "probe-endor#1",
+                  "probe-kessel#1",
+                  "probe-dathomir#1",
+                  "probe-bothawui#1",
+                  "probe-yavin#1",
+                  "probe-felucia#1",
+                  "probe-naboo#1",
+                  "probe-ilum#1",
+                  "probe-nal-hutta#1",
+                  "probe-dagobah#1",
+                  "probe-cato-neimoidia#1",
+                  "probe-bespin#1",
+                  "probe-alderaan#1",
+                  "probe-mon-calamari#1",
+                  "probe-toydaria#1",
+                  "probe-mygeeto#1",
+                  "probe-utapau#1",
+                  "probe-tatooine#1",
+                  "probe-dantooine#1",
+                  "probe-ryloth#1",
+                  "probe-kashyyyk#1",
+                  "probe-geonosis#1"
+                ]
+              },
+              {
+                "id": "probe-box",
+                "authority": "digital",
+                "cards": [
+                  "probe-corellia#1",
+                  "probe-mandalore#1",
+                  "probe-saleucami#1",
+                  "probe-sullust#1",
+                  "probe-mustafar#1"
+                ]
+              },
+              {
+                "id": "rebels-location",
+                "authority": "digital",
+                "cards": ["probe-rodia#1"]
+              },
+              {
+                "id": "rebels-base-revealed",
+                "authority": "digital",
+                "cards": []
+              },
+              {
+                "id": "empire-probes",
+                "authority": "digital",
+                "cards": ["probe-hoth#1", "probe-ord-mantell#1"]
+              }
+            ]
+          }
+        }
       },
       "rubric": {
         "expected": [

@@ -32,7 +32,8 @@ import {
   version,
   waitForTable,
 } from './support/board';
-import { storedRebelBase } from './support/seed';
+import { readStoredRow, storedRebelBase } from './support/seed';
+import { msg, setLanguage } from './support/cards';
 import { armLeader, clickSystem, commandViaUi } from './support/core';
 import {
   expectCaption,
@@ -41,6 +42,7 @@ import {
   expectFormDefaults,
   expectHumanErrorText,
   expectOpponent,
+  expectUnavailableOptions,
   fulfilError,
   idempotencyKeyOf,
   isCreatePost,
@@ -484,4 +486,107 @@ test.describe('SWR-004 PO TC-001..TC-006: game setup', () => {
       'true',
     );
   });
+});
+
+// SWR-010 AC-22 (test-cases.md §19): `physical_companion` is available against AI for either side and opens the table in
+// the Physical Execution mode (TC-SET-01); with a second player it is unavailable with «only against AI», a chosen
+// physical mode is reset to digital with a polite announcement, no form error (TC-SET-02). Digital stays the default
+// (TC-SET-05: the existing TC-001..TC-006 above + expectFormDefaults).
+test.describe('SWR-010 AC-22: setup of the physical-components mode', () => {
+  for (const faction of ['rebels', 'empire'] as const) {
+    test(`TC-SET-01: ${faction} vs AI — physical_companion is available, the POST carries it, the table opens in the physical mode`, async ({
+      page,
+      request,
+    }) => {
+      const before = await sessionIds(request);
+      await page.goto(newSessionPath(REBELLION));
+      await expectFormDefaults(page);
+      await page.getByTestId(T.setupFaction(faction)).click();
+      const physical = page.getByTestId(T.setupModeOption('physical_companion'));
+      await expect(physical).not.toHaveAttribute('aria-disabled', 'true');
+      await expect(physical).toContainText(msg('ru', 'setup', 'newGame.modePhysicalHint'));
+      await physical.click();
+      await expect(physical).toHaveAttribute('aria-checked', 'true');
+      await expect(page.getByTestId(T.setupModeOption('digital'))).toHaveAttribute(
+        'aria-checked',
+        'false',
+      );
+      const created = waitCreate(page);
+      await page.getByTestId(T.setupStart).click();
+      const res = await created;
+      expect(res.status()).toBe(201);
+      expect(res.request().postDataJSON()).toEqual({
+        gameId: REBELLION,
+        setup: {
+          playerFaction: faction,
+          opponentType: 'ai',
+          aiDifficulty: 'normal',
+          ruleset: 'base',
+          gameMode: 'physical_companion',
+        },
+      });
+      const body = (await res.json()) as SessionResponse;
+      expect(body.settings.gameMode).toBe('physical_companion');
+      expect(body.automation).toEqual({ pending: false, strategy: 'bot' });
+      const view = asCore(body.view);
+      expect(view.table?.tasks[0]?.kind).toBe('initialSetup');
+      expect(view.table?.tasks.map((t) => t.kind)).toEqual(
+        faction === 'rebels' ? ['initialSetup', 'registerBase'] : ['initialSetup'],
+      );
+      await expect(page).toHaveURL(urlOf(sessionPath(body.sessionId)));
+      await waitForTable(page, body.sessionId);
+      await expect(page.getByTestId(T.gameTable)).toHaveAttribute('data-console-mode', 'physical');
+      await expect(page.getByTestId(T.physicalExecution)).toHaveAttribute(
+        'data-head-kind',
+        'initialSetup',
+      );
+      // Stored: the AI made no move yet (blocked by the queue), the mode is saved.
+      const row = await readStoredRow(body.sessionId);
+      expect((row.state.settings as { gameMode: string }).gameMode).toBe('physical_companion');
+      expect(row.state.table?.tasks.map((t) => t.kind)).toEqual(
+        view.table?.tasks.map((t) => t.kind),
+      );
+      expect(await newSessionIdsSince(request, before)).toEqual([body.sessionId]);
+    });
+  }
+
+  for (const lang of ['ru', 'en'] as const) {
+    test(`TC-SET-02 (${lang}): second player — physical «only against AI», aria-disabled, described; a chosen physical resets to digital with an announcement`, async ({
+      page,
+    }) => {
+      if (lang === 'en') await setLanguage(page, 'en');
+      await page.goto(newSessionPath(REBELLION));
+      const physical = page.getByTestId(T.setupModeOption('physical_companion'));
+      const announce = page.getByTestId(T.setupModeAnnounce);
+      await expect(announce).toHaveAttribute('role', 'status');
+      await expect(announce).toHaveAttribute('aria-live', 'polite');
+      await expect(announce).toHaveText('');
+      await physical.click();
+      await expect(physical).toHaveAttribute('aria-checked', 'true');
+
+      await page.getByTestId(T.setupOpponent('human')).click();
+      await expectUnavailableOptions(page, 'human');
+      await expect(physical).toContainText(msg(lang, 'setup', 'newGame.aiOnly'));
+      await expect(physical).toHaveAccessibleDescription(
+        msg(lang, 'setup', 'newGame.modeAiOnlyHint'),
+      );
+      await expect(page.getByTestId(T.setupModeOption('digital'))).toHaveAttribute(
+        'aria-checked',
+        'true',
+      );
+      await expect(announce).toHaveText(msg(lang, 'setup', 'newGame.modeResetAnnounce'));
+      await expect(page.getByTestId(T.setupError)).toHaveCount(0);
+      // Not selectable by click.
+      await physical.click({ force: true });
+      await expect(physical).toHaveAttribute('aria-checked', 'false');
+      // Back to AI → available again, digital stays chosen, the announcement is cleared.
+      await page.getByTestId(T.setupOpponent('ai')).click();
+      await expectUnavailableOptions(page, 'ai');
+      await expect(announce).toHaveText('');
+      await expect(page.getByTestId(T.setupModeOption('digital'))).toHaveAttribute(
+        'aria-checked',
+        'true',
+      );
+    });
+  }
 });

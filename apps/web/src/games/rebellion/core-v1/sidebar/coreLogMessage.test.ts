@@ -351,3 +351,96 @@ describe('announcementText (FE-0 contract rebellion.match:announce.*)', () => {
     );
   });
 });
+
+describe('SWR-010 FE-0: card and physical-table events', () => {
+  const drawnOwn = ev({
+    type: 'CARDS_DRAWN',
+    actor: 'system',
+    payload: {
+      side: 'empire',
+      fromZoneId: 'probe-deck',
+      toZoneId: 'empire-probes',
+      count: 2,
+      definitionIds: ['probe-hoth', 'probe-endor'],
+    },
+  });
+  const drawnHidden = ev({
+    type: 'CARDS_DRAWN',
+    actor: 'system',
+    payload: {
+      side: 'empire',
+      fromZoneId: 'probe-deck',
+      toZoneId: 'empire-probes',
+      count: 2,
+      definitionIds: null,
+    },
+  });
+  const registered = ev({
+    type: 'CARD_REGISTERED',
+    actor: 'rebels',
+    payload: { zoneId: 'rebels-location', definitionId: 'probe-yavin' },
+  });
+  const registeredHidden = ev({
+    type: 'CARD_REGISTERED',
+    actor: 'rebels',
+    payload: { zoneId: 'rebels-location', definitionId: null },
+  });
+  const KINDS = [
+    'initialSetup',
+    'registerBase',
+    'aiActivation',
+    'aiMove',
+    'refresh',
+    'baseRevealed',
+  ] as const;
+
+  it('own draw names the cards; the opponent sees only the count (ru, en)', () => {
+    expect(coreLogMessage(drawnOwn, ru, view)).toBe(
+      `Империя: добор карт (Колода зондов) — ${sys(ru, 'hoth')}, ${sys(ru, 'endor')}`,
+    );
+    expect(coreLogMessage(drawnHidden, ru, view)).toBe('Империя: добраны 2 карты (Колода зондов)');
+    expect(coreLogMessage(drawnHidden, en, view)).toBe('Empire: drew 2 cards (Probe deck)');
+    expect(
+      coreLogMessage(
+        { ...drawnHidden, payload: { ...drawnHidden.payload, count: 1 } } as CoreViewEvent,
+        en,
+        view,
+      ),
+    ).toBe('Empire: drew 1 card (Probe deck)');
+    const hidden = coreLogMessage(drawnHidden, ru, view);
+    expect(hidden).not.toContain(sys(ru, 'hoth'));
+  });
+
+  it('registration names the system only when the server sent the card', () => {
+    expect(coreLogMessage(registered, ru, view)).toBe(
+      `Повстанцы: карта базы зарегистрирована — ${sys(ru, 'yavin')}`,
+    );
+    expect(coreLogMessage(registeredHidden, ru, view)).toBe(
+      'Повстанцы: карта базы зарегистрирована (скрыта)',
+    );
+    expect(coreLogMessage(registeredHidden, en, view)).toBe(
+      'Rebels: base card registered (hidden)',
+    );
+  });
+
+  it('every confirmed task kind has its own text (ru, en), no key leaks', () => {
+    for (const t of [ru, en]) {
+      const texts = KINDS.map((kind) =>
+        coreLogMessage(
+          ev({
+            type: 'TABLE_TASK_CONFIRMED',
+            actor: 'rebels',
+            payload: { taskId: 't-3-1', kind },
+          }),
+          t,
+          view,
+        ),
+      );
+      expect(new Set(texts).size).toBe(KINDS.length);
+      for (const text of texts) expect(text).not.toMatch(/rebellion\.|undefined|\{\{|log\./);
+    }
+    for (const e of [drawnOwn, drawnHidden, registered, registeredHidden]) {
+      expect(coreLogMessage(e, en, view)).not.toMatch(/[А-Яа-яЁё]/);
+    }
+  });
+});

@@ -6,6 +6,7 @@ import {
   RebellionSetupInputSchema,
   SUPPORTED_GAME_MODES,
   SUPPORTED_RULESETS,
+  isSupportedGameModeFor,
   opponentOf,
   settingsFromSetupInput,
   unsupportedSetupFields,
@@ -43,9 +44,9 @@ describe('REBELLION_SETUP_DEFAULTS (TC-U-03, AC-02)', () => {
     expect(parseRebellionSetup(REBELLION_SETUP_DEFAULTS).ok).toBe(true);
   });
 
-  it('supported lists: only base / digital (frozen)', () => {
+  it('supported lists: only base; digital + physical_companion (SWR-010, frozen)', () => {
     expect(SUPPORTED_RULESETS).toEqual(['base']);
-    expect(SUPPORTED_GAME_MODES).toEqual(['digital']);
+    expect(SUPPORTED_GAME_MODES).toEqual(['digital', 'physical_companion']);
     expect(Object.isFrozen(SUPPORTED_RULESETS)).toBe(true);
     expect(Object.isFrozen(SUPPORTED_GAME_MODES)).toBe(true);
   });
@@ -166,12 +167,17 @@ describe('parseRebellionSetup — invalid input → kind invalid (400)', () => {
   });
 });
 
-describe('parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8)', () => {
+describe('parseRebellionSetup — not available yet → kind unsupported (TC-U-12, Q-8, AM-BE-8; SWR-010 AC-22)', () => {
   it('the schema accepts the values; availability rejects them', () => {
     const rote = { ...REBELLION_SETUP_DEFAULTS, ruleset: 'rise-of-the-empire' } as const;
-    const physical = { ...REBELLION_SETUP_DEFAULTS, gameMode: 'physical_companion' } as const;
-    const both = { ...rote, gameMode: 'physical_companion' } as const;
-    for (const input of [rote, physical, both]) {
+    const physicalHuman = {
+      ...REBELLION_SETUP_DEFAULTS,
+      opponentType: 'human',
+      aiDifficulty: null,
+      gameMode: 'physical_companion',
+    } as const;
+    const both = { ...physicalHuman, ruleset: 'rise-of-the-empire' } as const;
+    for (const input of [rote, physicalHuman, both]) {
       expect(RebellionSetupInputSchema.safeParse(input).success).toBe(true);
     }
     expect(unsupportedSetupFields(REBELLION_SETUP_DEFAULTS)).toEqual([]);
@@ -181,7 +187,7 @@ describe('parseRebellionSetup — not available yet → kind unsupported (TC-U-1
       messageKey: 'errors.rulesetUnavailable',
       details: { unsupported: ['ruleset'] },
     });
-    expect(parseRebellionSetup(physical)).toEqual({
+    expect(parseRebellionSetup(physicalHuman)).toEqual({
       ok: false,
       kind: 'unsupported',
       messageKey: 'errors.modeUnavailable',
@@ -193,6 +199,33 @@ describe('parseRebellionSetup — not available yet → kind unsupported (TC-U-1
       messageKey: 'errors.rulesetUnavailable',
       details: { unsupported: ['ruleset', 'gameMode'] },
     });
+    // rise-of-the-empire stays unsupported in physical_companion vs AI too (D-8).
+    expect(
+      unsupportedSetupFields({ ...rote, gameMode: 'physical_companion', opponentType: 'ai' }),
+    ).toEqual(['ruleset']);
+  });
+
+  it.each(['rebels', 'empire'] as const)(
+    'physical_companion vs AI (%s) → supported settings (SWR-010 AC-22, TC-SET-04 unit part)',
+    (playerFaction) => {
+      const input = {
+        ...REBELLION_SETUP_DEFAULTS,
+        playerFaction,
+        gameMode: 'physical_companion',
+      } as const;
+      expect(unsupportedSetupFields(input)).toEqual([]);
+      expect(parseRebellionSetup(input)).toMatchObject({
+        ok: true,
+        value: { playerFaction, opponentType: 'ai', gameMode: 'physical_companion' },
+      });
+    },
+  );
+
+  it('isSupportedGameModeFor: physical_companion ⇒ AI opponent; digital for both', () => {
+    expect(isSupportedGameModeFor('digital', 'ai')).toBe(true);
+    expect(isSupportedGameModeFor('digital', 'human')).toBe(true);
+    expect(isSupportedGameModeFor('physical_companion', 'ai')).toBe(true);
+    expect(isSupportedGameModeFor('physical_companion', 'human')).toBe(false);
   });
 
   it('schema errors win over availability (400 before 422)', () => {

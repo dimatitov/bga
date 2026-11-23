@@ -13,8 +13,13 @@
  * The built state passes the central state checks once (`runStateChecks`, SWR-008 QD-2). With valid data they
  * change nothing (eligible bases exclude systems with Imperial start units and their neighbours); any event they
  * produced would follow the creation log (`seq` = last `seq` + 1…, `at = ctx.now`; see `checkCreatedState`).
+ * SWR-010 (plan-backend §3.4): a game on the base-game map (`CORE_SYSTEM_IDS`) tracks cards (`initCoreCards`; no
+ * new creation events). In `physical_companion` with a human Rebel player the base is PROVISIONAL (same
+ * `chooseRebelBase`) until the Location card is registered (`REGISTER_CARD`); its card stays in the deck. Other
+ * maps (test data) get no `cards`, exactly as before SWR-010.
  */
 import {
+  CORE_SYSTEM_IDS,
   CoreDataSchema,
   REBELLION_STATE_SCHEMA_VERSION,
   RebellionSettingsSchema,
@@ -28,7 +33,9 @@ import {
 } from '../../schema';
 import type { CreateContext } from '../context';
 import { chooseRebelBase } from './base';
+import { initCoreCards } from './cards';
 import { runStateChecks } from './state-checks';
+import { initialTableState } from './table';
 
 export function createCoreGame(
   settings: RebellionSettings,
@@ -103,7 +110,38 @@ export function createCoreGame(
       },
     ],
   };
-  return checkCreatedState(created, ctx.now);
+  const cards = cardsOnMap(parsed)
+    ? initCoreCards({
+        gameId: ctx.gameId,
+        settings: parsedSettings,
+        baseSystemId,
+        registrationPending:
+          parsedSettings.gameMode === 'physical_companion' &&
+          parsedSettings.playerFaction === 'rebels',
+      })
+    : undefined;
+  if (cards === undefined && parsedSettings.gameMode === 'physical_companion') {
+    throw new Error('createCoreGame: physical_companion needs the card catalog map');
+  }
+  // physical_companion: the table queue of the human (plan-backend §5.3, W4's `initialTableState`).
+  const table =
+    parsedSettings.gameMode === 'physical_companion'
+      ? initialTableState(parsedSettings, eligibleRebelBaseSystemIds(parsed))
+      : undefined;
+  return checkCreatedState(
+    {
+      ...created,
+      ...(cards === undefined ? {} : { cards }),
+      ...(table === undefined ? {} : { table }),
+    },
+    ctx.now,
+  );
+}
+
+/** Cards are tracked on the base-game map only: its systems are exactly `CORE_SYSTEM_IDS` (the catalog's map). */
+function cardsOnMap(data: CoreData): boolean {
+  const ids = new Set(data.systems.map((s) => s.id));
+  return ids.size === CORE_SYSTEM_IDS.length && CORE_SYSTEM_IDS.every((id) => ids.has(id));
 }
 
 /**

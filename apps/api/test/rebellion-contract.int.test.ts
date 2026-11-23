@@ -229,6 +229,7 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
     });
   });
 
+  // SWR-010 W2 (AC-22): physical_companion is now supported vs AI; the unsupported mode case is the hot-seat one.
   it('TC-I-11 / TC-I-12 / TC-I-13: unsupported ruleset / mode → 422 SETUP_UNSUPPORTED; schema errors first', async () => {
     const rote = expectError(
       await post(app, { ...DEF, ruleset: 'rise-of-the-empire' }),
@@ -238,14 +239,18 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
     );
     expect(rote.error.details).toEqual({ unsupported: ['ruleset'] });
     const physical = expectError(
-      await post(app, { ...DEF, gameMode: 'physical_companion' }),
+      await post(app, { ...REBELS_HUMAN, gameMode: 'physical_companion' }),
       422,
       'SETUP_UNSUPPORTED',
       'errors.modeUnavailable',
     );
     expect(physical.error.details).toEqual({ unsupported: ['gameMode'] });
     const both = expectError(
-      await post(app, { ...DEF, ruleset: 'rise-of-the-empire', gameMode: 'physical_companion' }),
+      await post(app, {
+        ...REBELS_HUMAN,
+        ruleset: 'rise-of-the-empire',
+        gameMode: 'physical_companion',
+      }),
       422,
       'SETUP_UNSUPPORTED',
       'errors.rulesetUnavailable',
@@ -352,7 +357,7 @@ describe('Session API × Rebellion (SWR-004 contract)', () => {
     responses.push(await api(app).get(`/api/sessions/${id}?viewer=rebels`));
     responses.push(await api(app).get('/api/sessions'));
     responses.push(await post(app, { ...DEF, aiFaction: 'empire' }));
-    responses.push(await post(app, { ...DEF, gameMode: 'physical_companion' }));
+    responses.push(await post(app, { ...REBELS_HUMAN, gameMode: 'physical_companion' }));
     for (const res of responses) {
       expect(forbiddenKeysIn(res.body), res.text).toEqual([]);
       expect(res.text).not.toContain(key);

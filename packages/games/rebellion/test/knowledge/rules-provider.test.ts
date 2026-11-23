@@ -27,6 +27,13 @@ import { REBELLION_RULE_TAGS } from '../../src/ai';
 import { KB_DIR, loadKnowledgeBase, loadRawKnowledgeBase, repoPath } from './load-kb';
 
 const MAX_CHARS = 6000;
+/**
+ * Command types the AI can be offered (SWR-010 W2: the physical-table commands CONFIRM_TABLE_TASK / REGISTER_CARD
+ * belong to the human only and are never AI candidates, plan-backend §8.2) — keeps the 2^5 combinations.
+ */
+const AI_COMMAND_TYPES = CORE_COMMAND_TYPES.filter(
+  (t) => t !== 'CONFIRM_TABLE_TASK' && t !== 'REGISTER_CARD',
+);
 const GOLDEN_PATH = 'packages/games/rebellion/test/knowledge/fixtures/rules-selection.golden.json';
 const UPDATE_GOLDEN = process.env.UPDATE_RULES_SELECTION_GOLDEN === '1';
 
@@ -326,7 +333,7 @@ describe('selection on the real knowledge base (TC-SEL-01..03, 05, 07..10, 12; T
 
 describe('every combination (TC-SEL-06, TC-ST-01, TC-ST-03, TC-ST-05)', () => {
   const PHASES = ['command', 'refresh', 'setup', 'assignment', 'unknown'];
-  const typeSets = subsets(CORE_COMMAND_TYPES);
+  const typeSets = subsets(AI_COMMAND_TYPES);
   const tagSets: string[][] = [[], ...TAG_SETS];
   const NOT_IMPLEMENTED_CATEGORIES = new Set(['combat', 'missions', 'build-deploy', 'recruit']);
   const coreTypes = new Set<string>(CORE_COMMAND_TYPES);
@@ -438,7 +445,7 @@ describe('hidden information guard (plan-backend §9)', () => {
   it('no rule selectable in the Command Phase names a system in its title or text', () => {
     const selected = new Set<string>();
     for (const side of SIDES) {
-      for (const types of subsets(CORE_COMMAND_TYPES)) {
+      for (const types of subsets(AI_COMMAND_TYPES)) {
         for (const tags of [[], ...TAG_SETS]) {
           for (const id of sel(side, types, tags, 'command', 12_000).ruleIds) selected.add(id);
         }

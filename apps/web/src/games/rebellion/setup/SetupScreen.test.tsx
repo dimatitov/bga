@@ -1,7 +1,8 @@
 import { REBELLION_GAME_ID, rebellionDefinition } from '@bga/game-rebellion/definition';
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { paths, sessionKeys, useCreateSession } from '@/platform';
+import { i18n } from '@/shared/i18n';
 import { mockFetch, type MockReply, renderWithProviders } from '@/shared/test';
 import { makeRebellionSession, makeView } from '../test/fixtures';
 import * as model from './model/toSetupInput';
@@ -232,38 +233,134 @@ describe('Rebellion SetupScreen (SWR-004 §2)', () => {
     });
   });
 
-  it('AC-05 client (TC-C-06): RotE / physical are shown «скоро», aria-disabled, described, not selectable by click or arrows', async () => {
+  it('AC-05 client (TC-C-06, TC-SET-05): RotE is shown «скоро», aria-disabled, described, not selectable by click or arrows', async () => {
     mockFetch({});
     const { user } = renderPage();
-    for (const [id, hint] of [
-      ['setup-ruleset-rise-of-the-empire', 'Дополнение пока не поддерживается.'],
-      ['setup-mode-physical_companion', 'Режим пока не поддерживается.'],
-    ] as const) {
-      const opt = screen.getByTestId(id);
-      expect(opt).toHaveAttribute('aria-disabled', 'true');
-      expect(opt).toHaveTextContent('скоро');
-      expect(opt).toHaveAccessibleDescription(hint);
-      expect(opt.tabIndex).toBe(-1);
-      await user.click(opt);
-      unchecked(id);
-    }
+    const id = 'setup-ruleset-rise-of-the-empire';
+    const opt = screen.getByTestId(id);
+    expect(opt).toHaveAttribute('aria-disabled', 'true');
+    expect(opt).toHaveTextContent('скоро');
+    expect(opt).toHaveAccessibleDescription('Дополнение пока не поддерживается.');
+    expect(opt.tabIndex).toBe(-1);
+    expect(opt).toHaveTextContent('Rise of the Empire');
+    await user.click(opt);
+    unchecked(id);
     checked('setup-ruleset-base');
-    checked('setup-mode-digital');
-    expect(screen.getByTestId('setup-ruleset-rise-of-the-empire')).toHaveTextContent(
-      'Rise of the Empire',
-    );
-    expect(screen.getByTestId('setup-mode-physical_companion')).toHaveTextContent(
-      'С физическими компонентами',
-    );
 
     screen.getByTestId('setup-ruleset-base').focus();
     await user.keyboard('{ArrowRight}');
     expect(screen.getByTestId('setup-ruleset-base')).toHaveFocus();
     checked('setup-ruleset-base');
+    // Digital stays the default mode (SWR-010 TC-SET-05).
+    checked('setup-mode-digital');
+  });
+
+  it.each([
+    ['rebels', 'setup-faction-rebels'],
+    ['empire', 'setup-faction-empire'],
+  ] as const)(
+    'AC-22 (TC-SET-01 client): %s vs AI — physical_companion available, hint shown, POST with gameMode physical_companion',
+    async (playerFaction, factionId) => {
+      const { requests } = mockFetch({ 'POST /api/sessions': created('g-p') });
+      const { user, router } = renderPage();
+      await user.click(screen.getByTestId(factionId));
+
+      const physical = screen.getByTestId('setup-mode-physical_companion');
+      expect(physical).not.toHaveAttribute('aria-disabled', 'true');
+      expect(physical).not.toHaveTextContent('скоро');
+      expect(physical).not.toHaveTextContent('только против AI');
+      expect(physical).toHaveTextContent('С физическими компонентами');
+      expect(physical).toHaveTextContent(
+        'Приложение ведёт колоды и подсказывает, что повторить на столе.',
+      );
+      await user.click(physical);
+      checked('setup-mode-physical_companion');
+      unchecked('setup-mode-digital');
+      // Arrow keys move between the two available modes.
+      await user.keyboard('{ArrowLeft}');
+      checked('setup-mode-digital');
+      await user.keyboard('{ArrowRight}');
+      checked('setup-mode-physical_companion');
+
+      await user.click(screen.getByTestId('setup-start'));
+      await waitFor(() => expect(router.state.location.pathname).toBe('/sessions/g-p'));
+      expect(requests.filter((r) => r.method === 'POST')).toHaveLength(1);
+      expect(requests[0]?.body).toEqual({
+        gameId: REBELLION_GAME_ID,
+        setup: {
+          playerFaction,
+          opponentType: 'ai',
+          aiDifficulty: 'normal',
+          ruleset: 'base',
+          gameMode: 'physical_companion',
+        },
+      });
+    },
+  );
+
+  it('AC-22 (TC-SET-02 client): second player — physical «только против AI», aria-disabled, described; a chosen physical resets to digital with an announcement', async () => {
+    const { requests } = mockFetch({});
+    const { user } = renderPage();
+    const id = 'setup-mode-physical_companion';
+    const announce = screen.getByTestId('setup-mode-announce');
+    expect(announce).toHaveAttribute('role', 'status');
+    expect(announce).toHaveAttribute('aria-live', 'polite');
+    expect(announce).toHaveTextContent('');
+
+    await user.click(screen.getByTestId(id));
+    checked(id);
+    await user.click(screen.getByTestId('setup-opponent-human'));
+
+    const opt = screen.getByTestId(id);
+    expect(opt).toHaveAttribute('aria-disabled', 'true');
+    expect(opt).toHaveTextContent('только против AI');
+    expect(opt).not.toHaveTextContent('скоро');
+    expect(opt).not.toHaveTextContent('Приложение ведёт колоды');
+    expect(opt).toHaveAccessibleDescription(
+      'Режим с физическими компонентами доступен только против AI.',
+    );
+    expect(opt.tabIndex).toBe(-1);
+    unchecked(id);
+    checked('setup-mode-digital');
+    expect(announce).toHaveTextContent(
+      'Режим с физическими компонентами доступен только против AI — выбран цифровой режим.',
+    );
+    // No form error for the reset.
+    expect(screen.queryByTestId('setup-error')).not.toBeInTheDocument();
+
+    await user.click(opt);
+    unchecked(id);
     screen.getByTestId('setup-mode-digital').focus();
-    await user.keyboard('{ArrowLeft}');
+    await user.keyboard('{ArrowRight}');
     expect(screen.getByTestId('setup-mode-digital')).toHaveFocus();
     checked('setup-mode-digital');
+
+    // Any next change clears the announcement; back to AI → available again (digital stays chosen).
+    await user.click(screen.getByTestId('setup-opponent-ai'));
+    expect(announce).toHaveTextContent('');
+    expect(screen.getByTestId(id)).not.toHaveAttribute('aria-disabled', 'true');
+    checked('setup-mode-digital');
+    expect(requests).toHaveLength(0);
+  });
+
+  it('AC-22: EN texts of the physical mode (hint, «AI only» badge and description)', async () => {
+    mockFetch({});
+    const { user } = renderPage();
+    await act(() => i18n.changeLanguage('en'));
+    const id = 'setup-mode-physical_companion';
+    expect(await screen.findByText('With physical components')).toBeInTheDocument();
+    expect(screen.getByTestId(id)).toHaveTextContent(
+      'The app tracks the decks and tells you what to repeat on the table.',
+    );
+    await user.click(screen.getByTestId(id));
+    await user.click(screen.getByTestId('setup-opponent-human'));
+    expect(screen.getByTestId(id)).toHaveTextContent('AI only');
+    expect(screen.getByTestId(id)).toHaveAccessibleDescription(
+      'The physical-components mode is available only against AI.',
+    );
+    expect(screen.getByTestId('setup-mode-announce')).toHaveTextContent(
+      'The physical-components mode is available only against AI — digital mode selected.',
+    );
   });
 
   it('AC-05 client (TC-C-06): validateSetup rejects → alert with the game text, no POST, focus stays on Start', async () => {

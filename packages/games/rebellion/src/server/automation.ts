@@ -12,6 +12,7 @@
 import type { ApplyCommandContext, ApplyCommandResult, GameAutomation } from '@bga/platform';
 import { buildDecision, type AutoPolicy, type BotDecision } from '../ai';
 import { applyCommand, toSideView } from '../rules';
+import { tableBlocks } from '../rules/core';
 import {
   REBELLION_ERROR_MESSAGE_KEYS as K,
   type CoreGameState,
@@ -37,9 +38,14 @@ function isAutomatedCore(state: GameState): state is CoreGameState {
   return state.rulesEngine === 'core-v1' && state.settings.opponentType === 'ai';
 }
 
-/** The AI side when it is its turn in a running `core-v1` AI game, otherwise `null`. */
+/**
+ * The AI side when it is its turn in a running `core-v1` AI game, otherwise `null`. SWR-010 (§5.7, AC-13):
+ * while the physical table has unconfirmed tasks the AI waits — no decision point, no paid calls; the runner
+ * stops with `humanTurn` (after ≥1 step) or `none` and resumes after the human confirms the last task.
+ */
 function pendingAiSide(state: GameState): Faction | null {
   if (!isAutomatedCore(state)) return null;
+  if (tableBlocks(state)) return null;
   if (state.outcome !== null || state.handoffPending) return null;
   const aiSide = state.settings.opponentFaction;
   return state.activeSide === aiSide ? aiSide : null;

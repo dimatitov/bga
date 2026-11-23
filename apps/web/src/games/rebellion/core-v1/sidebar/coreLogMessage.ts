@@ -11,6 +11,10 @@
  * SWR-006 (Q-FE-4): every event of the AI side (the actor = `settings.opponentFaction` of an AI game, or
  * `payload.auto`) reads «Империя (AI): …» — activations and moves via `log.aiActor`, passes / finished
  * activations via the existing `*_auto` keys.
+ *
+ * SWR-010 (FE-0): `CARDS_DRAWN` names the cards only when the server sent them (`definitionIds`, the drawing side's
+ * own view), otherwise only the public count (`log.CARDS_DRAWN_count`, plural); `CARD_REGISTERED` names the system
+ * only when `definitionId` is not redacted; `TABLE_TASK_CONFIRMED` uses the task kind as i18next context.
  */
 import type {
   CoreViewEvent,
@@ -22,6 +26,7 @@ import type { TFunction } from 'i18next';
 import { isAiActor } from '../model/aiCommander';
 import type { Announcement } from '../model/announcements';
 import { announcementI18n } from '../model/announcements';
+import { cardName, cardZoneName } from '../cards/model/catalog';
 
 const DATA_NS = 'rebellion.data';
 
@@ -153,6 +158,26 @@ export function coreLogMessage(event: CoreLogEvent, t: TFunction, view?: LogView
         winner: outcomeWinnerText(t, e.payload.winner),
         reason: outcomeReasonText(t, e.payload.reason),
       });
+    case 'CARDS_DRAWN': {
+      const side = coreFactionName(t, e.payload.side);
+      const from = cardZoneName(t, e.payload.fromZoneId);
+      return e.payload.definitionIds === null
+        ? t('rebellion.match:log.CARDS_DRAWN_count', { side, from, count: e.payload.count })
+        : t('rebellion.match:log.CARDS_DRAWN', {
+            side,
+            from,
+            cards: e.payload.definitionIds.map((id) => cardName(t, id)).join(', '),
+          });
+    }
+    case 'CARD_REGISTERED':
+      return e.payload.definitionId === null
+        ? t('rebellion.match:log.CARD_REGISTERED_hidden', { actor })
+        : t('rebellion.match:log.CARD_REGISTERED', {
+            actor,
+            card: cardName(t, e.payload.definitionId),
+          });
+    case 'TABLE_TASK_CONFIRMED':
+      return t('rebellion.match:log.TABLE_TASK_CONFIRMED', { context: e.payload.kind });
     default:
       return t('rebellion.match:log.unknown', { type: event.type });
   }

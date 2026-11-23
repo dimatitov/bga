@@ -9,18 +9,30 @@
  * - `contestedSystemIds` is computed AFTER the redaction (units in the zone count for no system).
  * After the reveal or the end of the game nothing is hidden, past events included (Q-16, Q-14).
  * Static data (`map`, `unitTypes`) and the pools of both sides are public.
+ *
+ * SWR-010 cards (plan-backend §4, §6): the card state is projected only here (`coreCardsView`,
+ * `corePublicCardsView`, via the platform `projectZones`): the probe deck is a count for everybody (order and
+ * contents never leave the server), the Empire's probes are its own (a count for the Rebels, forever in v0), the
+ * Location is the Rebels' own and becomes visible to the Empire when `hiddenBaseFor` turns false (reveal / end of
+ * the game). Events: `CARDS_DRAWN.definitionIds` only for the drawing side; `CARD_REGISTERED.definitionId` is
+ * `null` while the base is hidden from the viewer; `TABLE_TASK_CONFIRMED` is public.
  */
-import type {
-  CoreEvent,
-  CoreGameState,
-  CorePlayerView,
-  CoreViewEvent,
-  Faction,
-  GameEvent,
-  LeaderViewLocation,
-  ViewLocation,
+import { projectZones } from '@bga/platform/cards';
+import {
+  rebellionCardEngineContext,
+  type CoreCardsView,
+  type CoreEvent,
+  type CoreGameState,
+  type CorePlayerView,
+  type CoreViewEvent,
+  type Faction,
+  type GameEvent,
+  type LeaderViewLocation,
+  type ViewLocation,
 } from '../../schema';
+import { LOCATION_ZONE_ID } from './cards';
 import { coreLegalActions } from './legal';
+import { tableViewFor } from './table';
 
 export function hiddenBaseFor(state: CoreGameState, viewer: Faction): boolean {
   return viewer === 'empire' && !state.rebelBase.revealed && state.outcome === null;
@@ -82,6 +94,21 @@ export function redactCoreEvent(
     case 'BASE_REVEALED':
     case 'GAME_OVER':
       return { ...event, payload: { ...event.payload } } as CoreViewEvent;
+    case 'CARDS_DRAWN':
+      return {
+        ...event,
+        payload: {
+          ...event.payload,
+          definitionIds: viewer === event.payload.side ? [...event.payload.definitionIds] : null,
+        },
+      };
+    case 'CARD_REGISTERED':
+      return {
+        ...event,
+        payload: { ...event.payload, definitionId: hidden ? null : event.payload.definitionId },
+      };
+    case 'TABLE_TASK_CONFIRMED':
+      return { ...event, payload: { ...event.payload } };
     case 'PHASE_ADVANCED':
     case 'TURN_ENDED':
       throw new Error(`event type ${event.type} does not belong to the core-v1 engine`);
@@ -99,6 +126,28 @@ export function corePlayerEvents(
   viewer: Faction,
 ): CoreViewEvent[] {
   return events.map((event) => redactCoreEvent(event, state, viewer));
+}
+
+/**
+ * Card zones as `viewer` sees them (`null` = the game does not track cards). Every zone is listed with its count;
+ * the Location's contents are added for the Empire once the base is no longer hidden from it.
+ */
+export function coreCardsView(state: CoreGameState, viewer: Faction): CoreCardsView | null {
+  if (state.cards === undefined) return null;
+  const revealZoneIds = hiddenBaseFor(state, viewer) ? [] : [LOCATION_ZONE_ID];
+  return {
+    catalogId: state.cards.catalogId,
+    zones: projectZones(state.cards.pile, rebellionCardEngineContext, viewer, { revealZoneIds }),
+  };
+}
+
+/** Public projection (no viewer, AC-9): public zones with contents, every other zone as a count only. */
+export function corePublicCardsView(state: CoreGameState): CoreCardsView | null {
+  if (state.cards === undefined) return null;
+  return {
+    catalogId: state.cards.catalogId,
+    zones: projectZones(state.cards.pile, rebellionCardEngineContext, null),
+  };
 }
 
 /** Board projection of a `core-v1` state for `viewer` (hidden info removed, own legal actions added). */
@@ -168,5 +217,7 @@ export function coreSideView(state: CoreGameState, viewer: Faction): CorePlayerV
     outcome: state.outcome === null ? null : { ...state.outcome },
     log: corePlayerEvents(state.log satisfies readonly CoreEvent[], state, viewer),
     legalActions: coreLegalActions(state, viewer),
+    cards: coreCardsView(state, viewer),
+    table: tableViewFor(state, viewer),
   };
 }

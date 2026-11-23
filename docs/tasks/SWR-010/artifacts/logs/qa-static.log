@@ -1,0 +1,84 @@
+# QA static checks SWR-010 — 2026-11-23T00:53:14Z — HEAD f3619a1 + working tree
+
+## TC-AUD-02/03: KB references and long quotes in rules-audit.md (script: scratchpad kbcheck.mjs)
+KB entries: 182; KB refs in rules-audit.md: 184 (unique 70); dangling: 3
+DANGLING: setup, missions, recruit
+section 3.1 Карты миссий (Mission cards), включая стартовые: rows 20, rows without status/source: 1
+section 3.2 Проекты (Project cards): rows 9, rows without status/source: 1
+section 3.3 Карты действий (Action cards): стартовые и вербовочные: rows 16, rows without status/source: 1
+section 3.4 Карты целей (Objective cards), этапы I/II/III: rows 13, rows without status/source: 1
+section 3.5 Карты тактики (Tactic cards): космос / земля: rows 9, rows without status/source: 1
+section 3.6 Карты зондов (Probe cards): rows 13, rows without status/source: 1
+section 3.7 Карта «Location» (карта базы Повстанцев): rows 6, rows without status/source: 0
+quotes >= 25 words: 0
+wildcard KB:setup.* -> entries with prefix rebellion:setup.: 15
+wildcard KB:missions.* -> entries with prefix rebellion:missions.: 11
+wildcard KB:recruit.* -> entries with prefix rebellion:recruit.: 4
+
+## TC-REG-03: game names in packages/platform/src/cards (grep -rniE 'rebel|empire|imperial|probe|coruscant|rebellion|swr')
+exit=1 (1 = no matches)
+imports of packages/games in platform/src/cards:
+exit=1
+
+## TC-BND-02: apps/web/src imports of server card modules (platform cards engine/shuffle/visibility, rebellion rules/core/cards|table, chooseRebelBase)
+(eval):7: no matches found: --include=*.ts
+exit=1 (1 = no matches outside tests)
+
+## TC-HAND-06 / AC-19: hex colours in new UI dirs core-v1/cards, core-v1/table (non-test)
+exit=1
+raster/card images in those dirs:
+       0
+UI kit usage (TerminalModule|KeyButton|StatusBadge) in cards/table sources:
+apps/web/src/games/rebellion/core-v1/cards/CardHandPanel.tsx
+apps/web/src/games/rebellion/core-v1/cards/CardItem.tsx
+apps/web/src/games/rebellion/core-v1/cards/CardDetail.tsx
+apps/web/src/games/rebellion/core-v1/table/TableTaskKeys.tsx
+apps/web/src/games/rebellion/core-v1/table/LocationRegisterForm.tsx
+apps/web/src/games/rebellion/core-v1/table/PhysicalExecutionPanel.tsx
+apps/web/src/games/rebellion/core-v1/table/RegisterConfirmDialog.tsx
+
+## TC-AI-06: git diff f3619a1 -- AI config (budget / fallback / limits)
+(eval):11: no matches found: packages/games/rebellion/src/ai/budget*
+git diff --stat apps/api/src (all): 
+(empty = apps/api/src unchanged since f3619a1)
+packages/games/rebellion/src/ai changes:
+ packages/games/rebellion/src/ai/describe.ts | 31 ++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+ M packages/games/rebellion/src/ai/describe.ts
+
+## TC-AI-07: network guard + openai provider in SWR-010 tests
+apps/api/test/no-network.unit.test.ts
+18:    setupFiles: ['test/setup/blank-openai-env.ts', 'test/setup/no-network.ts'],
+apps/api/test/physical-sync.int.test.ts
+apps/api/test/cards-hidden-info.int.test.ts
+files above use provider openai; fake fetch import:
+apps/api/test/cards-hidden-info.int.test.ts
+apps/api/test/physical-sync.int.test.ts
+
+## TC-R-06: protected files
+git status of .env / dev.db / traces:
+!! apps/api/.env
+!! apps/api/prisma/dev.db
+!! apps/api/prisma/dev.pre-run-20261120.db
+!! apps/api/prisma/dev.pre-swr003.db
+!! apps/api/prisma/dev.pre-swr004.db
+!! apps/api/prisma/dev.pre-swr005.db
+!! apps/api/prisma/dev.pre-swr005b.db
+!! apps/api/prisma/dev.pre-swr008.db
+-rw-r--r--@ 1 dimatitov  staff  446464 Nov 21 01:51 apps/api/prisma/dev.db
+dev.db mtime predates SWR-010 (2026-11-23)
+MD5 (apps/api/prisma/dev.db) = 48b3d4eab2da21345b831e1c33467253
+MD5 (apps/api/prisma/dev.pre-run-20261120.db) = 37a2bd6733a2c45a08d09892b9a91259
+MD5 (apps/api/prisma/dev.pre-swr003.db) = a439cb150e0cdce52b93960c3b6682ea
+MD5 (apps/api/prisma/dev.pre-swr004.db) = afa75823ff0ad0e232e50a981ff9b69b
+MD5 (apps/api/prisma/dev.pre-swr005.db) = 2cb98ccb532949a954e5ab132fe7e6f0
+MD5 (apps/api/prisma/dev.pre-swr005b.db) = 8e48703974bf7f76497acd6658ca42a1
+MD5 (apps/api/prisma/dev.pre-swr008.db) = 37a2bd6733a2c45a08d09892b9a91259
+untracked large files (>1MB) in working tree:
+7513187 docs/design/design.zip
+(end)
+
+## TC-BND-02 (re-run, quoted globs): apps/web/src non-test imports of server card modules
+exit=1 (1 = no matches outside tests)
+## TC-AI-06: packages/games/rebellion/src/ai diff (only describe.ts; budget/fallback/candidates untouched):
+exit=1 (1 = no budget/fallback/limit lines changed)

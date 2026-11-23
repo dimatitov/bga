@@ -102,5 +102,37 @@
         "ion-cannon": "Ion Cannon"
       }
     }
+  },
+  "cards": {
+    "types": {
+      "probe": "Probe",
+      "mission": "Mission",
+      "project": "Project",
+      "action": "Action",
+      "objective": "Objective",
+      "tactic": "Tactic"
+    },
+    "typeInfo": {
+      "probe": "Names one system. The Empire draws probes to rule systems out of the base search; the card in the Rebel Location zone marks the system of their base.",
+      "mission": "Missions of both sides: leaders attempt them in the assignment phase.",
+      "project": "Imperial projects: new forces and technologies.",
+      "action": "Action cards the sides gain together with new leaders.",
+      "objective": "Rebel objectives: a completed objective gains reputation.",
+      "tactic": "Tactic cards played in combat."
+    },
+    "zones": {
+      "probe-deck": "Probe deck",
+      "probe-box": "Out of the game (first game)",
+      "rebels-location": "Rebel Location",
+      "rebels-base-revealed": "Revealed base",
+      "empire-probes": "Imperial probes"
+    },
+    "effects": {
+      "no-play": "Not played — reference card"
+    },
+    "usage": {
+      "probe-refresh-draw": "In the Refresh phase the Empire draws 2 probe cards: the base is not in those systems.",
+      "probe-base-location": "The card in the Rebel Location zone names the system of their base."
+    }
   }
 }

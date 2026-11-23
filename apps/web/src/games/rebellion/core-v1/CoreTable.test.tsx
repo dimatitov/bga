@@ -19,6 +19,8 @@ import { useCoreUiStore } from './model/coreUiStore';
 import { TURN_TITLE_ID } from './panels/focus';
 import { resetCoreStores } from './panels/test/harness';
 import { PRELOAD_TIMEOUT_MS, preloadTableScreen } from '../test/preloadTable';
+import { aiActivationTask, makePhysicalRebelsView } from '../test/tableFixtures';
+import { PX_TITLE_ID } from './panels/focus';
 
 // The first render of a file waits for the lazy table chunk; load it here (SWR-006 final gate, see helper).
 beforeAll(preloadTableScreen, PRELOAD_TIMEOUT_MS);
@@ -288,5 +290,63 @@ describe('CoreTable — AI Commander through SessionHost (SWR-006 R-5, R-8)', ()
     expect(screen.queryByTestId('ai-thinking')).not.toBeInTheDocument();
     expect(screen.queryByTestId('game-info-ai-commander')).not.toBeInTheDocument();
     expect(api.requests.some((r) => r.path.endsWith('/automation/run'))).toBe(false);
+  });
+});
+
+describe('CoreTable — SWR-010 FE-B Physical Execution mode (plan-frontend §2, §9)', () => {
+  function renderSession(view: Parameters<typeof makeCoreSession>[0]) {
+    mockFetch({
+      [`GET /api/sessions/${CORE_SESSION_ID}`]: { status: 200, body: makeCoreSession(view) },
+    });
+    return renderWithProviders({ path: `/sessions/${CORE_SESSION_ID}` });
+  }
+
+  it('digital legacy game: data-console-mode="turn", data-cards-tracked="false"', async () => {
+    renderTable();
+    const table = await screen.findByTestId('game-table');
+    expect(table).toHaveAttribute('data-console-mode', 'turn');
+    expect(table).toHaveAttribute('data-cards-tracked', 'false');
+  });
+
+  it('TC-RST-04 / TC-PX-06: the mode is restored from the view after a remount (reload), same task, same status', async () => {
+    const view = makePhysicalRebelsView({
+      unregistered: false,
+      aiWaiting: true,
+      tasks: [aiActivationTask()],
+    });
+    const first = renderSession(view);
+    let table = await screen.findByTestId('game-table');
+    expect(table).toHaveAttribute('data-console-mode', 'physical');
+    expect(table).toHaveAttribute('data-cards-tracked', 'true');
+    expect(within(table).getByTestId('physical-execution')).toHaveAttribute(
+      'data-head-kind',
+      'aiActivation',
+    );
+    first.unmount();
+    resetCoreStores();
+
+    // «Reload»: a fresh app, the same server view → the same mode and task without any local state.
+    renderSession(view);
+    table = await screen.findByTestId('game-table');
+    expect(table).toHaveAttribute('data-console-mode', 'physical');
+    expect(within(table).getByTestId('table-task-t-5-1')).toHaveAttribute('data-head', 'true');
+    expect(within(table).getByTestId('table-task-waiting')).toHaveTextContent(
+      t('rebellion.table:px.waiting.ai'),
+    );
+    expect(within(table).queryByTestId('turn-panel')).not.toBeInTheDocument();
+    // Base registered → Game info names the base; before the registration it says «не зарегистрирована».
+    expect(within(table).getByTestId('game-info-base')).not.toHaveTextContent(
+      t('rebellion.table:register.notRegistered'),
+    );
+  });
+
+  it('before the registration Game info says «base not registered»; the skip link goes to the PX heading', async () => {
+    const { user } = renderSession(makePhysicalRebelsView());
+    const table = await screen.findByTestId('game-table');
+    expect(within(table).getByTestId('game-info-base')).toHaveTextContent(
+      t('rebellion.table:register.notRegistered'),
+    );
+    await user.click(within(table).getByTestId('skip-to-turn'));
+    await waitFor(() => expect(document.activeElement?.id).toBe(PX_TITLE_ID));
   });
 });

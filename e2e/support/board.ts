@@ -173,7 +173,10 @@ export async function version(page: Page): Promise<number> {
   return Number(v);
 }
 
-export async function openSidebarTab(page: Page, tab: 'log' | 'objects' | 'game'): Promise<void> {
+export async function openSidebarTab(
+  page: Page,
+  tab: 'log' | 'cards' | 'objects' | 'game',
+): Promise<void> {
   const t = page.getByTestId(T.sidebarTab(tab));
   await t.click();
   await expect(t).toHaveAttribute('aria-selected', 'true');
@@ -382,8 +385,10 @@ export async function keyboardFocus(page: Page, target: Locator, maxSteps = 250)
  * SWR-005B: current task is SWR-005B (dev-ai.spec.ts); SWR-005 specs pass 'SWR-005' explicitly.
  * SWR-006: current task is SWR-006 (ai-commander.spec.ts); dev-ai.spec.ts passes 'SWR-005B' explicitly, so the SWR-005B
  * evidence is rewritten only by a deliberate `SCREENSHOT_TASK=SWR-005B pnpm e2e`.
+ * SWR-010 (plan-frontend §11.4, Analyst decision): current task is SWR-010 (cards / physical specs); ai-commander.spec.ts
+ * passes 'SWR-006' explicitly, so the SWR-006 evidence is rewritten only by `SCREENSHOT_TASK=SWR-006 pnpm e2e`.
  */
-export const CURRENT_SCREENSHOT_TASK = 'SWR-006';
+export const CURRENT_SCREENSHOT_TASK = 'SWR-010';
 
 /** Task whose evidence folder receives screenshots in this run. */
 export function evidenceTask(): string {

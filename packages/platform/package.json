@@ -14,6 +14,11 @@
       "@bga/source": "./src/rules-kb/index.ts",
       "types": "./dist/rules-kb/index.d.ts",
       "default": "./dist/rules-kb/index.js"
+    },
+    "./cards": {
+      "@bga/source": "./src/cards/index.ts",
+      "types": "./dist/cards/index.d.ts",
+      "default": "./dist/cards/index.js"
     }
   },
   "scripts": {

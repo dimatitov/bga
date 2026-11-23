@@ -27,6 +27,7 @@ import {
 } from './core-script';
 import {
   BASE_SYSTEM,
+  CARDS_REBELS_TIME_SESSION,
   EMPIRE_WIN_SESSION,
   EMPIRE_WIN_STEPS,
   REBELS_TIME_SESSION,
@@ -34,6 +35,7 @@ import {
   SEED_REVEAL_SESSION,
   SEED_WIN_NEXT,
   SEED_WIN_SESSION,
+  playCardsRebelsTimeWin,
   playEmpireWin,
   playRebelsTimeWin,
   playSeedReveal,
@@ -162,6 +164,43 @@ describe('golden scripted games (real data)', () => {
 
     expect(playRebelsTimeWin().final).toEqual(final);
     expectGolden('golden-rebels-time.json', golden(final, REBELS_TIME_SESSION));
+  });
+});
+
+describe('golden game with cards (SWR-010 §10.3 R3, AC-6, A-8)', () => {
+  it('Rebels vs AI Empire, 13 passes: 2 probes per Refresh, the 13th Refresh draws the last card', () => {
+    const final = playCardsRebelsTimeWin();
+    const { state } = final;
+    expect(state.outcome).toEqual({ winner: 'rebels', reason: 'timeReachedReputation' });
+    expect(state.version).toBe(27);
+    const zone = (id: string) => state.cards?.pile.zones.find((z) => z.id === id)?.cards ?? [];
+    expect(zone('probe-deck')).toEqual([]);
+    expect(zone('empire-probes')).toHaveLength(25);
+    expect(zone('probe-box')).toHaveLength(5);
+    expect(zone('rebels-location')).toEqual([`probe-${state.rebelBase.systemId}#1`]);
+    const draws = final.events.flatMap((e) => (e.type === 'CARDS_DRAWN' ? [e.payload.count] : []));
+    expect(draws).toEqual([...Array.from({ length: 12 }, () => 2), 1]);
+    // Refresh order: … LEADERS_RETURNED → CARDS_DRAWN → TIME_ADVANCED.
+    const t = types(final);
+    for (const [i, type] of t.entries()) {
+      if (type === 'CARDS_DRAWN') {
+        expect(t[i - 1]).toBe('LEADERS_RETURNED');
+        expect(t[i + 1]).toBe('TIME_ADVANCED');
+      }
+    }
+    // The player's (Rebels') view: the Empire's hand is a count, the deck a count, the own Location visible.
+    const view = board(sessionView(state));
+    const zones = new Map(view.cards?.zones.map((z) => [z.id, z]));
+    expect(zones.get('empire-probes')).toMatchObject({ count: 25, cards: null });
+    expect(zones.get('probe-deck')).toMatchObject({ count: 0, cards: null });
+    expect(zones.get('rebels-location')?.cards).toHaveLength(1);
+    expect(view.log.filter((e) => e.type === 'CARDS_DRAWN')).toHaveLength(13);
+    for (const e of view.log) {
+      if (e.type === 'CARDS_DRAWN') expect(e.payload.definitionIds).toBeNull();
+    }
+
+    expect(playCardsRebelsTimeWin()).toEqual(final);
+    expectGolden('golden-cards-rebels-time.json', golden(final, CARDS_REBELS_TIME_SESSION));
   });
 });
 

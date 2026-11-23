@@ -30,6 +30,7 @@ import {
 import { rebellionServerModule } from '../../src/server';
 import { NOW, REBELS_VS_AI, activate, finish, move, pass, type Step } from './core-script';
 import { drain } from './drain-automation';
+import { swapLocationCard } from '../ai/fixtures/relocate-base';
 
 const automation = rebellionServerModule.automation as GameAutomation<GameState, GameEvent>;
 const ELIGIBLE = eligibleRebelBaseSystemIds(coreDataBaseV1);
@@ -49,9 +50,12 @@ function sessionIdWithBase(base: string, prefix: string): string {
 /**
  * The same game with the base in `to`: every Rebel unit / leader / the Rebel activation in the old base system
  * and every Rebel `SYSTEM_ACTIVATED` / `PIECES_MOVED` reference to it are moved to `to`.
+ * SWR-010: the Location card is exchanged with `to`'s deck card at the same position (plan-backend §10.3).
  */
 function relocateBase(state: CoreGameState, to: string): CoreGameState {
   const from = state.rebelBase.systemId;
+  const withCards = swapLocationCard(state, from, to);
+  if (withCards === null) throw new Error(`card of ${to} is not in the deck`);
   const swap = (id: string) => (id === from ? to : id);
   const log = state.log.map((event) => {
     if (event.actor !== 'rebels') return event;
@@ -71,7 +75,7 @@ function relocateBase(state: CoreGameState, to: string): CoreGameState {
     return event;
   });
   return CoreGameStateV3Schema.parse({
-    ...state,
+    ...withCards,
     rebelBase: { ...state.rebelBase, systemId: to },
     units: state.units.map((u) =>
       u.owner === 'rebels' ? { ...u, systemId: swap(u.systemId) } : u,

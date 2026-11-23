@@ -127,7 +127,14 @@ describe('rebellionServerModule', () => {
       messageKey: 'errors.rulesetUnavailable',
       details: { unsupported: ['ruleset'] },
     });
-    expect(module.parseSetup({ ...EMPIRE_AI, gameMode: 'physical_companion' })).toEqual({
+    // SWR-010 (AC-22): physical_companion is supported against the AI only.
+    expect(module.parseSetup({ ...EMPIRE_AI, gameMode: 'physical_companion' })).toMatchObject({
+      ok: true,
+      value: { gameMode: 'physical_companion', opponentType: 'ai' },
+    });
+    expect(
+      module.parseSetup({ ...REBELS_HUMAN, aiDifficulty: null, gameMode: 'physical_companion' }),
+    ).toEqual({
       ok: false,
       kind: 'unsupported',
       messageKey: 'errors.modeUnavailable',

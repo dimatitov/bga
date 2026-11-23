@@ -21,12 +21,13 @@ import { useSendCommand } from '../table/hooks/useSendCommand';
 import { aiSideOf, aiSummaryText, coreAutomationFlags } from './model/aiCommander';
 import { CoreBoardContext, type CoreBoardContextValue } from './model/coreContext';
 import { useCoreUiStore } from './model/coreUiStore';
-import { BOARD_LIST_ID, focusWhenReady, TURN_TITLE_ID } from './panels/focus';
+import { BOARD_LIST_ID, focusWhenReady, PX_TITLE_ID, TURN_TITLE_ID } from './panels/focus';
 import { responseAnnouncements } from './panels/useTurnCommands';
 import { CoreEventLog } from './sidebar/CoreEventLog';
 import { CoreSidebar } from './sidebar/CoreSidebar';
 import { CoreGameInfoPanel, CoreTopBar, OutcomeBanner } from './top-bar';
 import { isGameOver } from './model/viewModel';
+import { consoleMode } from './table/model/tableModel';
 
 export interface CoreTableProps {
   sessionId: string;
@@ -207,6 +208,8 @@ export function CoreTable({
   useDisarmOnEscape(t('rebellion.turn:pool.disarmed'));
   useGlobalEscape();
 
+  // SWR-010 FE-B (plan-frontend §2.1, §9): the console mode is a function of the view (restored by a reload by itself).
+  const mode = consoleMode(view);
   const ctx = useMemo<CoreBoardContextValue>(
     () => ({ sessionId, view, send, isPending, aiThinking }),
     [sessionId, view, send, isPending, aiThinking],
@@ -223,13 +226,15 @@ export function CoreTable({
         data-phase={view.phase}
         data-active-side={view.activeSide}
         data-status={status}
+        data-console-mode={mode}
+        data-cards-tracked={view.cards !== null ? 'true' : 'false'}
         sx={CONSOLE_SX}
       >
         <Typography component="h1" ref={headingRef} tabIndex={-1} sx={SR_ONLY}>
           {t('rebellion.session:page.title')}
         </Typography>
         <Button
-          onClick={() => focusWhenReady(TURN_TITLE_ID)}
+          onClick={() => focusWhenReady(mode === 'physical' ? PX_TITLE_ID : TURN_TITLE_ID)}
           data-testid="skip-to-turn"
           sx={SKIP_LINK}
         >

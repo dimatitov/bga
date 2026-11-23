@@ -325,11 +325,19 @@ test.describe('SWR-004 visual & accessibility', () => {
       'ruleset soon',
       3,
     );
+    // SWR-010 AC-22: physical_companion is available against AI (normal text contrast) and disabled «only against AI»
+    // with a second player (disabled → readable ≥ 3:1).
     await expectTextContrastDeep(
       page.getByTestId(T.setupModeOption('physical_companion')),
-      'mode soon',
+      'mode physical (AI)',
+    );
+    await page.getByTestId(T.setupOpponent('human')).click();
+    await expectTextContrastDeep(
+      page.getByTestId(T.setupModeOption('physical_companion')),
+      'mode physical (human, only against AI)',
       3,
     );
+    await page.getByTestId(T.setupOpponent('ai')).click();
     await expectTextContrastDeep(page.getByTestId(T.setupStart), 'start button');
 
     const matcher = await routeCreate(page, (route) =>

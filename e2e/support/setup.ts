@@ -8,6 +8,7 @@ import {
   type Route,
 } from '@playwright/test';
 import { API, listSessions, type Faction, type OpponentType } from './api';
+import { msg } from './cards';
 import { T } from './testids';
 
 /** True for `POST /api/sessions` (create), not for `/commands`. */
@@ -103,16 +104,42 @@ export async function expectOpponent(page: Page, type: OpponentType): Promise<vo
   else await expect(page.getByTestId(T.setupDifficulty)).toBeHidden();
 }
 
-/** Unavailable options are shown, marked `aria-disabled`, and never selected (AC-05 client). */
-export async function expectUnavailableOptions(page: Page): Promise<void> {
-  for (const id of [
-    T.setupRulesetOption('rise-of-the-empire'),
-    T.setupModeOption('physical_companion'),
-  ]) {
-    const opt = page.getByTestId(id);
-    await expect(opt).toBeVisible();
-    await expect(opt).toHaveAttribute('aria-disabled', 'true');
-    await expect(opt).toHaveAttribute('aria-checked', 'false');
+/** Shown, marked `aria-disabled`, never selected. */
+async function expectUnavailable(page: Page, testId: string): Promise<void> {
+  const opt = page.getByTestId(testId);
+  await expect(opt).toBeVisible();
+  await expect(opt).toHaveAttribute('aria-disabled', 'true');
+  await expect(opt).toHaveAttribute('aria-checked', 'false');
+}
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * «Physical components» badge text (SWR-010 AC-22): the RU or EN `setup:newGame.aiOnly` string, read from the web locale
+ * files (not hard-coded), so a wording change does not break the spec.
+ */
+export const AI_ONLY_BADGE = new RegExp(
+  (['ru', 'en'] as const).map((lang) => escapeRe(msg(lang, 'setup', 'newGame.aiOnly'))).join('|'),
+);
+
+/**
+ * Unavailable options are shown, marked `aria-disabled`, and never selected (AC-05 client). RotE is always «soon»;
+ * SWR-010 (AC-22, TC-SET-01/02): `physical_companion` is available against AI and unavailable — badge «только против
+ * AI» — only with a human opponent.
+ */
+export async function expectUnavailableOptions(
+  page: Page,
+  opponentType: OpponentType = 'ai',
+): Promise<void> {
+  await expectUnavailable(page, T.setupRulesetOption('rise-of-the-empire'));
+  const physical = page.getByTestId(T.setupModeOption('physical_companion'));
+  await expect(physical).toBeVisible();
+  if (opponentType === 'human') {
+    await expectUnavailable(page, T.setupModeOption('physical_companion'));
+    await expect(physical).toContainText(AI_ONLY_BADGE);
+  } else {
+    await expect(physical).not.toHaveAttribute('aria-disabled', 'true');
+    await expect(physical).not.toContainText(AI_ONLY_BADGE);
   }
 }
 

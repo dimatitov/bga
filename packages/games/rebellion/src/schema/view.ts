@@ -9,6 +9,8 @@ import {
 } from './enums';
 import { UnitTypeSchema } from './data';
 import { RebellionSettingsSchema } from './settings';
+import { CoreCardsViewSchema } from './cards';
+import { TableViewSchema } from './table';
 import {
   CoreViewEventSchema,
   GameLogSchema,
@@ -217,6 +219,10 @@ export const CorePlayerViewSchema = z.strictObject({
   outcome: z.strictObject({ winner: FactionSchema, reason: OutcomeReasonSchema }).nullable(),
   log: z.array(CoreViewEventSchema),
   legalActions: z.array(CoreLegalActionSchema),
+  /** SWR-010: card zones as the viewer sees them; `null` = cards are not tracked in this game (legacy). */
+  cards: CoreCardsViewSchema.nullable(),
+  /** SWR-010: physical-table tasks; `null` = not `physical_companion` or the viewer is not the human. */
+  table: TableViewSchema.nullable(),
 });
 export type CorePlayerView = z.infer<typeof CorePlayerViewSchema>;
 /** Name used by plan-frontend (FE-0). */

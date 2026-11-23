@@ -5,7 +5,12 @@ import {
   RebellionSetupInputSchema,
 } from '@bga/game-rebellion/schema';
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETUP, initialSetupForm, type SetupFormValues } from './setupForm';
+import {
+  DEFAULT_SETUP,
+  initialSetupForm,
+  type SetupFormValues,
+  withOpponentType,
+} from './setupForm';
 import { toCreateSessionRequest, toSetupInput, validateSetup } from './toSetupInput';
 
 const FACTIONS: FactionId[] = ['rebels', 'empire'];
@@ -78,10 +83,20 @@ describe('setup form model (TC-U-03, TC-C-07, TR-12)', () => {
       ok: false,
       reason: 'rulesetUnavailable',
     });
-    expect(validateSetup({ ...DEFAULT_SETUP, gameMode: 'physical_companion' })).toEqual({
-      ok: false,
-      reason: 'modeUnavailable',
-    });
+    // SWR-010 AC-22: physical_companion is available against AI (both sides), not with a second player.
+    for (const playerFaction of FACTIONS) {
+      const physicalAi: SetupFormValues = {
+        ...DEFAULT_SETUP,
+        playerFaction,
+        gameMode: 'physical_companion',
+      };
+      expect(validateSetup(physicalAi)).toEqual({ ok: true, setup: toSetupInput(physicalAi) });
+      expect(toSetupInput(physicalAi).gameMode).toBe('physical_companion');
+      expect(validateSetup({ ...physicalAi, opponentType: 'human' })).toEqual({
+        ok: false,
+        reason: 'modeUnavailable',
+      });
+    }
     expect(
       validateSetup({
         ...DEFAULT_SETUP,
@@ -92,5 +107,29 @@ describe('setup form model (TC-U-03, TC-C-07, TR-12)', () => {
     expect(
       validateSetup({ ...DEFAULT_SETUP, playerFaction: 'jedi' as unknown as FactionId }),
     ).toEqual({ ok: false, reason: 'invalid' });
+  });
+
+  it('withOpponentType (SWR-010 §7): human resets physical_companion → digital (announced); other changes keep the mode', () => {
+    const physical: SetupFormValues = { ...DEFAULT_SETUP, gameMode: 'physical_companion' };
+    expect(withOpponentType(physical, 'human')).toEqual({
+      form: { ...physical, opponentType: 'human', gameMode: 'digital' },
+      modeReset: true,
+    });
+    // Back to AI does not restore physical (explicit choice) and is not announced.
+    const human = withOpponentType(physical, 'human').form;
+    expect(withOpponentType(human, 'ai')).toEqual({
+      form: { ...human, opponentType: 'ai' },
+      modeReset: false,
+    });
+    // Digital is available for any opponent; same opponent → same object.
+    expect(withOpponentType({ ...DEFAULT_SETUP }, 'human')).toEqual({
+      form: { ...DEFAULT_SETUP, opponentType: 'human' },
+      modeReset: false,
+    });
+    expect(withOpponentType(physical, 'ai').form).toBe(physical);
+    // aiDifficulty is kept (Q-19).
+    expect(withOpponentType({ ...physical, aiDifficulty: 'hard' }, 'human').form.aiDifficulty).toBe(
+      'hard',
+    );
   });
 });

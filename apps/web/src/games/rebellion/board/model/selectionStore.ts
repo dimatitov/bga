@@ -17,7 +17,8 @@ export type ReconcilableView =
   | Pick<PlayerViewMock, 'systems' | 'pieces'>
   | Pick<PlayerViewCore, 'map' | 'units' | 'leaders' | 'rebelBase'>;
 
-export type SidebarTab = 'log' | 'objects' | 'game';
+/** SWR-010: `cards` — Card Hand tab of the `core-v1` console (the mock-v1 sidebar lists its own tabs). */
+export type SidebarTab = 'log' | 'cards' | 'objects' | 'game';
 
 export const NO_SELECTION: Selection = { kind: 'none' };
 

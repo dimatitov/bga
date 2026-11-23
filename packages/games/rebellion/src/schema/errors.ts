@@ -49,6 +49,21 @@ export const REBELLION_ERROR_MESSAGE_KEYS = {
   immobileUnit: 'errors.immobileUnit',
   /** MOVE_PIECES: not enough transport capacity moving with the units that need it (R-5). */
   insufficientCapacity: 'errors.insufficientCapacity',
+  // --- SWR-010 (plan-backend §5.5, §11.4) ---
+  /** Physical-table tasks are pending: every other game command waits for their confirmation. */
+  tableSyncPending: 'errors.tableSyncPending',
+  /** CONFIRM_TABLE_TASK: no such task in the queue (e.g. already confirmed). */
+  tableTaskNotFound: 'errors.tableTaskNotFound',
+  /** CONFIRM_TABLE_TASK: the task is not the head of the queue. */
+  tableTaskNotHead: 'errors.tableTaskNotHead',
+  /** CONFIRM_TABLE_TASK: the head task is completed by REGISTER_CARD, not by a confirmation. */
+  tableTaskNeedsRegistration: 'errors.tableTaskNeedsRegistration',
+  /** REGISTER_CARD: no registration is expected (digital, human Empire, already registered, wrong zone, game over). */
+  registrationUnavailable: 'errors.registrationUnavailable',
+  /** REGISTER_CARD: not a probe card of the catalog. */
+  unknownCard: 'errors.unknownCard',
+  /** REGISTER_CARD: the card's system cannot hold the base. */
+  cardNotEligible: 'errors.cardNotEligible',
 } as const;
 export type RebellionErrorMessageKey =
   (typeof REBELLION_ERROR_MESSAGE_KEYS)[keyof typeof REBELLION_ERROR_MESSAGE_KEYS];

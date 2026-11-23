@@ -12,13 +12,14 @@ import { Link as RouterLink } from 'react-router';
 import type { SetupScreenProps } from '@/games/types';
 import { translateUnknownError } from '@/shared/i18n';
 import { terminalTokens } from '@/shared/theme';
+import { VisuallyHidden } from '@/shared/ui';
 import { REBELLION_ERRORS_NS } from '../i18n';
 import { DifficultyPicker } from './components/DifficultyPicker';
 import { FactionCards } from './components/FactionCards';
 import { GameModePicker } from './components/GameModePicker';
 import { OpponentPicker } from './components/OpponentPicker';
 import { RulesetPicker } from './components/RulesetPicker';
-import { initialSetupForm, type SetupFormValues } from './model/setupForm';
+import { initialSetupForm, type SetupFormValues, withOpponentType } from './model/setupForm';
 import { type SetupValidation, validateSetup } from './model/toSetupInput';
 
 const T = terminalTokens;
@@ -44,6 +45,8 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
   const { t } = useTranslation();
   const [form, setForm] = useState<SetupFormValues>(initialSetupForm);
   const [clientError, setClientError] = useState<ClientError | null>(null);
+  // SWR-010 §7: polite announcement when switching to a second player resets `physical_companion` → digital.
+  const [modeResetAnnounced, setModeResetAnnounced] = useState(false);
   const startRef = useRef<HTMLButtonElement>(null);
   const alertRef = useRef<HTMLDivElement>(null);
   const pending = start.isPending;
@@ -57,11 +60,23 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
     alertRef.current?.scrollIntoView?.({ block: 'nearest' });
   }, [serverError]);
 
-  const update = <K extends keyof SetupFormValues>(key: K, value: SetupFormValues[K]) => {
-    setForm((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }));
+  const clearErrors = () => {
     // D-SW4-12: the error belongs to the previous settings.
     setClientError(null);
     if (start.error) start.reset();
+  };
+
+  const update = <K extends keyof SetupFormValues>(key: K, value: SetupFormValues[K]) => {
+    setForm((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }));
+    setModeResetAnnounced(false);
+    clearErrors();
+  };
+
+  const updateOpponent = (opponentType: SetupFormValues['opponentType']) => {
+    const next = withOpponentType(form, opponentType);
+    setForm(next.form);
+    setModeResetAnnounced(next.modeReset);
+    clearErrors();
   };
 
   const handleSubmit = (e: FormEvent) => {
@@ -117,6 +132,12 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
           </Typography>
         </Box>
 
+        {/* Outside the Stack: an empty live region must not add a spacing gap. */}
+        <Box role="status" aria-live="polite" data-testid="setup-mode-announce">
+          <VisuallyHidden>
+            {modeResetAnnounced ? t('rebellion.setup:newGame.modeResetAnnounce') : null}
+          </VisuallyHidden>
+        </Box>
         <Stack spacing={3} sx={{ p: { xs: 2, sm: 4 } }}>
           <FactionCards
             value={form.playerFaction}
@@ -125,7 +146,7 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
           />
           <OpponentPicker
             value={form.opponentType}
-            onChange={(v) => update('opponentType', v)}
+            onChange={updateOpponent}
             playerFaction={form.playerFaction}
             disabled={pending}
           />
@@ -145,6 +166,7 @@ export default function SetupScreen({ start, backHref }: SetupScreenProps) {
           <GameModePicker
             value={form.gameMode}
             onChange={(v) => update('gameMode', v)}
+            opponentType={form.opponentType}
             disabled={pending}
           />
 

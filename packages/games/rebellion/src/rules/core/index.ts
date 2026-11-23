@@ -6,11 +6,21 @@
  *   `./turn-flow` (R-3, R-6, R-7, hot-seat), `./victory` (R-8, R-9);
  * - `./state-checks` — `runStateChecks`, THE single base-reveal / Empire-victory check (SWR-008 DISC-009),
  *   exported here for tests only (not re-exported by `../index`);
- * - `./legal` — legal actions; `./redact` — THE single redaction point (views and events).
+ * - `./legal` — legal actions; `./redact` — THE single redaction point (views, events, card zones);
+ * - `./cards` — the SWR-010 card engine (deck init, Refresh draw, Location reveal / registration);
+ * - `./table` — Physical Sync v0 (`tableBlocks` is also used by the server automation).
  */
 export { applyCoreCommand } from './apply';
 export { chooseRebelBase, fnv1a32 } from './base';
 export { createCoreGame } from './create';
 export { coreLegalActions } from './legal';
-export { corePlayerEvents, coreSideView, hiddenBaseFor } from './redact';
+export {
+  coreCardsView,
+  corePlayerEvents,
+  corePublicCardsView,
+  coreSideView,
+  hiddenBaseFor,
+} from './redact';
+export { initCoreCards } from './cards';
+export { tableBlocks } from './table';
 export { baseRevealConditionMet, revealTimingAllows, runStateChecks } from './state-checks';

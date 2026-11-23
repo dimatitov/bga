@@ -81,6 +81,8 @@ export const T = {
   setupModeOption: (m: 'digital' | 'physical_companion') => `setup-mode-${m}`,
   /** replaces `setup-mock-badge` (removed in SWR-004) */
   setupPrototypeNote: 'setup-prototype-note',
+  /** SWR-010: `role=status` live region — «physical only against AI, digital selected» after a reset (plan-frontend §7) */
+  setupModeAnnounce: 'setup-mode-announce',
   /** `aria-busy` while the request is in flight */
   setupStart: 'setup-start',
   setupCancel: 'setup-cancel',
@@ -125,7 +127,7 @@ export const T = {
   actionMove: (pieceId: string, to: string) => `action-move-${pieceId}-${to}`,
   eventLog: 'event-log',
   eventLogItem: 'event-log-item',
-  sidebarTab: (tab: 'log' | 'objects' | 'game') => `sidebar-tab-${tab}`,
+  sidebarTab: (tab: 'log' | 'cards' | 'objects' | 'game') => `sidebar-tab-${tab}`,
   boardList: 'board-list',
   systemItem: (id: string) => `system-item-${id}`,
   systemItemMove: (id: string) => `system-item-${id}-move`,
@@ -260,6 +262,57 @@ export const T = {
   /** < 760 px: bottom sheet wrapper and its `aria-expanded` toggle */
   unitManifestSheet: 'unit-manifest-sheet',
   unitManifestSheetToggle: 'unit-manifest-sheet-toggle',
+  // SWR-010 Card Hand / Card Detail (plan-frontend §9, verified against core-v1/cards/**)
+  /** `data-tracked` true|false, `data-viewer` */
+  cardHand: 'card-hand',
+  cardHandLegacy: 'card-hand-legacy',
+  /** `data-count`, `data-visible` true|false */
+  cardZone: (zoneId: string) => `card-zone-${zoneId}`,
+  /** toggle button, `aria-pressed`, `data-zone` (FD-2: by definition id) */
+  cardHandItem: (definitionId: string) => `card-hand-item-${definitionId}`,
+  /** `data-count` = sum of the opponent zones */
+  cardHandOpponentCount: 'card-hand-opponent-count',
+  /** `data-count` */
+  cardDeckCount: 'card-deck-count',
+  cardHandRegister: 'card-hand-register',
+  cardHandDeferred: 'card-hand-deferred',
+  /** `role=region`, `data-definition-id` */
+  cardDetail: 'card-detail',
+  cardDetailClose: 'card-detail-close',
+  cardDetailType: 'card-detail-type',
+  cardDetailTypeInfo: 'card-detail-type-info',
+  cardDetailUsage: 'card-detail-usage',
+  /** `data-effect-status` */
+  cardDetailEffect: 'card-detail-effect',
+  cardDetailWhere: 'card-detail-where',
+  /** `data-authority` digital|physical */
+  cardDetailAuthority: 'card-detail-authority',
+  cardDetailSources: 'card-detail-sources',
+  /** `data-verification` */
+  cardDetailVerification: 'card-detail-verification',
+  // SWR-010 Physical Execution (plan-frontend §9, verified against core-v1/table/**)
+  /** `data-head-kind`, `data-queue-length`, `data-ai-waiting` */
+  physicalExecution: 'physical-execution',
+  /** `data-head`, `data-kind`; head = `role=region` */
+  tableTask: (taskId: string) => `table-task-${taskId}`,
+  tableTaskHappened: 'table-task-happened',
+  tableTaskAffected: 'table-task-affected',
+  /** `<ol>` of the steps, `li[data-step]` */
+  tableTaskSteps: 'table-task-steps',
+  tableTaskNext: 'table-task-next',
+  tableTaskKeys: 'table-task-keys',
+  /** «Выполнено на столе», `data-task-id` */
+  tableTaskConfirm: 'table-task-confirm',
+  /** `data-ai-waiting` */
+  tableTaskWaiting: 'table-task-waiting',
+  tableTaskError: 'table-task-error',
+  locationRegisterForm: 'location-register-form',
+  /** the native `<select>` */
+  locationRegisterSelect: 'location-register-select',
+  locationRegisterSubmit: 'location-register-submit',
+  locationRegisterDialog: 'location-register-dialog',
+  locationRegisterConfirm: 'location-register-confirm',
+  locationRegisterCancel: 'location-register-cancel',
   // shared
   notFound: 'not-found',
   feedback: 'feedback',

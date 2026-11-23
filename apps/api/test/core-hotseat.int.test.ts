@@ -147,6 +147,8 @@ describe('core-v1 hot-seat over HTTP (AC-09)', () => {
       'PASSED empire',
       'PHASE_STARTED system',
       'LEADERS_RETURNED system',
+      // SWR-010: Refresh step 3 — the Empire draws 2 probe cards (new games carry cards).
+      'CARDS_DRAWN system',
       'TIME_ADVANCED system',
       'PHASE_STARTED system',
       'PHASE_STARTED system',

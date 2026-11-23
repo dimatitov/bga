@@ -8,6 +8,10 @@ export const TURN_TITLE_ID = 'core-turn-title';
 export const MOVE_TITLE_ID = 'core-move-title';
 export const TURN_PANEL_ID = 'core-turn-panel';
 export const BOARD_LIST_ID = 'core-board-list';
+/** SWR-010 FE-B: heading of the Physical Execution module (`physical-execution`) — focus target in the `physical` mode. */
+export const PX_TITLE_ID = 'core-px-title';
+/** SWR-010 FE-B: the system select of the Location registration form (target of «Зарегистрировать карту базы»). */
+export const LOCATION_REGISTER_SELECT_ID = 'core-location-register-select';
 
 const ATTEMPTS = 12;
 const STEP_MS = 16;

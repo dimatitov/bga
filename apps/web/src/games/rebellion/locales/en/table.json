@@ -1,0 +1,77 @@
+{
+  "table": {
+    "tasks": {
+      "initialSetup": "Set up the physical table",
+      "registerBase": "Register your base card",
+      "aiActivation": "AI activated a system",
+      "aiMove": "AI moved units",
+      "refresh": "Refresh phase",
+      "baseRevealed": "The Rebel base is revealed"
+    },
+    "steps": {
+      "setupFirstGame": "Set up the board and the pieces for the first game as the rulebook describes.",
+      "removeProbeCards": "Put these probe cards back in the box, they are out of this game ({{count}}): {{cards}}.",
+      "setAsideReferenceStack": "Set the remaining probe cards aside face up as a reference stack: the app keeps the probe deck.",
+      "placeLocationPlaceholder": "Put a face-down placeholder on the \"Rebel Base\" space: the app keeps the base secret.",
+      "registerBaseCard": "Choose your base system, take its probe card from the reference stack and put it face down on the \"Rebel Base\" space, then register it below.",
+      "placeLeader": "Place {{leader}} in {{system}}.",
+      "moveUnits": "Move {{units}} from {{from}} to {{to}}.",
+      "returnLeaders": "Return these leaders to their pools: {{leaders}}.",
+      "takeProbeCards": "Take these probe cards from the reference stack into your hand: {{cards}}.",
+      "opponentDrewProbeCards_one": "The opponent drew {{count}} probe card (kept by the app, nothing to do).",
+      "opponentDrewProbeCards_other": "The opponent drew {{count}} probe cards (kept by the app, nothing to do).",
+      "advanceTime": "Move the time marker from {{from}} to {{to}}.",
+      "revealBase": "Take the {{system}} card from the reference stack and put it face up on the \"Rebel Base\" space; remove the placeholder.",
+      "revealOwnBase": "Turn your base card {{system}} face up.",
+      "moveBaseUnits": "Move the units of the \"Rebel Base\" space to {{system}}."
+    }
+  },
+  "px": {
+    "label": "Physical table · task {{n}} of {{total}}",
+    "keysLabel": "Physical table",
+    "happenedTitle": "What happened",
+    "happened": {
+      "initialSetup": "The game has started: prepare the physical table.",
+      "registerBase": "Your base has not been registered yet.",
+      "aiActivation": "{{side}} activated a system.",
+      "aiMove": "{{side}} moved units.",
+      "refresh": "The refresh phase has run.",
+      "baseRevealed": "The Rebel base has been revealed."
+    },
+    "affected": {
+      "title": "Affected",
+      "cards": "Cards",
+      "leaders": "Leaders",
+      "units": "Units",
+      "systems": "Systems",
+      "none": "Nothing on the map."
+    },
+    "doTitle": "Do on the table",
+    "next": "Next tasks",
+    "confirm": "Done on the table",
+    "waiting": {
+      "ai": "AI waits for the table to be confirmed",
+      "you": "Sync the table to continue",
+      "over": "Game over: finish syncing the table"
+    },
+    "baseSpace": "the \"Rebel Base\" space",
+    "announce": {
+      "task": "Table task: {{title}}.",
+      "next": "Next table task: {{title}}.",
+      "synced": "The table is in sync.",
+      "done": "Done on the table: {{title}}."
+    }
+  },
+  "register": {
+    "hint": "Only systems that can hold your base are listed.",
+    "label": "Base system",
+    "placeholder": "Choose a system",
+    "submit": "Register",
+    "dialogTitle": "Register the base card?",
+    "dialogText": "Register {{system}} as your base card? This cannot be changed.",
+    "cancel": "Cancel",
+    "confirm": "Register",
+    "done": "Base card registered: {{card}}.",
+    "notRegistered": "Not registered"
+  }
+}

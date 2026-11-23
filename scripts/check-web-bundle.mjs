@@ -31,6 +31,18 @@
 // (`dev-ui-kit-path` / `dev-ui-kit-testid`); its modules live under `apps/web/src/dev/**` and are covered by the module
 // check above.
 //
+// SWR-010 (plan-frontend §12, AC-23, TC-LK-17): card decks are server-only. The web may bundle the public card catalog
+// (`@bga/game-rebellion/schema`) and the Zod contracts of `@bga/platform/cards` (`schema.ts`), nothing else of it:
+// - `card-deck-seed`: the probe-deck shuffle seed literal (`…|probe-deck|…`) — survives minification and would expose
+//   how the hidden deck order is derived;
+// - `rebellion-card-server-symbol`: server card/table function names (`initCoreCards`, `drawProbeCards`,
+//   `applyRegisterLocation`, `tasksFromEvents`, `initialTableState`, plus `chooseRebelBase`) as a string or key —
+//   same reasoning as `rebel-base-choice-symbol`;
+// - module composition: no `packages/platform/{src,dist}/cards/{engine,shuffle,visibility}` in the sourcemaps
+//   (`forbiddenPlatformCardModules`); `rules/core/{cards,table}.ts` are already covered by the game sub-path rule.
+//   `cards/invariants` IS allowed (Analyst decision Q1, SWR-010 FE-C): pure validation reached through the game
+//   `./schema` state schema (`checkCardInvariants` in its superRefine) — no secrets, no seed, no ordering logic.
+//
 // Usage: node scripts/check-web-bundle.mjs [--dist <dir>] [--rebuild] [--modules] [--modules-dir <dir>] [--skip-modules]
 //   Reads apps/web/dist; builds it first (pnpm --filter @bga/web build) if it is missing or --rebuild.
 //   --modules          also print every game-package module of the bundle;
@@ -102,12 +114,31 @@ export const DEV_AI_AND_SECRET_RULES = [
 ];
 
 /**
+ * SWR-010 (plan-frontend §12, AC-23): server-only card deck logic (stable ids for QA logs).
+ * @type {{ id: string, description: string, regex: RegExp }[]}
+ */
+export const CARD_SERVER_RULES = [
+  {
+    id: 'card-deck-seed',
+    description: 'probe-deck shuffle seed literal (`…|probe-deck|…`) in the web bundle: deck order is server-only (AC-23)',
+    regex: /\|probe-deck\|/,
+  },
+  {
+    id: 'rebellion-card-server-symbol',
+    description:
+      'server card/table logic string (`initCoreCards` / `drawProbeCards` / `applyRegisterLocation` / `tasksFromEvents` / `initialTableState` / `chooseRebelBase`) in the web bundle (AC-23)',
+    regex: /initCoreCards|drawProbeCards|applyRegisterLocation|tasksFromEvents|initialTableState|chooseRebelBase/,
+  },
+];
+
+/**
  * Rules derived from a scenario object ({ pieces: [{ id, hidden?, typeKey }], rebelBaseSystemId }).
  * @returns {{ id: string, description: string, regex: RegExp }[]}
  */
 export function forbiddenFromScenario(scenario) {
   const rules = [
     ...DEV_AI_AND_SECRET_RULES,
+    ...CARD_SERVER_RULES,
     {
       id: 'board-debug-hook',
       description: '`__boardDebug` dev/test hook in a production bundle (R-11, TC-ARCH-08)',
@@ -240,6 +271,18 @@ export function forbiddenWebModules(sources) {
   return sources.map((raw) => String(raw).replace(/\\/g, '/')).filter((source) => WEB_DEV_MODULE_RE.test(source));
 }
 
+/**
+ * SWR-010 (plan-frontend §12): modules of the platform card engine (`engine`, `shuffle`, `visibility`) — deck
+ * operations, the seeded shuffle and the hidden-zone projector are server-only. Allowed: `cards/schema` (Zod contracts
+ * of the view) and `cards/invariants` (Analyst Q1: pure checks used by the game state schema; nothing secret).
+ */
+const PLATFORM_CARD_ENGINE_RE = /(?:^|\/)packages\/platform\/(?:src|dist)\/cards\/(?:engine|shuffle|visibility)\.[cm]?[jt]s$/;
+export function forbiddenPlatformCardModules(sources) {
+  return sources
+    .map((raw) => String(raw).replace(/\\/g, '/'))
+    .filter((source) => PLATFORM_CARD_ENGINE_RE.test(source));
+}
+
 /** `sources` of every *.map file under `dir`. */
 export function readMapSources(dir) {
   const sources = [];
@@ -309,14 +352,19 @@ function checkBundleModules({ modulesDir, listModules }) {
     for (const source of devModules) {
       console.log(`FORBIDDEN module ${source} [web-dev] — apps/web/src/dev/** is dev-only (import.meta.env.DEV)`);
     }
-    if (forbidden.length > 0 || devModules.length > 0) {
+    // SWR-010: the platform card engine is server-only (expected: none).
+    const cardModules = forbiddenPlatformCardModules(sources);
+    for (const source of cardModules) {
+      console.log(`FORBIDDEN module ${source} [platform-cards-engine] — web may bundle only @bga/platform/cards schema`);
+    }
+    if (forbidden.length > 0 || devModules.length > 0 || cardModules.length > 0) {
       console.log(
-        `FAIL check-web-bundle: ${forbidden.length} forbidden game module(s), ${devModules.length} dev module(s) in the bundle`,
+        `FAIL check-web-bundle: ${forbidden.length} forbidden game module(s), ${devModules.length} dev module(s), ${cardModules.length} card engine module(s) in the bundle`,
       );
       return 1;
     }
     console.log(
-      `OK check-web-bundle modules: ${sources.length} sources, ${all.length} game modules, only ${WEB_GAME_SUBPATHS.join('/')}; 0 apps/web/src/dev modules`,
+      `OK check-web-bundle modules: ${sources.length} sources, ${all.length} game modules, only ${WEB_GAME_SUBPATHS.join('/')}; 0 apps/web/src/dev modules; 0 platform card engine modules`,
     );
     return 0;
   } finally {

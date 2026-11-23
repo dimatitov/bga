@@ -25,6 +25,7 @@ import {
   U_TRANSPORT,
   U_XWING,
 } from '../../test/coreFixtures';
+import { makePhysicalRebelsView } from '../../test/tableFixtures';
 import * as vm from './viewModel';
 
 describe('core fixtures follow the frozen schema', () => {
@@ -300,5 +301,18 @@ describe('viewModel — rebel base and the hidden zone (AC-10)', () => {
     const view = makeCoreOutcomeView('rebels', 'timeReachedReputation', { viewer: 'empire' });
     expect(vm.visibleRebelBaseSystemId(view)).toBe(CS_YAVIN);
     expect(vm.hiddenZone(view)).toBeNull();
+  });
+
+  it('SWR-010 (§5.3, AQ-4): physical game before the Location registration — the base is not named, no zone', () => {
+    const view = makePhysicalRebelsView();
+    // The server still sends its provisional system; the UI must not show it as the base.
+    expect(view.rebelBase.systemId).toBe(CS_YAVIN);
+    expect(vm.baseRegistrationPending(view)).toBe(true);
+    expect(vm.visibleRebelBaseSystemId(view)).toBeNull();
+    expect(vm.hiddenZone(view)).toBeNull();
+    const registered = makePhysicalRebelsView({ unregistered: false });
+    expect(vm.baseRegistrationPending(registered)).toBe(false);
+    expect(vm.visibleRebelBaseSystemId(registered)).toBe(CS_YAVIN);
+    expect(vm.baseRegistrationPending(makeCoreView())).toBe(false);
   });
 });

@@ -6,7 +6,7 @@
 // never the exact AI moves. States the bot cannot produce on demand (slow answer, OpenAI fallback, pending run, run
 // error) are produced with `page.route` on the real responses (plan-frontend §8).
 // Final testids: plan-frontend.md §8 (`e2e/support/testids.ts`). Screenshots (TC-VA-01) go to
-// docs/tasks/SWR-006/artifacts/screenshots/ (CURRENT_SCREENSHOT_TASK = 'SWR-006').
+// docs/tasks/SWR-006/artifacts/screenshots/ only with SCREENSHOT_TASK=SWR-006 (SWR-010: explicit task, the current one is SWR-010).
 import { readFileSync } from 'node:fs';
 import { expect, test, type Page, type Request, type Route } from '@playwright/test';
 import {
@@ -684,6 +684,8 @@ test.describe('SWR-006 AI Commander v0 (core-v1, bot)', () => {
 
 // TC-VA-01: evidence screenshots ru/en × 1440/375 into docs/tasks/SWR-006/artifacts/screenshots/; at 375 no
 // horizontal scroll and the AI status / summary / notices are not clipped.
+/** Evidence task of these screenshots (SWR-010: explicit — the current task is SWR-010). */
+const SWR006 = 'SWR-006';
 const SIZES = [
   { width: 1440, height: 900 },
   { width: 375, height: 812 },
@@ -716,14 +718,14 @@ for (const lang of ['ru', 'en'] as const) {
       await expect(page.getByTestId(T.aiThinking)).toBeVisible();
       await check(T.aiCommanderStatus, 'AI status (thinking)');
       await page.evaluate(() => window.scrollTo(0, 0));
-      await saveScreenshot(page, `swr006-rebels-vs-ai-thinking-${suffix}`);
+      await saveScreenshot(page, `swr006-rebels-vs-ai-thinking-${suffix}`, SWR006);
       await done;
       await expect(page.getByTestId(T.aiThinking)).toHaveCount(0);
       await expect(page.getByTestId(T.aiTurnSummary)).toBeVisible();
       await check(T.aiTurnSummary, 'AI turn summary');
       await check(T.aiCommanderStatus, 'AI status');
       if (!narrow) await openSidebarTab(page, 'log');
-      await saveScreenshot(page, `swr006-rebels-vs-ai-after-turn-${suffix}`, undefined, {
+      await saveScreenshot(page, `swr006-rebels-vs-ai-after-turn-${suffix}`, SWR006, {
         fullPage: narrow,
       });
 
@@ -737,7 +739,7 @@ for (const lang of ['ru', 'en'] as const) {
       await finishViaUi(page);
       await check(T.aiFallbackNotice, 'fallback notice');
       await page.getByTestId(T.aiFallbackNotice).scrollIntoViewIfNeeded();
-      await saveScreenshot(page, `swr006-ai-fallback-notice-${suffix}`);
+      await saveScreenshot(page, `swr006-ai-fallback-notice-${suffix}`, SWR006);
 
       // 4) Empire vs AI: the hidden base zone after the AI Rebels' first turn.
       const c = await createSession(request, EMPIRE_VS_AI);
@@ -747,7 +749,7 @@ for (const lang of ['ru', 'en'] as const) {
       await expect(page.getByTestId(T.hiddenZonePanel)).toBeVisible();
       await check(T.aiCommanderStatus, 'AI status (Empire)');
       await page.evaluate(() => window.scrollTo(0, 0));
-      await saveScreenshot(page, `swr006-empire-vs-ai-hidden-base-${suffix}`, undefined, {
+      await saveScreenshot(page, `swr006-empire-vs-ai-hidden-base-${suffix}`, SWR006, {
         fullPage: narrow,
       });
 
@@ -763,7 +765,7 @@ for (const lang of ['ru', 'en'] as const) {
       await expect(page.getByTestId(T.sessionAutomationNotice)).toBeVisible();
       await expect(page.getByTestId(T.sessionAutomationRetry)).toHaveText(texts(lang).retry);
       await check(T.sessionAutomationNotice, 'automation notice');
-      await saveScreenshot(page, `swr006-ai-continue-${suffix}`);
+      await saveScreenshot(page, `swr006-ai-continue-${suffix}`, SWR006);
     });
   }
 }

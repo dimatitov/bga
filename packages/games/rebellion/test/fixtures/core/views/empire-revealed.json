@@ -1237,5 +1237,7 @@
     {
       "type": "PASS"
     }
-  ]
+  ],
+  "cards": null,
+  "table": null
 }

@@ -118,7 +118,7 @@
 
 ## Refresh Phase (`refresh`)
 
-- `rebellion:impl.refresh-partial` core-v1 Refresh: only retrieve leaders and advance time — implementation-note, verified (RR p.12)
+- `rebellion:impl.refresh-partial` core-v1 Refresh: retrieve leaders, draw probes, advance time — implementation-note, verified (RR p.12)
 - `rebellion:refresh.advance-time` Step 5: advance the time marker, recruit and build — rule, verified (RR p.12; LTP p.10)
 - `rebellion:refresh.deploy-step` Step 6: slide the build queue and deploy — rule, verified (RR p.12; LTP p.10)
 - `rebellion:refresh.draw-missions` Step 2: draw missions, hand limit 10 — rule, verified (RR p.12; LTP p.10)

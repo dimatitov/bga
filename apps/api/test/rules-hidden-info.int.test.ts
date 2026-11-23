@@ -42,6 +42,7 @@ import {
 import { afterEach, describe, expect, it } from 'vitest';
 import { PrismaService } from '../src/persistence/prisma.service';
 import { TMP_DIR } from './global-setup';
+import { swapLocationCard } from './support/location-card';
 import {
   AutomatedGame,
   aiEmpireSeed,
@@ -149,7 +150,9 @@ function otherBase(state: CoreGameState): { to: string; relocated: CoreGameState
     .filter((sys) => sys !== base && !empireAt.has(sys) && !activatedByEmpire.has(sys))
     .sort((x, y) => farness(y) - farness(x) || (x < y ? -1 : 1));
   for (const to of options) {
-    const relocated = relocateHiddenBase(state, to);
+    const moved = relocateHiddenBase(state, to);
+    // SWR-010: the Location card moves with the base (swapped with `to`'s deck card).
+    const relocated = moved && swapLocationCard(moved, base, to);
     if (relocated) return { to, relocated: CoreGameStateV3Schema.parse(relocated) };
   }
   throw new Error('no other base');

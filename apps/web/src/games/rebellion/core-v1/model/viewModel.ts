@@ -282,10 +282,22 @@ export function isRemote(view: View, systemId: string): boolean {
 // ---------------------------------------------------------------------------------------------------------
 
 /**
+ * SWR-010 (plan-frontend §5.3, AQ-4): a human Rebel player of a `physical_companion` game has not registered the
+ * Location card yet (`view.table.registration` is set). Until then `rebelBase.systemId` is only the server's
+ * provisional system, not the chosen base.
+ */
+export function baseRegistrationPending(view: View): boolean {
+  return (view.table?.registration ?? null) !== null;
+}
+
+/**
  * The rebel-base system when the server shows it to the viewer (Rebels always; Empire after the reveal or the
  * end of the game, Q-14); `null` otherwise. Marks the system with `data-rebel-base="true"` (Q-37).
+ * SWR-010: `null` while the base is not registered (`baseRegistrationPending`) — the map, the system panel, the
+ * manifest, Game info and the debug API never name the provisional system.
  */
 export function visibleRebelBaseSystemId(view: View): string | null {
+  if (baseRegistrationPending(view)) return null;
   return view.rebelBase.systemId;
 }
 

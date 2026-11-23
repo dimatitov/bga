@@ -11,6 +11,7 @@
  * - `payload.auto` marks the server's automatic AI move (`ctx.origin === 'auto'`, AM-BE-4).
  */
 import { opponentOf, type CoreGameState, type Faction } from '../../schema';
+import { drawProbeCards } from './cards';
 import { isHotSeat, type Transition } from './helpers';
 import { endGame } from './victory';
 
@@ -58,13 +59,15 @@ export function applyPass(state: CoreGameState, actor: Faction, auto: boolean): 
     : handOver(transition, actor);
 }
 
-/** Both sides passed: refresh (steps 1 and 5, D-3), then a new round or the Rebel victory. */
+/** Both sides passed: refresh (steps 1, 3 and 5, D-3), then a new round or the Rebel victory. */
 function endCommandPhase(transition: Transition, lastActor: Faction): Transition {
   const { state } = transition;
   const from = state.round;
   const to = from + 1;
   const returned = state.leaders.filter((l) => l.systemId !== null).map((l) => l.id);
-  const refreshed: Transition = {
+  // Step 3 (SWR-010, D-7): the Empire draws probe cards — only in games that track cards (`drawProbeCards` is a
+  // no-op otherwise), between LEADERS_RETURNED and TIME_ADVANCED.
+  const drawn = drawProbeCards({
     state: {
       ...state,
       phase: 'refresh',
@@ -76,8 +79,11 @@ function endCommandPhase(transition: Transition, lastActor: Faction): Transition
       ...transition.drafts,
       { type: 'PHASE_STARTED', actor: 'system', payload: { round: from, phase: 'refresh' } },
       { type: 'LEADERS_RETURNED', actor: 'system', payload: { leaderIds: returned } },
-      { type: 'TIME_ADVANCED', actor: 'system', payload: { from, to } },
     ],
+  });
+  const refreshed: Transition = {
+    state: drawn.state,
+    drafts: [...drawn.drafts, { type: 'TIME_ADVANCED', actor: 'system', payload: { from, to } }],
   };
   if (to >= state.reputation) {
     return endGame(refreshed, { winner: 'rebels', reason: 'timeReachedReputation' });

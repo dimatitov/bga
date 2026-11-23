@@ -92,7 +92,7 @@ Learn to Play (записи писались по зеркалу, пока CDN F
 - **Severity:** high
 - **Decision:** accepted-for-slice
 - **Rules:** `rebellion:refresh.steps`, `rebellion:refresh.draw-missions`, `rebellion:refresh.probe-droids`, `rebellion:refresh.draw-objective`, `rebellion:refresh.advance-time`, `rebellion:refresh.deploy-step`, `rebellion:build.build-units`, `rebellion:deploy.deploy-units`, `rebellion:recruit.procedure`
-- **Engine behaviour:** R-7 / D-3: Refresh runs only step 1 (all leaders return, LEADERS_RETURNED) and the +1 time advance of step 5 (TIME_ADVANCED). No missions, probe cards, objectives, recruiting, building or deploying.
+- **Engine behaviour:** R-7 / D-3: Refresh runs step 1 (all leaders return, LEADERS_RETURNED) and the +1 time advance of step 5 (TIME_ADVANCED). SWR-010: games created with cards also keep the probe deck, and in step 3 the Empire draws 2 probe cards while the deck lasts (CARDS_DRAWN); legacy games without cards skip it. No missions, objectives, recruiting, building or deploying, and no other card mechanics.
 - **Official behaviour:** Six steps: retrieve leaders, draw missions, launch probe droids, draw objective, advance time with recruit/build icons, deploy from the build queue (RR p.12, LTP p.10).
 - **Follow-up:** Refresh slice together with missions/objectives; needs the time track icon positions (DISC-018) and resource icon data.
 - **Refs:** `rebellion:impl.refresh-partial`, RR p.12

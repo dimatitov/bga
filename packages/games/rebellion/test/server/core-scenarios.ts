@@ -15,6 +15,7 @@ import {
   pass,
   play,
   start,
+  startWithCards,
   type Played,
   type Step,
 } from './core-script';
@@ -130,6 +131,16 @@ export function playRebelsTimeWin(): { beforeLast: Played; final: Played } {
   );
   const final = play(beforeLast, [pass('rebels')]);
   return { beforeLast, final };
+}
+
+/** SWR-010 (§10.3 R3): the same 13-pass game WITH cards (Refresh step 3 every round, deck exhausted, A-8). */
+export const CARDS_REBELS_TIME_SESSION = 'golden-cards-rebels-time';
+
+export function playCardsRebelsTimeWin(): Played {
+  return play(
+    startWithCards(REBELS_VS_AI, CARDS_REBELS_TIME_SESSION),
+    Array.from({ length: 13 }, () => pass('rebels')),
+  );
 }
 
 // ---------------------------------------------------------------------------------------------------------

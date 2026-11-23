@@ -22,5 +22,12 @@
   "notActivatedSystem": "Units can only move into the activated system.",
   "pinnedByLeader": "Units in a system with your leader cannot move.",
   "immobileUnit": "This unit cannot move (it is a structure).",
-  "insufficientCapacity": "Not enough transport: add ships from the same system or leave ground units and fighters behind."
+  "insufficientCapacity": "Not enough transport: add ships from the same system or leave ground units and fighters behind.",
+  "tableSyncPending": "Complete and confirm the physical table tasks first.",
+  "tableTaskNotFound": "This table task is not in the queue: it may already be confirmed.",
+  "tableTaskNotHead": "Table tasks are confirmed in order: the first one in the queue goes first.",
+  "tableTaskNeedsRegistration": "This task is completed by registering the base card, not by a confirmation.",
+  "registrationUnavailable": "Registering the base card is not available now.",
+  "unknownCard": "There is no such probe card in the catalog.",
+  "cardNotEligible": "The base cannot be placed in the system of this card."
 }

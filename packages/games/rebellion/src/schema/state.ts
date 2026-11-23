@@ -8,6 +8,10 @@ import {
 } from './enums';
 import { RegionDataSchema, SystemDataSchema, UnitTypeSchema } from './data';
 import { REBELLION_STATE_SCHEMA_VERSION, RebellionSettingsSchema } from './settings';
+import { CardIdSchema, checkCardInvariants } from '@bga/platform/cards';
+import { PROBE_SYSTEM_IDS, probeInstanceId, probeSystemOf } from './card-catalog';
+import { CoreCardsStateSchema, rebellionCardEngineContext } from './cards';
+import { CoreTableStateSchema, TableTaskKindSchema } from './table';
 
 /** A system of the MOCK map (`mock-v1`; the `core-v1` map uses `SystemData`). */
 export const SystemSchema = z.strictObject({
@@ -171,6 +175,71 @@ export const GameOverEventSchema = z.strictObject({
 });
 export type GameOverEvent = z.infer<typeof GameOverEventSchema>;
 
+// ---------------------------------------------------------------------------------------------------------
+// SWR-010 card / physical-table events (plan-backend §4.1, §11.4). State forms are full; view forms redact.
+// ---------------------------------------------------------------------------------------------------------
+
+/** Refresh step 3: `side` drew `count` cards (`definitionIds` in draw order) from `fromZoneId` into `toZoneId`. */
+export const CardsDrawnEventSchema = z.strictObject({
+  ...eventBase,
+  type: z.literal('CARDS_DRAWN'),
+  actor: z.literal('system'),
+  payload: z
+    .strictObject({
+      side: FactionSchema,
+      fromZoneId: CardIdSchema,
+      toZoneId: CardIdSchema,
+      count: z.int().positive(),
+      definitionIds: z.array(CardIdSchema).min(1),
+    })
+    .refine((p) => p.definitionIds.length === p.count, {
+      message: 'definitionIds.length must equal count',
+      path: ['definitionIds'],
+    }),
+});
+export type CardsDrawnEvent = z.infer<typeof CardsDrawnEventSchema>;
+
+/** Physical Hand: the human Rebels registered their Location card (secret until the base is revealed). */
+export const CardRegisteredEventSchema = z.strictObject({
+  ...eventBase,
+  type: z.literal('CARD_REGISTERED'),
+  actor: FactionSchema,
+  payload: z.strictObject({ zoneId: CardIdSchema, definitionId: CardIdSchema }),
+});
+export type CardRegisteredEvent = z.infer<typeof CardRegisteredEventSchema>;
+
+/** The human confirmed the head physical-table task (public). */
+export const TableTaskConfirmedEventSchema = z.strictObject({
+  ...eventBase,
+  type: z.literal('TABLE_TASK_CONFIRMED'),
+  actor: FactionSchema,
+  payload: z.strictObject({ taskId: z.string(), kind: TableTaskKindSchema }),
+});
+export type TableTaskConfirmedEvent = z.infer<typeof TableTaskConfirmedEventSchema>;
+
+/** View form: `definitionIds: null` when the viewer is not `side` (the count stays public). */
+export const CardsDrawnViewEventSchema = CardsDrawnEventSchema.extend({
+  payload: z
+    .strictObject({
+      side: FactionSchema,
+      fromZoneId: CardIdSchema,
+      toZoneId: CardIdSchema,
+      count: z.int().positive(),
+      definitionIds: z.array(CardIdSchema).nullable(),
+    })
+    .refine((p) => p.definitionIds === null || p.definitionIds.length === p.count, {
+      message: 'definitionIds.length must equal count',
+      path: ['definitionIds'],
+    }),
+});
+export type CardsDrawnViewEvent = z.infer<typeof CardsDrawnViewEventSchema>;
+
+/** View form: `definitionId: null` while the base is hidden from the viewer. */
+export const CardRegisteredViewEventSchema = CardRegisteredEventSchema.extend({
+  payload: z.strictObject({ zoneId: CardIdSchema, definitionId: CardIdSchema.nullable() }),
+});
+export type CardRegisteredViewEvent = z.infer<typeof CardRegisteredViewEventSchema>;
+
 /** Log of a `mock-v1` state: exactly the five SWR-004 event types. */
 export const MockEventSchema = z.discriminatedUnion('type', [
   GameCreatedEventSchema,
@@ -194,6 +263,9 @@ export const CoreEventSchema = z.discriminatedUnion('type', [
   TimeAdvancedEventSchema,
   BaseRevealedEventSchema,
   GameOverEventSchema,
+  CardsDrawnEventSchema,
+  CardRegisteredEventSchema,
+  TableTaskConfirmedEventSchema,
 ]);
 export type CoreEvent = z.infer<typeof CoreEventSchema>;
 
@@ -212,6 +284,9 @@ export const GameEventSchema = z.discriminatedUnion('type', [
   TimeAdvancedEventSchema,
   BaseRevealedEventSchema,
   GameOverEventSchema,
+  CardsDrawnEventSchema,
+  CardRegisteredEventSchema,
+  TableTaskConfirmedEventSchema,
 ]);
 export type GameEvent = z.infer<typeof GameEventSchema>;
 export type GameEventType = GameEvent['type'];
@@ -243,6 +318,9 @@ export const CoreViewEventSchema = z.discriminatedUnion('type', [
   TimeAdvancedEventSchema,
   BaseRevealedEventSchema,
   GameOverEventSchema,
+  CardsDrawnViewEventSchema,
+  CardRegisteredViewEventSchema,
+  TableTaskConfirmedEventSchema,
 ]);
 export type CoreViewEvent = z.infer<typeof CoreViewEventSchema>;
 
@@ -264,6 +342,9 @@ export const PlayerEventSchema = z.discriminatedUnion('type', [
   TimeAdvancedEventSchema,
   BaseRevealedEventSchema,
   GameOverEventSchema,
+  CardsDrawnViewEventSchema,
+  CardRegisteredViewEventSchema,
+  TableTaskConfirmedEventSchema,
 ]);
 export type PlayerEvent = z.infer<typeof PlayerEventSchema>;
 
@@ -406,6 +487,13 @@ const CoreGameStateObjectSchema = z.strictObject({
   rebelBase: CoreRebelBaseSchema,
   outcome: OutcomeSchema.nullable(),
   log: z.array(CoreEventSchema),
+  /**
+   * SWR-010 (plan-backend §3.1, D-3): card state. Absent = cards are not tracked in this game (created before
+   * SWR-010); never `null` in storage. Optional → legacy rows parse byte-identically, no schemaVersion bump.
+   */
+  cards: CoreCardsStateSchema.optional(),
+  /** SWR-010: physical-table queue; present exactly in `physical_companion` games. */
+  table: CoreTableStateSchema.optional(),
 });
 type CoreGameStateObject = z.infer<typeof CoreGameStateObjectSchema>;
 
@@ -470,6 +558,92 @@ function checkCoreInvariants(state: CoreGameStateObject, ctx: z.RefinementCtx): 
     if (state.handoffPending) issue(['handoffPending'], 'no handoff after the game is over');
   }
   checkAiInvariant(state, ctx, false);
+  checkCardsAndTable(state, issue);
+}
+
+const PROBE_COUNT = PROBE_SYSTEM_IDS.length;
+
+/** SWR-010 invariants of `cards` / `table` (plan-backend §3.1). */
+function checkCardsAndTable(
+  state: CoreGameStateObject,
+  issue: (path: (string | number)[], message: string) => void,
+): void {
+  const physical = state.settings.gameMode === 'physical_companion';
+  const { cards, table } = state;
+  if ((table !== undefined) !== physical) {
+    issue(['table'], 'table is present exactly in physical_companion games');
+  }
+  if (physical && state.settings.opponentType !== 'ai') {
+    issue(['settings', 'opponentType'], 'physical_companion is played against the AI only');
+  }
+  if (physical && cards === undefined) issue(['cards'], 'physical_companion games track cards');
+
+  let locationEmpty = false;
+  if (cards !== undefined) {
+    for (const i of checkCardInvariants(cards.pile, rebellionCardEngineContext)) {
+      issue(['cards', 'pile'], `card invariant ${i.code}${i.zoneId ? ` (${i.zoneId})` : ''}`);
+    }
+    if (cards.pile.instances.length !== PROBE_COUNT) {
+      issue(['cards', 'pile', 'instances'], `exactly ${PROBE_COUNT} card instances`);
+    }
+    const zone = (id: string) => cards.pile.zones.find((z0) => z0.id === id)?.cards ?? [];
+    const definitionOf = new Map(cards.pile.instances.map((c) => [c.id, c.definitionId]));
+    const location = zone('rebels-location');
+    const revealedZone = zone('rebels-base-revealed');
+    locationEmpty = location.length === 0;
+    if (location.length > 1) issue(['cards'], 'the Location holds at most one card');
+    const locationCard = location[0];
+    if (locationCard !== undefined) {
+      const def = definitionOf.get(locationCard);
+      if (def === undefined || probeSystemOf(def) !== state.rebelBase.systemId) {
+        issue(['cards'], 'the Location card must name the rebel base system');
+      }
+    }
+    if (state.rebelBase.revealed) {
+      if (!locationEmpty) issue(['cards'], 'a revealed base leaves the Location empty');
+      if (
+        revealedZone.length !== 1 ||
+        revealedZone[0] !== probeInstanceId(state.rebelBase.systemId)
+      ) {
+        issue(['cards'], 'a revealed base card lies on the Rebel Base space');
+      }
+    } else if (revealedZone.length > 0) {
+      issue(['cards'], 'no revealed base card before the reveal');
+    }
+  }
+
+  const pendingRegistration = cards !== undefined && locationEmpty && !state.rebelBase.revealed;
+  const registration = table?.baseRegistration ?? null;
+  const hasRegisterTask = table?.tasks.some((t) => t.kind === 'registerBase') ?? false;
+  if ((registration !== null) !== hasRegisterTask) {
+    issue(['table', 'baseRegistration'], 'baseRegistration iff a registerBase task is queued');
+  }
+  if ((registration !== null) !== pendingRegistration) {
+    issue(['table', 'baseRegistration'], 'baseRegistration iff the Location awaits registration');
+  }
+  if (registration !== null && state.settings.playerFaction !== 'rebels') {
+    issue(['table', 'baseRegistration'], 'only a human Rebel player registers the base');
+  }
+  if (table !== undefined) {
+    const ids = table.tasks.map((t) => t.id);
+    if (new Set(ids).size !== ids.length) issue(['table', 'tasks'], 'duplicate table task id');
+    if (table.tasks.filter((t) => t.kind === 'registerBase').length > 1) {
+      issue(['table', 'tasks'], 'at most one registerBase task');
+    }
+    table.tasks.forEach((t, i) => {
+      // `register` is the completion of `registerBase` and of nothing else (rules/core/table.ts `task`).
+      if ((t.kind === 'registerBase') !== (t.completion === 'register')) {
+        issue(
+          ['table', 'tasks', i, 'completion'],
+          'completion is register iff kind is registerBase',
+        );
+      }
+      // The title is fixed by the kind: `table.tasks.<kind>`.
+      if (t.titleKey !== `table.tasks.${t.kind}`) {
+        issue(['table', 'tasks', i, 'titleKey'], 'titleKey is table.tasks.<kind>');
+      }
+    });
+  }
 }
 
 /** Full authoritative `core-v1` state (never sent to clients; `rebelBase.systemId` always set). */

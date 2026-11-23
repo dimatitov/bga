@@ -29,6 +29,7 @@ import {
 } from './support/automation-helpers';
 import { prismaOf } from './support/fixtures';
 import { baseLeaks } from './support/hidden-scan';
+import { swapLocationCard } from './support/location-card';
 import { SENTINEL_KEY, decisionText, enabledOpenAI, okResponse } from './support/openai-fake-fetch';
 import { distancesFrom, huntingEmpire } from './support/scripted-empire';
 import { api, createTestDb, removeTestDb, type TestDb } from './support/test-app';
@@ -61,12 +62,17 @@ async function openaiApp(id: string, fake: ReturnType<typeof modelFake>): Promis
   return started;
 }
 
-/** The same state with the base in `to` (Rebel units / leaders / activation / own log references moved). */
+/**
+ * The same state with the base in `to` (Rebel units / leaders / activation / own log references moved).
+ * SWR-010: the Location card moves too (swapped with `to`'s deck card, plan-backend §10.3).
+ */
 function relocateBase(state: CoreGameState, to: string): CoreGameState {
   const from = state.rebelBase.systemId;
+  const withCard = swapLocationCard(state, from, to);
+  if (withCard === null) throw new Error(`relocateBase: card of ${to} is not in the deck`);
   const swap = (id: string) => (id === from ? to : id);
   return CoreGameStateV3Schema.parse({
-    ...state,
+    ...withCard,
     rebelBase: { ...state.rebelBase, systemId: to },
     units: state.units.map((u) =>
       u.owner === 'rebels' ? { ...u, systemId: swap(u.systemId) } : u,

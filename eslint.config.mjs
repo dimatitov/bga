@@ -20,6 +20,11 @@ const GAME_NOT_WEB = '^@bga/game-[^/]+(/(?!(definition|schema|board|assets)$).*)
 const GAME_NOT_REGISTRY = '^@bga/game-[^/]+(/(?!(definition|server)$).*)?$';
 /** Server-only game entry points that even web i18n tests must not read (they may read ./scenario). */
 const GAME_RULES_SERVER_AI = '^@bga/game-[^/]+/(rules|server|ai)(/.*)?$';
+/**
+ * SWR-010 (plan-frontend §12, TC-BND-02): the platform card engine (deck, shuffle, invariants, projector) is
+ * server-only; web takes card/zone types and the public catalog from `@bga/game-rebellion/schema`.
+ */
+const WEB_NO_PLATFORM_CARDS = '^@bga/platform/cards$';
 /** Relative imports from web into the api sources (only the registry consistency test may read definitions). */
 const WEB_TO_API_SRC = '(^|/)api/src/';
 
@@ -64,9 +69,9 @@ const WEB_DYNAMIC_IMPORTS = [
 
 // ---- web restriction sets ----
 const WEB_MESSAGE =
-  'web imports from game packages only ./definition, ./schema, ./board, ./assets; never server code (AC-5, Q-8).';
+  'web imports from game packages only ./definition, ./schema, ./board, ./assets; never server code (AC-5, Q-8); never @bga/platform/cards (SWR-010: card types come from the game ./schema).';
 const WEB_GROUPS = ['@prisma/*', '@nestjs/*', 'openai', 'openai/*', '**/packages/**'];
-const WEB = { groups: WEB_GROUPS, regexes: [GAME_NOT_WEB, WEB_TO_API_SRC] };
+const WEB = { groups: WEB_GROUPS, regexes: [GAME_NOT_WEB, WEB_TO_API_SRC, WEB_NO_PLATFORM_CARDS] };
 
 // ---- api restriction sets ----
 const API_GROUPS = ['react', 'react-*', 'react/*', '@mui/*', 'openai', 'openai/*'];
@@ -347,7 +352,7 @@ export default tseslint.config(
             '@/features/*',
             '**/features/*',
           ],
-          regexes: [ANY_GAME_PKG, WEB_TO_API_SRC],
+          regexes: [ANY_GAME_PKG, WEB_TO_API_SRC, WEB_NO_PLATFORM_CARDS],
         },
       ),
     },
@@ -357,7 +362,7 @@ export default tseslint.config(
     files: ['apps/web/src/games/*/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': restrict(
-        'A web game folder must not import the registry or other games (from @/games/* only @/games/types); from game packages only definition/schema/board/assets — rules/scenario/server/ai are server-only.',
+        'A web game folder must not import the registry or other games (from @/games/* only @/games/types); from game packages only definition/schema/board/assets — rules/scenario/server/ai are server-only; never @bga/platform/cards (SWR-010).',
         { groups: [...WEB_GROUPS, '@/games/*', '!@/games/types'], regexes: WEB.regexes },
       ),
     },
@@ -383,7 +388,11 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': restrict(WEB_MESSAGE, {
         groups: WEB_GROUPS,
-        regexes: [GAME_NOT_WEB, '(^|/)api/src/(?!game-registry/definitions$)'],
+        regexes: [
+          GAME_NOT_WEB,
+          '(^|/)api/src/(?!game-registry/definitions$)',
+          WEB_NO_PLATFORM_CARDS,
+        ],
       }),
     },
   },

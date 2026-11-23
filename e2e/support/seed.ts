@@ -4,7 +4,10 @@
 //   mock scenario) and the SWR-003 v1 snapshot `apps/api/test/fixtures/v1/sessions.v1.json` — they keep the mock rules
 //   (`rulesEngine: 'mock-v1'`) covered in e2e;
 // - `core-v1` rows "one activation before the reveal / the Empire's win": the W5 seeds
-//   `packages/games/rebellion/test/fixtures/core/seeds/*.json` (scenarios 4 and 5b).
+//   `packages/games/rebellion/test/fixtures/core/seeds/*.json` (scenarios 4 and 5b);
+// - SWR-010 `core-v1` rows WITH cards (same folder, same file shape): `physical-rebels-registration` (head task
+//   registerBase), `physical-empire-ai-task-pending` (head aiActivation into the Rebel Base space),
+//   `physical-empire-refresh-pending` (head refresh with takeProbeCards), `digital-empire-after-refresh` (2 probes).
 //
 // WHY at test time, not in e2e-serve.mjs before the server starts: `00-empty-db.spec.ts` (TC-GP-13) needs an EMPTY DB
 // for the "no sessions" game page; seeding before the server starts would make that check impossible. The rows are
@@ -233,7 +236,14 @@ export async function seedLegacyV1(options: { ageMs?: number } = {}): Promise<Se
 // core-v1 seeds (W5)
 // ---------------------------------------------------------------------------------------------------------------
 
-export type CoreSeedName = 'ai-empire-before-reveal' | 'hotseat-empire-before-win';
+export type CoreSeedName =
+  | 'ai-empire-before-reveal'
+  | 'hotseat-empire-before-win'
+  // SWR-010 W4 / FQ-3 seeds (games with cards; `physical-*` = `physical_companion` with a pending table task)
+  | 'physical-rebels-registration'
+  | 'physical-empire-ai-task-pending'
+  | 'physical-empire-refresh-pending'
+  | 'digital-empire-after-refresh';
 
 export interface CoreSeedCommand {
   actor: 'rebels' | 'empire';
@@ -301,6 +311,13 @@ export interface StoredRow {
     schemaVersion?: number;
     rulesEngine?: string;
     rebelBase?: { systemId: string; revealed: boolean };
+    /** SWR-010: card pile (zones → instance ids `probe-<system>#1`), absent in games created before SWR-010. */
+    cards?: { catalogId: string; pile: { zones: { id: string; cards: string[] }[] } };
+    /** SWR-010: physical table queue (only `physical_companion`). */
+    table?: {
+      tasks: { id: string; kind: string }[];
+      baseRegistration: { eligibleSystemIds: string[] } | null;
+    };
     [key: string]: unknown;
   };
 }
@@ -328,3 +345,14 @@ export async function storedRebelBase(sessionId: string): Promise<string> {
   if (!base) throw new Error(`session ${sessionId} has no rebelBase.systemId in its stored state`);
   return base;
 }
+
+/** SWR-010 oracle: instance ids of a stored card zone (`probe-<system>#1`, in zone order). */
+export async function storedZone(sessionId: string, zoneId: string): Promise<string[]> {
+  const { state } = await readStoredRow(sessionId);
+  const zone = state.cards?.pile.zones.find((z) => z.id === zoneId);
+  if (!zone) throw new Error(`session ${sessionId} has no stored card zone ${zoneId}`);
+  return zone.cards;
+}
+
+/** `probe-<system>#1` → `probe-<system>` (definition id). */
+export const definitionOfInstance = (instanceId: string): string => instanceId.replace(/#\d+$/, '');

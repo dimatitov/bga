@@ -50,7 +50,7 @@
       "rebellion:deploy.deploy-units",
       "rebellion:recruit.procedure"
     ],
-    "engineBehaviour": "R-7 / D-3: Refresh runs only step 1 (all leaders return, LEADERS_RETURNED) and the +1 time advance of step 5 (TIME_ADVANCED). No missions, probe cards, objectives, recruiting, building or deploying.",
+    "engineBehaviour": "R-7 / D-3: Refresh runs step 1 (all leaders return, LEADERS_RETURNED) and the +1 time advance of step 5 (TIME_ADVANCED). SWR-010: games created with cards also keep the probe deck, and in step 3 the Empire draws 2 probe cards while the deck lasts (CARDS_DRAWN); legacy games without cards skip it. No missions, objectives, recruiting, building or deploying, and no other card mechanics.",
     "officialBehaviour": "Six steps: retrieve leaders, draw missions, launch probe droids, draw objective, advance time with recruit/build icons, deploy from the build queue (RR p.12, LTP p.10).",
     "decision": "accepted-for-slice",
     "followUp": "Refresh slice together with missions/objectives; needs the time track icon positions (DISC-018) and resource icon data.",

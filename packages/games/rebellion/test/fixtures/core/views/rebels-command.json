@@ -1124,5 +1124,7 @@
     {
       "type": "FINISH_ACTIVATION"
     }
-  ]
+  ],
+  "cards": null,
+  "table": null
 }

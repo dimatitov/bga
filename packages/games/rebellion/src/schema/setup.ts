@@ -7,6 +7,7 @@ import {
   OpponentTypeSchema,
   type GameMode,
   type GameRuleset,
+  type OpponentType,
 } from './enums';
 import { opponentOf } from './factions';
 import { RebellionSettingsSchema, type RebellionSettings } from './settings';
@@ -16,8 +17,8 @@ import { RebellionSettingsSchema, type RebellionSettings } from './settings';
  * `opponentFaction`, legacy `humanFaction`/`opponent`) → 400. `ruleset` and `gameMode` are required (Q-7).
  * `aiDifficulty`: optional for AI (default 'normal'), `null` only for a human opponent (Q-6);
  * a human opponent with a difficulty → issue at `['aiDifficulty']`.
- * Values of the right type but not available yet (`rise-of-the-empire`, `physical_companion`) pass
- * the schema; `unsupportedSetupFields` reports them (→ 422 SETUP_UNSUPPORTED).
+ * Values of the right type but not available yet (`rise-of-the-empire`; `physical_companion` with a human
+ * opponent, SWR-010) pass the schema; `unsupportedSetupFields` reports them (→ 422 SETUP_UNSUPPORTED).
  */
 export const RebellionSetupInputSchema = z
   .strictObject({
@@ -62,6 +63,7 @@ export const REBELLION_SETUP_DEFAULTS = Object.freeze({
 export const SUPPORTED_RULESETS = Object.freeze(['base'] as const satisfies readonly GameRuleset[]);
 export const SUPPORTED_GAME_MODES = Object.freeze([
   'digital',
+  'physical_companion',
 ] as const satisfies readonly GameMode[]);
 
 export function isSupportedRuleset(ruleset: GameRuleset): boolean {
@@ -72,15 +74,21 @@ export function isSupportedGameMode(mode: GameMode): boolean {
   return (SUPPORTED_GAME_MODES as readonly GameMode[]).includes(mode);
 }
 
+/** SWR-010 (plan-backend §7, AC-22): `physical_companion` is available only against the AI. Web-safe (setup form). */
+export function isSupportedGameModeFor(mode: GameMode, opponentType: OpponentType): boolean {
+  if (!isSupportedGameMode(mode)) return false;
+  return mode !== 'physical_companion' || opponentType === 'ai';
+}
+
 export type UnsupportedSetupField = 'ruleset' | 'gameMode';
 
 /** Fields of a schema-valid input that are not available yet, in check order (Q-8: ruleset first). */
 export function unsupportedSetupFields(
-  input: Pick<RebellionSetupInput, 'ruleset' | 'gameMode'>,
+  input: Pick<RebellionSetupInput, 'ruleset' | 'gameMode' | 'opponentType'>,
 ): UnsupportedSetupField[] {
   const fields: UnsupportedSetupField[] = [];
   if (!isSupportedRuleset(input.ruleset)) fields.push('ruleset');
-  if (!isSupportedGameMode(input.gameMode)) fields.push('gameMode');
+  if (!isSupportedGameModeFor(input.gameMode, input.opponentType)) fields.push('gameMode');
   return fields;
 }
 

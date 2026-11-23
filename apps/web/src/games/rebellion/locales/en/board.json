@@ -83,6 +83,7 @@
     "tabsLabel": "Sections",
     "tab": {
       "log": "Log",
+      "cards": "Cards",
       "objects": "Objects",
       "game": "Game"
     }

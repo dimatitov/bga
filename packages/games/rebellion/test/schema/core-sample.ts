@@ -244,5 +244,7 @@ export function coreEmpireView(): CorePlayerView {
       },
     ],
     legalActions: [],
+    cards: null,
+    table: null,
   };
 }

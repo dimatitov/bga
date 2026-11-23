@@ -66,7 +66,19 @@
     "hiddenZone": "hidden zone",
     "unknownUnit": "unit",
     "aiActor": "{{actor}} (AI)",
-    "aiTag": "AI"
+    "aiTag": "AI",
+    "CARDS_DRAWN": "{{side}}: cards drawn ({{from}}) — {{cards}}",
+    "CARDS_DRAWN_count_one": "{{side}}: drew {{count}} card ({{from}})",
+    "CARDS_DRAWN_count_other": "{{side}}: drew {{count}} cards ({{from}})",
+    "CARD_REGISTERED": "{{actor}}: base card registered — {{card}}",
+    "CARD_REGISTERED_hidden": "{{actor}}: base card registered (hidden)",
+    "TABLE_TASK_CONFIRMED": "Table synced",
+    "TABLE_TASK_CONFIRMED_initialSetup": "Table synced: initial setup",
+    "TABLE_TASK_CONFIRMED_registerBase": "Table synced: base card",
+    "TABLE_TASK_CONFIRMED_aiActivation": "Table synced: AI activation",
+    "TABLE_TASK_CONFIRMED_aiMove": "Table synced: AI move",
+    "TABLE_TASK_CONFIRMED_refresh": "Table synced: Refresh phase",
+    "TABLE_TASK_CONFIRMED_baseRevealed": "Table synced: base revealed"
   },
   "announce": {
     "autoPass": "AI pass ({{side}})",

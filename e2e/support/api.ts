@@ -247,7 +247,10 @@ export type Command =
   // SWR-005 core-v1
   | { type: 'ACTIVATE_SYSTEM'; leaderId: string; systemId: string }
   | { type: 'FINISH_ACTIVATION' }
-  | { type: 'PASS' };
+  | { type: 'PASS' }
+  // SWR-010 physical table sync (plan-backend §9, §11.4)
+  | { type: 'CONFIRM_TABLE_TASK'; taskId: string }
+  | { type: 'REGISTER_CARD'; zoneId: string; definitionId: string };
 
 export const newIdempotencyKey = (): string => randomUUID();
 
@@ -550,7 +553,11 @@ export interface CoreEventView {
     | 'LEADERS_RETURNED'
     | 'TIME_ADVANCED'
     | 'BASE_REVEALED'
-    | 'GAME_OVER';
+    | 'GAME_OVER'
+    // SWR-010 (plan-backend §4.1)
+    | 'CARDS_DRAWN'
+    | 'CARD_REGISTERED'
+    | 'TABLE_TASK_CONFIRMED';
   actor: Faction | 'system';
   payload: Record<string, unknown>;
 }
@@ -590,6 +597,57 @@ export interface CorePlayerView {
   outcome: { winner: Faction; reason: OutcomeReason } | null;
   log: CoreEventView[];
   legalActions: CoreLegalAction[];
+  /** SWR-010: `null` = a game without cards (created before SWR-010). */
+  cards: CoreCardsView | null;
+  /** SWR-010: `null` = not `physical_companion` (or the viewer is not the human). */
+  table: TableView | null;
+}
+
+// SWR-010 card / table wire (plan-backend §11.2–11.4; local mirror of `CoreCardsViewSchema` / `TableViewSchema`)
+export interface CardZoneView {
+  id: string;
+  kind: string;
+  owner: Faction | null;
+  visibility: string;
+  authority: 'digital' | 'physical';
+  count: number;
+  /** `null` = only the count is visible to this viewer. */
+  cards: { instanceId: string; definitionId: string }[] | null;
+  [key: string]: unknown;
+}
+
+export interface CoreCardsView {
+  catalogId: string;
+  zones: CardZoneView[];
+}
+
+export interface TableTask {
+  id: string;
+  kind: 'initialSetup' | 'registerBase' | 'aiActivation' | 'aiMove' | 'refresh' | 'baseRevealed';
+  actor: Faction | 'system';
+  titleKey: string;
+  createdAtVersion: number;
+  affected: {
+    cardDefinitionIds: string[];
+    leaderIds: string[];
+    unitIds: string[];
+    systemIds: (string | null)[];
+  };
+  steps: { key: string; params: Record<string, unknown> }[];
+  completion: 'confirm' | 'register';
+}
+
+export interface TableView {
+  tasks: TableTask[];
+  aiWaiting: boolean;
+  registration: { zoneId: 'rebels-location'; eligibleDefinitionIds: string[] } | null;
+}
+
+/** Zone of a cards view by id (fails if absent). */
+export function zoneOf(view: Pick<CorePlayerView, 'cards'>, zoneId: string): CardZoneView {
+  const z = view.cards?.zones.find((x) => x.id === zoneId);
+  if (!z) throw new Error(`zone ${zoneId} not in the cards view`);
+  return z;
 }
 
 /** Base-game data facts used by the specs (spec Data clarifications). */
